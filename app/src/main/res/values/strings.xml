@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Lock Scheduler</string>
+    <string name="action_settings">Settings</string>
+    <string name="my_admin">My Admin</string>
+    <string name="device_admin_description">Bla bla description</string>
+    <string name="profile_modifier">Modify profile</string>
+</resources>
