@@ -28,6 +28,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -258,19 +259,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return;
             case RESULT_PROFILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    final Profile profile = data.getParcelableExtra("profile");
+                    final Profile resultProfile = data.getParcelableExtra("profile");
                     if (mProfiles == null)
                         restoreProfiles();
                     switch (data.getAction()) {
                         case "delete":
-                            for (Profile p : mProfiles) {
-                                if (p.getId() == profile.getId()) {
-                                    mProfiles.remove(p);
+                            for (Profile profile : mProfiles) {
+                                if (profile.getId() == resultProfile.getId()) {
+                                    mProfiles.remove(profile);
                                     break;
                                 }
                             }
-                            if (profile.isEnabled()) {
-                                final String profileId = Long.toString(profile.getId());
+                            if (resultProfile.isEnabled()) {
+                                final String profileId = Long.toString(resultProfile.getId());
                                 getJobs().add(new Runnable() {
                                     @Override
                                     public void run() {
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             saveProfiles();
                             break;
                         case "new":
-                            mProfiles.add(profile);
+                            mProfiles.add(resultProfile);
                             saveProfiles();
                             getJobs().add(new Runnable() {
                                 @Override
@@ -293,17 +294,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             });
                             break;
                         case "update":
-                            for (final Profile p : mProfiles) {
-                                if (p.getId() == profile.getId()) {
-                                    p.setName(profile.getName());
-                                    p.setRadius(profile.getRadius());
-                                    if (!p.getPlace().equals(profile.getPlace())) {
-                                        p.setPlace(profile.getPlace());
+                            for (final Profile profile : mProfiles) {
+                                if (profile.getId() == resultProfile.getId()) {
+                                    LatLng previousPlace = profile.getPlace();
+                                    profile.update(resultProfile);
+                                    if (!previousPlace.equals(profile.getPlace())) {
                                         getJobs().add(new Runnable() {
                                             @Override
                                             public void run() {
                                                 ArrayList<String> removeList = new ArrayList<>(1);
-                                                removeList.add(Long.toString(p.getId()));
+                                                removeList.add(Long.toString(profile.getId()));
                                                 LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
                                                 initGeofences(mGoogleApiClient);
                                             }

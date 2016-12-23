@@ -107,6 +107,15 @@ public class Profile implements Parcelable {
         this.exitLockMode = exitLockMode;
     }
 
+    public void update(Profile profile) {
+        enabled = profile.isEnabled();
+        name = profile.getName();
+        place = profile.getPlace();
+        radius = profile.getRadius();
+        enterLockMode = profile.getEnterLockMode();
+        exitLockMode = profile.getExitLockMode();
+    }
+
     @Override
     public String toString() {
         return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, radius=%d, enterLock=%s, exitLock=%s}", id, name, radius, enterLockMode, exitLockMode);
