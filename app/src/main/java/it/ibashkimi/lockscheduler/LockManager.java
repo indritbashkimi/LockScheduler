@@ -22,7 +22,7 @@ public class LockManager {
     public LockManager(Context context) {
         deviceManger = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        compName = new ComponentName(context, MyAdmin.class);
+        compName = new ComponentName(context, LockSchedulerAdmin.class);
         this.context = context;
     }
 

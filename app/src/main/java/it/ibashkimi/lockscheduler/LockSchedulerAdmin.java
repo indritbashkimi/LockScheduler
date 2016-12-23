@@ -10,7 +10,7 @@ import android.widget.Toast;
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class MyAdmin extends DeviceAdminReceiver {
+public class LockSchedulerAdmin extends DeviceAdminReceiver {
 
     static SharedPreferences getSamplePreferences(Context context) {
         return context.getSharedPreferences(

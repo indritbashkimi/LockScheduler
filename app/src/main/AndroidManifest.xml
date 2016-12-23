@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProfileModifierActivity"
+            android:name=".ProfileActivity"
             android:label="@string/profile_modifier"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -44,7 +44,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
-            android:name=".MyAdmin"
+            android:name=".LockSchedulerAdmin"
             android:description="@string/device_admin_description"
             android:label="@string/my_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">

@@ -1,23 +1,54 @@
 package it.ibashkimi.lockscheduler.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class Profile {
-    private String name;
-    private boolean enabled;
-    private List<Condition> conditions;
+public class Profile implements Parcelable {
 
-    public Profile(String name) {
-        this.name = name;
-        this.enabled = false;
+    private long id;
+    private String name;
+    private LatLng place;
+    private int radius;
+    private boolean enabled = true;
+    private LockMode enterLockMode;
+    private LockMode exitLockMode;
+
+    public Profile() {
+        this(0, "", null, 0);
     }
 
-    public Profile(String name, boolean enabled) {
+    public Profile(long id, String name, LatLng place, int radius) {
+        this(id, name, place, radius, true, new LockMode(LockMode.LockType.UNCHANGED), new LockMode(LockMode.LockType.UNCHANGED));
+    }
+
+    public Profile(long id, String name, LatLng place, int radius, boolean enabled, LockMode enterLockMode, LockMode exitLockMode) {
+        this.id = id;
         this.name = name;
+        this.place = place;
+        this.radius = radius;
+        this.enabled = enabled;
+        this.enterLockMode = enterLockMode;
+        this.exitLockMode = exitLockMode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -29,19 +60,118 @@ public class Profile {
         this.name = name;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public LatLng getPlace() {
+        return place;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setPlace(LatLng place) {
+        this.place = place;
     }
 
-    public List<Condition> getConditions() {
-        return conditions;
+    public int getRadius() {
+        return radius;
     }
 
-    public void setConditions(List<Condition> conditions) {
-        this.conditions = conditions;
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+        Log.d(TAG, "setId: id=" + this.id);
+    }
+
+    public LockMode getEnterLockMode() {
+        return enterLockMode;
+    }
+
+    public void setEnterLockMode(LockMode enterLockMode) {
+        this.enterLockMode = enterLockMode;
+    }
+
+    public LockMode getExitLockMode() {
+        return exitLockMode;
+    }
+
+    public void setExitLockMode(LockMode exitLockMode) {
+        this.exitLockMode = exitLockMode;
+    }
+
+    @Override
+    public String toString() {
+        Log.d(TAG, "toString: id=" + id);
+        return String.format(Locale.ITALIAN, "Profile{id=%d, name=%s, radius=%d}", id, name, radius);
+    }
+
+    private static final String TAG = "Profile";
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Log.d(TAG, "toJson: id=" + id);
+            jsonObject.put("id", "" + id);
+            jsonObject.put("name", name);
+            jsonObject.put("enabled", enabled);
+            jsonObject.put("latitude", place.latitude);
+            jsonObject.put("longitude", place.longitude);
+            jsonObject.put("radius", radius);
+            jsonObject.put("enterLock", enterLockMode.toJson().toString());
+            jsonObject.put("exitLock", exitLockMode.toJson().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+
+    public static Profile fromJsonString(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        Profile profile = new Profile();
+        profile.setId(Long.parseLong(jsonObject.getString("id")));
+        profile.setName(jsonObject.getString("name"));
+        profile.setEnabled(jsonObject.getBoolean("enabled"));
+        profile.setPlace(new LatLng(jsonObject.getDouble("latitude"), jsonObject.getDouble("longitude")));
+        profile.setRadius(jsonObject.getInt("radius"));
+        profile.setEnterLockMode(LockMode.fromJsonString(jsonObject.getString("enterLock")));
+        profile.setExitLockMode(LockMode.fromJsonString(jsonObject.getString("exitLock")));
+        return profile;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(enabled ? 1 : 0);
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeParcelable(place, flags);
+        dest.writeInt(radius);
+        dest.writeParcelable(enterLockMode, flags);
+        dest.writeParcelable(exitLockMode, flags);
+    }
+
+    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
+        public Profile createFromParcel(Parcel in) {
+            return new Profile(in);
+        }
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
+    };
+
+    private Profile(Parcel in) {
+        enabled = in.readInt() == 1;
+        id = in.readLong();
+        name = in.readString();
+        place = in.readParcelable(LatLng.class.getClassLoader());
+        radius = in.readInt();
+        enterLockMode = in.readParcelable(LockMode.class.getClassLoader());
+        exitLockMode = in.readParcelable(LockMode.class.getClassLoader());
     }
 }

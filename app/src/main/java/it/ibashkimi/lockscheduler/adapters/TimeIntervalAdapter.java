@@ -15,7 +15,7 @@ import it.ibashkimi.lockscheduler.TimeActivity;
 import it.ibashkimi.lockscheduler.TimePickerFragment;
 
 /**
- * Created by indrit on 21/11/16.
+ * @author Indrit Bashkimi <indrit.bashkimi@gmail.com>
  */
 
 public class TimeIntervalAdapter extends RecyclerView.Adapter<TimeIntervalAdapter.ViewHolder> {

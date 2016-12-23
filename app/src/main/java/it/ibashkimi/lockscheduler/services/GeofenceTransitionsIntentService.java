@@ -4,14 +4,21 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import org.json.JSONException;
+
+import java.util.List;
+
 import it.ibashkimi.lockscheduler.LockManager;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.domain.LockMode;
+import it.ibashkimi.lockscheduler.domain.Profile;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -20,47 +27,9 @@ import it.ibashkimi.lockscheduler.R;
  */
 public class GeofenceTransitionsIntentService extends IntentService {
     private static final String TAG = "GeofenceTransitionsInte";
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "it.ibashkimi.geoactions.services.action.FOO";
-    private static final String ACTION_BAZ = "it.ibashkimi.geoactions.services.action.BAZ";
-
-    // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "it.ibashkimi.geoactions.services.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "it.ibashkimi.geoactions.services.extra.PARAM2";
 
     public GeofenceTransitionsIntentService() {
         super("GeofenceTransitionsIntentService");
-    }
-
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, GeofenceTransitionsIntentService.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, GeofenceTransitionsIntentService.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
     }
 
     @Override
@@ -68,22 +37,54 @@ public class GeofenceTransitionsIntentService extends IntentService {
         Log.d(TAG, "onHandleIntent() called with: intent = [" + intent + "]");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
-            /*tring errorMessage = GeofenceErrorMessages.getErrorString(this,
+            /*String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());*/
             Log.e(TAG, "geofencing has error");
             return;
         }
 
+        SharedPreferences sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
-        sendNotification(getTransitionName(geofenceTransition));
-        LockManager lockManager = new LockManager(this);
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) { // use DWELL
-            lockManager.removeLockPin();
-        } else if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-            lockManager.setLockPin("3475");
+        List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
+        for (Geofence geofence : geofenceList) {
+            String id = geofence.getRequestId();
+            try {
+                Profile profile = Profile.fromJsonString(sharedPreferences.getString("profile_" + id, null));
+                LockMode lockMode;
+                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+                    lockMode = profile.getEnterLockMode();
+                } else {
+                    lockMode = profile.getExitLockMode();
+                }
+                doJob(lockMode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+        sendNotification(getTransitionName(geofenceTransition));
+
         Log.d(TAG, "onHandleIntent() returned: notification created");
+    }
+
+    private void doJob(LockMode lockMode) {
+        LockManager lockManager = new LockManager(this);
+        switch (lockMode.getLockType()) {
+            case LockMode.LockType.PASSWORD:
+                lockManager.setLockPin(lockMode.getPassword());
+                break;
+            case LockMode.LockType.PIN:
+                lockManager.setLockPin(lockMode.getPin());
+                break;
+            case LockMode.LockType.SEQUENCE:
+                break;
+            case LockMode.LockType.SWIPE:
+                lockManager.removeLockPin();
+                break;
+            case LockMode.LockType.UNCHANGED:
+                break;
+        }
     }
 
     private void sendNotification(String transitionName) {
