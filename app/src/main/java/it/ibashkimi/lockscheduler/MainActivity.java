@@ -7,10 +7,9 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.SystemClock;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,9 +17,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,8 +29,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -47,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public static final int RESULT_PROFILE = 0;
 
     private DevicePolicyManager deviceManger;
-    private ActivityManager activityManager;
     private ComponentName compName;
     private GoogleApiClient mGoogleApiClient;
     private PendingIntent mGeofencePendingIntent;
     private ArrayList<Profile> mProfiles;
+    private ArrayList<Runnable> mJobs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +79,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         restoreProfiles();
 
+        getJobs().add(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "run: firstJob");
+                if (getProfiles().size() > 0)
+                    initGeofences(mGoogleApiClient);
+            }
+        });
+
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -88,6 +96,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     .addApi(LocationServices.API)
                     .build();
         }
+    }
+
+    public ArrayList<Runnable> getJobs() {
+        if (mJobs == null) {
+            mJobs = new ArrayList<>();
+        }
+        return mJobs;
     }
 
     public void initGeofences(GoogleApiClient googleApiClient) {
@@ -185,37 +200,33 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void restoreProfiles() {
-        Log.d(TAG, "restoreProfiles() called");
-        SharedPreferences sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        String ids = sharedPreferences.getString("ids", "");
-        String[] idStrings = ids.equals("") ? new String[0] : ids.split(",");
-        for(String s : idStrings)
-            Log.d(TAG, "restoreProfiles: s = " + s);
-        Log.d(TAG, "restoreProfiles: ids = " + ids);
-        Log.d(TAG, "restoreProfiles: idStrings.length=" + idStrings.length);
-        //Log.d(TAG, "restoreProfiles: idstings[0] = " + idStrings[0]);
-        mProfiles = new ArrayList<>(idStrings.length);
-        for (String idString : idStrings) {
-            try {
-                mProfiles.add(Profile.fromJsonString(sharedPreferences.getString("profile_" + idString, null)));
-            } catch (JSONException e) {
+        String jsonArrayRep = getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("profiles", "");
+        try {
+            JSONArray jsonArray = new JSONArray(jsonArrayRep);
+            mProfiles = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                mProfiles.add(Profile.fromJsonString(jsonArray.get(i).toString()));
+            }
+        } catch (JSONException e) {
+            if (jsonArrayRep.equals(""))
+                Log.d(TAG, "restoreProfiles: no stored profiles found");
+            else {
+                Log.e(TAG, "restoreProfiles: error during restore");
                 e.printStackTrace();
             }
+            mProfiles = new ArrayList<>();
         }
     }
 
     private void saveProfiles() {
-        if (mProfiles.size() > 0) {
-            SharedPreferences.Editor editor = getSharedPreferences("prefs", Context.MODE_PRIVATE).edit();
-            String ids = Long.toString(mProfiles.get(0).getId());
-            for (int i = 1; i < mProfiles.size(); i++)
-                ids += "," + Long.toString(mProfiles.get(i).getId());
-            editor.putString("ids", ids);
-            for (Profile profile : mProfiles) {
-                editor.putString("profile_" + profile.getId(), profile.toJson().toString());
-            }
-            editor.apply();
+        JSONArray jsonArray = new JSONArray();
+        for (Profile profile : mProfiles) {
+            jsonArray.put(profile.toJson());
         }
+        getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putString("profiles", jsonArray.toString())
+                .apply();
     }
 
     @Override
@@ -256,9 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 return;
             case RESULT_PROFILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    SharedPreferences prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-                    Profile profile = data.getParcelableExtra("profile");
-                    Log.d(TAG, "onActivityResult: profile = " + profile);
+                    final Profile profile = data.getParcelableExtra("profile");
                     if (mProfiles == null)
                         restoreProfiles();
                     switch (data.getAction()) {
@@ -270,40 +279,55 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                 }
                             }
                             if (profile.isEnabled()) {
-                                ArrayList<String> removeList = new ArrayList<>(1);
-                                removeList.add(Long.toString(profile.getId()));
-                                LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
+                                final String profileId = Long.toString(profile.getId());
+                                getJobs().add(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ArrayList<String> removeList = new ArrayList<>(1);
+                                        removeList.add(profileId);
+                                        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
+                                    }
+                                });
                             }
-                            prefs.edit().remove("profile_" + profile.getId()).apply();
                             saveProfiles();
                             break;
                         case "new":
                             mProfiles.add(profile);
                             saveProfiles();
-                            //initGeofences(mGoogleApiClient);
+                            getJobs().add(new Runnable() {
+                                @Override
+                                public void run() {
+                                    initGeofences(mGoogleApiClient);
+                                }
+                            });
                             break;
                         case "update":
-                            for (Profile p : mProfiles) {
+                            for (final Profile p : mProfiles) {
                                 if (p.getId() == profile.getId()) {
-                                    Log.d(TAG, "onActivityResult: updating profile");
                                     p.setName(profile.getName());
                                     p.setRadius(profile.getRadius());
                                     if (!p.getPlace().equals(profile.getPlace())) {
                                         p.setPlace(profile.getPlace());
-                                        //initGeofences(mGoogleApiClient);
+                                        getJobs().add(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                ArrayList<String> removeList = new ArrayList<>(1);
+                                                removeList.add(Long.toString(p.getId()));
+                                                LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
+                                                initGeofences(mGoogleApiClient);
+                                            }
+                                        });
                                     }
+                                    saveProfiles();
                                     break;
                                 }
                             }
-                            saveProfiles();
                             break;
                         default:
                             break;
                     }
-
                     MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
                     fragment.notifyDataHasChanged();
-                    Log.d(TAG, "onActivityResult: profiles.size = " + mProfiles.size());
                 }
                 return;
             default:
@@ -320,7 +344,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnected(@Nullable Bundle bundle) {
         //Toast.makeText(this, "Google api client Connected", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onConnected: initGeofences ");
-        initGeofences(mGoogleApiClient);
+        //initGeofences(mGoogleApiClient);
+        Handler handler = new Handler();
+        for (Runnable job : getJobs()) {
+            handler.post(job);
+        }
     }
 
     @Override

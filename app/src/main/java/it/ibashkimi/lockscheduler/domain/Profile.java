@@ -25,6 +25,7 @@ public class Profile implements Parcelable {
     private boolean enabled = true;
     private LockMode enterLockMode;
     private LockMode exitLockMode;
+    private boolean entered;
 
     public Profile() {
         this(0, "", null, 0);
@@ -42,6 +43,14 @@ public class Profile implements Parcelable {
         this.enabled = enabled;
         this.enterLockMode = enterLockMode;
         this.exitLockMode = exitLockMode;
+    }
+
+    public boolean isEntered() {
+        return entered;
+    }
+
+    public void setEntered(boolean entered) {
+        this.entered = entered;
     }
 
     public boolean isEnabled() {
@@ -82,7 +91,6 @@ public class Profile implements Parcelable {
 
     public void setId(long id) {
         this.id = id;
-        Log.d(TAG, "setId: id=" + this.id);
     }
 
     public LockMode getEnterLockMode() {
@@ -103,15 +111,13 @@ public class Profile implements Parcelable {
 
     @Override
     public String toString() {
-        Log.d(TAG, "toString: id=" + id);
         return String.format(Locale.ITALIAN, "Profile{id=%d, name=%s, radius=%d}", id, name, radius);
     }
 
-    private static final String TAG = "Profile";
+
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
-            Log.d(TAG, "toJson: id=" + id);
             jsonObject.put("id", "" + id);
             jsonObject.put("name", name);
             jsonObject.put("enabled", enabled);
@@ -120,12 +126,12 @@ public class Profile implements Parcelable {
             jsonObject.put("radius", radius);
             jsonObject.put("enterLock", enterLockMode.toJson().toString());
             jsonObject.put("exitLock", exitLockMode.toJson().toString());
+            jsonObject.put("entered", entered);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return jsonObject;
     }
-
 
     public static Profile fromJsonString(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
@@ -137,8 +143,10 @@ public class Profile implements Parcelable {
         profile.setRadius(jsonObject.getInt("radius"));
         profile.setEnterLockMode(LockMode.fromJsonString(jsonObject.getString("enterLock")));
         profile.setExitLockMode(LockMode.fromJsonString(jsonObject.getString("exitLock")));
+        profile.setEntered(jsonObject.getBoolean("entered"));
         return profile;
     }
+
 
     @Override
     public int describeContents() {
@@ -154,6 +162,7 @@ public class Profile implements Parcelable {
         dest.writeInt(radius);
         dest.writeParcelable(enterLockMode, flags);
         dest.writeParcelable(exitLockMode, flags);
+        dest.writeInt(entered ? 1 : 0);
     }
 
     public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
@@ -173,5 +182,6 @@ public class Profile implements Parcelable {
         radius = in.readInt();
         enterLockMode = in.readParcelable(LockMode.class.getClassLoader());
         exitLockMode = in.readParcelable(LockMode.class.getClassLoader());
+        entered = in.readInt() == 1;
     }
 }

@@ -11,8 +11,10 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.LockManager;
@@ -43,25 +45,31 @@ public class GeofenceTransitionsIntentService extends IntentService {
             return;
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-
-        // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
+        ArrayList<Profile> profiles = getProfiles();
         for (Geofence geofence : geofenceList) {
-            String id = geofence.getRequestId();
-            try {
-                Profile profile = Profile.fromJsonString(sharedPreferences.getString("profile_" + id, null));
-                LockMode lockMode;
-                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                    lockMode = profile.getEnterLockMode();
-                } else {
-                    lockMode = profile.getExitLockMode();
-                }
-                doJob(lockMode);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            Profile profile = findProfile(profiles, Long.parseLong(geofence.getRequestId()));
+            if (profile == null) {
+                Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
+                return;
             }
+            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
+                if (!profile.isEntered()) {
+                    profile.setEntered(true);
+                    doJob(profile.getEnterLockMode());
+                } else {
+                    Log.d(TAG, String.format("onHandleIntent: profile %s already entered. ignoring enter event", profile.getName()));
+                }
+            } else {
+                if (profile.isEntered()) {
+                    profile.setEntered(false);
+                    doJob(profile.getExitLockMode());
+                } else {
+                    Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
+                }
+            }
+            saveProfiles(profiles);
         }
         sendNotification(getTransitionName(geofenceTransition));
 
@@ -85,6 +93,45 @@ public class GeofenceTransitionsIntentService extends IntentService {
             case LockMode.LockType.UNCHANGED:
                 break;
         }
+    }
+
+    private ArrayList<Profile> getProfiles() {
+        String jsonArrayRep = getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("profiles", "");
+        ArrayList<Profile> profiles;
+        try {
+            JSONArray jsonArray = new JSONArray(jsonArrayRep);
+            profiles = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                profiles.add(Profile.fromJsonString(jsonArray.get(i).toString()));
+            }
+        } catch (JSONException e) {
+            if (jsonArrayRep.equals(""))
+                Log.d(TAG, "restoreProfiles: no stored profiles found");
+            else {
+                Log.e(TAG, "restoreProfiles: error during restore");
+                e.printStackTrace();
+            }
+            profiles = new ArrayList<>();
+        }
+        return profiles;
+    }
+
+    private void saveProfiles(ArrayList<Profile> profiles) {
+        JSONArray jsonArray = new JSONArray();
+        for (Profile profile : profiles) {
+            jsonArray.put(profile.toJson());
+        }
+        getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putString("profiles", jsonArray.toString())
+                .apply();
+    }
+
+    private Profile findProfile(ArrayList<Profile> profiles, long id) {
+        for (Profile profile : profiles)
+            if (profile.getId() == id)
+                return profile;
+        return null;
     }
 
     private void sendNotification(String transitionName) {
