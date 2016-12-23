@@ -5,4 +5,12 @@
     <string name="device_admin_description">Bla bla description</string>
     <string name="profile_modifier">Modify profile</string>
     <string name="profile_radius">%1$d</string>
+
+    <string-array name="lock_modes_array">
+        <item>Do nothing</item>
+        <item>Password</item>
+        <item>PIN</item>
+        <item>Sequence</item>
+        <item>Swipe</item>
+    </string-array>
 </resources>

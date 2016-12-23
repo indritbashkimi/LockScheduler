@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +32,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-
-import java.util.ArrayList;
 
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -101,9 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
             mProfile = new Profile();
             mProfile.setId(System.currentTimeMillis());
             mProfile.setRadius(DEFAULT_RADIUS);
-            //mProfile.setName(DEFAULT_NAME);
         }
-        Log.d(TAG, "onCreate: Profile: " + mProfile.toString());
 
         mName = (EditText) findViewById(R.id.input_name);
         mName.setText(mProfile.getName());
@@ -142,56 +136,21 @@ public class ProfileActivity extends AppCompatActivity {
         mExitInput = (EditText) findViewById(R.id.exit_input);
         mExitInput.setVisibility(View.GONE);
 
-        Spinner lockSpinner = (Spinner) findViewById(R.id.lock_spinner);
-        ArrayList<String> spinnerArray = new ArrayList<>();
-        spinnerArray.add("Do nothing");
-        spinnerArray.add("Password");
-        spinnerArray.add("PIN");
-        spinnerArray.add("Swipe");
-        spinnerArray.add("Sequence");
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerArray);
-        lockSpinner.setAdapter(spinnerArrayAdapter);
-        lockSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mProfile.getEnterLockMode().setLockType(getLockTypeFromSpinnerPosition(position));
-                if (position == 1 || position == 2) {
-                    mEnterInput.setVisibility(View.VISIBLE);
-                } else {
-                    mEnterInput.setVisibility(View.GONE);
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        Spinner enterSpinner = (Spinner) findViewById(R.id.lock_spinner);
+        ArrayAdapter<CharSequence> enterSpinnerAdapter = ArrayAdapter.createFromResource(
+                this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
+        enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        enterSpinner.setAdapter(enterSpinnerAdapter);
+        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterInput));
+        enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
 
-            }
-        });
-        lockSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
-        Spinner otherwiseSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
-        ArrayList<String> spinnerArray2 = new ArrayList<>();
-        spinnerArray2.add("Do nothing");
-        spinnerArray2.add("Password");
-        spinnerArray2.add("PIN");
-        spinnerArray2.add("Sequence");
-        spinnerArray2.add("Swipe");
-        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerArray2);
-        otherwiseSpinner.setAdapter(spinnerArrayAdapter2);
-        otherwiseSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
-        otherwiseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mProfile.getExitLockMode().setLockType(getLockTypeFromSpinnerPosition(position));
-                if (position == 1 || position == 2) {
-                    mExitInput.setVisibility(View.VISIBLE);
-                } else {
-                    mExitInput.setVisibility(View.GONE);
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        Spinner exitSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
+        ArrayAdapter<CharSequence> exitSpinnerAdapter = ArrayAdapter.createFromResource(
+                this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
+        exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        exitSpinner.setAdapter(exitSpinnerAdapter);
+        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitInput));
+        exitSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
 
         // Gets the MapView from the XML layout and creates it
         mMapView = (MapView) findViewById(R.id.mapview);
@@ -227,7 +186,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         String action = getIntent().getAction();
-        Log.d(TAG, "onCreate: action = " + action);
         switch (action) {
             case ACTION_NEW:
                 new Handler().post(new Runnable() {
@@ -269,49 +227,14 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (lockType == LockMode.LockType.PIN) {
                 mProfile.getExitLockMode().setPin(mEnterInput.getText().toString());
             }
-            Log.d(TAG, "finish: returning profile: " + mProfile.toString());
+            //Log.d(TAG, "finish: returning profile: " + mProfile.toString());
             Intent resultIntent = new Intent();
             resultIntent.putExtra("profile", mProfile);
             String action = mDelete ? "delete" : (getIntent().getAction().equals(ACTION_NEW) ? "new" : "update");
-            Log.d(TAG, "finish: action=" + action);
             resultIntent.setAction(action);
             setResult(Activity.RESULT_OK, resultIntent);
         }
         super.finish();
-    }
-
-    private int getSpinnerPositionFromLockType(@LockMode.LockType int lockType) {
-        switch (lockType) {
-            case LockMode.LockType.UNCHANGED:
-                return 0;
-            case LockMode.LockType.PASSWORD:
-                return 1;
-            case LockMode.LockType.PIN:
-                return 2;
-            case LockMode.LockType.SEQUENCE:
-                return 3;
-            case LockMode.LockType.SWIPE:
-                return 4;
-            default:
-                return 0;
-        }
-    }
-
-    private @LockMode.LockType int getLockTypeFromSpinnerPosition(int position) {
-        switch (position) {
-            case 0:
-                return LockMode.LockType.UNCHANGED;
-            case 1:
-                return LockMode.LockType.PASSWORD;
-            case 2:
-                return LockMode.LockType.PIN;
-            case 3:
-                return LockMode.LockType.SEQUENCE;
-            case 4:
-                return LockMode.LockType.SWIPE;
-            default:
-                return LockMode.LockType.UNCHANGED;
-        }
     }
 
     @Override
@@ -397,6 +320,73 @@ public class ProfileActivity extends AppCompatActivity {
             mGoogleMap.animateCamera(cameraUpdate);
             mCircle.setCenter(mProfile.getPlace());
             mCircle.setRadius(mProfile.getRadius());
+        }
+    }
+
+
+    private static int getSpinnerPositionFromLockType(@LockMode.LockType int lockType) {
+        switch (lockType) {
+            case LockMode.LockType.UNCHANGED:
+                return 0;
+            case LockMode.LockType.PASSWORD:
+                return 1;
+            case LockMode.LockType.PIN:
+                return 2;
+            case LockMode.LockType.SEQUENCE:
+                return 3;
+            case LockMode.LockType.SWIPE:
+                return 4;
+            default:
+                return 0;
+        }
+    }
+
+    private static
+    @LockMode.LockType
+    int getLockTypeFromSpinnerPosition(int position) {
+        switch (position) {
+            case 0:
+                return LockMode.LockType.UNCHANGED;
+            case 1:
+                return LockMode.LockType.PASSWORD;
+            case 2:
+                return LockMode.LockType.PIN;
+            case 3:
+                return LockMode.LockType.SEQUENCE;
+            case 4:
+                return LockMode.LockType.SWIPE;
+            default:
+                return LockMode.LockType.UNCHANGED;
+        }
+    }
+
+    private static class SpinnerListener implements AdapterView.OnItemSelectedListener {
+        private LockMode lockMode;
+        private EditText input;
+
+        SpinnerListener(LockMode lockMode, EditText input) {
+            this.lockMode = lockMode;
+            this.input = input;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            @LockMode.LockType int lockType = getLockTypeFromSpinnerPosition(position);
+            lockMode.setLockType(lockType);
+            if (lockType == LockMode.LockType.PASSWORD) {
+                input.setText(lockMode.getPassword());
+                input.setVisibility(View.VISIBLE);
+            } else if (lockType == LockMode.LockType.PIN) {
+                input.setText(lockMode.getPin());
+                input.setVisibility(View.VISIBLE);
+            } else {
+                input.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     }
 }
