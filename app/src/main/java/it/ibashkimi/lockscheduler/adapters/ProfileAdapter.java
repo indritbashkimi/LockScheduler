@@ -26,6 +26,7 @@ import it.ibashkimi.lockscheduler.MainActivity;
 import it.ibashkimi.lockscheduler.ProfileActivity;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
+import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
 
 /**
@@ -65,6 +66,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 profile.setEnabled(isChecked);
             }
         });
+        holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
+        if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PASSWORD) {
+            holder.enterLock.append(" " + profile.getEnterLockMode().getPassword());
+        } else if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PIN) {
+            holder.enterLock.append(" " + profile.getEnterLockMode().getPin());
+        }
+        holder.exitLock.setText(LockMode.lockTypeToString(profile.getExitLockMode().getLockType()));
+        if (profile.getExitLockMode().getLockType() == LockMode.LockType.PASSWORD) {
+            holder.exitLock.append(" " + profile.getExitLockMode().getPassword());
+        } else if (profile.getExitLockMode().getLockType() == LockMode.LockType.PIN) {
+            holder.exitLock.append(" " + profile.getExitLockMode().getPin());
+        }
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +89,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         });
         holder.mapView.onCreate(null);
         holder.mapView.onResume();
+        holder.mapView.setClickable(false);
         holder.mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -109,6 +123,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         TextView name;
         CompoundButton enabledView;
         MapView mapView;
+        TextView enterLock;
+        TextView exitLock;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -116,6 +132,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             this.name = (TextView) itemView.findViewById(R.id.name_view);
             this.enabledView = (CompoundButton) itemView.findViewById(R.id.switchView);
             this.mapView = (MapView) itemView.findViewById(R.id.mapView);
+            this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
+            this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
         }
     }
 }

@@ -42,7 +42,7 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
 
     @Override
     public void onPasswordChanged(Context context, Intent intent) {
-        showToast(context, "Sample Device Admin: pw changed");
+        showToast(context, "LockScheduler: password changed");
     }
 
     @Override

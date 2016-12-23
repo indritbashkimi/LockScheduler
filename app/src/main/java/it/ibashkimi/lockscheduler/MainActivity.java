@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void initGeofences(GoogleApiClient googleApiClient) {
+        Log.d(TAG, "initGeofences");
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -144,20 +145,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         ArrayList<Geofence> geofences = new ArrayList<>();
         getProfiles();
         for (Profile profile : getProfiles()) {
-            geofences.add(new Geofence.Builder()
-                    // Set the request ID of the geofence. This is a string to identify this
-                    // geofence.
-                    .setRequestId(Long.toString(profile.getId()))
-                    .setCircularRegion(
-                            profile.getPlace().latitude,
-                            profile.getPlace().longitude,
-                            profile.getRadius()
-                    )
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                            Geofence.GEOFENCE_TRANSITION_EXIT)
-                    .setLoiteringDelay(60000) // 1 min
-                    .build());
+            if (profile.isEnabled()) {
+                geofences.add(new Geofence.Builder()
+                        // Set the request ID of the geofence. This is a string to identify this
+                        // geofence.
+                        .setRequestId(Long.toString(profile.getId()))
+                        .setCircularRegion(
+                                profile.getPlace().latitude,
+                                profile.getPlace().longitude,
+                                profile.getRadius()
+                        )
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                Geofence.GEOFENCE_TRANSITION_EXIT)
+                        .setLoiteringDelay(60000) // 1 min
+                        .build());
+            }
+
         }
         return geofences;
     }
@@ -262,6 +266,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     final Profile resultProfile = data.getParcelableExtra("profile");
                     if (mProfiles == null)
                         restoreProfiles();
+                    Log.d(TAG, "onActivityResult: action" + data.getAction());
                     switch (data.getAction()) {
                         case "delete":
                             for (Profile profile : mProfiles) {
@@ -297,8 +302,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             for (final Profile profile : mProfiles) {
                                 if (profile.getId() == resultProfile.getId()) {
                                     LatLng previousPlace = profile.getPlace();
+                                    int previousRadius = profile.getRadius();
                                     profile.update(resultProfile);
-                                    if (!previousPlace.equals(profile.getPlace())) {
+                                    if (!previousPlace.equals(profile.getPlace()) || previousRadius != profile.getRadius()) {
                                         getJobs().add(new Runnable() {
                                             @Override
                                             public void run() {

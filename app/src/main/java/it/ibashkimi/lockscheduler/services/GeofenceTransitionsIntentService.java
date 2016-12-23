@@ -55,14 +55,18 @@ public class GeofenceTransitionsIntentService extends IntentService {
             }
             if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
                 if (!profile.isEntered()) {
+                    Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " enter event accepted.");
                     profile.setEntered(true);
+                    sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName());
                     doJob(profile.getEnterLockMode());
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s already entered. ignoring enter event", profile.getName()));
                 }
             } else {
                 if (profile.isEntered()) {
+                    Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " exit event accepted.");
                     profile.setEntered(false);
+                    sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName());
                     doJob(profile.getExitLockMode());
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
@@ -70,8 +74,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
             }
             saveProfiles(profiles);
         }
-        sendNotification(getTransitionName(geofenceTransition));
-
         Log.d(TAG, "onHandleIntent() returned: notification created");
     }
 
