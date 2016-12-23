@@ -2,14 +2,12 @@ package it.ibashkimi.lockscheduler.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -111,7 +109,7 @@ public class Profile implements Parcelable {
 
     @Override
     public String toString() {
-        return String.format(Locale.ITALIAN, "Profile{id=%d, name=%s, radius=%d}", id, name, radius);
+        return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, radius=%d, enterLock=%s, exitLock=%s}", id, name, radius, enterLockMode, exitLockMode);
     }
 
 
@@ -133,7 +131,7 @@ public class Profile implements Parcelable {
         return jsonObject;
     }
 
-    public static Profile fromJsonString(String json) throws JSONException {
+    public static Profile parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         Profile profile = new Profile();
         profile.setId(Long.parseLong(jsonObject.getString("id")));
@@ -141,8 +139,8 @@ public class Profile implements Parcelable {
         profile.setEnabled(jsonObject.getBoolean("enabled"));
         profile.setPlace(new LatLng(jsonObject.getDouble("latitude"), jsonObject.getDouble("longitude")));
         profile.setRadius(jsonObject.getInt("radius"));
-        profile.setEnterLockMode(LockMode.fromJsonString(jsonObject.getString("enterLock")));
-        profile.setExitLockMode(LockMode.fromJsonString(jsonObject.getString("exitLock")));
+        profile.setEnterLockMode(LockMode.parseJson(jsonObject.getString("enterLock")));
+        profile.setExitLockMode(LockMode.parseJson(jsonObject.getString("exitLock")));
         profile.setEntered(jsonObject.getBoolean("entered"));
         return profile;
     }

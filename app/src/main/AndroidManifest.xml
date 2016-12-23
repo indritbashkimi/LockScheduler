@@ -46,7 +46,7 @@
         <receiver
             android:name=".LockSchedulerAdmin"
             android:description="@string/device_admin_description"
-            android:label="@string/my_admin"
+            android:label="@string/lock_scheduler_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"

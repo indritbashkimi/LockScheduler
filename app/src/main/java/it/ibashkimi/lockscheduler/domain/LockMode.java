@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Locale;
 
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.PASSWORD;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.PIN;
@@ -70,6 +71,27 @@ public class LockMode implements Parcelable {
         this.lockType = lockType;
     }
 
+    @Override
+    public String toString() {
+        return String.format(Locale.ENGLISH, "LockMode{%s}", lockTypeToString(lockType));
+    }
+
+    public static String lockTypeToString(@LockType int lockType) {
+        switch (lockType) {
+            case UNCHANGED:
+                return "UNCHANGED";
+            case LockType.PASSWORD:
+                return "PASSWORD";
+            case LockType.PIN:
+                return "PIN";
+            case LockType.SEQUENCE:
+                return "SEQUENCE";
+            case LockType.SWIPE:
+                return "SWIPE";
+            default:
+                return "UNKNOWN";
+        }
+    }
 
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
@@ -84,7 +106,7 @@ public class LockMode implements Parcelable {
     }
 
 
-    public static LockMode fromJsonString(String json) throws JSONException {
+    public static LockMode parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         @LockType int lockType = Integer.parseInt(jsonObject.getString("lockType"));
         LockMode lockMode = new LockMode(lockType);

@@ -61,6 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Circle mCircle;
     private boolean mSaved;
     private boolean mDelete;
+    private EditText mEnterInput;
+    private EditText mExitInput;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mProfile.setRadius(Integer.parseInt(s.toString()));
+                mProfile.setRadius(s.length() == 0 ? 0 : Integer.parseInt(s.toString()));
                 updateMap();
             }
 
@@ -135,6 +137,11 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        mEnterInput = (EditText) findViewById(R.id.enter_input);
+        mEnterInput.setVisibility(View.GONE);
+        mExitInput = (EditText) findViewById(R.id.exit_input);
+        mExitInput.setVisibility(View.GONE);
+
         Spinner lockSpinner = (Spinner) findViewById(R.id.lock_spinner);
         ArrayList<String> spinnerArray = new ArrayList<>();
         spinnerArray.add("Do nothing");
@@ -148,8 +155,12 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mProfile.getEnterLockMode().setLockType(getLockTypeFromSpinnerPosition(position));
+                if (position == 1 || position == 2) {
+                    mEnterInput.setVisibility(View.VISIBLE);
+                } else {
+                    mEnterInput.setVisibility(View.GONE);
+                }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -166,6 +177,21 @@ public class ProfileActivity extends AppCompatActivity {
         ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerArray2);
         otherwiseSpinner.setAdapter(spinnerArrayAdapter2);
         otherwiseSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
+        otherwiseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mProfile.getExitLockMode().setLockType(getLockTypeFromSpinnerPosition(position));
+                if (position == 1 || position == 2) {
+                    mExitInput.setVisibility(View.VISIBLE);
+                } else {
+                    mExitInput.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Gets the MapView from the XML layout and creates it
         mMapView = (MapView) findViewById(R.id.mapview);
@@ -231,11 +257,18 @@ public class ProfileActivity extends AppCompatActivity {
         if (mSaved || mDelete) {
             mProfile.setName(mName.getText().toString());
             mProfile.setRadius(Integer.parseInt(mRadius.getText().toString()));
-            //LockMode enterLockMode = new LockMode(LockMode.LockType.PIN);
-            //enterLockMode.setPin("3475");
-            //LockMode exitLockMode = new LockMode(LockMode.LockType.SWIPE);
-            //mProfile.setEnterLockMode(enterLockMode);
-            //mProfile.setExitLockMode(exitLockMode);
+            @LockMode.LockType int lockType = mProfile.getEnterLockMode().getLockType();
+            if (lockType == LockMode.LockType.PASSWORD) {
+                mProfile.getEnterLockMode().setPassword(mEnterInput.getText().toString());
+            } else if (lockType == LockMode.LockType.PIN) {
+                mProfile.getEnterLockMode().setPin(mEnterInput.getText().toString());
+            }
+            lockType = mProfile.getEnterLockMode().getLockType();
+            if (lockType == LockMode.LockType.PASSWORD) {
+                mProfile.getExitLockMode().setPassword(mEnterInput.getText().toString());
+            } else if (lockType == LockMode.LockType.PIN) {
+                mProfile.getExitLockMode().setPin(mEnterInput.getText().toString());
+            }
             Log.d(TAG, "finish: returning profile: " + mProfile.toString());
             Intent resultIntent = new Intent();
             resultIntent.putExtra("profile", mProfile);

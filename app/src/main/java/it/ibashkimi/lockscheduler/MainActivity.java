@@ -1,7 +1,6 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             JSONArray jsonArray = new JSONArray(jsonArrayRep);
             mProfiles = new ArrayList<>(jsonArray.length());
             for (int i = 0; i < jsonArray.length(); i++) {
-                mProfiles.add(Profile.fromJsonString(jsonArray.get(i).toString()));
+                mProfiles.add(Profile.parseJson(jsonArray.get(i).toString()));
             }
         } catch (JSONException e) {
             if (jsonArrayRep.equals(""))
@@ -236,9 +235,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mGoogleApiClient.connect();
         if (mProfiles == null)
             restoreProfiles();
-        // Bind to GeofenceManagerService
-        //Intent intent = new Intent(this, GeofenceManagerService.class);
-        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -247,11 +243,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mGoogleApiClient.disconnect();
         saveProfiles();
         super.onStop();
-        // Unbind from the service
-        /*if (bound) {
-            unbindService(mConnection);
-            bound = false;
-        }*/
     }
 
     @Override

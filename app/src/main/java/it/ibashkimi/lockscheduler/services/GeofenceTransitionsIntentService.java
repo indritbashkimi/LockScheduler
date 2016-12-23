@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -102,7 +101,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
             JSONArray jsonArray = new JSONArray(jsonArrayRep);
             profiles = new ArrayList<>(jsonArray.length());
             for (int i = 0; i < jsonArray.length(); i++) {
-                profiles.add(Profile.fromJsonString(jsonArray.get(i).toString()));
+                profiles.add(Profile.parseJson(jsonArray.get(i).toString()));
             }
         } catch (JSONException e) {
             if (jsonArrayRep.equals(""))
