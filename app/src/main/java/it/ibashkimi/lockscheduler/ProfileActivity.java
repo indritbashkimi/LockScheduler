@@ -162,6 +162,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 //mGoogleMap.getUiSettings().setMapToolbarEnabled(true);
                 mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override

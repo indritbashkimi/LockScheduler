@@ -51,7 +51,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         Log.d(TAG, "onCreateViewHolder() viewType = [" + viewType + "]");
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.item_profile, parent, false);
+                inflate(R.layout.item_profile2, parent, false);
         return new ViewHolder(itemView);
     }
 
@@ -99,6 +99,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         .center(profile.getPlace())
                         .radius(profile.getRadius())
                         .strokeColor(Color.RED));
+                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), circlePadding);
                 googleMap.animateCamera(cameraUpdate);
             }
