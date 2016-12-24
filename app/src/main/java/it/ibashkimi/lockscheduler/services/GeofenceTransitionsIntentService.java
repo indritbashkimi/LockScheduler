@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.LockManager;
+import it.ibashkimi.lockscheduler.Profiles;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -46,7 +47,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
-        ArrayList<Profile> profiles = getProfiles();
+        ArrayList<Profile> profiles = Profiles.restoreProfiles(this);
         for (Geofence geofence : geofenceList) {
             Profile profile = findProfile(profiles, Long.parseLong(geofence.getRequestId()));
             if (profile == null) {
@@ -72,7 +73,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                     Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
                 }
             }
-            saveProfiles(profiles);
+            Profiles.saveProfiles(this, profiles);
         }
         Log.d(TAG, "onHandleIntent() returned: notification created");
     }
@@ -94,38 +95,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
             case LockMode.LockType.UNCHANGED:
                 break;
         }
-    }
-
-    private ArrayList<Profile> getProfiles() {
-        String jsonArrayRep = getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("profiles", "");
-        ArrayList<Profile> profiles;
-        try {
-            JSONArray jsonArray = new JSONArray(jsonArrayRep);
-            profiles = new ArrayList<>(jsonArray.length());
-            for (int i = 0; i < jsonArray.length(); i++) {
-                profiles.add(Profile.parseJson(jsonArray.get(i).toString()));
-            }
-        } catch (JSONException e) {
-            if (jsonArrayRep.equals(""))
-                Log.d(TAG, "restoreProfiles: no stored profiles found");
-            else {
-                Log.e(TAG, "restoreProfiles: error during restore");
-                e.printStackTrace();
-            }
-            profiles = new ArrayList<>();
-        }
-        return profiles;
-    }
-
-    private void saveProfiles(ArrayList<Profile> profiles) {
-        JSONArray jsonArray = new JSONArray();
-        for (Profile profile : profiles) {
-            jsonArray.put(profile.toJson());
-        }
-        getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .edit()
-                .putString("profiles", jsonArray.toString())
-                .apply();
     }
 
     private Profile findProfile(ArrayList<Profile> profiles, long id) {

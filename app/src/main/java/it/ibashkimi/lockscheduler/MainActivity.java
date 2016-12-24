@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        restoreProfiles();
+        mProfiles = Profiles.restoreProfiles(this);
 
         getJobs().add(new Runnable() {
             @Override
@@ -199,38 +199,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     public ArrayList<Profile> getProfiles() {
         if (mProfiles == null)
-            restoreProfiles();
+            mProfiles = Profiles.restoreProfiles(this);
         return mProfiles;
-    }
-
-    private void restoreProfiles() {
-        String jsonArrayRep = getSharedPreferences("prefs", Context.MODE_PRIVATE).getString("profiles", "");
-        try {
-            JSONArray jsonArray = new JSONArray(jsonArrayRep);
-            mProfiles = new ArrayList<>(jsonArray.length());
-            for (int i = 0; i < jsonArray.length(); i++) {
-                mProfiles.add(Profile.parseJson(jsonArray.get(i).toString()));
-            }
-        } catch (JSONException e) {
-            if (jsonArrayRep.equals(""))
-                Log.d(TAG, "restoreProfiles: no stored profiles found");
-            else {
-                Log.e(TAG, "restoreProfiles: error during restore");
-                e.printStackTrace();
-            }
-            mProfiles = new ArrayList<>();
-        }
-    }
-
-    private void saveProfiles() {
-        JSONArray jsonArray = new JSONArray();
-        for (Profile profile : mProfiles) {
-            jsonArray.put(profile.toJson());
-        }
-        getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .edit()
-                .putString("profiles", jsonArray.toString())
-                .apply();
     }
 
     @Override
@@ -239,14 +209,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onStart();
         mGoogleApiClient.connect();
         if (mProfiles == null)
-            restoreProfiles();
+            mProfiles = Profiles.restoreProfiles(this);
     }
 
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop() called");
         mGoogleApiClient.disconnect();
-        saveProfiles();
+        Profiles.saveProfiles(this, mProfiles);
         super.onStop();
     }
 
@@ -265,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 if (resultCode == Activity.RESULT_OK) {
                     final Profile resultProfile = data.getParcelableExtra("profile");
                     if (mProfiles == null)
-                        restoreProfiles();
+                        mProfiles = Profiles.restoreProfiles(this);
                     Log.d(TAG, "onActivityResult: action" + data.getAction());
                     switch (data.getAction()) {
                         case "delete":
@@ -286,11 +256,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     }
                                 });
                             }
-                            saveProfiles();
+                            Profiles.saveProfiles(this, mProfiles);
                             break;
                         case "new":
                             mProfiles.add(resultProfile);
-                            saveProfiles();
+                            Profiles.saveProfiles(this, mProfiles);
                             getJobs().add(new Runnable() {
                                 @Override
                                 public void run() {
@@ -315,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                             }
                                         });
                                     }
-                                    saveProfiles();
+                                    Profiles.saveProfiles(this, mProfiles);
                                     break;
                                 }
                             }
