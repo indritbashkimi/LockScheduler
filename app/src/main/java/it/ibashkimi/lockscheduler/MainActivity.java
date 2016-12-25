@@ -1,68 +1,39 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import it.ibashkimi.lockscheduler.api.AdminApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
-import it.ibashkimi.lockscheduler.services.GeofenceTransitionsIntentService;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
 
-    private static final int RESULT_ENABLE = 1;
+    private static final int RESULT_ADMIN_ENABLE = 1;
     public static final int RESULT_PROFILE = 0;
-
-    private DevicePolicyManager deviceManger;
-    private ComponentName compName;
-    private GoogleApiClient mGoogleApiClient;
-    private PendingIntent mGeofencePendingIntent;
-    private ArrayList<Profile> mProfiles;
-    private ArrayList<Runnable> mJobs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        deviceManger = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        compName = new ComponentName(this, LockSchedulerAdmin.class);
-
-        if (!deviceManger.isAdminActive(compName)) {
-            addAdmin();
+        AdminApiHelper adminApiHelper = new AdminApiHelper(this);
+        if (!adminApiHelper.isAdminActive()) {
+            startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
         }
 
         setContentView(R.layout.activity_main);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,93 +45,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         });
 
-        mProfiles = Profiles.restoreProfiles(this);
-
-        getJobs().add(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run: firstJob");
-                if (getProfiles().size() > 0)
-                    initGeofences(mGoogleApiClient);
-            }
-        });
-
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
-    }
-
-    public ArrayList<Runnable> getJobs() {
-        if (mJobs == null) {
-            mJobs = new ArrayList<>();
-        }
-        return mJobs;
-    }
-
-    public void initGeofences(GoogleApiClient googleApiClient) {
-        Log.d(TAG, "initGeofences");
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        LocationServices.GeofencingApi.addGeofences(
-                googleApiClient,
-                getGeofencingRequest(),
-                getGeofencePendingIntent()
-        ).setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(@NonNull Status status) {
-                Log.d(TAG, "Geofence: " + (status.isSuccess() ? "successful." : "failed."));
-            }
-        });
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return mGeofencePendingIntent;
-    }
-
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_EXIT);
-        builder.addGeofences(getGeofenceList());
-        return builder.build();
-    }
-
-    private List<Geofence> getGeofenceList() {
-        ArrayList<Geofence> geofences = new ArrayList<>();
-        getProfiles();
-        for (Profile profile : getProfiles()) {
-            if (profile.isEnabled()) {
-                geofences.add(new Geofence.Builder()
-                        // Set the request ID of the geofence. This is a string to identify this
-                        // geofence.
-                        .setRequestId(Long.toString(profile.getId()))
-                        .setCircularRegion(
-                                profile.getPlace().latitude,
-                                profile.getPlace().longitude,
-                                profile.getRadius()
-                        )
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                Geofence.GEOFENCE_TRANSITION_EXIT)
-                        .setLoiteringDelay(60000) // 1 min
-                        .build());
-            }
-
-        }
-        return geofences;
+        MapsInitializer.initialize(this);
     }
 
     @Override
@@ -185,43 +70,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return super.onOptionsItemSelected(item);
     }
 
-    private void addAdmin() {
-        Log.d(TAG, "addAdmin() called");
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Additional text explaining why this needs to be added.");
-        startActivityForResult(intent, RESULT_ENABLE);
-    }
-
-    public ArrayList<Profile> getProfiles() {
-        if (mProfiles == null)
-            mProfiles = Profiles.restoreProfiles(this);
-        return mProfiles;
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(TAG, "onStart() called");
-        super.onStart();
-        mGoogleApiClient.connect();
-        if (mProfiles == null)
-            mProfiles = Profiles.restoreProfiles(this);
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(TAG, "onStop() called");
-        mGoogleApiClient.disconnect();
-        Profiles.saveProfiles(this, mProfiles);
-        super.onStop();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
         switch (requestCode) {
-            case RESULT_ENABLE:
+            case RESULT_ADMIN_ENABLE:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.i(TAG, "Admin enabled!");
                 } else {
@@ -231,58 +84,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             case RESULT_PROFILE:
                 if (resultCode == Activity.RESULT_OK) {
                     final Profile resultProfile = data.getParcelableExtra("profile");
-                    if (mProfiles == null)
-                        mProfiles = Profiles.restoreProfiles(this);
+                    ArrayList<Profile> profiles = Profiles.restoreProfiles(this);
                     Log.d(TAG, "onActivityResult: action" + data.getAction());
                     switch (data.getAction()) {
                         case "delete":
-                            for (Profile profile : mProfiles) {
+                            for (Profile profile : profiles) {
                                 if (profile.getId() == resultProfile.getId()) {
-                                    mProfiles.remove(profile);
+                                    profiles.remove(profile);
                                     break;
                                 }
                             }
+                            Profiles.saveProfiles(this, profiles);
                             if (resultProfile.isEnabled()) {
-                                final String profileId = Long.toString(resultProfile.getId());
-                                getJobs().add(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ArrayList<String> removeList = new ArrayList<>(1);
-                                        removeList.add(profileId);
-                                        LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
-                                    }
-                                });
+                                App.getGeofenceApiHelper().removeGeofence(Long.toString(resultProfile.getId()));
                             }
-                            Profiles.saveProfiles(this, mProfiles);
                             break;
                         case "new":
-                            mProfiles.add(resultProfile);
-                            Profiles.saveProfiles(this, mProfiles);
-                            getJobs().add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    initGeofences(mGoogleApiClient);
-                                }
-                            });
+                            profiles.add(resultProfile);
+                            Profiles.saveProfiles(this, profiles);
+                            App.getGeofenceApiHelper().initGeofences();
                             break;
                         case "update":
-                            for (final Profile profile : mProfiles) {
+                            for (final Profile profile : profiles) {
                                 if (profile.getId() == resultProfile.getId()) {
                                     LatLng previousPlace = profile.getPlace();
                                     int previousRadius = profile.getRadius();
                                     profile.update(resultProfile);
                                     if (!previousPlace.equals(profile.getPlace()) || previousRadius != profile.getRadius()) {
-                                        getJobs().add(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                ArrayList<String> removeList = new ArrayList<>(1);
-                                                removeList.add(Long.toString(profile.getId()));
-                                                LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, removeList);
-                                                initGeofences(mGoogleApiClient);
-                                            }
-                                        });
+                                        App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
                                     }
-                                    Profiles.saveProfiles(this, mProfiles);
+                                    Profiles.saveProfiles(this, profiles);
+                                    App.getGeofenceApiHelper().initGeofences();
                                     break;
                                 }
                             }
@@ -298,31 +130,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d(TAG, "onActivityResult: unknown request code");
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void removeAdmin() {
-        deviceManger.removeActiveAdmin(compName);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        //Toast.makeText(this, "Google api client Connected", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "onConnected: initGeofences ");
-        //initGeofences(mGoogleApiClient);
-        MapsInitializer.initialize(this);
-        Handler handler = new Handler();
-        for (Runnable job : getJobs()) {
-            handler.post(job);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "Connection suspended", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this, "Connection failed", Toast.LENGTH_SHORT).show();
     }
 }
