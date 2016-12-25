@@ -9,12 +9,14 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        resConfigs "en", "it", "sq"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
