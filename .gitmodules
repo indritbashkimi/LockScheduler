@@ -1,0 +1,3 @@
+[submodule "support-design"]
+	path = support-design
+	url = https://ibashkimi@bitbucket.org/ibashkimi/support-design.git
