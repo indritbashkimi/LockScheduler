@@ -15,10 +15,10 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -35,6 +35,9 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
+    private static final int VIEW_TYPE_PROFILE = 0;
+    private static final int VIEW_TYPE_SPACE = 1;
+
     private static final String TAG = "ProfileAdapter";
     private Activity activity;
     private List<Profile> profiles;
@@ -47,16 +50,30 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder() viewType = [" + viewType + "]");
-        View itemView = LayoutInflater.
-                from(parent.getContext()).
-                inflate(R.layout.item_profile2, parent, false);
-        return new ViewHolder(itemView);
+    public int getItemViewType(int position) {
+        return position == profiles.size() ? VIEW_TYPE_SPACE : VIEW_TYPE_PROFILE;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder() viewType = [" + viewType + "]");
+        if (viewType == VIEW_TYPE_SPACE) {
+            View itemView = LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.item_space, parent, false);
+            return new ViewHolder(itemView, VIEW_TYPE_SPACE);
+        }
+        View itemView = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.item_profile2, parent, false);
+        return new ViewHolder(itemView, VIEW_TYPE_PROFILE);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        if (holder.viewType == VIEW_TYPE_SPACE) {
+            return;
+        }
         final Profile profile = profiles.get(position);
         holder.name.setText(profile.getName());
         holder.enabledView.setChecked(profile.isEnabled());
@@ -89,19 +106,30 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         });
         holder.mapView.onCreate(null);
         holder.mapView.onResume();
-        holder.mapView.setClickable(false);
         holder.mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                MapsInitializer.initialize(activity);
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                googleMap.getUiSettings().setZoomGesturesEnabled(false);
+                googleMap.getUiSettings().setScrollGesturesEnabled(false);
+                googleMap.getUiSettings().setRotateGesturesEnabled(false);
+                googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        Intent intent = new Intent(activity, ProfileActivity.class);
+                        intent.setAction(ProfileActivity.ACTION_VIEW);
+                        intent.putExtra("profile", profile);
+                        activity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+                    }
+                });
                 Circle circle = googleMap.addCircle(new CircleOptions()
                         .center(profile.getPlace())
                         .radius(profile.getRadius())
                         .strokeColor(Color.RED));
                 googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), circlePadding);
-                googleMap.animateCamera(cameraUpdate);
+                googleMap.moveCamera(cameraUpdate);
             }
         });
     }
@@ -109,14 +137,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        holder.mapView.onPause();
-        holder.mapView.onStop();
-        holder.mapView.onDestroy();
+        if (holder.viewType == VIEW_TYPE_PROFILE) {
+            holder.mapView.onPause();
+            holder.mapView.onStop();
+            holder.mapView.onDestroy();
+        }
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(ViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
     }
 
     @Override
     public int getItemCount() {
-        return profiles.size();
+        return profiles.size() + 1;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -126,15 +161,19 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         MapView mapView;
         TextView enterLock;
         TextView exitLock;
+        int viewType;
 
-        ViewHolder(View itemView) {
+        ViewHolder(View itemView, int viewType) {
             super(itemView);
-            this.rootView = itemView;
-            this.name = (TextView) itemView.findViewById(R.id.name_view);
-            this.enabledView = (CompoundButton) itemView.findViewById(R.id.switchView);
-            this.mapView = (MapView) itemView.findViewById(R.id.mapView);
-            this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
-            this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
+            this.viewType = viewType;
+            if (viewType == VIEW_TYPE_PROFILE) {
+                this.rootView = itemView;
+                this.name = (TextView) itemView.findViewById(R.id.name_view);
+                this.enabledView = (CompoundButton) itemView.findViewById(R.id.switchView);
+                this.mapView = (MapView) itemView.findViewById(R.id.mapView);
+                this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
+                this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
+            }
         }
     }
 }

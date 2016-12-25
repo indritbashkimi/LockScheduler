@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
+import android.support.transition.TransitionManager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -59,6 +64,8 @@ public class ProfileActivity extends AppCompatActivity {
     private boolean mDelete;
     private EditText mEnterInput;
     private EditText mExitInput;
+    private TextInputLayout mEnterInputLayout;
+    private TextInputLayout mExitInputLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -131,17 +138,27 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        mEnterInputLayout = (TextInputLayout) findViewById(R.id.enter_password_layout);
+        mEnterInputLayout.setVisibility(View.GONE);
+        mExitInputLayout = (TextInputLayout) findViewById(R.id.exit_password_layout);
+        mExitInputLayout.setVisibility(View.GONE);
+
         mEnterInput = (EditText) findViewById(R.id.enter_input);
-        mEnterInput.setVisibility(View.GONE);
         mExitInput = (EditText) findViewById(R.id.exit_input);
-        mExitInput.setVisibility(View.GONE);
+
+        EditText enterInputConfirm = (EditText) findViewById(R.id.enter_input_confirm);
+        EditText exitInputConfirm = (EditText) findViewById(R.id.exit_input_confirm);
+        TextInputLayout enterInputConfirmLayout = (TextInputLayout) findViewById(R.id.enter_password_layout_confirm);
+        TextInputLayout exitInputConfirmLayout = (TextInputLayout) findViewById(R.id.exit_password_layout_confirm);
+
+        NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScroolView);
 
         Spinner enterSpinner = (Spinner) findViewById(R.id.lock_spinner);
         ArrayAdapter<CharSequence> enterSpinnerAdapter = ArrayAdapter.createFromResource(
                 this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         enterSpinner.setAdapter(enterSpinnerAdapter);
-        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterInput));
+        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterInputLayout, enterInputConfirmLayout, mEnterInput, enterInputConfirm, nestedScrollView));
         enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
 
         Spinner exitSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
@@ -149,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
                 this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exitSpinner.setAdapter(exitSpinnerAdapter);
-        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitInput));
+        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitInputLayout, exitInputConfirmLayout, mExitInput, exitInputConfirm, nestedScrollView));
         exitSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
 
         // Gets the MapView from the XML layout and creates it
@@ -314,11 +331,13 @@ public class ProfileActivity extends AppCompatActivity {
                         .radius(mProfile.getRadius())
                         .strokeColor(Color.RED));
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(mProfile.getPlace(), mProfile.getRadius()), padding);
-                mGoogleMap.animateCamera(cameraUpdate);
+                mGoogleMap.moveCamera(cameraUpdate);
             }
         } else {
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(mProfile.getPlace(), mProfile.getRadius()), padding);
-            mGoogleMap.animateCamera(cameraUpdate);
+            if (mProfile.getRadius() > 0) {
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(mProfile.getPlace(), mProfile.getRadius()), padding);
+                mGoogleMap.animateCamera(cameraUpdate);
+            }
             mCircle.setCenter(mProfile.getPlace());
             mCircle.setRadius(mProfile.getRadius());
         }
@@ -363,25 +382,59 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static class SpinnerListener implements AdapterView.OnItemSelectedListener {
         private LockMode lockMode;
+        private TextInputLayout inputLayout;
+        private TextInputLayout inputLayoutConfirm;
         private EditText input;
+        private EditText inputConfirm;
+        private ViewGroup rootView;
 
-        SpinnerListener(LockMode lockMode, EditText input) {
+        SpinnerListener(LockMode lockMode, TextInputLayout inputLayout, TextInputLayout inputLayoutConfirm, EditText input, EditText inputConfirm, ViewGroup rootView) {
             this.lockMode = lockMode;
+            this.inputLayout = inputLayout;
             this.input = input;
+            this.inputLayoutConfirm = inputLayoutConfirm;
+            this.inputConfirm = inputConfirm;
+            this.rootView = rootView;
         }
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             @LockMode.LockType int lockType = getLockTypeFromSpinnerPosition(position);
             lockMode.setLockType(lockType);
+            TransitionManager.beginDelayedTransition(rootView);
             if (lockType == LockMode.LockType.PASSWORD) {
                 input.setText(lockMode.getPassword());
-                input.setVisibility(View.VISIBLE);
+                inputLayout.setVisibility(View.VISIBLE);
+                inputLayout.setPasswordVisibilityToggleEnabled(true);
+                input.setInputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                input.setSelection(input.getText().length());
+                input.setHint("Enter password");
+                inputConfirm.setText(lockMode.getPassword());
+                inputLayoutConfirm.setVisibility(View.VISIBLE);
+                inputLayoutConfirm.setPasswordVisibilityToggleEnabled(true);
+                inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                inputConfirm.setSelection(inputConfirm.getText().length());
+                inputConfirm.setHint("Confirm password");
             } else if (lockType == LockMode.LockType.PIN) {
                 input.setText(lockMode.getPin());
-                input.setVisibility(View.VISIBLE);
+                inputLayout.setVisibility(View.VISIBLE);
+                inputLayout.setPasswordVisibilityToggleEnabled(true);
+                input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                        InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                input.setSelection(input.getText().length());
+                input.setHint("Enter PIN");
+                inputConfirm.setText(lockMode.getPin());
+                inputLayoutConfirm.setVisibility(View.VISIBLE);
+                inputLayoutConfirm.setPasswordVisibilityToggleEnabled(true);
+                inputConfirm.setInputType(InputType.TYPE_CLASS_NUMBER |
+                        InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+                inputConfirm.setSelection(inputConfirm.getText().length());
+                inputConfirm.setHint("Enter PIN");
             } else {
-                input.setVisibility(View.GONE);
+                inputLayout.setVisibility(View.GONE);
+                inputLayoutConfirm.setVisibility(View.GONE);
             }
         }
 

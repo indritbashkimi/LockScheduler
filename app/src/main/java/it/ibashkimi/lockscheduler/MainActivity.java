@@ -14,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,10 +27,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -312,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         //Toast.makeText(this, "Google api client Connected", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onConnected: initGeofences ");
         //initGeofences(mGoogleApiClient);
+        MapsInitializer.initialize(this);
         Handler handler = new Handler();
         for (Runnable job : getJobs()) {
             handler.post(job);

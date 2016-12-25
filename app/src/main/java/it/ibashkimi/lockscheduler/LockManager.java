@@ -36,7 +36,7 @@ public class LockManager {
         //deviceManger.setPasswordMinimumLength(compName, 4);
 
         //deviceManger.isAdminActive(compName)
-        deviceManger.setPasswordExpirationTimeout(compName, 60000);
+        //deviceManger.setPasswordExpirationTimeout(compName, 60000);
         boolean result = deviceManger.resetPassword(pin,
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
         String msg = result ? "Password changed successfully" : "Password change failed.";
