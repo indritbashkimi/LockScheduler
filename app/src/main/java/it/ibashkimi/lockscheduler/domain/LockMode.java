@@ -17,9 +17,6 @@ import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.SEQUENCE;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.SWIPE;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.UNCHANGED;
 
-/**
- * Created by indrit on 22/12/16.
- */
 
 public class LockMode implements Parcelable {
 
@@ -33,9 +30,8 @@ public class LockMode implements Parcelable {
         int UNCHANGED = 4;
     }
 
-    private
     @LockType
-    int lockType;
+    private int lockType;
     private String pin;
     private String password;
 
@@ -61,9 +57,8 @@ public class LockMode implements Parcelable {
         this.password = password;
     }
 
-    public
     @LockMode.LockType
-    int getLockType() {
+    public int getLockType() {
         return lockType;
     }
 

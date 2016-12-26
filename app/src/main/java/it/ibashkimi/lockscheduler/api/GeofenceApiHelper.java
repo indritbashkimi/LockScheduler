@@ -37,7 +37,7 @@ public class GeofenceApiHelper {
     }
 
     public void initGeofences() {
-        Log.d(TAG, "initGeofences: 1");
+        Log.d(TAG, "initGeofences: adding job");
         mGoogleApiHandler.doJob(new Runnable() {
             @Override
             public void run() {
@@ -48,9 +48,12 @@ public class GeofenceApiHelper {
 
     private void initGeofences(GoogleApiClient googleApiClient) {
         Log.d(TAG, "initGeofences");
-        if (getProfiles().size() == 0)
+        if (getProfiles().size() == 0) {
+            Log.e(TAG, "initGeofences: no profiles found.");
             return;
+        }
         if (ActivityCompat.checkSelfPermission(this.mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "initGeofences: location permission is needed");
             return;
         }
         LocationServices.GeofencingApi.addGeofences(

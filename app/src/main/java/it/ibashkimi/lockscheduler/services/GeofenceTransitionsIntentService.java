@@ -3,7 +3,9 @@ package it.ibashkimi.lockscheduler.services;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -29,8 +31,16 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 public class GeofenceTransitionsIntentService extends IntentService {
     private static final String TAG = "GeofenceTransitionsInte";
 
+    private SharedPreferences mSharedPreferences;
+
     public GeofenceTransitionsIntentService() {
         super("GeofenceTransitionsIntentService");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mSharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -43,6 +53,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             Log.e(TAG, "geofencing has error");
             return;
         }
+
+        boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
 
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
         List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
@@ -57,7 +69,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 if (!profile.isEntered()) {
                     Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " enter event accepted.");
                     profile.setEntered(true);
-                    sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName());
+                    if (showNotification)
+                        sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
                     doJob(profile.getEnterLockMode());
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s already entered. ignoring enter event", profile.getName()));
@@ -66,7 +79,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 if (profile.isEntered()) {
                     Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " exit event accepted.");
                     profile.setEntered(false);
-                    sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName());
+                    if (showNotification)
+                        sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
                     doJob(profile.getExitLockMode());
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
@@ -103,8 +117,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
         return null;
     }
 
-    private void sendNotification(String transitionName) {
-        // // TODO: 26/12/16
+    private void sendNotification(String transitionName, int notificationId) {
+        boolean vibrate = mSharedPreferences.getBoolean("notifications_vibrate", true);
+        String ringtone = mSharedPreferences.getString("notifications_ringtone", "DEFAULT_SOUND");
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -113,16 +128,16 @@ public class GeofenceTransitionsIntentService extends IntentService {
                         .setContentText("Transition " + transitionName)
                         .setSound(alarmSound);
 
-        // Sets an ID for the notification
-        int mNotificationId = 1;
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         Notification notification = mBuilder.build();
         notification.defaults |= Notification.DEFAULT_LIGHTS;
-        notification.defaults |= Notification.DEFAULT_VIBRATE;
-        mNotifyMgr.notify(mNotificationId, notification);
+        if (vibrate)
+            notification.defaults |= Notification.DEFAULT_VIBRATE;
+        notification.sound = Uri.parse(ringtone);
+        mNotifyMgr.notify(notificationId, notification);
     }
 
     private String getTransitionName(int transitionType) {
