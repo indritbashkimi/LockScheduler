@@ -16,12 +16,12 @@ public class LockManager {
 
     private Context context;
     private DevicePolicyManager deviceManger;
-    private ActivityManager activityManager;
+    //private ActivityManager activityManager;
     private ComponentName compName;
 
     public LockManager(Context context) {
         deviceManger = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        //activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         compName = new ComponentName(context, LockSchedulerAdmin.class);
         this.context = context;
     }
@@ -36,7 +36,7 @@ public class LockManager {
         //deviceManger.setPasswordMinimumLength(compName, 4);
 
         //deviceManger.isAdminActive(compName)
-        //deviceManger.setPasswordExpirationTimeout(compName, 60000);
+        deviceManger.setPasswordExpirationTimeout(compName, Constants.PASSWORD_EXPIRATION_TIMEOUT);
         boolean result = deviceManger.resetPassword(pin,
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
         String msg = result ? "Password changed successfully" : "Password change failed.";

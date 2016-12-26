@@ -5,19 +5,13 @@
         android:title="@string/pref_header_general">
 
         <ListPreference
-            android:defaultValue="180"
-            android:entries="@array/pref_sync_frequency_titles"
-            android:entryValues="@array/pref_sync_frequency_values"
-            android:key="sync_frequency"
-            android:negativeButtonText="@null"
+            android:defaultValue="0"
+            android:entries="@array/pref_loitering_delay_titles"
+            android:entryValues="@array/pref_loitering_delay_values"
+            android:key="loitering_delay"
+            android:summary="%s"
             android:positiveButtonText="@null"
-            android:title="@string/pref_title_sync_frequency" />
-
-        <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
-             design guidelines. -->
-        <Preference android:title="@string/pref_title_system_sync_settings">
-            <intent android:action="android.settings.SYNC_SETTINGS" />
-        </Preference>
+            android:title="@string/pref_title_loitering_delay" />
 
     </PreferenceCategory>
 
@@ -52,9 +46,7 @@
             android:key="widget_style"
             android:title="@string/pref_appearance_widget_style"
             android:summary="%s"
-            android:entries="@array/settings_theme_human_value"
-            android:entryValues="@array/settings_theme_phone_value"
-            android:defaultValue="1"
+
             android:dialogTitle="@string/dialog_title_theme_list_preference" />
 
     </PreferenceCategory>
@@ -62,16 +54,11 @@
     <PreferenceCategory
         android:title="@string/pref_notifications">
 
-        <!-- A 'parent' preference, which enables/disables child preferences (below)
-             when checked/unchecked. -->
         <SwitchPreference
             android:defaultValue="true"
             android:key="notifications_show"
             android:title="@string/pref_title_show_notifications" />
 
-        <!-- Allows the user to choose a ringtone in the 'notification' category. -->
-        <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
-        <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:dependency="notifications_show"
@@ -79,7 +66,6 @@
             android:ringtoneType="notification"
             android:title="@string/pref_title_ringtone" />
 
-        <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <SwitchPreference
             android:defaultValue="true"
             android:dependency="notifications_show"
@@ -107,11 +93,6 @@
 
     <PreferenceCategory
         android:title="@string/pref_about">
-
-        <!-- This PreferenceScreen tag serves as a screen break (similar to page break
-             in word processing). Like for other preference types, we assign a key
-
-            here so it is able to save and restore its instance state. -->
 
         <PreferenceScreen
             android:title="@string/pref_title_rate_app">

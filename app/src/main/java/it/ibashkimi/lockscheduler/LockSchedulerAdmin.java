@@ -4,6 +4,7 @@ import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -12,14 +13,12 @@ import android.widget.Toast;
 
 public class LockSchedulerAdmin extends DeviceAdminReceiver {
 
+    private static final String TAG = "LockSchedulerAdmin";
+
     static SharedPreferences getSamplePreferences(Context context) {
         return context.getSharedPreferences(
                 DeviceAdminReceiver.class.getName(), 0);
     }
-
-    static String PREF_PASSWORD_QUALITY = "password_quality";
-    static String PREF_PASSWORD_LENGTH = "password_length";
-    static String PREF_MAX_FAILED_PW = "max_failed_pw";
 
     void showToast(Context context, CharSequence msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -47,12 +46,19 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
 
     @Override
     public void onPasswordFailed(Context context, Intent intent) {
-        showToast(context, "Sample Device Admin: pw failed");
+        showToast(context, "Device Admin: pw failed");
     }
 
     @Override
     public void onPasswordSucceeded(Context context, Intent intent) {
-        showToast(context, "Sample Device Admin: pw succeeded");
+        showToast(context, "Device Admin: pw succeeded");
     }
 
+    @Override
+    public void onPasswordExpiring(Context context, Intent intent) {
+        super.onPasswordExpiring(context, intent);
+        showToast(context, "Device Admin: password expired");
+        Log.d(TAG, "onPasswordExpiring: password expired.");
+        new LockManager(context).removeLockPin();
+    }
 }

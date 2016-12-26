@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.ibashkimi.lockscheduler.Constants;
 import it.ibashkimi.lockscheduler.Profiles;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.services.GeofenceTransitionsIntentService;
@@ -27,7 +28,6 @@ public class GeofenceApiHelper {
 
     private static final String TAG = "GeofenceApiHelper";
     private Context mContext;
-    private ArrayList<Profile> mProfiles;
     private PendingIntent mGeofencePendingIntent;
     private GoogleApiHelper mGoogleApiHandler;
 
@@ -79,11 +79,6 @@ public class GeofenceApiHelper {
         });
     }
 
-    public void updateGeofence(final String id) {
-        removeGeofence(id);
-        initGeofences();
-    }
-
     private PendingIntent getGeofencePendingIntent() {
         // Reuse the PendingIntent if we already have it.
         if (mGeofencePendingIntent != null) {
@@ -104,25 +99,30 @@ public class GeofenceApiHelper {
     }
 
     private List<Geofence> getGeofenceList() {
+        String delayStr = mContext.getSharedPreferences(Constants.MAIN_PREFS, Context.MODE_PRIVATE)
+                .getString("loitering_delay", "0");
+        int loiteringDelay = Integer.parseInt(delayStr);
+        Log.d(TAG, "getGeofenceList: loitering " + loiteringDelay);
         ArrayList<Geofence> geofences = new ArrayList<>();
         for (Profile profile : getProfiles()) {
             if (profile.isEnabled()) {
-                geofences.add(new Geofence.Builder()
-                        // Set the request ID of the geofence. This is a string to identify this
-                        // geofence.
+                Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(Long.toString(profile.getId()))
                         .setCircularRegion(
                                 profile.getPlace().latitude,
                                 profile.getPlace().longitude,
-                                profile.getRadius()
-                        )
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                                Geofence.GEOFENCE_TRANSITION_EXIT)
-                        .setLoiteringDelay(60000) // 1 min
-                        .build());
+                                profile.getRadius())
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE);
+                if (loiteringDelay == 0) {
+                    builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                            Geofence.GEOFENCE_TRANSITION_EXIT);
+                } else {
+                    builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL |
+                            Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .setLoiteringDelay(loiteringDelay);
+                }
+                geofences.add(builder.build());
             }
-
         }
         return geofences;
     }

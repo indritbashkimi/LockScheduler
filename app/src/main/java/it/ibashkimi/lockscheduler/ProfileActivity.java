@@ -53,8 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     public static final String ACTION_NEW = "it.ibashkimi.lockscheduler.profile.new";
     public static final String ACTION_VIEW = "it.ibashkimi.lockscheduler.profile.view";
 
-    private static final int DEFAULT_RADIUS = 300;
-
     private static final String TAG = "ProfileActivity";
     private static final int PLACE_PICKER_REQUEST = 1;
 
@@ -112,7 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (mProfile == null) {
             mProfile = new Profile();
             mProfile.setId(System.currentTimeMillis());
-            mProfile.setRadius(DEFAULT_RADIUS);
+            mProfile.setRadius(Constants.GEOFENCE_RADIUS_IN_METERS);
         }
 
         mMapType = Utils.resolveMapStyle(getSharedPreferences("prefs", Context.MODE_PRIVATE)

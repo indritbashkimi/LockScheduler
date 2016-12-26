@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,13 +27,14 @@ import it.ibashkimi.lockscheduler.api.AdminApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 import it.ibashkimi.support.design.color.Themes;
-import it.ibashkimi.support.design.utils.*;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
 
     private static final int RESULT_ADMIN_ENABLE = 1;
     public static final int RESULT_PROFILE = 0;
+    private static final int RESULT_PERMISSION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,21 @@ public class MainActivity extends AppCompatActivity {
         if (!adminApiHelper.isAdminActive()) {
             startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
         }
+
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously*. After the user
+                // sees the explanation, try again to request the permission.
+                showWritePermissionRationale();
+            } else {
+                // No explanation needed, we can request the permission.
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            }
+
+        }*/
 
         setContentView(R.layout.activity_main);
 
@@ -62,6 +82,64 @@ public class MainActivity extends AppCompatActivity {
 
         MapsInitializer.initialize(this);
     }
+
+    private Snackbar snackbar;
+
+    /*private void showWritePermissionRationale() {
+        View rootView = findViewById(R.id.rootView);
+        snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+                Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity.this.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        RESULT_PERMISSION);
+            }
+        });
+        snackbar.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+            String permission = permissions[0];
+            int grantResult = grantResults[0];
+            if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    onWritePermissionGranted();
+                } else {
+                    onWritePermissionDenied();
+                }
+            }
+        }
+    }
+
+    private void onWritePermissionDenied() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            showWritePermissionRationale();
+        } else {
+            Snackbar snackbar = Snackbar.make(this.rootView, R.string.frag_inspector_write_permission_rationale,
+                    Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.frag_inspector_action_settings, v -> {
+                final Intent i = new Intent();
+                i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                i.addCategory(Intent.CATEGORY_DEFAULT);
+                i.setData(Uri.parse("package:" + getContext().getPackageName()));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                getContext().startActivity(i);
+            });
+            snackbar.show();
+        }
+    }
+
+    private void onWritePermissionGranted() {
+        Snackbar.make(this.rootView, R.string.frag_inspector_write_permission_granted,
+                Snackbar.LENGTH_SHORT).show();
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

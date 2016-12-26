@@ -124,6 +124,7 @@
                 android:id="@+id/enter_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:hintEnabled="false"
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
@@ -140,6 +141,7 @@
                 android:id="@+id/enter_password_layout_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:errorEnabled="true"
                 app:hintEnabled="false"
                 app:passwordToggleEnabled="true">
@@ -170,6 +172,7 @@
                 android:id="@+id/exit_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
 
@@ -185,6 +188,7 @@
                 android:id="@+id/exit_password_layout_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:errorEnabled="true"
                 app:passwordToggleEnabled="true">
 

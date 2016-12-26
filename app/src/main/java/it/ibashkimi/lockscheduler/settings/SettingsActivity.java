@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.support.design.color.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
@@ -62,13 +63,19 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if (s.equals("theme")) {
-            @Themes.Theme int themeId = sharedPreferences.getInt("theme_id", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
-            ThemeUtils.applyTheme(this, themeId);
-            recreate();
-        } else if (s.contentEquals("theme_mode")) {
-            ThemeUtils.applyDayNightMode(this, sharedPreferences.getString("theme_mode", "light"));
-            recreate();
+        switch (s) {
+            case "theme":
+                @Themes.Theme int themeId = sharedPreferences.getInt("theme_id", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
+                ThemeUtils.applyTheme(this, themeId);
+                recreate();
+                break;
+            case "theme_mode":
+                ThemeUtils.applyDayNightMode(this, sharedPreferences.getString("theme_mode", "light"));
+                recreate();
+                break;
+            case "loitering_delay":
+                App.getGeofenceApiHelper().initGeofences();
+                break;
         }
     }
 

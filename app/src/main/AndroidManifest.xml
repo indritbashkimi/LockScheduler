@@ -3,6 +3,7 @@
     package="it.ibashkimi.lockscheduler">
 
     <user-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -37,11 +38,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ProfileActivity"
-            android:label="@string/profile_modifier" />
-        <activity
-            android:name=".TimeActivity" />
+            android:label="@string/profile_modifier"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".TimeActivity" />
 
         <receiver
             android:name=".LockSchedulerAdmin"
@@ -63,12 +65,13 @@
 
         <receiver
             android:name="it.ibashkimi.lockscheduler.receivers.BootCompleteReceiver"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
