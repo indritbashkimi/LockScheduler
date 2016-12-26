@@ -1,7 +1,9 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +42,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.support.design.color.Themes;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
@@ -66,9 +70,14 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText mExitInput;
     private TextInputLayout mEnterInputLayout;
     private TextInputLayout mExitInputLayout;
+    private int mMapType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        SharedPreferences settings = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        @Themes.Theme int themeId = settings.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
+        setTheme(Themes.resolveTheme(themeId));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -105,6 +114,9 @@ public class ProfileActivity extends AppCompatActivity {
             mProfile.setId(System.currentTimeMillis());
             mProfile.setRadius(DEFAULT_RADIUS);
         }
+
+        mMapType = Utils.resolveMapStyle(getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .getString("map_style", "hybrid"));
 
         mName = (EditText) findViewById(R.id.input_name);
         mName.setText(mProfile.getName());
@@ -179,7 +191,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                mGoogleMap.setMapType(mMapType);
                 //mGoogleMap.getUiSettings().setMapToolbarEnabled(true);
                 mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
@@ -323,7 +335,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateMap() {
-        int padding = (int) Utils.dpToPx(this, 8);
+        int padding = (int) ThemeUtils.dpToPx(this, 8);
         if (mCircle == null) {
             if (mGoogleMap != null && mProfile.getPlace() != null) {
                 mCircle = mGoogleMap.addCircle(new CircleOptions()

@@ -3,6 +3,7 @@ package it.ibashkimi.lockscheduler;
 import android.content.Context;
 import android.util.TypedValue;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.SphericalUtil;
@@ -19,6 +20,21 @@ public class Utils {
                 include(SphericalUtil.computeOffset(center, radius, 90)).
                 include(SphericalUtil.computeOffset(center, radius, 180)).
                 include(SphericalUtil.computeOffset(center, radius, 270)).build();
+    }
+
+    public static int resolveMapStyle(String mapStyle) {
+        switch (mapStyle) {
+            case "normal":
+                return GoogleMap.MAP_TYPE_NORMAL;
+            case "satellite":
+                return GoogleMap.MAP_TYPE_SATELLITE;
+            case "hybrid":
+                return GoogleMap.MAP_TYPE_HYBRID;
+            case "terrain":
+                return GoogleMap.MAP_TYPE_TERRAIN;
+            default:
+                return GoogleMap.MAP_TYPE_HYBRID;
+        }
     }
 
     public static float dpToPx(Context context, int px) {

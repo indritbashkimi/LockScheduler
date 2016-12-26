@@ -6,6 +6,25 @@
     <string name="profile_modifier">Modify profile</string>
     <string name="profile_radius">%1$d</string>
 
+    <string name="appearance_preference">Appearance</string>
+    <string name="pref_about">About</string>
+    <string name="pref_title_rate_app">Rate this app</string>
+    <string name="pref_title_licences">Licences</string>
+    <string name="pref_summary_licences">Dettagli delle licenze per il software open source</string>
+    <string name="title_version">Version</string>
+    <string name="summary_version">1.0</string>
+    <string name="pref_theme_title">Theme</string>
+    <string name="pref_theme_summary">Light</string>
+    <string name="pref_notifications">Notifications</string>
+    <string name="dialog_title_theme_list_preference">Theme</string>
+    <string name="pref_appearance_color">Color Scheme</string>
+    <string name="pref_appearance_map_style">Map Style</string>
+    <string name="pref_appearance_widget_style">Widget Style</string>
+    <string name="pref_header_backup">Backup and Restore</string>
+    <string name="pref_title_backup">Backup</string>
+    <string name="pref_title_restore">Restore</string>
+    <string name="pref_title_reset">Reset</string>
+
     <string-array name="lock_modes_array">
         <item>Do nothing</item>
         <item>Password</item>
@@ -13,4 +32,37 @@
         <item>Sequence</item>
         <item>Swipe</item>
     </string-array>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_title_show_notifications">Show notifications</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrate</string>
 </resources>

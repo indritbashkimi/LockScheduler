@@ -1,10 +1,14 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +21,9 @@ import java.util.ArrayList;
 
 import it.ibashkimi.lockscheduler.api.AdminApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.lockscheduler.settings.SettingsActivity;
+import it.ibashkimi.support.design.color.Themes;
+import it.ibashkimi.support.design.utils.*;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
@@ -26,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences settings = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        ThemeUtils.applyDayNightMode(this, settings.getString("theme_mode", "light"));
+        @Themes.Theme int themeId = settings.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
+        ThemeUtils.applyTheme(this, themeId);
+
         super.onCreate(savedInstanceState);
 
         AdminApiHelper adminApiHelper = new AdminApiHelper(this);
@@ -34,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent();
+            intent.setClass(this, SettingsActivity.class);
+            startActivityForResult(intent, 0);
             return true;
         }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="settings_theme_human_value">
+        <item>DayNight (Auto)</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="settings_theme_phone_value">
+        <item>auto</item>
+        <item>light</item>
+        <item>dark</item>
+    </string-array>
+
+    <string-array name="settings_map_style_human">
+        <item>Normal</item>
+        <item>Satellite</item>
+        <item>Hybrid</item>
+        <item>Terrain</item>
+    </string-array>
+
+    <string-array name="settings_map_style_value">
+        <item>normal</item>
+        <item>satellite</item>
+        <item>hybrid</item>
+        <item>terrain</item>
+        </string-array>
+</resources>

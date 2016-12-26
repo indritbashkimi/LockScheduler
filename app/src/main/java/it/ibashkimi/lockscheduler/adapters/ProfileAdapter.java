@@ -1,6 +1,7 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -42,11 +44,25 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private Activity activity;
     private List<Profile> profiles;
     private int circlePadding;
+    private int mapType;
 
     public ProfileAdapter(Activity activity, List<Profile> profiles) {
+        this(activity, profiles, GoogleMap.MAP_TYPE_HYBRID);
+    }
+
+    public ProfileAdapter(Activity activity, List<Profile> profiles, int mapType) {
         this.activity = activity;
         this.profiles = profiles;
         this.circlePadding = (int) Utils.dpToPx(activity, 8);
+        this.mapType = mapType;
+    }
+
+    public void setMapType(int mapType) {
+        this.mapType = mapType;
+    }
+
+    public int getMapType() {
+        return mapType;
     }
 
     @Override
@@ -105,15 +121,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             }
         });
         holder.mapView.onCreate(null);
+        //holder.mapView.onSaveInstanceState(null);
         holder.mapView.onResume();
+        holder.mapView.onStart();
         holder.mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(GoogleMap googleMap) {
+            public void onMapReady(final GoogleMap googleMap) {
+                //MapsInitializer.initialize(activity);
+                googleMap.setMapType(mapType);
+
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 googleMap.getUiSettings().setZoomGesturesEnabled(false);
                 googleMap.getUiSettings().setScrollGesturesEnabled(false);
                 googleMap.getUiSettings().setRotateGesturesEnabled(false);
                 googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
@@ -127,9 +149,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         .center(profile.getPlace())
                         .radius(profile.getRadius())
                         .strokeColor(Color.RED));
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), circlePadding);
-                googleMap.moveCamera(cameraUpdate);
+                googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    @Override
+                    public void onMapLoaded() {
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), circlePadding);
+                        googleMap.moveCamera(cameraUpdate);
+                    }
+                });
             }
         });
     }
@@ -174,6 +200,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
                 this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
             }
+        }
+
+        void initializeMapView() {
+
         }
     }
 }

@@ -1,17 +1,16 @@
 package it.ibashkimi.lockscheduler.services;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.content.Context;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,11 +104,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
     }
 
     private void sendNotification(String transitionName) {
+        // // TODO: 26/12/16
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_notif)
                         .setContentTitle("Geofence")
-                        .setContentText("Transition " + transitionName);
+                        .setContentText("Transition " + transitionName)
+                        .setSound(alarmSound);
 
         // Sets an ID for the notification
         int mNotificationId = 1;
@@ -117,7 +119,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        Notification notification = mBuilder.build();
+        notification.defaults |= Notification.DEFAULT_LIGHTS;
+        notification.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotifyMgr.notify(mNotificationId, notification);
     }
 
     private String getTransitionName(int transitionType) {
