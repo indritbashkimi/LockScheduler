@@ -5,18 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,12 +35,14 @@ import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 import it.ibashkimi.support.design.color.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getCanonicalName();
-
+    private static final String FRAGMENT_TAG_MAIN = "main_fragment";
+    private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
     public static final int RESULT_PROFILE = 0;
-    private static final int RESULT_PERMISSION = 2;
+    private static final int RESULT_LOCATION_PERMISSION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +57,6 @@ public class MainActivity extends AppCompatActivity {
         if (!adminApiHelper.isAdminActive()) {
             startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
         }
-
-        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously*. After the user
-                // sees the explanation, try again to request the permission.
-                showWritePermissionRationale();
-            } else {
-                // No explanation needed, we can request the permission.
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            }
-
-        }*/
 
         setContentView(R.layout.activity_main);
 
@@ -80,66 +73,117 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        MapsInitializer.initialize(this);
-    }
+        // You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
-    private Snackbar snackbar;
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-    /*private void showWritePermissionRationale() {
-        View rootView = findViewById(R.id.rootView);
-        snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
-                Snackbar.LENGTH_LONG);
-        snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MainActivity.this.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        RESULT_PERMISSION);
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                onShowLocationPermissionRationale();
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        RESULT_LOCATION_PERMISSION);
             }
-        });
-        snackbar.show();
+        } else if (savedInstanceState == null) {
+            attachMainFragment();
+        }
+
+        MapsInitializer.initialize(this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {
+        if (requestCode == RESULT_LOCATION_PERMISSION) {
             String permission = permissions[0];
             int grantResult = grantResults[0];
-            if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (permission.equals(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    onWritePermissionGranted();
+                    onLocationPermissionGranted();
                 } else {
-                    onWritePermissionDenied();
+                    onLocationPermissionDenied();
                 }
             }
         }
     }
 
-    private void onWritePermissionDenied() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            showWritePermissionRationale();
+    private void onShowLocationPermissionRationale() {
+        attachPermissionDeniedFragment();
+        View rootView = findViewById(R.id.rootView);
+        Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+                Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        RESULT_LOCATION_PERMISSION);
+            }
+        });
+        snackbar.show();
+    }
+
+    private void onLocationPermissionGranted() {
+        attachMainFragment();
+        Snackbar.make(findViewById(R.id.rootView), R.string.location_permission_granted,
+                Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void onLocationPermissionDenied() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            onShowLocationPermissionRationale();
         } else {
-            Snackbar snackbar = Snackbar.make(this.rootView, R.string.frag_inspector_write_permission_rationale,
+            attachPermissionDeniedFragment();
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.rootView), R.string.location_permission_denied,
                     Snackbar.LENGTH_LONG);
-            snackbar.setAction(R.string.frag_inspector_action_settings, v -> {
-                final Intent i = new Intent();
-                i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                i.addCategory(Intent.CATEGORY_DEFAULT);
-                i.setData(Uri.parse("package:" + getContext().getPackageName()));
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                getContext().startActivity(i);
+            snackbar.setAction(R.string.permission_action_settings, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent i = new Intent();
+                    i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    i.setData(Uri.parse("package:" + getPackageName()));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(i);
+                }
             });
             snackbar.show();
         }
     }
 
-    private void onWritePermissionGranted() {
-        Snackbar.make(this.rootView, R.string.frag_inspector_write_permission_granted,
-                Snackbar.LENGTH_SHORT).show();
-    }*/
+    private void attachMainFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
+        if (fragment == null)
+            fragment = new MainFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment, FRAGMENT_TAG_MAIN)
+                .commit();
+    }
+
+    private void attachPermissionDeniedFragment() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_PERMISSION_DENIED);
+        if (fragment == null)
+            fragment = new PermissionDeniedFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment, FRAGMENT_TAG_PERMISSION_DENIED)
+                .commit();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -218,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             break;
                     }
-                    MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                    MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
                     fragment.notifyDataHasChanged();
                 }
                 return;
@@ -226,5 +270,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult: unknown request code");
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    public static class PermissionDeniedFragment extends Fragment {
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_permission_denied, container, false);
+            return rootView;
+        }
     }
 }

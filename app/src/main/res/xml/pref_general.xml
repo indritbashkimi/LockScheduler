@@ -42,12 +42,11 @@
             android:defaultValue="2"
             android:dialogTitle="@string/pref_appearance_map_style" />
 
-        <ListPreference
+        <!--<ListPreference
             android:key="widget_style"
             android:title="@string/pref_appearance_widget_style"
-            android:summary="%s"
-
-            android:dialogTitle="@string/dialog_title_theme_list_preference" />
+            android:summary="%s
+            android:dialogTitle="@string/dialog_title_theme_list_preference" />-->
 
     </PreferenceCategory>
 

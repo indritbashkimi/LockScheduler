@@ -120,39 +120,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start" />
 
-            <android.support.design.widget.TextInputLayout
+            <it.ibashkimi.lockscheduler.views.PasswordInputLayout
                 android:id="@+id/enter_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:hintEnabled="false"
-                app:errorEnabled="true"
-                app:passwordToggleEnabled="true">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/enter_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberPassword" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/enter_password_layout_confirm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:errorEnabled="true"
-                app:hintEnabled="false"
-                app:passwordToggleEnabled="true">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/enter_input_confirm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberPassword" />
-
-            </android.support.design.widget.TextInputLayout>
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -168,38 +140,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start" />
 
-            <android.support.design.widget.TextInputLayout
+            <it.ibashkimi.lockscheduler.views.PasswordInputLayout
                 android:id="@+id/exit_password_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:errorEnabled="true"
-                app:passwordToggleEnabled="true">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/exit_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberPassword" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/exit_password_layout_confirm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:errorEnabled="true"
-                app:passwordToggleEnabled="true">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/exit_input_confirm"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberPassword" />
-
-            </android.support.design.widget.TextInputLayout>
-
+                android:visibility="gone" />
 
         </LinearLayout>
 

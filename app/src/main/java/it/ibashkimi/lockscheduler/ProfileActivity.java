@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -42,6 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.lockscheduler.views.PasswordInputLayout;
 import it.ibashkimi.support.design.color.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
@@ -64,10 +66,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Circle mCircle;
     private boolean mSaved;
     private boolean mDelete;
-    private EditText mEnterInput;
-    private EditText mExitInput;
-    private TextInputLayout mEnterInputLayout;
-    private TextInputLayout mExitInputLayout;
+    private PasswordInputLayout mEnterPasswordLayout;
+    private PasswordInputLayout mExitPasswordLayout;
     private int mMapType;
 
     @Override
@@ -148,18 +148,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        mEnterInputLayout = (TextInputLayout) findViewById(R.id.enter_password_layout);
-        mEnterInputLayout.setVisibility(View.GONE);
-        mExitInputLayout = (TextInputLayout) findViewById(R.id.exit_password_layout);
-        mExitInputLayout.setVisibility(View.GONE);
-
-        mEnterInput = (EditText) findViewById(R.id.enter_input);
-        mExitInput = (EditText) findViewById(R.id.exit_input);
-
-        EditText enterInputConfirm = (EditText) findViewById(R.id.enter_input_confirm);
-        EditText exitInputConfirm = (EditText) findViewById(R.id.exit_input_confirm);
-        TextInputLayout enterInputConfirmLayout = (TextInputLayout) findViewById(R.id.enter_password_layout_confirm);
-        TextInputLayout exitInputConfirmLayout = (TextInputLayout) findViewById(R.id.exit_password_layout_confirm);
+        mEnterPasswordLayout = (PasswordInputLayout) findViewById(R.id.enter_password_layout);
+        mExitPasswordLayout = (PasswordInputLayout) findViewById(R.id.exit_password_layout);
 
         NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScroolView);
 
@@ -168,7 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
                 this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         enterSpinner.setAdapter(enterSpinnerAdapter);
-        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterInputLayout, enterInputConfirmLayout, mEnterInput, enterInputConfirm, nestedScrollView));
+        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, nestedScrollView));
         enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
 
         Spinner exitSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
@@ -176,7 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
                 this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exitSpinner.setAdapter(exitSpinnerAdapter);
-        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitInputLayout, exitInputConfirmLayout, mExitInput, exitInputConfirm, nestedScrollView));
+        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitPasswordLayout, nestedScrollView));
         exitSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
 
         // Gets the MapView from the XML layout and creates it
@@ -241,21 +231,41 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void finish() {
         if (mSaved || mDelete) {
-            mProfile.setName(mName.getText().toString());
-            mProfile.setRadius(Integer.parseInt(mRadius.getText().toString()));
             @LockMode.LockType int lockType = mProfile.getEnterLockMode().getLockType();
             if (lockType == LockMode.LockType.PASSWORD) {
-                mProfile.getEnterLockMode().setPassword(mEnterInput.getText().toString());
+                if (mEnterPasswordLayout.passwordMatch()) {
+                    mProfile.getEnterLockMode().setPassword(mEnterPasswordLayout.getPassword());
+                } else {
+                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             } else if (lockType == LockMode.LockType.PIN) {
-                mProfile.getEnterLockMode().setPin(mEnterInput.getText().toString());
+                if (mEnterPasswordLayout.passwordMatch()) {
+                    mProfile.getEnterLockMode().setPin(mEnterPasswordLayout.getPassword());
+                } else {
+                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
-            lockType = mProfile.getEnterLockMode().getLockType();
+            lockType = mProfile.getExitLockMode().getLockType();
             if (lockType == LockMode.LockType.PASSWORD) {
-                mProfile.getExitLockMode().setPassword(mEnterInput.getText().toString());
+                if (mExitPasswordLayout.passwordMatch()) {
+                    mProfile.getExitLockMode().setPassword(mExitPasswordLayout.getPassword());
+                } else {
+                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             } else if (lockType == LockMode.LockType.PIN) {
-                mProfile.getExitLockMode().setPin(mEnterInput.getText().toString());
+                if (mExitPasswordLayout.passwordMatch()) {
+                    mProfile.getExitLockMode().setPin(mExitPasswordLayout.getPassword());
+                } else {
+                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
-            //Log.d(TAG, "finish: returning profile: " + mProfile.toString());
+            mProfile.setName(mName.getText().toString());
+            mProfile.setRadius(Integer.parseInt(mRadius.getText().toString()));
+            Log.d(TAG, "finish: returning profile: " + mProfile.toString());
             Intent resultIntent = new Intent();
             resultIntent.putExtra("profile", mProfile);
             String action = mDelete ? "delete" : (getIntent().getAction().equals(ACTION_NEW) ? "new" : "update");
@@ -392,19 +402,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private static class SpinnerListener implements AdapterView.OnItemSelectedListener {
         private LockMode lockMode;
-        private TextInputLayout inputLayout;
-        private TextInputLayout inputLayoutConfirm;
-        private EditText input;
-        private EditText inputConfirm;
         private ViewGroup rootView;
+        private PasswordInputLayout mPasswordInputLayout;
 
-        SpinnerListener(LockMode lockMode, TextInputLayout inputLayout, TextInputLayout inputLayoutConfirm, EditText input, EditText inputConfirm, ViewGroup rootView) {
+        SpinnerListener(LockMode lockMode, PasswordInputLayout passwordInputLayout, ViewGroup rootView) {
             this.lockMode = lockMode;
-            this.inputLayout = inputLayout;
-            this.input = input;
-            this.inputLayoutConfirm = inputLayoutConfirm;
-            this.inputConfirm = inputConfirm;
             this.rootView = rootView;
+            this.mPasswordInputLayout = passwordInputLayout;
         }
 
         @Override
@@ -413,38 +417,17 @@ public class ProfileActivity extends AppCompatActivity {
             lockMode.setLockType(lockType);
             TransitionManager.beginDelayedTransition(rootView);
             if (lockType == LockMode.LockType.PASSWORD) {
-                input.setText(lockMode.getPassword());
-                inputLayout.setVisibility(View.VISIBLE);
-                inputLayout.setPasswordVisibilityToggleEnabled(true);
-                input.setInputType(InputType.TYPE_CLASS_TEXT |
+                mPasswordInputLayout.setInputType(InputType.TYPE_CLASS_TEXT |
                         InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                input.setSelection(input.getText().length());
-                input.setHint("Enter password");
-                inputConfirm.setText(lockMode.getPassword());
-                inputLayoutConfirm.setVisibility(View.VISIBLE);
-                inputLayoutConfirm.setPasswordVisibilityToggleEnabled(true);
-                inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT |
-                        InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                inputConfirm.setSelection(inputConfirm.getText().length());
-                inputConfirm.setHint("Confirm password");
+                mPasswordInputLayout.setPassword(lockMode.getPassword());
+                mPasswordInputLayout.setVisibility(View.VISIBLE);
             } else if (lockType == LockMode.LockType.PIN) {
-                input.setText(lockMode.getPin());
-                inputLayout.setVisibility(View.VISIBLE);
-                inputLayout.setPasswordVisibilityToggleEnabled(true);
-                input.setInputType(InputType.TYPE_CLASS_NUMBER |
+                mPasswordInputLayout.setInputType(InputType.TYPE_CLASS_NUMBER |
                         InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-                input.setSelection(input.getText().length());
-                input.setHint("Enter PIN");
-                inputConfirm.setText(lockMode.getPin());
-                inputLayoutConfirm.setVisibility(View.VISIBLE);
-                inputLayoutConfirm.setPasswordVisibilityToggleEnabled(true);
-                inputConfirm.setInputType(InputType.TYPE_CLASS_NUMBER |
-                        InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-                inputConfirm.setSelection(inputConfirm.getText().length());
-                inputConfirm.setHint("Enter PIN");
+                mPasswordInputLayout.setPassword(lockMode.getPin());
+                mPasswordInputLayout.setVisibility(View.VISIBLE);
             } else {
-                inputLayout.setVisibility(View.GONE);
-                inputLayoutConfirm.setVisibility(View.GONE);
+                mPasswordInputLayout.setVisibility(View.GONE);
             }
         }
 
