@@ -95,15 +95,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
         LockManager lockManager = new LockManager(this);
         switch (lockMode.getLockType()) {
             case LockMode.LockType.PASSWORD:
-                lockManager.setLockPin(lockMode.getPassword());
+                lockManager.setPassword(lockMode.getPassword());
                 break;
             case LockMode.LockType.PIN:
-                lockManager.setLockPin(lockMode.getPin());
+                lockManager.setPin(lockMode.getPin());
                 break;
             case LockMode.LockType.SEQUENCE:
                 break;
             case LockMode.LockType.SWIPE:
-                lockManager.removeLockPin();
+                lockManager.resetPassword();
                 break;
             case LockMode.LockType.UNCHANGED:
                 break;

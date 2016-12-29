@@ -13,6 +13,22 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_loitering_delay" />
 
+        <EditTextPreference
+            android:key="min_password_length"
+            android:title="@string/pref_title_min_password_length"
+            android:summary="%s"
+            android:defaultValue="4"
+            android:dialogTitle="@string/pref_min_password_length_dialog_title"
+            android:numeric="integer" />
+
+        <EditTextPreference
+            android:key="min_pin_length"
+            android:title="@string/pref_title_min_password_length"
+            android:summary="%s"
+            android:defaultValue="4"
+            android:dialogTitle="@string/pref_min_password_length_dialog_title"
+            android:numeric="integer" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

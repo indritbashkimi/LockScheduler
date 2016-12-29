@@ -7,7 +7,6 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +23,27 @@ public class PasswordInputLayout extends LinearLayout {
     private TextInputLayout mConfirmTextInputLayout;
     private EditText mEditText;
     private EditText mConfirmEditText;
+    private int mMinLength = 0; // 0 means no check
+    private TextWatcher mEditTextTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (editable.length() < mMinLength) {
+                mTextInputLayout.setError("Too short");
+                mError = "Too short";
+            }
+        }
+    };
+    private String mError;
 
     public PasswordInputLayout(Context context) {
         this(context, null);
@@ -67,7 +87,7 @@ public class PasswordInputLayout extends LinearLayout {
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().equals(mEditText.getText().toString())) {
-                    showPasswordMismatchError();
+                    setPasswordMismatchError();
                 } else {
                     mConfirmTextInputLayout.setErrorEnabled(false);
                 }
@@ -77,7 +97,7 @@ public class PasswordInputLayout extends LinearLayout {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus && !passwordMatch()) {
-                    showPasswordMismatchError();
+                    setPasswordMismatchError();
                 }
             }
         });
@@ -111,11 +131,34 @@ public class PasswordInputLayout extends LinearLayout {
         return mEditText.getText().toString().equals(mConfirmEditText.getText().toString());
     }
 
-    public void showEmptyInputError() {
+    public boolean isMinimumLong() {
+        return mMinLength != 0 && mEditText.getText().length() > mMinLength;
+    }
+
+
+    private void showEmptyInputError() {
         mConfirmTextInputLayout.setError("Password is empty");
     }
 
-    public void showPasswordMismatchError() {
+    private void setPasswordMismatchError() {
         mConfirmTextInputLayout.setError("Password doesn't match");
+        mError = "Password doesn't match";
+    }
+
+    public void setMinLength(int length) {
+        if (length > 0) {
+            mMinLength = length;
+            mEditText.addTextChangedListener(mEditTextTextWatcher);
+        } else {
+            mEditText.removeTextChangedListener(mEditTextTextWatcher);
+        }
+    }
+
+    public boolean isCorrect() {
+        return mError == null;
+    }
+
+    public String getError() {
+        return mError;
     }
 }

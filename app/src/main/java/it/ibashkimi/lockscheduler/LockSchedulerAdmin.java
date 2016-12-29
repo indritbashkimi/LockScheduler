@@ -59,6 +59,6 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
         super.onPasswordExpiring(context, intent);
         showToast(context, "Device Admin: password expired");
         Log.d(TAG, "onPasswordExpiring: password expired.");
-        new LockManager(context).removeLockPin();
+        new LockManager(context).resetPassword();
     }
 }

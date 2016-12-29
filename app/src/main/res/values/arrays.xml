@@ -25,4 +25,28 @@
         <item>hybrid</item>
         <item>terrain</item>
         </string-array>
+
+    <string-array name="pref_loitering_delay_titles">
+        <item>No delay</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+    </string-array>
+
+    <string-array name="pref_loitering_delay_values">
+        <item>0</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>300000</item>
+        <item>600000</item>
+    </string-array>
+
+    <string-array name="lock_modes_array">
+        <item>Do nothing</item>
+        <item>Password</item>
+        <item>PIN</item>
+        <item>Sequence</item>
+        <item>Swipe</item>
+    </string-array>
 </resources>

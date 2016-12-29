@@ -29,14 +29,11 @@
     <string name="pref_title_backup">Backup</string>
     <string name="pref_title_restore">Restore</string>
     <string name="pref_title_reset">Reset</string>
+    <string name="pref_title_min_password_length">Minimum Password length</string>
+    <string name="pref_title_min_pin_length">Minimum PIN length</string>
+    <string name="pref_min_password_length_dialog_title">Minimum Password Length</string>
+    <string name="pref_min_pin_length_dialog_title">Minimum Length</string>
 
-    <string-array name="lock_modes_array">
-        <item>Do nothing</item>
-        <item>Password</item>
-        <item>PIN</item>
-        <item>Sequence</item>
-        <item>Swipe</item>
-    </string-array>
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
@@ -44,20 +41,6 @@
     <string name="pref_header_general">General</string>
 
     <string name="pref_title_loitering_delay">Loitering delay</string>
-    <string-array name="pref_loitering_delay_titles">
-        <item>No delay</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-    </string-array>
-    <string-array name="pref_loitering_delay_values">
-        <item>0</item>
-        <item>60000</item>
-        <item>120000</item>
-        <item>300000</item>
-        <item>600000</item>
-    </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 

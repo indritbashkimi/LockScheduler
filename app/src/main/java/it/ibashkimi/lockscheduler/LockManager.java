@@ -26,16 +26,25 @@ public class LockManager {
         this.context = context;
     }
 
-    public boolean setLockPassword(final String password) {
-        return setLockPin(password);
+    public boolean setPassword(final String password) {
+        Log.d(TAG, "setPin() called");
+        //if (deviceManger.hasGrantedPolicy(compName, ))
+        deviceManger.setPasswordQuality(compName, DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC);
+        deviceManger.setPasswordMinimumLength(compName, 4);
+        deviceManger.setPasswordExpirationTimeout(compName, Constants.PASSWORD_EXPIRATION_TIMEOUT);
+        boolean result = deviceManger.resetPassword(password,
+                DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
+        String msg = result ? "Password changed successfully" : "Password change failed.";
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+
+        return result;
     }
 
-    public boolean setLockPin(final String pin) {
-        Log.d(TAG, "setLockPin() called");
-        //deviceManger.setPasswordQuality(compName, DevicePolicyManager.PASSWORD_QUALITY_UNSPECIFIED);
-        //deviceManger.setPasswordMinimumLength(compName, 4);
-
-        //deviceManger.isAdminActive(compName)
+    public boolean setPin(final String pin) {
+        Log.d(TAG, "setPin() called");
+        //if (deviceManger.hasGrantedPolicy(compName, ))
+        deviceManger.setPasswordQuality(compName, DevicePolicyManager.PASSWORD_QUALITY_NUMERIC);
+        deviceManger.setPasswordMinimumLength(compName, 4);
         deviceManger.setPasswordExpirationTimeout(compName, Constants.PASSWORD_EXPIRATION_TIMEOUT);
         boolean result = deviceManger.resetPassword(pin,
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
@@ -46,8 +55,8 @@ public class LockManager {
         //deviceManger.lockNow();
     }
 
-    public boolean removeLockPin() {
-        Log.d(TAG, "removeLockPin() called");
+    public boolean resetPassword() {
+        Log.d(TAG, "resetPassword() called");
         boolean result = deviceManger.resetPassword("",
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
         String msg = result ? "Password removed successfully" : "Password remove failed.";
