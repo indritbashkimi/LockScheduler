@@ -42,11 +42,11 @@
         <item>600000</item>
     </string-array>
 
-    <string-array name="lock_modes_array">
-        <item>Do nothing</item>
-        <item>Password</item>
-        <item>PIN</item>
-        <item>Sequence</item>
-        <item>Swipe</item>
-    </string-array>
+    <string name="lock_mode_nothing">Do nothing</string>
+    <string name="lock_mode_fingerprint">Fingerprint</string>
+    <string name="lock_mode_password">Password</string>
+    <string name="lock_mode_pattern">Pattern</string>
+    <string name="lock_mode_pin">PIN</string>
+    <string name="lock_mode_swipe">Swipe</string>
+
 </resources>

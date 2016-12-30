@@ -92,6 +92,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     }
 
     private void doJob(LockMode lockMode) {
+        Log.d(TAG, "doJob() called with: lockMode = [" + LockMode.lockTypeToString(lockMode.getLockType()) + "]");
         LockManager lockManager = new LockManager(this);
         switch (lockMode.getLockType()) {
             case LockMode.LockType.PASSWORD:

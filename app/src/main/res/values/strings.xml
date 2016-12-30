@@ -10,7 +10,13 @@
     <string name="location_permission_granted">Location permission granted</string>
     <string name="location_permission_denied">Location permission denied</string>
     <string name="permission_action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
 
+    <!-- Strings related to Settings -->
+
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_loitering_delay">Loitering delay</string>
+    <string name="pref_title_system_sync_settings">System sync settings</string>
     <string name="appearance_preference">Appearance</string>
     <string name="pref_about">About</string>
     <string name="pref_title_rate_app">Rate this app</string>
@@ -33,18 +39,6 @@
     <string name="pref_title_min_pin_length">Minimum PIN length</string>
     <string name="pref_min_password_length_dialog_title">Minimum Password Length</string>
     <string name="pref_min_pin_length_dialog_title">Minimum Length</string>
-
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_loitering_delay">Loitering delay</string>
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_title_show_notifications">Show notifications</string>
     <string name="pref_title_ringtone">Ringtone</string>

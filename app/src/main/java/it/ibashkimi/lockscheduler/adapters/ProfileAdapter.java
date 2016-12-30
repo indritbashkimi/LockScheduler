@@ -1,7 +1,6 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -101,15 +99,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         });
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
         if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PASSWORD) {
-            holder.enterLock.append(" " + profile.getEnterLockMode().getPassword());
+            holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPassword()));
         } else if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PIN) {
-            holder.enterLock.append(" " + profile.getEnterLockMode().getPin());
+            holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPin()));
         }
         holder.exitLock.setText(LockMode.lockTypeToString(profile.getExitLockMode().getLockType()));
         if (profile.getExitLockMode().getLockType() == LockMode.LockType.PASSWORD) {
-            holder.exitLock.append(" " + profile.getExitLockMode().getPassword());
+            holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPassword()));
         } else if (profile.getExitLockMode().getLockType() == LockMode.LockType.PIN) {
-            holder.exitLock.append(" " + profile.getExitLockMode().getPin());
+            holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPin()));
         }
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +176,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     @Override
     public int getItemCount() {
         return profiles.size() + 1;
+    }
+
+    private String hidePassword(String password) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < password.length(); i++) {
+            s.append("*");
+        }
+        return s.toString();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

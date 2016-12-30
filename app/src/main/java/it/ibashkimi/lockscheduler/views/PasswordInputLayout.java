@@ -18,11 +18,13 @@ import it.ibashkimi.lockscheduler.R;
 
 
 public class PasswordInputLayout extends LinearLayout {
+    private static final String TAG = "PasswordInputLayout";
 
     private TextInputLayout mTextInputLayout;
     private TextInputLayout mConfirmTextInputLayout;
     private EditText mEditText;
     private EditText mConfirmEditText;
+    private String mError;
     private int mMinLength = 0; // 0 means no check
     private TextWatcher mEditTextTextWatcher = new TextWatcher() {
         @Override
@@ -37,13 +39,10 @@ public class PasswordInputLayout extends LinearLayout {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (editable.length() < mMinLength) {
-                mTextInputLayout.setError("Too short");
-                mError = "Too short";
-            }
+            setPasswordTooShortError(editable.length() < mMinLength);
+            setPasswordMismatchError(!editable.toString().equals(mConfirmEditText.getText().toString()));
         }
     };
-    private String mError;
 
     public PasswordInputLayout(Context context) {
         this(context, null);
@@ -86,18 +85,14 @@ public class PasswordInputLayout extends LinearLayout {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().equals(mEditText.getText().toString())) {
-                    setPasswordMismatchError();
-                } else {
-                    mConfirmTextInputLayout.setErrorEnabled(false);
-                }
+                setPasswordMismatchError(!s.toString().equals(mEditText.getText().toString()));
             }
         });
         mEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus && !passwordMatch()) {
-                    setPasswordMismatchError();
+                    setPasswordMismatchError(true);
                 }
             }
         });
@@ -118,7 +113,6 @@ public class PasswordInputLayout extends LinearLayout {
         return passwordMatch() ? mEditText.getText().toString() : null;
     }
 
-    private static final String TAG = "PasswordInputLayout";
     public void setPassword(CharSequence password) {
         Log.d(TAG, "setPassword() called with: password = [" + password + "]");
         mEditText.setText(password);
@@ -131,18 +125,8 @@ public class PasswordInputLayout extends LinearLayout {
         return mEditText.getText().toString().equals(mConfirmEditText.getText().toString());
     }
 
-    public boolean isMinimumLong() {
-        return mMinLength != 0 && mEditText.getText().length() > mMinLength;
-    }
-
-
-    private void showEmptyInputError() {
-        mConfirmTextInputLayout.setError("Password is empty");
-    }
-
-    private void setPasswordMismatchError() {
-        mConfirmTextInputLayout.setError("Password doesn't match");
-        mError = "Password doesn't match";
+    public boolean hasValidLength() {
+        return mEditText.getText().length() >= mMinLength;
     }
 
     public void setMinLength(int length) {
@@ -151,14 +135,35 @@ public class PasswordInputLayout extends LinearLayout {
             mEditText.addTextChangedListener(mEditTextTextWatcher);
         } else {
             mEditText.removeTextChangedListener(mEditTextTextWatcher);
+            mTextInputLayout.setErrorEnabled(false);
         }
     }
 
-    public boolean isCorrect() {
-        return mError == null;
+    public boolean isValid() {
+        return hasValidLength() && passwordMatch();
     }
 
     public String getError() {
         return mError;
+    }
+
+    private void setPasswordTooShortError(boolean tooShort) {
+        if (tooShort) {
+            mError = "Password too short";
+            mTextInputLayout.setError(mError);
+        } else {
+            mError = null;
+            mTextInputLayout.setErrorEnabled(false);
+        }
+    }
+
+    private void setPasswordMismatchError(boolean mismatch) {
+        if (mismatch) {
+            mError = "Password doesn't match";
+            mConfirmTextInputLayout.setError(mError);
+        } else {
+            mError = null;
+            mConfirmTextInputLayout.setErrorEnabled(false);
+        }
     }
 }

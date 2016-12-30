@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
@@ -39,6 +40,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -153,17 +156,22 @@ public class ProfileActivity extends AppCompatActivity {
 
         NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScroolView);
 
+        ArrayList<StringWithTag> array = new ArrayList<>();
+        array.add(new StringWithTag(getString(R.string.lock_mode_nothing), "nothing"));
+        array.add(new StringWithTag(getString(R.string.lock_mode_password), "password"));
+        array.add(new StringWithTag(getString(R.string.lock_mode_pin), "pin"));
+        array.add(new StringWithTag(getString(R.string.lock_mode_swipe), "swipe"));
         Spinner enterSpinner = (Spinner) findViewById(R.id.lock_spinner);
-        ArrayAdapter<CharSequence> enterSpinnerAdapter = ArrayAdapter.createFromResource(
-                this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<StringWithTag> enterSpinnerAdapter = new ArrayAdapter<StringWithTag>(this, android.R.layout.simple_spinner_item, array);
+        //.createFromResource(
+                //this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         enterSpinner.setAdapter(enterSpinnerAdapter);
         enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, nestedScrollView, mPrefs));
         enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
 
         Spinner exitSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
-        ArrayAdapter<CharSequence> exitSpinnerAdapter = ArrayAdapter.createFromResource(
-                this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<StringWithTag> exitSpinnerAdapter = new ArrayAdapter<StringWithTag>(this, android.R.layout.simple_spinner_item, array);
         exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exitSpinner.setAdapter(exitSpinnerAdapter);
         exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitPasswordLayout, nestedScrollView, mPrefs));
@@ -233,33 +241,33 @@ public class ProfileActivity extends AppCompatActivity {
         if (mSaved || mDelete) {
             @LockMode.LockType int lockType = mProfile.getEnterLockMode().getLockType();
             if (lockType == LockMode.LockType.PASSWORD) {
-                if (mEnterPasswordLayout.isCorrect()) {
+                if (mEnterPasswordLayout.isValid()) {
                     mProfile.getEnterLockMode().setPassword(mEnterPasswordLayout.getPassword());
                 } else {
-                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, mEnterPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                     return;
                 }
             } else if (lockType == LockMode.LockType.PIN) {
-                if (mEnterPasswordLayout.isCorrect()) {
+                if (mEnterPasswordLayout.isValid()) {
                     mProfile.getEnterLockMode().setPin(mEnterPasswordLayout.getPassword());
                 } else {
-                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, mEnterPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
             lockType = mProfile.getExitLockMode().getLockType();
             if (lockType == LockMode.LockType.PASSWORD) {
-                if (mExitPasswordLayout.isCorrect()) {
+                if (mExitPasswordLayout.isValid()) {
                     mProfile.getExitLockMode().setPassword(mExitPasswordLayout.getPassword());
                 } else {
-                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, mExitPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                     return;
                 }
             } else if (lockType == LockMode.LockType.PIN) {
-                if (mExitPasswordLayout.isCorrect()) {
+                if (mExitPasswordLayout.isValid()) {
                     mProfile.getExitLockMode().setPin(mExitPasswordLayout.getPassword());
                 } else {
-                    Toast.makeText(this, "Passwords doesn't match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, mExitPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -373,27 +381,25 @@ public class ProfileActivity extends AppCompatActivity {
             case LockMode.LockType.PIN:
                 return 2;
             case LockMode.LockType.SEQUENCE:
-                return 3;
+                return 0;
             case LockMode.LockType.SWIPE:
-                return 4;
+                return 3;
             default:
                 return 0;
         }
     }
 
-    private static
-    @LockMode.LockType
-    int getLockTypeFromSpinnerPosition(int position) {
-        switch (position) {
-            case 0:
+    private static int getLockTypeFromSpinnerTag(String tag) {
+        switch (tag) {
+            case "nothing":
                 return LockMode.LockType.UNCHANGED;
-            case 1:
+            case "password":
                 return LockMode.LockType.PASSWORD;
-            case 2:
+            case "pin":
                 return LockMode.LockType.PIN;
-            case 3:
+            case "sequence":
                 return LockMode.LockType.SEQUENCE;
-            case 4:
+            case "swipe":
                 return LockMode.LockType.SWIPE;
             default:
                 return LockMode.LockType.UNCHANGED;
@@ -415,17 +421,20 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            @LockMode.LockType int lockType = getLockTypeFromSpinnerPosition(position);
+            StringWithTag item = (StringWithTag) parent.getItemAtPosition(position);
+            @LockMode.LockType int lockType = getLockTypeFromSpinnerTag(item.tag);
             lockMode.setLockType(lockType);
             TransitionManager.beginDelayedTransition(rootView);
             if (lockType == LockMode.LockType.PASSWORD) {
-                mPasswordInputLayout.setMinLength(mPrefs.getInt("min_password_length", 4));
+                int len = Integer.parseInt(mPrefs.getString("min_password_length", "4"));
+                mPasswordInputLayout.setMinLength(len);
                 mPasswordInputLayout.setInputType(InputType.TYPE_CLASS_TEXT |
                         InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 mPasswordInputLayout.setPassword(lockMode.getPassword());
                 mPasswordInputLayout.setVisibility(View.VISIBLE);
             } else if (lockType == LockMode.LockType.PIN) {
-                mPasswordInputLayout.setMinLength(mPrefs.getInt("min_pin_length", 4));
+                int len = Integer.parseInt(mPrefs.getString("min_pin_length", "4"));
+                mPasswordInputLayout.setMinLength(len);
                 mPasswordInputLayout.setInputType(InputType.TYPE_CLASS_NUMBER |
                         InputType.TYPE_NUMBER_VARIATION_PASSWORD);
                 mPasswordInputLayout.setPassword(lockMode.getPin());
@@ -438,6 +447,37 @@ public class ProfileActivity extends AppCompatActivity {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
+        }
+    }
+
+    private static class StringWithTag implements CharSequence {
+        public String string;
+        public String tag;
+
+        StringWithTag(String stringPart, String tagPart) {
+            string = stringPart;
+            tag = tagPart;
+        }
+
+        @Override
+        public int length() {
+            return string.length();
+        }
+
+        @Override
+        public char charAt(int index) {
+            return string.charAt(index);
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            return string.subSequence(start, end);
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return string;
         }
     }
 }

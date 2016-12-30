@@ -11,6 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
+import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.FINGERPRINT;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.PASSWORD;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.PIN;
 import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.SEQUENCE;
@@ -20,7 +21,7 @@ import static it.ibashkimi.lockscheduler.domain.LockMode.LockType.UNCHANGED;
 
 public class LockMode implements Parcelable {
 
-    @IntDef({PIN, PASSWORD, SEQUENCE, SWIPE, UNCHANGED})
+    @IntDef({FINGERPRINT, PIN, PASSWORD, SEQUENCE, SWIPE, UNCHANGED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LockType {
         int PIN = 0;
@@ -28,6 +29,7 @@ public class LockMode implements Parcelable {
         int SEQUENCE = 2;
         int SWIPE = 3;
         int UNCHANGED = 4;
+        int FINGERPRINT = 5;
     }
 
     @LockType
@@ -83,6 +85,8 @@ public class LockMode implements Parcelable {
                 return "SEQUENCE";
             case LockType.SWIPE:
                 return "SWIPE";
+            case FINGERPRINT:
+                return "FINGERPRINT";
             default:
                 return "UNKNOWN";
         }

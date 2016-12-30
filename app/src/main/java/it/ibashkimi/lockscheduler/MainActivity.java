@@ -277,8 +277,7 @@ public class MainActivity extends AppCompatActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_permission_denied, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_permission_denied, container, false);
         }
     }
 }
