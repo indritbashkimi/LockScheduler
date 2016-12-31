@@ -3,6 +3,8 @@ package it.ibashkimi.lockscheduler.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
@@ -80,7 +82,9 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     }
 
 
-    public static class PrefsFragment extends PreferenceFragment {
+    public static class PrefsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+        private SharedPreferences settings;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,32 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             getPreferenceManager().setSharedPreferencesName("prefs");
             // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.pref_general);
+            settings = getActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            settings.registerOnSharedPreferenceChangeListener(this);
+            EditTextPreference minPasswordLength = (EditTextPreference) findPreference("min_password_length");
+            minPasswordLength.setSummary(settings.getString("min_password_length", "4"));
+            EditTextPreference minPinLength = (EditTextPreference) findPreference("min_pin_length");
+            minPinLength.setSummary(settings.getString("min_pin_length", "4"));
+        }
+
+        @Override
+        public void onStop() {
+            settings.unregisterOnSharedPreferenceChangeListener(this);
+            super.onStop();
+        }
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Preference pref = findPreference(key);
+            if (pref instanceof EditTextPreference) {
+                EditTextPreference listPref = (EditTextPreference) pref;
+                pref.setSummary(listPref.getText());
+            }
         }
     }
 }

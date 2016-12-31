@@ -42,12 +42,36 @@
         <item>600000</item>
     </string-array>
 
-    <string-array name="settings_widget_style_human">
-        <item>Widget 1</item>
-        <item>Widget 2</item>
+    <string-array name="pref_password_expiration_timeout_titles">
+        <item>Never</item>
+        <item>after 5 minutes</item>
+        <item>after 30 minutes</item>
+        <item>after 1 hour</item>
+        <item>after 4 hours</item>
+        <item>after 12 hours</item>
+        <item>after 1 day</item>
+        <item>after 1 week</item>
+        <item>after 1 month</item>
     </string-array>
 
-    <string-array name="settings_widget_style_value">
+    <string-array name="pref_password_expiration_timeout_values">
+        <item>0</item>
+        <item>300000</item>
+        <item>1800000</item>
+        <item>3600000</item>
+        <item>14400000</item>
+        <item>43200000</item>
+        <item>86400000</item>
+        <item>604800000</item>
+        <item>2592000000</item>
+    </string-array>
+
+    <string-array name="settings_profile_item_layout_human">
+        <item>Layout 1</item>
+        <item>Layout 2</item>
+    </string-array>
+
+    <string-array name="settings_profile_item_layout_value">
         <item>0</item>
         <item>1</item>
     </string-array>
