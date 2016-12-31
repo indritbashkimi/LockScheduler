@@ -42,6 +42,16 @@
         <item>600000</item>
     </string-array>
 
+    <string-array name="settings_widget_style_human">
+        <item>Widget 1</item>
+        <item>Widget 2</item>
+    </string-array>
+
+    <string-array name="settings_widget_style_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
     <string name="lock_mode_nothing">Do nothing</string>
     <string name="lock_mode_fingerprint">Fingerprint</string>
     <string name="lock_mode_password">Password</string>
