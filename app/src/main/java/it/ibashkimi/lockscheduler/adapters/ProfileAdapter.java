@@ -35,37 +35,50 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
+    private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
+    private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile;
+
     private static final int VIEW_TYPE_PROFILE = 0;
     private static final int VIEW_TYPE_SPACE = 1;
 
     private static final String TAG = "ProfileAdapter";
-    private Activity activity;
-    private List<Profile> profiles;
-    private int circlePadding;
-    private int mapType;
+    private Activity mActivity;
+    private List<Profile> mProfiles;
+    private int mCirclePadding;
+    private int mMapType;
+    private int mItemLayout;
 
     public ProfileAdapter(Activity activity, List<Profile> profiles) {
-        this(activity, profiles, GoogleMap.MAP_TYPE_HYBRID);
+        this(activity, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE);
     }
 
-    public ProfileAdapter(Activity activity, List<Profile> profiles, int mapType) {
-        this.activity = activity;
-        this.profiles = profiles;
-        this.circlePadding = (int) Utils.dpToPx(activity, 8);
-        this.mapType = mapType;
+    public ProfileAdapter(Activity activity, List<Profile> profiles, int itemLayout, int mapType) {
+        this.mActivity = activity;
+        this.mProfiles = profiles;
+        this.mCirclePadding = (int) Utils.dpToPx(activity, 8);
+        this.mItemLayout = itemLayout;
+        this.mMapType = mapType;
     }
 
     public void setMapType(int mapType) {
-        this.mapType = mapType;
+        this.mMapType = mapType;
     }
 
     public int getMapType() {
-        return mapType;
+        return mMapType;
+    }
+
+    public int getItemLayout() {
+        return mItemLayout;
+    }
+
+    public void setItemLayout(int itemLayout) {
+        this.mItemLayout = itemLayout;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == profiles.size() ? VIEW_TYPE_SPACE : VIEW_TYPE_PROFILE;
+        return position == mProfiles.size() ? VIEW_TYPE_SPACE : VIEW_TYPE_PROFILE;
     }
 
     @Override
@@ -79,7 +92,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         }
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.item_profile2, parent, false);
+                inflate(mItemLayout, parent, false);
         return new ViewHolder(itemView, VIEW_TYPE_PROFILE);
     }
 
@@ -88,7 +101,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         if (holder.viewType == VIEW_TYPE_SPACE) {
             return;
         }
-        final Profile profile = profiles.get(position);
+        final Profile profile = mProfiles.get(position);
         holder.name.setText(profile.getName());
         holder.enabledView.setChecked(profile.isEnabled());
         holder.enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -112,10 +125,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, ProfileActivity.class);
+                Intent intent = new Intent(mActivity, ProfileActivity.class);
                 intent.setAction(ProfileActivity.ACTION_VIEW);
                 intent.putExtra("profile", profile);
-                activity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+                mActivity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
             }
         });
         holder.mapView.onCreate(null);
@@ -125,8 +138,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(final GoogleMap googleMap) {
-                //MapsInitializer.initialize(activity);
-                googleMap.setMapType(mapType);
+                //MapsInitializer.initialize(mActivity);
+                googleMap.setMapType(mMapType);
 
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 googleMap.getUiSettings().setZoomGesturesEnabled(false);
@@ -137,10 +150,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        Intent intent = new Intent(activity, ProfileActivity.class);
+                        Intent intent = new Intent(mActivity, ProfileActivity.class);
                         intent.setAction(ProfileActivity.ACTION_VIEW);
                         intent.putExtra("profile", profile);
-                        activity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+                        mActivity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
                     }
                 });
                 Circle circle = googleMap.addCircle(new CircleOptions()
@@ -150,7 +163,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), circlePadding);
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), mCirclePadding);
                         googleMap.moveCamera(cameraUpdate);
                     }
                 });
@@ -175,7 +188,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return profiles.size() + 1;
+        return mProfiles.size() + 1;
     }
 
     private String hidePassword(String password) {

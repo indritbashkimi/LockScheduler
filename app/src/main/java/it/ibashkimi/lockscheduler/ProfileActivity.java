@@ -384,6 +384,8 @@ public class ProfileActivity extends AppCompatActivity {
                 return 0;
             case LockMode.LockType.SWIPE:
                 return 3;
+            case LockMode.LockType.FINGERPRINT:
+                return 0;
             default:
                 return 0;
         }

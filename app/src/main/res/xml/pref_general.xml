@@ -40,7 +40,7 @@
             android:summary="%s"
             android:entries="@array/settings_theme_human_value"
             android:entryValues="@array/settings_theme_phone_value"
-            android:defaultValue="1"
+            android:defaultValue="auto"
             android:dialogTitle="@string/dialog_title_theme_list_preference" />
 
         <it.ibashkimi.support.design.color.ColorDialogPreference
@@ -55,16 +55,16 @@
             android:summary="%s"
             android:entries="@array/settings_map_style_human"
             android:entryValues="@array/settings_map_style_value"
-            android:defaultValue="2"
+            android:defaultValue="hybrid"
             android:dialogTitle="@string/pref_appearance_map_style" />
 
         <ListPreference
-            android:key="widget_style"
+            android:key="item_layout"
             android:title="@string/pref_appearance_widget_style"
             android:summary="%s"
             android:entries="@array/settings_widget_style_human"
             android:entryValues="@array/settings_widget_style_value"
-            android:defaultValue="2"
+            android:defaultValue="0"
             android:dialogTitle="@string/pref_appearance_widget_style" />
 
     </PreferenceCategory>

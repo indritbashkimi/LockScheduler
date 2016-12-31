@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private void attachMainFragment() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
         if (fragment == null)
-            fragment = new MainFragment();
+            fragment = new ProfileListFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment, FRAGMENT_TAG_MAIN)
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             break;
                     }
-                    MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
+                    ProfileListFragment fragment = (ProfileListFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
                     fragment.notifyDataHasChanged();
                 }
                 return;
