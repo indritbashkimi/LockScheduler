@@ -1,11 +1,13 @@
 package it.ibashkimi.lockscheduler.adapters;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -22,8 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.MainActivity;
-import it.ibashkimi.lockscheduler.ProfileActivity;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.lockscheduler.domain.LockMode;
@@ -35,6 +35,12 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
+    public interface Callback {
+        void onProfileRemoved(Profile profile, int position);
+        void onProfileClicked(Profile profile);
+        void onProfileEnabled(Profile profile, boolean enabled);
+    }
+
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
     private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile;
 
@@ -42,22 +48,24 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private static final int VIEW_TYPE_SPACE = 1;
 
     private static final String TAG = "ProfileAdapter";
-    private Activity mActivity;
+    private Context mContext;
     private List<Profile> mProfiles;
     private int mCirclePadding;
     private int mMapType;
     private int mItemLayout;
+    private Callback mCallback;
 
-    public ProfileAdapter(Activity activity, List<Profile> profiles) {
-        this(activity, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE);
+    public ProfileAdapter(Context context, List<Profile> profiles, @NonNull Callback callback) {
+        this(context, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE, callback);
     }
 
-    public ProfileAdapter(Activity activity, List<Profile> profiles, int itemLayout, int mapType) {
-        this.mActivity = activity;
+    public ProfileAdapter(Context context, List<Profile> profiles, int itemLayout, int mapType, @NonNull Callback callback) {
+        this.mContext = context;
         this.mProfiles = profiles;
-        this.mCirclePadding = (int) Utils.dpToPx(activity, 8);
+        this.mCirclePadding = (int) Utils.dpToPx(context, 8);
         this.mItemLayout = itemLayout;
         this.mMapType = mapType;
+        this.mCallback = callback;
     }
 
     public void setMapType(int mapType) {
@@ -83,7 +91,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder() viewType = [" + viewType + "]");
         if (viewType == VIEW_TYPE_SPACE) {
             View itemView = LayoutInflater.
                     from(parent.getContext()).
@@ -97,17 +104,41 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         if (holder.viewType == VIEW_TYPE_SPACE) {
             return;
         }
+
         final Profile profile = mProfiles.get(position);
+
+        final PopupMenu popup = new PopupMenu(mContext, holder.settingsView);
+        popup.getMenuInflater().inflate(R.menu.menu_profile_popup, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        mCallback.onProfileRemoved(profile, holder.getAdapterPosition());
+                        return true;
+                    default:
+                        return true;
+                }
+            }
+        });
+
+        holder.settingsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.show();
+            }
+        });
+
         holder.name.setText(profile.getName());
         holder.enabledView.setChecked(profile.isEnabled());
         holder.enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                profile.setEnabled(isChecked);
+                mCallback.onProfileEnabled(profile, isChecked);
             }
         });
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
@@ -125,10 +156,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mActivity, ProfileActivity.class);
-                intent.setAction(ProfileActivity.ACTION_VIEW);
-                intent.putExtra("profile", profile);
-                mActivity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+                mCallback.onProfileClicked(profile);
             }
         });
         holder.mapView.onCreate(null);
@@ -150,10 +178,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        Intent intent = new Intent(mActivity, ProfileActivity.class);
-                        intent.setAction(ProfileActivity.ACTION_VIEW);
-                        intent.putExtra("profile", profile);
-                        mActivity.startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+                        mCallback.onProfileClicked(profile);
                     }
                 });
                 Circle circle = googleMap.addCircle(new CircleOptions()
@@ -182,11 +207,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     }
 
     @Override
-    public void onViewDetachedFromWindow(ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-    }
-
-    @Override
     public int getItemCount() {
         return mProfiles.size() + 1;
     }
@@ -207,6 +227,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         TextView enterLock;
         TextView exitLock;
         int viewType;
+        View settingsView;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -218,6 +239,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.mapView = (MapView) itemView.findViewById(R.id.mapView);
                 this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
                 this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
+                this.settingsView = itemView.findViewById(R.id.options_menu);
             }
         }
 
