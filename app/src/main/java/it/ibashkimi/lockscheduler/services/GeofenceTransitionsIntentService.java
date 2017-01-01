@@ -3,6 +3,7 @@ package it.ibashkimi.lockscheduler.services;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.LockManager;
+import it.ibashkimi.lockscheduler.MainActivity;
 import it.ibashkimi.lockscheduler.Profiles;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.domain.LockMode;
@@ -133,11 +135,19 @@ public class GeofenceTransitionsIntentService extends IntentService {
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        mBuilder.setContentIntent(intent);
         Notification notification = mBuilder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults |= Notification.DEFAULT_LIGHTS;
         if (vibrate)
             notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.sound = Uri.parse(ringtone);
+
+
+
         mNotifyMgr.notify(notificationId, notification);
     }
 
