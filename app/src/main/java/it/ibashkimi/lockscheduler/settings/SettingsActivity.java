@@ -9,25 +9,19 @@ import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import it.ibashkimi.lockscheduler.App;
+import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.support.design.color.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
-public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private SharedPreferences settings;
+public class SettingsActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        settings = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        @Themes.Theme int themeId = settings.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
-        setTheme(Themes.resolveTheme(themeId));
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -49,12 +43,12 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
     @Override
     protected void onStart() {
         super.onStart();
-        settings.registerOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onStop() {
-        settings.unregisterOnSharedPreferenceChangeListener(this);
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         super.onStop();
     }
 

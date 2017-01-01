@@ -1,9 +1,7 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +13,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,11 +29,10 @@ import java.util.ArrayList;
 import it.ibashkimi.lockscheduler.api.AdminApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
-import it.ibashkimi.support.design.color.Themes;
-import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
+
     private static final String TAG = MainActivity.class.getCanonicalName();
     private static final String FRAGMENT_TAG_MAIN = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
@@ -46,11 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences settings = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        ThemeUtils.applyDayNightMode(this, settings.getString("theme_mode", "light"));
-        @Themes.Theme int themeId = settings.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
-        ThemeUtils.applyTheme(this, themeId);
-
         super.onCreate(savedInstanceState);
 
         AdminApiHelper adminApiHelper = new AdminApiHelper(this);

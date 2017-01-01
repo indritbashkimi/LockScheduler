@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.transition.TransitionManager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
@@ -46,14 +45,13 @@ import java.util.ArrayList;
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.views.PasswordInputLayout;
-import it.ibashkimi.support.design.color.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
     public static final String ACTION_NEW = "it.ibashkimi.lockscheduler.profile.new";
     public static final String ACTION_VIEW = "it.ibashkimi.lockscheduler.profile.view";
 
@@ -71,14 +69,9 @@ public class ProfileActivity extends AppCompatActivity {
     private PasswordInputLayout mEnterPasswordLayout;
     private PasswordInputLayout mExitPasswordLayout;
     private int mMapType;
-    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        mPrefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        @Themes.Theme int themeId = mPrefs.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
-        setTheme(Themes.resolveTheme(themeId));
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
@@ -167,14 +160,14 @@ public class ProfileActivity extends AppCompatActivity {
                 //this, R.array.lock_modes_array, android.R.layout.simple_spinner_item);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         enterSpinner.setAdapter(enterSpinnerAdapter);
-        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, nestedScrollView, mPrefs));
+        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, nestedScrollView, getSharedPreferences()));
         enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
 
         Spinner exitSpinner = (Spinner) findViewById(R.id.otherwise_spinner);
         ArrayAdapter<StringWithTag> exitSpinnerAdapter = new ArrayAdapter<StringWithTag>(this, android.R.layout.simple_spinner_item, array);
         exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exitSpinner.setAdapter(exitSpinnerAdapter);
-        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitPasswordLayout, nestedScrollView, mPrefs));
+        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitPasswordLayout, nestedScrollView, getSharedPreferences()));
         exitSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
 
         // Gets the MapView from the XML layout and creates it
