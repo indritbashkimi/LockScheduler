@@ -8,18 +8,7 @@
     android:fitsSystemWindows="true"
     tools:context="it.ibashkimi.lockscheduler.MainActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?attr/appBarStyle">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            style="?attr/toolbarStyle" />
-
-    </android.support.design.widget.AppBarLayout>
+    <include layout="@layout/app_bar"/>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -36,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:tint="?attr/fabTint"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add" />
 
