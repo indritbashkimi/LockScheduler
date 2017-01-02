@@ -27,7 +27,7 @@ android {
 
 ext {
     supportLibVersion = '25.1.0'
-    playServicesVersion = '10.0.1'
+    playServicesVersion = '10.0.1' //10.0.1 latest version. For emulator: 9.8.0
 }
 
 dependencies {
@@ -42,6 +42,8 @@ dependencies {
     compile "com.android.support:percent:${supportLibVersion}"
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:support-vector-drawable:${supportLibVersion}"
+    compile "com.android.support:preference-v7:${supportLibVersion}"
+    compile "com.android.support:preference-v14:${supportLibVersion}"
     compile "com.android.support.constraint:constraint-layout:1.0.0-beta4"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-maps:${playServicesVersion}"

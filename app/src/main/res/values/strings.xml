@@ -11,9 +11,9 @@
     <string name="location_permission_denied">Location permission denied</string>
     <string name="permission_action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="auto">Auto</string>
     <string name="pref_header_general">General</string>
     <string name="pref_title_loitering_delay">Loitering delay</string>
     <string name="pref_title_password_expiration">Reset password</string>
@@ -24,12 +24,14 @@
     <string name="pref_summary_licences">Dettagli delle licenze per il software open source</string>
     <string name="title_version">Version</string>
     <string name="summary_version">1.0</string>
-    <string name="pref_theme_title">Theme</string>
-    <string name="pref_theme_summary">Light</string>
+    <string name="pref_title_night_mode">Night mode</string>
     <string name="pref_notifications">Notifications</string>
-    <string name="dialog_title_theme_list_preference">Theme</string>
-    <string name="pref_appearance_color">Color Scheme</string>
-    <string name="pref_appearance_map_style">Map Style</string>
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_title_map_style">Map style</string>
+    <string name="pref_map_style_normal">Normal</string>
+    <string name="pref_map_style_satellite">Satellite</string>
+    <string name="pref_map_style_hybrid">Hybrid</string>
+    <string name="pref_map_style_terrain">Terrain</string>
     <string name="pref_appearance_profile_item_layout">Profile item layout</string>
     <string name="pref_header_backup">Backup and Restore</string>
     <string name="pref_title_backup">Backup</string>

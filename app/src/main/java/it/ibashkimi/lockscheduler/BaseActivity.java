@@ -6,12 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import it.ibashkimi.support.design.color.Themes;
+import it.ibashkimi.support.design.preference.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
-/**
- * Created by indrit on 01/01/17.
- */
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -23,7 +20,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         mSharedPrefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        ThemeUtils.applyDayNightMode(this, mSharedPrefs.getString("theme_mode", "light"));
+        ThemeUtils.applyDayNightMode(this, mSharedPrefs.getString("night_mode", "auto"));
         @Themes.Theme int themeId = mSharedPrefs.getInt("theme", DEFAULT_THEME);
         ThemeUtils.applyTheme(this, themeId);
 

@@ -1,20 +1,27 @@
 package it.ibashkimi.lockscheduler.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.EditTextPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.color.Themes;
+import it.ibashkimi.support.design.preference.ThemePreference;
+import it.ibashkimi.support.design.preference.ThemePreferenceDialogFragmentCompat;
+import it.ibashkimi.support.design.preference.Themes;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
@@ -25,7 +32,6 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        // Set up toolbar as ActionBar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -33,11 +39,11 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(R.id.container, new PrefsFragment())
-                .commit();
-
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new SettingsFragment())
+                    .commit();
+        }
     }
 
     @Override
@@ -65,8 +71,8 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
                 ThemeUtils.applyTheme(this, themeId);
                 recreate();
                 break;
-            case "theme_mode":
-                ThemeUtils.applyDayNightMode(this, sharedPreferences.getString("theme_mode", "light"));
+            case "night_mode":
+                ThemeUtils.applyDayNightMode(this, sharedPreferences.getString("night_mode", "auto"));
                 recreate();
                 break;
             case "loitering_delay":
@@ -76,18 +82,88 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     }
 
 
-    public static class PrefsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-
+    public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+        private static final int REQUEST_CODE_ALERT_RINGTONE = 0;
         private SharedPreferences settings;
+
+        @Override
+        public void onCreatePreferences(Bundle bundle, String s) {
+            getPreferenceManager().setSharedPreferencesName("prefs");
+            addPreferencesFromResource(R.xml.pref_general);
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            // Define the settings file to use by this settings fragment
-            getPreferenceManager().setSharedPreferencesName("prefs");
-            // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.pref_general);
             settings = getActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        }
+
+        @Override
+        public void onDisplayPreferenceDialog(Preference preference) {
+            DialogFragment dialogFragment = null;
+            if (preference instanceof ThemePreference) {
+                dialogFragment = ThemePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            }
+
+            // If it was one of our custom Preferences, show its dialog
+            if (dialogFragment != null) {
+                dialogFragment.setTargetFragment(this, 0);
+                dialogFragment.show(getFragmentManager(),
+                        "android.support.v7.preference" + ".PreferenceFragment.DIALOG");
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(Preference preference) {
+            if (preference.getKey().equals("notifications_ringtone")) {
+                Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true);
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Settings.System.DEFAULT_NOTIFICATION_URI);
+                String existingValue = getRingtonePreferenceValue();
+                if (existingValue != null) {
+                    if (existingValue.length() == 0) {
+                        // Select "Silent"
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, (Uri) null);
+                    } else {
+                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(existingValue));
+                    }
+                } else {
+                    // No ringtone has been selected, set to the default
+                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Settings.System.DEFAULT_NOTIFICATION_URI);
+                }
+                startActivityForResult(intent, REQUEST_CODE_ALERT_RINGTONE);
+                return true;
+            } else {
+                return super.onPreferenceTreeClick(preference);
+            }
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if (requestCode == REQUEST_CODE_ALERT_RINGTONE && data != null) {
+                Uri ringtone = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                if (ringtone != null) {
+                    setRingtonePreferenceValue(ringtone.toString());
+                } else {
+                    // "Silent" was selected
+                    setRingtonePreferenceValue("");
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+
+        @Nullable
+        private String getRingtonePreferenceValue() {
+            return settings.getString("notifications_ringtone", null);
+        }
+
+        private void setRingtonePreferenceValue(String ringtone) {
+            settings.edit().putString("notifications_ringtone", ringtone).apply();
         }
 
         @Override
