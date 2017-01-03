@@ -142,17 +142,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             }
         });
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
-        if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PASSWORD) {
+        /*if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PASSWORD) {
             holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPassword()));
         } else if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PIN) {
             holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPin()));
-        }
+        }*/
         holder.exitLock.setText(LockMode.lockTypeToString(profile.getExitLockMode().getLockType()));
-        if (profile.getExitLockMode().getLockType() == LockMode.LockType.PASSWORD) {
+        /*if (profile.getExitLockMode().getLockType() == LockMode.LockType.PASSWORD) {
             holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPassword()));
         } else if (profile.getExitLockMode().getLockType() == LockMode.LockType.PIN) {
             holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPin()));
-        }
+        }*/
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

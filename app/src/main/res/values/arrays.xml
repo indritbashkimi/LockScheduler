@@ -69,11 +69,13 @@
     <string-array name="pref_profile_item_layout_human">
         <item>Layout 1</item>
         <item>Layout 2</item>
+        <item>Layout 3</item>
     </string-array>
 
     <string-array name="pref_profile_item_layout_value">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string name="lock_mode_nothing">Do nothing</string>
