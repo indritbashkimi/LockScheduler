@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
@@ -185,17 +187,28 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent();
-            intent.setClass(this, SettingsActivity.class);
-            startActivityForResult(intent, 0);
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                Intent intent = new Intent();
+                intent.setClass(this, SettingsActivity.class);
+                startActivityForResult(intent, 0);
+                return true;
+            case R.id.action_feedback:
+                // TODO: 03/01/17  
+                // http://stackoverflow.com/a/16217921
+                ShareCompat.IntentBuilder.from(this)
+                        .setType("message/rfc822")
+                        .addEmailTo(getString(R.string.developer_email))
+                        .setSubject("Feedback")
+                        .setText("This app is awesome")
+                        //.setHtmlText(body) //If you are using HTML in your body text
+                        .setChooserTitle("Feedback")
+                        .startChooser();
+                return true;
+            case R.id.action_about:
+                Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -5,16 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.annotation.XmlRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
@@ -78,6 +83,13 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
             case "loitering_delay":
                 App.getGeofenceApiHelper().initGeofences();
                 break;
+            case "colored_navigation_bar":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    boolean coloredNavBar = sharedPreferences.getBoolean("colored_navigation_bar", false);
+                    int navBarColor = ThemeUtils.getColorFromAttribute(this, coloredNavBar ? R.attr.colorPrimaryDark : android.R.attr.navigationBarColor);
+                    getWindow().setNavigationBarColor(navBarColor);
+                }
+                break;
         }
     }
 
@@ -98,6 +110,18 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
             settings = getActivity().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         }
 
+        @Override
+        public void addPreferencesFromResource(@XmlRes int preferencesResId) {
+            super.addPreferencesFromResource(preferencesResId);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                Log.d(TAG, "onDisplayPreferenceDialog: removing preference");
+                PreferenceCategory category = (PreferenceCategory) findPreference("appearance");
+                CheckBoxPreference preference = (CheckBoxPreference) findPreference("colored_navigation_bar");
+                category.removePreference(preference);
+            }
+        }
+
+        private static final String TAG = "SettingsFragment";
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             DialogFragment dialogFragment = null;
@@ -170,6 +194,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         public void onStart() {
             super.onStart();
             settings.registerOnSharedPreferenceChangeListener(this);
+
             EditTextPreference minPasswordLength = (EditTextPreference) findPreference("min_password_length");
             minPasswordLength.setSummary(settings.getString("min_password_length", "4"));
             EditTextPreference minPinLength = (EditTextPreference) findPreference("min_pin_length");

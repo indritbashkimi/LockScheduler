@@ -1,6 +1,8 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/appearance_preference">
+    <android.support.v7.preference.PreferenceCategory
+        android:key="appearance"
+        android:title="@string/appearance_preference">
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="auto"
@@ -29,6 +31,12 @@
             android:key="item_layout"
             android:summary="%s"
             android:title="@string/pref_appearance_profile_item_layout" />
+
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="colored_navigation_bar"
+            android:summary="@string/pref_colored_navigation_bar_summary"
+            android:title="@string/pref_colored_navigation_bar" />
 
     </android.support.v7.preference.PreferenceCategory>
 
@@ -105,20 +113,6 @@
         <android.support.v7.preference.Preference android:title="@string/pref_title_reset">
             <intent android:action="android.settings.SYNC_SETTINGS" />
         </android.support.v7.preference.Preference>
-
-    </android.support.v7.preference.PreferenceCategory>
-
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_about">
-
-        <android.support.v7.preference.Preference android:title="@string/pref_title_rate_app" />
-
-        <android.support.v7.preference.Preference
-            android:summary="@string/pref_summary_licences"
-            android:title="@string/pref_title_licences" />
-
-        <android.support.v7.preference.Preference
-            android:summary="@string/summary_version"
-            android:title="@string/title_version" />
 
     </android.support.v7.preference.PreferenceCategory>
 

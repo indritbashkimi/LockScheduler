@@ -16,11 +16,14 @@ public class LockManager {
     private Context mContext;
     private DevicePolicyManager mDevicePolicyManager;
     private ComponentName mCompName;
+    private int mPasswordExpirationTimeout;
 
     public LockManager(Context context) {
         //mDevicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         mCompName = new ComponentName(context, LockSchedulerAdmin.class);
         mContext = context;
+        mPasswordExpirationTimeout = Integer.parseInt(context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
+                .getString("password_expiration", "0"));
     }
 
     public DevicePolicyManager getDevicePolicyManager() {
@@ -40,7 +43,7 @@ public class LockManager {
         getDevicePolicyManager();
         mDevicePolicyManager.setPasswordQuality(mCompName, DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC);
         mDevicePolicyManager.setPasswordMinimumLength(mCompName, 4);
-        mDevicePolicyManager.setPasswordExpirationTimeout(mCompName, Constants.PASSWORD_EXPIRATION_TIMEOUT);
+        mDevicePolicyManager.setPasswordExpirationTimeout(mCompName, mPasswordExpirationTimeout);
         boolean result = mDevicePolicyManager.resetPassword(password,
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
         String msg = result ? "Password changed successfully" : "Password change failed.";
@@ -54,7 +57,7 @@ public class LockManager {
         getDevicePolicyManager();
         mDevicePolicyManager.setPasswordQuality(mCompName, DevicePolicyManager.PASSWORD_QUALITY_NUMERIC);
         mDevicePolicyManager.setPasswordMinimumLength(mCompName, 4);
-        mDevicePolicyManager.setPasswordExpirationTimeout(mCompName, Constants.PASSWORD_EXPIRATION_TIMEOUT);
+        mDevicePolicyManager.setPasswordExpirationTimeout(mCompName, mPasswordExpirationTimeout);
         boolean result = mDevicePolicyManager.resetPassword(pin,
                 DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
         String msg = result ? "Password changed successfully" : "Password change failed.";
