@@ -8,49 +8,56 @@
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/firstDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="M" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/secondDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="T" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/thirdDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="T" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/fourthDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="W" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/fifthDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="F" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/sithDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="S" />
 
     <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/seventhDay"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
         android:text="S" />
 </LinearLayout>

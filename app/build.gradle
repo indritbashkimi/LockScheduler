@@ -44,6 +44,7 @@ dependencies {
     compile "com.android.support:support-vector-drawable:${supportLibVersion}"
     compile "com.android.support:preference-v7:${supportLibVersion}"
     compile "com.android.support:preference-v14:${supportLibVersion}"
+    compile "com.android.support:customtabs:${supportLibVersion}"
     compile "com.android.support.constraint:constraint-layout:1.0.0-beta4"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-maps:${playServicesVersion}"

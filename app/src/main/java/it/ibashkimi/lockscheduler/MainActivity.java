@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
@@ -197,17 +195,19 @@ public class MainActivity extends BaseActivity {
             case R.id.action_feedback:
                 // TODO: 03/01/17  
                 // http://stackoverflow.com/a/16217921
-                ShareCompat.IntentBuilder.from(this)
-                        .setType("message/rfc822")
-                        .addEmailTo(getString(R.string.developer_email))
-                        .setSubject("Feedback")
-                        .setText("This app is awesome")
-                        //.setHtmlText(body) //If you are using HTML in your body text
-                        .setChooserTitle("Feedback")
-                        .startChooser();
+                // https://developer.android.com/guide/components/intents-common.html#Email
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + getString(R.string.developer_email)));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "This app is awesome");
+                //emailIntent.putExtra(Intent.EXTRA_HTML_TEXT, body); //If you are using HTML in your body text
+                /*if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(emailIntent);
+                }*/
+                startActivity(Intent.createChooser(emailIntent, "Chooser Title"));
                 return true;
             case R.id.action_about:
-                Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
                 return true;
         }
 
