@@ -14,7 +14,9 @@
 
         <it.ibashkimi.support.design.preference.ThemePreference
             android:key="theme"
-            android:title="@string/pref_title_theme" />
+            android:title="@string/pref_title_theme"
+            android:positiveButtonText="@null"
+            android:negativeButtonText="Cancel"/>
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="hybrid"
