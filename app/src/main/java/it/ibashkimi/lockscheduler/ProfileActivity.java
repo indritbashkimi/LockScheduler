@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -69,6 +69,8 @@ public class ProfileActivity extends BaseActivity {
     private PasswordInputLayout mEnterPasswordLayout;
     private PasswordInputLayout mExitPasswordLayout;
     private int mMapType;
+    @ColorInt
+    private int mCircleColor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,6 +110,8 @@ public class ProfileActivity extends BaseActivity {
             mProfile.setId(System.currentTimeMillis());
             mProfile.setRadius(Constants.GEOFENCE_RADIUS_IN_METERS);
         }
+
+        mCircleColor = ThemeUtils.getColorFromAttribute(this, R.attr.colorAccent);
 
         mMapType = Utils.resolveMapStyle(getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 .getString("map_style", "hybrid"));
@@ -350,7 +354,7 @@ public class ProfileActivity extends BaseActivity {
                 mCircle = mGoogleMap.addCircle(new CircleOptions()
                         .center(mProfile.getPlace())
                         .radius(mProfile.getRadius())
-                        .strokeColor(Color.RED));
+                        .strokeColor(mCircleColor));
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(mProfile.getPlace(), mProfile.getRadius()), padding);
                 mGoogleMap.moveCamera(cameraUpdate);
             }

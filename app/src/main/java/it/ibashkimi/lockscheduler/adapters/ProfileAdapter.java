@@ -1,11 +1,10 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +27,7 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
@@ -54,6 +54,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private int mMapType;
     private int mItemLayout;
     private Callback mCallback;
+    @ColorInt
+    private int mCircleColor;
 
     public ProfileAdapter(Context context, List<Profile> profiles, @NonNull Callback callback) {
         this(context, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE, callback);
@@ -66,6 +68,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.mItemLayout = itemLayout;
         this.mMapType = mapType;
         this.mCallback = callback;
+        this.mCircleColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorAccent);
     }
 
     public void setMapType(int mapType) {
@@ -184,7 +187,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 Circle circle = googleMap.addCircle(new CircleOptions()
                         .center(profile.getPlace())
                         .radius(profile.getRadius())
-                        .strokeColor(Color.RED));
+                        .strokeColor(mCircleColor));
                 googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
