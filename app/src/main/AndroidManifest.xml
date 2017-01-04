@@ -38,13 +38,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ProfileActivity"
             android:label="@string/profile_modifier"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".TimeActivity" />
-
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_about"
@@ -73,7 +71,7 @@
             android:exported="false" />
 
         <receiver
-            android:name="it.ibashkimi.lockscheduler.receivers.BootCompleteReceiver"
+            android:name=".receivers.BootCompleteReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
@@ -93,6 +91,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="it.ibashkimi.lockscheduler.MainActivity" />
         </activity>
+        <activity android:name=".intro.IntroActivity"></activity>
     </application>
 
 </manifest>

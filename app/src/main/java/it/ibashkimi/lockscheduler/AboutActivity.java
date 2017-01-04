@@ -96,14 +96,7 @@ public class AboutActivity extends BaseActivity {
             view.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + getString(R.string.developer_email)));
-                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
-                    emailIntent.putExtra(Intent.EXTRA_TEXT, "This app is awesome");
-                    //emailIntent.putExtra(Intent.EXTRA_HTML_TEXT, body); //If you are using HTML in your body text
-                /*if (emailIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(emailIntent);
-                }*/
-                    startActivity(Intent.createChooser(emailIntent, "Chooser Title"));
+                    MainActivity.sendFeedback(getContext());
                 }
             });
         }

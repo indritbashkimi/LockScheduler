@@ -4,7 +4,6 @@
         <limit-password />
         <watch-login />
         <reset-password />
-        <force-lock />
         <expire-password />
     </uses-policies>
 </device-admin>

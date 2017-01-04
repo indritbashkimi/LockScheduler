@@ -1,7 +1,9 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +27,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-import it.ibashkimi.lockscheduler.api.AdminApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 
 
@@ -44,10 +45,16 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AdminApiHelper adminApiHelper = new AdminApiHelper(this);
+        SharedPreferences prefs = getSharedPreferences();
+        if (prefs.getBoolean("first_run", true)) {
+            startActivity(new Intent(this, IntroActivity.class));
+            prefs.edit().putBoolean("first_run", false).apply();
+        }
+
+        /*AdminApiHelper adminApiHelper = new AdminApiHelper(this);
         if (!adminApiHelper.isAdminActive()) {
             startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
-        }
+        }*/
 
         setContentView(R.layout.activity_main);
 
@@ -64,7 +71,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        // You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
+        /*// You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -86,7 +93,8 @@ public class MainActivity extends BaseActivity {
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         RESULT_LOCATION_PERMISSION);
             }
-        } else if (savedInstanceState == null) {
+        } else*/
+        if (savedInstanceState == null) {
             attachMainFragment();
         }
 
@@ -193,17 +201,7 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent, 0);
                 return true;
             case R.id.action_feedback:
-                // TODO: 03/01/17  
-                // http://stackoverflow.com/a/16217921
-                // https://developer.android.com/guide/components/intents-common.html#Email
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + getString(R.string.developer_email)));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "This app is awesome");
-                //emailIntent.putExtra(Intent.EXTRA_HTML_TEXT, body); //If you are using HTML in your body text
-                /*if (emailIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(emailIntent);
-                }*/
-                startActivity(Intent.createChooser(emailIntent, "Chooser Title"));
+                sendFeedback(this);
                 return true;
             case R.id.action_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
@@ -276,6 +274,18 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public static void sendFeedback(Context context) {
+        // http://stackoverflow.com/a/16217921
+        // https://developer.android.com/guide/components/intents-common.html#Email
+        String address = context.getString(R.string.developer_email);
+        String subject = context.getString(R.string.feedback_subject);
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + address));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+
+        String chooserTitle = context.getString(R.string.feedback_chooser_title);
+        context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
+    }
 
     public static class PermissionDeniedFragment extends Fragment {
         @Nullable
