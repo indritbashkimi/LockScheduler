@@ -24,6 +24,7 @@ import android.util.Log;
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.support.design.preference.ThemePreference;
 import it.ibashkimi.support.design.preference.ThemePreferenceDialogFragmentCompat;
 import it.ibashkimi.support.design.preference.Themes;
@@ -113,7 +114,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         @Override
         public void addPreferencesFromResource(@XmlRes int preferencesResId) {
             super.addPreferencesFromResource(preferencesResId);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && !Utils.hasNavBar(getContext())) {
                 Log.d(TAG, "onDisplayPreferenceDialog: removing preference");
                 PreferenceCategory category = (PreferenceCategory) findPreference("appearance");
                 CheckBoxPreference preference = (CheckBoxPreference) findPreference("colored_navigation_bar");
