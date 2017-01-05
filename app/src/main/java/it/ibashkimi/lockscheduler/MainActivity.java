@@ -27,6 +27,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
@@ -251,9 +252,29 @@ public class MainActivity extends BaseActivity {
                                 if (profile.getId() == resultProfile.getId()) {
                                     LatLng previousPlace = profile.getPlace();
                                     int previousRadius = profile.getRadius();
+                                    LockMode previousLockMode = profile.getEnterLockMode();
                                     profile.update(resultProfile);
                                     if (!previousPlace.equals(profile.getPlace()) || previousRadius != profile.getRadius()) {
                                         App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
+                                    }
+                                    if (profile.isEntered() && (previousLockMode.getLockType() != profile.getEnterLockMode().getLockType())) {
+                                        LockManager lockManager = new LockManager(this);
+                                        LockMode lockMode = profile.getEnterLockMode();
+                                        switch (lockMode.getLockType()) {
+                                            case LockMode.LockType.PASSWORD:
+                                                lockManager.setPassword(lockMode.getPassword());
+                                                break;
+                                            case LockMode.LockType.PIN:
+                                                lockManager.setPin(lockMode.getPin());
+                                                break;
+                                            case LockMode.LockType.SEQUENCE:
+                                                break;
+                                            case LockMode.LockType.SWIPE:
+                                                lockManager.resetPassword();
+                                                break;
+                                            case LockMode.LockType.UNCHANGED:
+                                                break;
+                                        }
                                     }
                                     Profiles.saveProfiles(this, profiles);
                                     App.getGeofenceApiHelper().initGeofences();

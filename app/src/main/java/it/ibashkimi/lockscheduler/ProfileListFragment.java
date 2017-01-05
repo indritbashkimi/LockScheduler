@@ -72,6 +72,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 Collections.swap(profiles, viewHolder.getAdapterPosition(), targetPosition);
                 // and notify the adapter that its data set has changed
                 mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), targetPosition);
+                Profiles.saveProfiles(getContext(), profiles);
                 return true;
             }
 

@@ -76,7 +76,7 @@ public class ProfileActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+// TODO: 04/01/17 fare un fragment per le conditzione e un altro per le azioni. in schermo grandi si possono mettere uno di fianco
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_profile);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -103,6 +103,12 @@ public class ProfileActivity extends BaseActivity {
                 finish();
             }
         });
+
+        Toolbar placeToolbar = (Toolbar) findViewById(R.id.placeToolbar);
+        placeToolbar.inflateMenu(R.menu.menu_condition);
+        Toolbar timeToolbar = (Toolbar) findViewById(R.id.timeToolbar);
+        timeToolbar.inflateMenu(R.menu.menu_condition);
+
 
         mProfile = getIntent().getParcelableExtra("profile");
         if (mProfile == null) {
