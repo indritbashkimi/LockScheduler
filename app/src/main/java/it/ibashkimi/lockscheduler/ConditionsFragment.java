@@ -60,6 +60,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         View rootView = inflater.inflate(R.layout.fragment_conditions, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.conditionsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
 
         addPlace = rootView.findViewById(R.id.add_place);
