@@ -20,6 +20,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.Constants;
 import it.ibashkimi.lockscheduler.Profiles;
+import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.services.GeofenceTransitionsIntentService;
 
@@ -104,14 +105,16 @@ public class GeofenceApiHelper {
         int loiteringDelay = Integer.parseInt(delayStr);
         Log.d(TAG, "getGeofenceList: loitering " + loiteringDelay);
         ArrayList<Geofence> geofences = new ArrayList<>();
+        PlaceCondition placeCondition;
         for (Profile profile : getProfiles()) {
-            if (profile.isEnabled()) {
+            placeCondition = profile.getPlaceCondition();
+            if (profile.isEnabled() && placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(Long.toString(profile.getId()))
                         .setCircularRegion(
-                                profile.getPlace().latitude,
-                                profile.getPlace().longitude,
-                                profile.getRadius())
+                                placeCondition.getPlace().latitude,
+                                placeCondition.getPlace().longitude,
+                                placeCondition.getRadius())
                         .setExpirationDuration(Geofence.NEVER_EXPIRE);
                 if (loiteringDelay == 0) {
                     builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |

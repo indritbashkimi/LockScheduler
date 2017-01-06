@@ -25,8 +25,6 @@ public class BaseActivity extends AppCompatActivity {
         ThemeUtils.applyDayNightMode(this, mSharedPrefs.getString("night_mode", "auto"));
         @Themes.Theme int themeId = mSharedPrefs.getInt("theme", DEFAULT_THEME);
         ThemeUtils.applyTheme(this, themeId);
-        /*int theme = Themes.resolveTheme(themeId);
-        int primaryDarkColor = ThemeUtils.getColorFromAttribute()*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             boolean coloredNavBar = mSharedPrefs.getBoolean("colored_navigation_bar", false);
             if (coloredNavBar) {

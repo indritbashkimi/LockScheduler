@@ -69,6 +69,32 @@ public class LockMode implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof LockMode))
+            return false;
+        LockMode lockMode = (LockMode) obj;
+        if (lockType != lockMode.lockType)
+            return false;
+        switch (lockType) {
+            case LockType.FINGERPRINT:
+                break;
+            case LockType.PASSWORD:
+                if (!password.equals(lockMode.getPassword())) return false;
+                break;
+            case LockType.PIN:
+                if (!pin.equals(lockMode.getPin())) return false;
+                break;
+            case LockType.SEQUENCE:
+                break;
+            case LockType.SWIPE:
+                break;
+            case LockType.UNCHANGED:
+                break;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         return String.format(Locale.ENGLISH, "LockMode{%s}", lockTypeToString(lockType));
     }

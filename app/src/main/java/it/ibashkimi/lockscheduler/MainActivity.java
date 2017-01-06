@@ -23,11 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
 import it.ibashkimi.lockscheduler.domain.LockMode;
+import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
@@ -52,6 +54,23 @@ public class MainActivity extends BaseActivity {
             prefs.edit().putBoolean("first_run", false).apply();
         }
 
+        /*ArrayList<Profile> profiles = new ArrayList<>();
+        Profile profile = new Profile();
+        profile.setId(0);
+        profile.setName("Home");
+        profile.setEnabled(true);
+        //profile.setRadius(300);
+        //profile.setPlace(new LatLng(0, 0));
+        profile.setEntered(false);
+        profile.setEnterLockMode(new LockMode(LockMode.LockType.UNCHANGED));
+        profile.setExitLockMode(new LockMode(LockMode.LockType.UNCHANGED));
+        ArrayList<Condition> conditions = new ArrayList<>();
+        PlaceCondition placeCondition = new PlaceCondition("Home", new LatLng(0, 0), 300);
+        conditions.add(placeCondition);
+        profile.setConditions(conditions);
+        profiles.add(profile);
+        Profiles.saveProfiles(this, profiles);*/
+
         /*AdminApiHelper adminApiHelper = new AdminApiHelper(this);
         if (!adminApiHelper.isAdminActive()) {
             startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
@@ -62,7 +81,7 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -226,7 +245,14 @@ public class MainActivity extends BaseActivity {
                 return;
             case RESULT_PROFILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    final Profile resultProfile = data.getParcelableExtra("profile");
+                    final Profile resultProfile;
+                    try {
+                        resultProfile = Profile.parseJson(data.getStringExtra("profile"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onActivityResult: wtf");
+                        break;
+                    }
                     ArrayList<Profile> profiles = Profiles.restoreProfiles(this);
                     Log.d(TAG, "onActivityResult: action" + data.getAction());
                     switch (data.getAction()) {
@@ -250,14 +276,14 @@ public class MainActivity extends BaseActivity {
                         case "update":
                             for (final Profile profile : profiles) {
                                 if (profile.getId() == resultProfile.getId()) {
-                                    LatLng previousPlace = profile.getPlace();
-                                    int previousRadius = profile.getRadius();
+                                    PlaceCondition previousPlaceCondition = profile.getPlaceCondition();
                                     LockMode previousLockMode = profile.getEnterLockMode();
                                     profile.update(resultProfile);
-                                    if (!previousPlace.equals(profile.getPlace()) || previousRadius != profile.getRadius()) {
+                                    PlaceCondition newPlaceCondition = profile.getPlaceCondition();
+                                    if (previousPlaceCondition != null && !previousPlaceCondition.equals(newPlaceCondition)) {
                                         App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
                                     }
-                                    if (profile.isEntered() && (previousLockMode.getLockType() != profile.getEnterLockMode().getLockType())) {
+                                    if (profile.isEntered() && !(previousLockMode.equals(profile.getEnterLockMode()))) {
                                         LockManager lockManager = new LockManager(this);
                                         LockMode lockMode = profile.getEnterLockMode();
                                         switch (lockMode.getLockType()) {
@@ -273,6 +299,8 @@ public class MainActivity extends BaseActivity {
                                                 lockManager.resetPassword();
                                                 break;
                                             case LockMode.LockType.UNCHANGED:
+                                                break;
+                                            case LockMode.LockType.FINGERPRINT:
                                                 break;
                                         }
                                     }

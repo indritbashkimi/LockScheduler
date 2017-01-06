@@ -116,13 +116,13 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     private static int resolveLayout(int itemLayout) {
         switch (itemLayout) {
             case 0:
-                return R.layout.item_profile;
+                return R.layout.item_profile_0;
             case 1:
-                return R.layout.item_profile2;
+                return R.layout.item_profile_1;
             case 2:
-                return R.layout.item_profile_3;
+                return R.layout.item_profile_2;
             default:
-                return R.layout.item_profile;
+                return R.layout.item_profile_0;
         }
     }
 
@@ -154,7 +154,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onProfileClicked(Profile profile) {
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
         intent.setAction(ProfileActivity.ACTION_VIEW);
-        intent.putExtra("profile", profile);
+        intent.putExtra("profile", profile.toJson().toString());
         getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);
     }
 

@@ -17,7 +17,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -26,6 +25,7 @@ import java.util.List;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.lockscheduler.domain.LockMode;
+import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
@@ -37,17 +37,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     public interface Callback {
         void onProfileRemoved(Profile profile, int position);
+
         void onProfileClicked(Profile profile);
+
         void onProfileEnabled(Profile profile, boolean enabled);
     }
 
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
-    private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile;
+    private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile_1;
 
     private static final int VIEW_TYPE_PROFILE = 0;
     private static final int VIEW_TYPE_SPACE = 1;
 
-    private static final String TAG = "ProfileAdapter";
     private Context mContext;
     private List<Profile> mProfiles;
     private int mCirclePadding;
@@ -57,6 +58,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     @ColorInt
     private int mCircleColor;
 
+    @SuppressWarnings("unused")
     public ProfileAdapter(Context context, List<Profile> profiles, @NonNull Callback callback) {
         this(context, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE, callback);
     }
@@ -69,22 +71,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.mMapType = mapType;
         this.mCallback = callback;
         this.mCircleColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorAccent);
-    }
-
-    public void setMapType(int mapType) {
-        this.mMapType = mapType;
-    }
-
-    public int getMapType() {
-        return mMapType;
-    }
-
-    public int getItemLayout() {
-        return mItemLayout;
-    }
-
-    public void setItemLayout(int itemLayout) {
-        this.mItemLayout = itemLayout;
     }
 
     @Override
@@ -145,64 +131,56 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             }
         });
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
-        /*if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PASSWORD) {
-            holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPassword()));
-        } else if (profile.getEnterLockMode().getLockType() == LockMode.LockType.PIN) {
-            holder.enterLock.append(": " + hidePassword(profile.getEnterLockMode().getPin()));
-        }*/
         holder.exitLock.setText(LockMode.lockTypeToString(profile.getExitLockMode().getLockType()));
-        /*if (profile.getExitLockMode().getLockType() == LockMode.LockType.PASSWORD) {
-            holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPassword()));
-        } else if (profile.getExitLockMode().getLockType() == LockMode.LockType.PIN) {
-            holder.exitLock.append(": " + hidePassword(profile.getExitLockMode().getPin()));
-        }*/
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCallback.onProfileClicked(profile);
             }
         });
-        holder.mapView.onCreate(null);
-        //holder.mapView.onSaveInstanceState(null);
-        holder.mapView.onResume();
-        holder.mapView.onStart();
-        holder.mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(final GoogleMap googleMap) {
-                //MapsInitializer.initialize(mActivity);
-                googleMap.setMapType(mMapType);
 
-                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                googleMap.getUiSettings().setZoomGesturesEnabled(false);
-                googleMap.getUiSettings().setScrollGesturesEnabled(false);
-                googleMap.getUiSettings().setRotateGesturesEnabled(false);
-                googleMap.getUiSettings().setTiltGesturesEnabled(false);
-                googleMap.getUiSettings().setMapToolbarEnabled(false);
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        mCallback.onProfileClicked(profile);
-                    }
-                });
-                Circle circle = googleMap.addCircle(new CircleOptions()
-                        .center(profile.getPlace())
-                        .radius(profile.getRadius())
-                        .strokeColor(mCircleColor));
-                googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(profile.getPlace(), profile.getRadius()), mCirclePadding);
-                        googleMap.moveCamera(cameraUpdate);
-                    }
-                });
-            }
-        });
+        final PlaceCondition placeCondition = profile.getPlaceCondition();
+        if (placeCondition != null) {
+            holder.mapActive = true;
+            holder.mapView.onCreate(null);
+            holder.mapView.onResume();
+            holder.mapView.onStart();
+            holder.mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(final GoogleMap googleMap) {
+                    googleMap.setMapType(mMapType);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    googleMap.getUiSettings().setZoomGesturesEnabled(false);
+                    googleMap.getUiSettings().setScrollGesturesEnabled(false);
+                    googleMap.getUiSettings().setRotateGesturesEnabled(false);
+                    googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                    googleMap.getUiSettings().setMapToolbarEnabled(false);
+                    googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(LatLng latLng) {
+                            mCallback.onProfileClicked(profile);
+                        }
+                    });
+                    googleMap.addCircle(new CircleOptions()
+                            .center(placeCondition.getPlace())
+                            .radius(placeCondition.getRadius())
+                            .strokeColor(mCircleColor));
+                    googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                        @Override
+                        public void onMapLoaded() {
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(placeCondition.getPlace(), placeCondition.getRadius()), mCirclePadding);
+                            googleMap.moveCamera(cameraUpdate);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        if (holder.viewType == VIEW_TYPE_PROFILE) {
+        if (holder.viewType == VIEW_TYPE_PROFILE && holder.mapActive) {
             holder.mapView.onPause();
             holder.mapView.onStop();
             holder.mapView.onDestroy();
@@ -214,14 +192,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         return mProfiles.size() + 1;
     }
 
-    private String hidePassword(String password) {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < password.length(); i++) {
-            s.append("*");
-        }
-        return s.toString();
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
         View rootView;
         TextView name;
@@ -231,6 +201,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         TextView exitLock;
         int viewType;
         View settingsView;
+        boolean mapActive;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -244,10 +215,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
                 this.settingsView = itemView.findViewById(R.id.options_menu);
             }
-        }
-
-        void initializeMapView() {
-
         }
     }
 }

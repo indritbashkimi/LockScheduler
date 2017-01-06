@@ -55,7 +55,7 @@ dependencies {
     compile "com.google.android.gms:play-services-places:${playServicesVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesVersion}"
     compile "com.google.maps.android:android-maps-utils:0.4"
-    compile 'com.heinrichreimersoftware:material-intro:1.6'
+    compile "com.heinrichreimersoftware:material-intro:1.6"
     testCompile 'junit:junit:4.12'
 }
 
