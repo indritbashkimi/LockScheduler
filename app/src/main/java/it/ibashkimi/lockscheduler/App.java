@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -12,6 +13,10 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 
 
 public class App extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private static final String TAG = "App";
 

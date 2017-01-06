@@ -12,12 +12,16 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.util.ArrayList;
+
+import it.ibashkimi.lockscheduler.adapters.ChipAdapter;
 import it.ibashkimi.lockscheduler.adapters.ConditionsAdapter;
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
@@ -32,11 +36,12 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
     private static final int PLACE_PICKER_REQUEST = 1;
     private SparseArray<Condition> conditions;
     private ConditionsAdapter adapter;
+    private ChipAdapter chipAdapter;
     private RecyclerView recyclerView;
+    private RecyclerView chipsRecyclerView;
+    private TextView addCondition;
     private ProfileFragment parent;
-    private View addPlace;
-    private View addTime;
-    private View addWifi;
+    private ArrayList<ChipAdapter.ChipItem> chipItems;
 
     @SuppressWarnings("unused")
     public static ConditionsFragment newInstance() {
@@ -63,41 +68,55 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
 
-        addPlace = rootView.findViewById(R.id.add_place);
-        addPlace.setOnClickListener(new View.OnClickListener() {
+        addCondition = (TextView) rootView.findViewById(R.id.add_condition);
+
+        chipsRecyclerView = (RecyclerView) rootView.findViewById(R.id.chipsRecyclerView);
+        chipsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        chipItems = new ArrayList<>();
+        if (conditions.get(Condition.Type.PLACE) == null) {
+            addChip(Condition.Type.PLACE, false);
+        }
+        if (conditions.get(Condition.Type.TIME) == null) {
+            addChip(Condition.Type.TIME, false);
+        }
+        if (conditions.get(Condition.Type.WIFI) == null) {
+            addChip(Condition.Type.WIFI, false);
+        }
+        if (chipItems.size() > 0) {
+            addCondition.setVisibility(View.VISIBLE);
+            chipsRecyclerView.setVisibility(View.VISIBLE);
+        }
+        chipAdapter = new ChipAdapter(chipItems, new ChipAdapter.Callbacks() {
             @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: place pressed");
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try {
-                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    Log.d(TAG, "onClick: play service not available");
-                    e.printStackTrace();
+            public void onChipClicked(ChipAdapter.ChipItem chipItem) {
+                switch (chipItem.id) {
+                    case Condition.Type.PLACE:
+                        Log.d(TAG, "onClick: place pressed");
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        try {
+                            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+                        } catch (GooglePlayServicesRepairableException e) {
+                            e.printStackTrace();
+                        } catch (GooglePlayServicesNotAvailableException e) {
+                            Log.d(TAG, "onClick: play service not available");
+                            e.printStackTrace();
+                        }
+                        break;
+                    case Condition.Type.TIME:
+                        Log.d(TAG, "onClick: time pressed");
+                        adapter.getConditions().put(Condition.Type.TIME, new TimeCondition("Time"));
+                        TransitionManager.beginDelayedTransition(recyclerView);
+                        adapter.notifyDataSetChanged();
+                        removeChip(Condition.Type.TIME);
+                        break;
+                    case Condition.Type.WIFI:
+                        removeChip(Condition.Type.WIFI);
+                        break;
                 }
             }
         });
-        if (conditions.get(Condition.Type.PLACE) != null) {
-            addPlace.setVisibility(View.GONE);
-        }
-        addTime = rootView.findViewById(R.id.add_time);
-        addTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: time pressed");
-                adapter.getConditions().put(Condition.Type.TIME, new TimeCondition("Time"));
-                TransitionManager.beginDelayedTransition(recyclerView);
-                adapter.notifyDataSetChanged();
-                addTime.setVisibility(View.GONE);
-            }
-        });
-        if (conditions.get(Condition.Type.TIME) != null) {
-            addTime.setVisibility(View.GONE);
-        }
-        addWifi = rootView.findViewById(R.id.add_wifi);
-        addWifi.setVisibility(View.GONE);
+        chipsRecyclerView.setAdapter(chipAdapter);
+
         return rootView;
     }
 
@@ -118,7 +137,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                     placeCondition = new PlaceCondition("Place", place.getLatLng(), 300);
                     conditions.put(Condition.Type.PLACE, placeCondition);
                     parent.onConditionAdded(placeCondition);
-                    addPlace.setVisibility(View.GONE);
+                    removeChip(Condition.Type.PLACE);
                 }
                 parent.onPlacePicked(place);
                 TransitionManager.beginDelayedTransition(recyclerView);
@@ -153,20 +172,45 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
 
     @Override
     public void onConditionRemoved(Condition condition) {
-        switch (condition.getType()) {
-            case Condition.Type.PLACE:
-                addPlace.setVisibility(View.VISIBLE);
-                break;
-            case Condition.Type.TIME:
-                addTime.setVisibility(View.VISIBLE);
-                break;
-            case Condition.Type.WIFI:
-                addWifi.setVisibility(View.VISIBLE);
-                break;
-        }
+        addChip(condition.getType(), true);
     }
 
     public boolean saveData() {
         return true;
+    }
+
+    private void addChip(@Condition.Type int chipId, boolean notifyAdapter) {
+        ChipAdapter.ChipItem chip = null;
+        switch (chipId) {
+            case Condition.Type.PLACE:
+                chip = new ChipAdapter.ChipItem(Condition.Type.PLACE, R.drawable.ic_place, "Place");
+                break;
+            case Condition.Type.TIME:
+                chip = new ChipAdapter.ChipItem(Condition.Type.TIME, R.drawable.ic_time, "Time");
+                break;
+            case Condition.Type.WIFI:
+                chip = new ChipAdapter.ChipItem(Condition.Type.WIFI, R.drawable.ic_wifi, "Wifi");
+                break;
+        }
+        chipItems.add(chip);
+        if (notifyAdapter) {
+            addCondition.setVisibility(View.VISIBLE);
+            chipsRecyclerView.setVisibility(View.VISIBLE);
+            chipAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void removeChip(@Condition.Type int chipId) {
+        for (ChipAdapter.ChipItem chipItem : chipItems) {
+            if (chipItem.id == chipId) {
+                chipItems.remove(chipItem);
+                chipAdapter.notifyDataSetChanged();
+                break;
+            }
+        }
+        if (chipItems.size() == 0) {
+            addCondition.setVisibility(View.GONE);
+            chipsRecyclerView.setVisibility(View.GONE);
+        }
     }
 }

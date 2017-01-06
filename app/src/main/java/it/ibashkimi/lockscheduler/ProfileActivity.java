@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -17,6 +18,10 @@ public class ProfileActivity extends BaseActivity {
     public static final String ACTION_VIEW = "it.ibashkimi.lockscheduler.profile.view";
 
     private static final String TAG = "ProfileActivity";
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

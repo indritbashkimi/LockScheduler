@@ -34,6 +34,7 @@ public class Condition {
         this.name = name;
     }
 
+    @Type
     public int getType() {
         return type;
     }

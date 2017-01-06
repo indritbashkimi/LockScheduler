@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,11 @@ import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 
 
 public class MainActivity extends BaseActivity {
+
+    // http://stackoverflow.com/a/36899459
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private static final String TAG = MainActivity.class.getCanonicalName();
     private static final String FRAGMENT_TAG_MAIN = "main_fragment";

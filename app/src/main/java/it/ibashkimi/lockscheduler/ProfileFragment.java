@@ -3,6 +3,7 @@ package it.ibashkimi.lockscheduler;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +28,10 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     private Profile mProfile;
     private EditText mName;
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     public static ProfileFragment newInstance(String profile) {
         ProfileFragment fragment = new ProfileFragment();
