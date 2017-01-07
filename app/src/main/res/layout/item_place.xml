@@ -29,10 +29,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapView"
+            <FrameLayout
                 app:layout_aspectRatio="178%"
-                app:layout_widthPercent="100%" />
+                app:layout_widthPercent="100%">
+
+                <com.google.android.gms.maps.MapView
+                    android:id="@+id/mapView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <View
+                    android:id="@+id/mapCover"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/gray_500" />
+
+            </FrameLayout>
 
         </android.support.percent.PercentRelativeLayout>
 

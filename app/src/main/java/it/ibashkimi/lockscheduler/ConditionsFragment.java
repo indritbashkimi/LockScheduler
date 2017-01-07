@@ -1,6 +1,9 @@
 package it.ibashkimi.lockscheduler;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
@@ -20,12 +23,14 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.ibashkimi.lockscheduler.adapters.ChipAdapter;
 import it.ibashkimi.lockscheduler.adapters.ConditionsAdapter;
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.TimeCondition;
+import it.ibashkimi.lockscheduler.domain.WifiCondition;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,7 +61,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         super.onCreate(savedInstanceState);
         parent = (ProfileFragment) getParentFragment();
         conditions = parent.getConditions();
-        adapter = new ConditionsAdapter(conditions, this);
+        adapter = new ConditionsAdapter(getContext(), conditions, this);
     }
 
     @Nullable
@@ -110,6 +115,9 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                         removeChip(Condition.Type.TIME);
                         break;
                     case Condition.Type.WIFI:
+                        adapter.getConditions().put(Condition.Type.WIFI, new WifiCondition("Wifi", getNetworkList()));
+                        TransitionManager.beginDelayedTransition(recyclerView);
+                        adapter.notifyDataSetChanged();
                         removeChip(Condition.Type.WIFI);
                         break;
                 }
@@ -198,6 +206,11 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             chipsRecyclerView.setVisibility(View.VISIBLE);
             chipAdapter.notifyDataSetChanged();
         }
+    }
+
+    private List<WifiConfiguration> getNetworkList() {
+        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return wifiManager.getConfiguredNetworks();
     }
 
     private void removeChip(@Condition.Type int chipId) {

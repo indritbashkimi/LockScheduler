@@ -180,6 +180,9 @@ public class Profile implements Parcelable {
                     condition = TimeCondition.parseJson(conditionJson);
                     conditions.put(Condition.Type.TIME, condition);
                     break;
+                case Condition.Type.WIFI:
+                    condition = WifiCondition.parseJson(conditionJson);
+                    conditions.put(Condition.Type.WIFI, condition);
             }
         }
         profile.setConditions(conditions);
