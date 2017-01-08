@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
+import it.ibashkimi.lockscheduler.domain.LockAction;
 import it.ibashkimi.lockscheduler.domain.Profile;
 
 /**
@@ -29,19 +30,22 @@ public class ProfileActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             String action = getIntent().getAction();
-            String profile = null;
+            String profileRep = null;
             switch (action) {
                 case ACTION_NEW:
-                    profile = new Profile(System.currentTimeMillis()).toJson().toString();
+                    Profile profile = new Profile(System.currentTimeMillis());
+                    profile.getTrueActions().add(new LockAction());
+                    profile.getFalseActions().add(new LockAction());
+                    profileRep = profile.toJson();
                     break;
                 case ACTION_VIEW:
-                    profile = getIntent().getStringExtra("profile");
+                    profileRep = getIntent().getStringExtra("profile");
                     break;
                 default:
                     break;
             }
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, ProfileFragment.newInstance(profile, !action.equals(ACTION_NEW)))
+                    .replace(android.R.id.content, ProfileFragment.newInstance(profileRep, !action.equals(ACTION_NEW)))
                     .commit();
         }
     }
@@ -52,7 +56,7 @@ public class ProfileActivity extends BaseActivity {
 
     public void delete(Profile profile) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("profile", profile.toJson().toString());
+        resultIntent.putExtra("profile", profile.toJson());
         resultIntent.setAction("delete");
         setResult(Activity.RESULT_OK, resultIntent);
         finish();

@@ -12,6 +12,8 @@ import java.util.Locale;
 
 public class PlaceCondition extends Condition {
 
+    private static final String TAG = "PlaceCondition";
+
     private LatLng place;
     private int radius;
 
@@ -36,8 +38,6 @@ public class PlaceCondition extends Condition {
     public void setRadius(int radius) {
         this.radius = radius;
     }
-
-    private static final String TAG = "PlaceCondition";
 
     @Override
     public boolean equals(Object obj) {

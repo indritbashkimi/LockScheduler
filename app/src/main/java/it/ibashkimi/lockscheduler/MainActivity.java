@@ -29,6 +29,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -248,49 +249,55 @@ public class MainActivity extends BaseActivity {
                                 }
                             }
                             Profiles.saveProfiles(this, profiles);
-                            if (resultProfile.isEnabled()) {
-                                App.getGeofenceApiHelper().removeGeofence(Long.toString(resultProfile.getId()));
+                            for (Condition condition : resultProfile.getConditions()) {
+                                switch (condition.getType()) {
+                                    case Condition.Type.PLACE:
+                                        App.getGeofenceApiHelper().removeGeofence(Long.toString(resultProfile.getId()));
+                                        break;
+                                    case Condition.Type.TIME:
+                                        break;
+                                    case Condition.Type.WIFI:
+                                        break;
+                                }
                             }
                             showSnackBar("Profile deleted");
                             break;
                         case "new":
                             profiles.add(resultProfile);
                             Profiles.saveProfiles(this, profiles);
-                            App.getGeofenceApiHelper().initGeofences();
+                            for (Condition condition : resultProfile.getConditions()) {
+                                switch (condition.getType()) {
+                                    case Condition.Type.PLACE:
+                                        App.getGeofenceApiHelper().initGeofences();
+                                        break;
+                                    case Condition.Type.TIME:
+                                        break;
+                                    case Condition.Type.WIFI:
+                                        break;
+                                }
+                            }
                             break;
                         case "update":
                             for (final Profile profile : profiles) {
                                 if (profile.getId() == resultProfile.getId()) {
-                                    PlaceCondition previousPlaceCondition = profile.getPlaceCondition();
-                                    LockMode previousLockMode = profile.getEnterLockMode();
+                                    PlaceCondition previousPlaceCondition = (PlaceCondition) profile.getCondition(Condition.Type.PLACE);
+                                    LockMode previousLockMode = profile.getLockAction(true).getLockMode();
                                     profile.update(resultProfile);
-                                    PlaceCondition newPlaceCondition = profile.getPlaceCondition();
+                                    PlaceCondition newPlaceCondition = (PlaceCondition) profile.getCondition(Condition.Type.PLACE);
                                     if (previousPlaceCondition != null && !previousPlaceCondition.equals(newPlaceCondition)) {
                                         App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
                                     }
-                                    if (profile.isEntered() && !(previousLockMode.equals(profile.getEnterLockMode()))) {
-                                        LockManager lockManager = new LockManager(this);
-                                        LockMode lockMode = profile.getEnterLockMode();
-                                        switch (lockMode.getLockType()) {
-                                            case LockMode.LockType.PASSWORD:
-                                                lockManager.setPassword(lockMode.getPassword());
-                                                break;
-                                            case LockMode.LockType.PIN:
-                                                lockManager.setPin(lockMode.getPin());
-                                                break;
-                                            case LockMode.LockType.SEQUENCE:
-                                                break;
-                                            case LockMode.LockType.SWIPE:
-                                                lockManager.resetPassword();
-                                                break;
-                                            case LockMode.LockType.UNCHANGED:
-                                                break;
-                                            case LockMode.LockType.FINGERPRINT:
-                                                break;
+                                    /*if (profile.isActive()) {
+                                        for (Action action : profile.getTrueActions()) {
+                                            action.doJob();
                                         }
+                                    }*/
+                                    if (profile.isActive() && !(previousLockMode.equals(profile.getLockAction(true).getLockMode()))) {
+                                        profile.getLockAction(true).doJob();
                                     }
                                     Profiles.saveProfiles(this, profiles);
-                                    App.getGeofenceApiHelper().initGeofences();
+                                    if (profile.getPlaceCondition() != null)
+                                        App.getGeofenceApiHelper().initGeofences();
                                     showSnackBar("Profile updated");
                                     break;
                                 }

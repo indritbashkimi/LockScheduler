@@ -108,7 +108,7 @@ public class GeofenceApiHelper {
         PlaceCondition placeCondition;
         for (Profile profile : getProfiles()) {
             placeCondition = profile.getPlaceCondition();
-            if (profile.isEnabled() && placeCondition != null) {
+            if (placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(Long.toString(profile.getId()))
                         .setCircularRegion(

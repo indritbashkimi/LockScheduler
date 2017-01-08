@@ -19,7 +19,7 @@ import com.google.android.gms.maps.MapsInitializer;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -107,7 +107,7 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
-    public ArrayList<Condition> getConditions() {
+    public List<Condition> getConditions() {
         return mProfile.getConditions();
     }
 

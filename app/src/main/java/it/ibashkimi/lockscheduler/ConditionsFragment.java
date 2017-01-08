@@ -21,6 +21,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import it.ibashkimi.lockscheduler.adapters.ChipAdapter;
 import it.ibashkimi.lockscheduler.adapters.ConditionsAdapter;
@@ -36,7 +37,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
 
     private static final String TAG = "ConditionsFragment";
     private static final int PLACE_PICKER_REQUEST = 1;
-    private ArrayList<Condition> conditions;
+    private List<Condition> conditions;
     private ConditionsAdapter adapter;
     private ChipAdapter chipAdapter;
     private RecyclerView recyclerView;
@@ -187,7 +188,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         return null;
     }
 
-    public ArrayList<Condition> getConditions() {
+    public List<Condition> getConditions() {
         return conditions;
     }
 

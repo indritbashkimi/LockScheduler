@@ -28,6 +28,7 @@ public class Condition {
     @Condition.Type
     private int type;
     private String name;
+    private boolean isTrue;
 
     public Condition(int type, String name) {
         this.type = type;
@@ -45,6 +46,14 @@ public class Condition {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isTrue() {
+        return isTrue;
+    }
+
+    public void setTrue(boolean isTrue) {
+        this.isTrue = isTrue;
     }
 
     public String toJson() {

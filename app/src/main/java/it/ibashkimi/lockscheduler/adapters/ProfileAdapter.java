@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -42,8 +41,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         void onProfileRemoved(Profile profile, int position);
 
         void onProfileClicked(Profile profile);
-
-        void onProfileEnabled(Profile profile, boolean enabled);
     }
 
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
@@ -128,15 +125,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             }
         });
         holder.name.setText(profile.getName());
-        holder.enabledView.setChecked(profile.isEnabled());
-        holder.enabledView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCallback.onProfileEnabled(profile, isChecked);
-            }
-        });
-        holder.enterLock.setText(LockMode.lockTypeToString(profile.getEnterLockMode().getLockType()));
-        holder.exitLock.setText(LockMode.lockTypeToString(profile.getExitLockMode().getLockType()));
+        holder.enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
+        holder.exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,7 +211,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
         View rootView;
         TextView name;
-        CompoundButton enabledView;
         MapView mapView;
         TextView enterLock;
         TextView exitLock;
@@ -236,7 +225,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             if (viewType == VIEW_TYPE_PROFILE) {
                 this.rootView = itemView;
                 this.name = (TextView) itemView.findViewById(R.id.name_view);
-                this.enabledView = (CompoundButton) itemView.findViewById(R.id.switchView);
                 this.mapView = (MapView) itemView.findViewById(R.id.mapView);
                 this.enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
                 this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);

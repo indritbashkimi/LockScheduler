@@ -24,7 +24,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (profiles.size() > 0) {
             Log.d(TAG, "onReceive: initGeofencing");
             for (Profile profile: profiles)
-                profile.setEntered(false);
+                profile.setActive(false);
             Profiles.saveProfiles(context, profiles);
             GoogleApiHelper googleApiHelper = new GoogleApiHelper(context);
             GeofenceApiHelper geofenceApiHelper = new GeofenceApiHelper(context, googleApiHelper);

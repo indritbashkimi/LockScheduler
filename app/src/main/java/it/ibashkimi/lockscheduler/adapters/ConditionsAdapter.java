@@ -53,11 +53,11 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         void onConditionRemoved(Condition condition);
     }
 
-    private ArrayList<Condition> conditions;
+    private List<Condition> conditions;
     private Callbacks listener;
     private Context context;
 
-    public ConditionsAdapter(Context context, ArrayList<Condition> conditions, Callbacks listener) {
+    public ConditionsAdapter(Context context, List<Condition> conditions, Callbacks listener) {
         this.context = context;
         this.conditions = conditions;
         this.listener = listener;
@@ -89,7 +89,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         holder.init(context, this, condition, listener);
     }
 
-    public ArrayList<Condition> getConditions() {
+    public List<Condition> getConditions() {
         return conditions;
     }
 

@@ -24,6 +24,7 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
     private GeofenceApiHelper geofenceApiHelper;
     private static App mInstance;
     private ArrayList<Profile> mProfiles;
+    private LockManager lockManager;
 
     @Override
     public void onCreate() {
@@ -47,6 +48,13 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     public GeofenceApiHelper getGeofenceApiHelperInstance() {
         return this.geofenceApiHelper;
+    }
+
+    public LockManager getLockManager() {
+        if (lockManager == null) {
+            lockManager = new LockManager(this);
+        }
+        return lockManager;
     }
 
     public static GoogleApiHelper getGoogleApiHelper() {

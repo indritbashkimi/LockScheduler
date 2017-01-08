@@ -144,7 +144,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onProfileRemoved(Profile profile, int position) {
         mProfiles.remove(position);
         Profiles.saveProfiles(getContext(), mProfiles);
-        if (profile.isEnabled()) {
+        if (profile.isActive()) {
             App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
         }
         mAdapter.notifyItemRemoved(position);
@@ -154,13 +154,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onProfileClicked(Profile profile) {
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
         intent.setAction(ProfileActivity.ACTION_VIEW);
-        intent.putExtra("profile", profile.toJson().toString());
+        intent.putExtra("profile", profile.toJson());
         getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);
-    }
-
-    @Override
-    public void onProfileEnabled(Profile profile, boolean enabled) {
-        profile.setEnabled(enabled);
-        // TODO: 31/12/16
     }
 }

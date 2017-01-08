@@ -26,10 +26,12 @@ import it.ibashkimi.lockscheduler.views.PasswordInputLayout;
 public class ActionsFragment extends Fragment {
 
     private SharedPreferences mSharedPrefs;
-    private Profile mProfile;
+    private LockMode enterLockMode;
+    private LockMode exitLockMode;
     private PasswordInputLayout mEnterPasswordLayout;
     private PasswordInputLayout mExitPasswordLayout;
 
+    @SuppressWarnings("unused")
     public static ActionsFragment newInstance() {
         ActionsFragment fragment = new ActionsFragment();
         Bundle args = new Bundle();
@@ -40,14 +42,15 @@ public class ActionsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
+        ProfileFragment parent = (ProfileFragment) getParentFragment();
+        Profile profile = parent.getProfile();
+        enterLockMode = profile.getLockAction(true).getLockMode();
+        exitLockMode = profile.getLockAction(false).getLockMode();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ProfileFragment parent = (ProfileFragment) getParentFragment();
-        mProfile = parent.getProfile();
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_actions, container, false);
         mEnterPasswordLayout = (PasswordInputLayout) rootView.findViewById(R.id.enter_password_layout);
@@ -62,20 +65,16 @@ public class ActionsFragment extends Fragment {
         ArrayAdapter<StringWithTag> enterSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, array);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         enterSpinner.setAdapter(enterSpinnerAdapter);
-        enterSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, rootView, getSharedPreferences()));
-        enterSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
+        enterSpinner.setOnItemSelectedListener(new SpinnerListener(enterLockMode, mEnterPasswordLayout, rootView, getSharedPreferences()));
+        enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockMode.getLockType()));
 
         Spinner exitSpinner = (Spinner) rootView.findViewById(R.id.otherwise_spinner);
         ArrayAdapter<StringWithTag> exitSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, array);
         exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         exitSpinner.setAdapter(exitSpinnerAdapter);
-        exitSpinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getExitLockMode(), mExitPasswordLayout, rootView, getSharedPreferences()));
-        exitSpinner.setSelection(getSpinnerPositionFromLockType(mProfile.getExitLockMode().getLockType()));
+        exitSpinner.setOnItemSelectedListener(new SpinnerListener(exitLockMode, mExitPasswordLayout, rootView, getSharedPreferences()));
+        exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockMode.getLockType()));
         return rootView;
-    }
-
-    public void setProfile(Profile profile) {
-        this.mProfile = profile;
     }
 
     protected SharedPreferences getSharedPreferences() {
@@ -90,33 +89,33 @@ public class ActionsFragment extends Fragment {
     }
 
     public boolean saveData() {
-        @LockMode.LockType int lockType = mProfile.getEnterLockMode().getLockType();
+        @LockMode.LockType int lockType = enterLockMode.getLockType();
         if (lockType == LockMode.LockType.PASSWORD) {
             if (mEnterPasswordLayout.isValid()) {
-                mProfile.getEnterLockMode().setPassword(mEnterPasswordLayout.getPassword());
+                enterLockMode.setPassword(mEnterPasswordLayout.getPassword());
             } else {
                 Toast.makeText(getContext(), mEnterPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         } else if (lockType == LockMode.LockType.PIN) {
             if (mEnterPasswordLayout.isValid()) {
-                mProfile.getEnterLockMode().setPin(mEnterPasswordLayout.getPassword());
+                enterLockMode.setPin(mEnterPasswordLayout.getPassword());
             } else {
                 Toast.makeText(getContext(), mEnterPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
-        lockType = mProfile.getExitLockMode().getLockType();
+        lockType = exitLockMode.getLockType();
         if (lockType == LockMode.LockType.PASSWORD) {
             if (mExitPasswordLayout.isValid()) {
-                mProfile.getExitLockMode().setPassword(mExitPasswordLayout.getPassword());
+                exitLockMode.setPassword(mExitPasswordLayout.getPassword());
             } else {
                 Toast.makeText(getContext(), mExitPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         } else if (lockType == LockMode.LockType.PIN) {
             if (mExitPasswordLayout.isValid()) {
-                mProfile.getExitLockMode().setPin(mExitPasswordLayout.getPassword());
+                exitLockMode.setPin(mExitPasswordLayout.getPassword());
             } else {
                 Toast.makeText(getContext(), mExitPasswordLayout.getError(), Toast.LENGTH_SHORT).show();
                 return false;

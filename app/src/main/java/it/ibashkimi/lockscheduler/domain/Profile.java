@@ -1,74 +1,56 @@
 package it.ibashkimi.lockscheduler.domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class Profile implements Parcelable {
+public class Profile {
 
     private long id;
     private String name;
-    private boolean enabled = true;
-    private LockMode enterLockMode;
-    private LockMode exitLockMode;
-    private boolean entered;
-    private ArrayList<Condition> conditions;
-    private ArrayList<Action> actions;
-    private boolean autoNameAssignment = true;
+    private List<Condition> conditions;
+    private List<Action> trueActions;
+    private List<Action> falseActions;
+
+    private boolean active;
 
     public Profile(long id) {
         this(id, "");
     }
 
     public Profile(long id, String name) {
-        this(id, name, false, true, new LockMode(LockMode.LockType.UNCHANGED), new LockMode(LockMode.LockType.UNCHANGED));
+        this(id, name, new ArrayList<Condition>(), new ArrayList<Action>(), new ArrayList<Action>());
     }
 
-    public Profile(long id, String name, boolean enabled, LockMode enterLockMode, LockMode exitLockMode) {
-        this(id, name, false, enabled, enterLockMode, exitLockMode);
-    }
-
-    private Profile(long id, String name, boolean autoNameAssignment, boolean enabled, LockMode enterLockMode, LockMode exitLockMode) {
+    public Profile(long id, String name, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
         this.id = id;
         this.name = name;
-        this.autoNameAssignment = autoNameAssignment;
-        this.enabled = enabled;
-        this.enterLockMode = enterLockMode;
-        this.exitLockMode = exitLockMode;
-        this.conditions = new ArrayList<>();
+        this.conditions = conditions;
+        this.trueActions = trueActions;
+        this.falseActions = falseActions;
     }
 
-    public ArrayList<Condition> getConditions() {
+    public List<Condition> getConditions() {
         return conditions;
     }
 
-    public void setConditions(ArrayList<Condition> conditions) {
+    public void setConditions(List<Condition> conditions) {
         this.conditions = conditions;
     }
 
-    public boolean isEntered() {
-        return entered;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setEntered(boolean entered) {
-        this.entered = entered;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getName() {
@@ -81,11 +63,6 @@ public class Profile implements Parcelable {
 
     public void setName(String name, boolean auto) {
         this.name = name;
-        this.autoNameAssignment = auto;
-    }
-
-    public boolean isNameAutomaticallyGenerated() {
-        return autoNameAssignment;
     }
 
     public long getId() {
@@ -96,29 +73,43 @@ public class Profile implements Parcelable {
         this.id = id;
     }
 
-    public LockMode getEnterLockMode() {
-        return enterLockMode;
+    public List<Action> getTrueActions() {
+        return trueActions;
     }
 
-    public void setEnterLockMode(LockMode enterLockMode) {
-        this.enterLockMode = enterLockMode;
+    public void setTrueActions(List<Action> trueActions) {
+        this.trueActions = trueActions;
     }
 
-    public LockMode getExitLockMode() {
-        return exitLockMode;
+    public List<Action> getFalseActions() {
+        return falseActions;
     }
 
-    public void setExitLockMode(LockMode exitLockMode) {
-        this.exitLockMode = exitLockMode;
+    public void setFalseActions(List<Action> falseActions) {
+        this.falseActions = falseActions;
     }
 
     public void update(Profile profile) {
-        enabled = profile.isEnabled();
         name = profile.getName();
-        enterLockMode = profile.getEnterLockMode();
-        exitLockMode = profile.getExitLockMode();
+        active = profile.isActive();
         conditions = profile.getConditions();
-        //actions = profile.getActions();
+        trueActions = profile.getTrueActions();
+        falseActions = profile.getFalseActions();
+    }
+
+    public Action getAction(@Action.Type int type, boolean fromTrueActions) {
+        List<Action> actions = fromTrueActions ? trueActions : falseActions;
+        for (Action action : actions)
+            if (action.getType() == Action.Type.LOCK)
+                return action;
+        return null;
+    }
+
+    public LockAction getLockAction(boolean fromTrueActions) {
+        Action action = getAction(Action.Type.LOCK, fromTrueActions);
+        if (action != null)
+            return (LockAction) action;
+        return null;
     }
 
     public Condition getCondition(@Condition.Type int type) {
@@ -151,37 +142,64 @@ public class Profile implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Profile))
+            return false;
+        Profile profile = (Profile) obj;
+        if (conditions.size() != profile.getConditions().size() || id != profile.getId() || !name.equals(profile.getName()) || trueActions.size() != profile.getTrueActions().size() || falseActions.size() != profile.getFalseActions().size())
+            return false;
+        for (int i = 0; i < conditions.size(); i++) {
+            if (!conditions.get(i).equals(profile.getConditions().get(i)))
+                return false;
+        }
+        for (int i = 0; i < trueActions.size(); i++) {
+            if (!trueActions.get(i).equals(profile.getTrueActions().get(i)))
+                return false;
+        }
+        for (int i = 0; i < falseActions.size(); i++) {
+            if (!falseActions.get(i).equals(profile.getFalseActions().get(i)))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, enterLock=%s, exitLock=%s, %s}", id, name, enterLockMode, exitLockMode, getPlaceCondition());
+        return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, conditions=%d, trueActions=%d, falseActions=%d}", id, name, conditions.size(), trueActions.size(), falseActions.size());
     }
 
 
-    public JSONObject toJson() {
+    public String toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("id", "" + id);
             jsonObject.put("name", name);
-            jsonObject.put("enabled", enabled);
-            jsonObject.put("enterLock", enterLockMode.toJson().toString());
-            jsonObject.put("exitLock", exitLockMode.toJson().toString());
             jsonObject.put("conditions_len", conditions.size());
             for (int i = 0; i < conditions.size(); i++) {
                 jsonObject.put("condition_" + i, conditions.get(i).toJson());
             }
-            jsonObject.put("entered", entered);
+            jsonObject.put("active", active);
+            jsonObject.put("true_actions_size", trueActions.size());
+            for (int i = 0; i < trueActions.size(); i++) {
+                jsonObject.put("true_action_" + i, trueActions.get(i).toJson());
+            }
+            jsonObject.put("false_actions_size", falseActions.size());
+            for (int i = 0; i < trueActions.size(); i++) {
+                jsonObject.put("false_action_" + i, falseActions.get(i).toJson());
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
         }
-        return jsonObject;
+        return jsonObject.toString();
     }
+
 
     public static Profile parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         Profile profile = new Profile(Long.parseLong(jsonObject.getString("id")));
         profile.setName(jsonObject.getString("name"));
-        profile.setEnabled(jsonObject.getBoolean("enabled"));
-        profile.setEnterLockMode(LockMode.parseJson(jsonObject.getString("enterLock")));
-        profile.setExitLockMode(LockMode.parseJson(jsonObject.getString("exitLock")));
 
         int conditionsLen = jsonObject.getInt("conditions_len");
         ArrayList<Condition> conditions = new ArrayList<>(conditionsLen);
@@ -189,59 +207,60 @@ public class Profile implements Parcelable {
             String conditionJson = jsonObject.getString("condition_" + i);
             JSONObject conditionJsonObject = new JSONObject(conditionJson);
             @Condition.Type int type = conditionJsonObject.getInt("type");
-            Condition condition = null;
+            Condition condition;
             switch (type) {
                 case Condition.Type.PLACE:
                     condition = PlaceCondition.parseJson(conditionJson);
-                    conditions.add(condition);
                     break;
                 case Condition.Type.TIME:
                     condition = TimeCondition.parseJson(conditionJson);
-                    conditions.add(condition);
                     break;
                 case Condition.Type.WIFI:
                     condition = WifiCondition.parseJson(conditionJson);
-                    conditions.add(condition);
+                    break;
+                default:
+                    condition = null;
             }
+            if (condition != null) conditions.add(condition);
         }
         profile.setConditions(conditions);
 
-        profile.setEntered(jsonObject.getBoolean("entered"));
+        int trueActionsSize = jsonObject.getInt("true_actions_size");
+        ArrayList<Action> trueActions = new ArrayList<>(trueActionsSize);
+        for (int i = 0; i < trueActionsSize; i++) {
+            String actionRep = jsonObject.getString("true_action_" + i);
+            Action action;
+            @Action.Type int type = new JSONObject(actionRep).getInt("type");
+            switch (type) {
+                case Action.Type.LOCK:
+                    action = LockAction.parseJson(actionRep);
+                    break;
+                default:
+                    action = null;
+            }
+            trueActions.add(action);
+        }
+        profile.setTrueActions(trueActions);
+
+        int falseActionsSize = jsonObject.getInt("false_actions_size");
+        ArrayList<Action> falseActions = new ArrayList<>(falseActionsSize);
+        for (int i = 0; i < falseActionsSize; i++) {
+            String actionRep = jsonObject.getString("false_action_" + i);
+            Action action;
+            @Action.Type int type = new JSONObject(actionRep).getInt("type");
+            switch (type) {
+                case Action.Type.LOCK:
+                    action = LockAction.parseJson(actionRep);
+                    break;
+                default:
+                    action = null;
+            }
+            if (action != null)
+                falseActions.add(action);
+        }
+        profile.setFalseActions(falseActions);
+
+        profile.setActive(jsonObject.getBoolean("active"));
         return profile;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(enabled ? 1 : 0);
-        dest.writeLong(id);
-        dest.writeString(name);
-        dest.writeParcelable(enterLockMode, flags);
-        dest.writeParcelable(exitLockMode, flags);
-        dest.writeInt(entered ? 1 : 0);
-    }
-
-    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
-        public Profile createFromParcel(Parcel in) {
-            return new Profile(in);
-        }
-
-        public Profile[] newArray(int size) {
-            return new Profile[size];
-        }
-    };
-
-    private Profile(Parcel in) {
-        enabled = in.readInt() == 1;
-        id = in.readLong();
-        name = in.readString();
-        enterLockMode = in.readParcelable(LockMode.class.getClassLoader());
-        exitLockMode = in.readParcelable(LockMode.class.getClassLoader());
-        entered = in.readInt() == 1;
     }
 }

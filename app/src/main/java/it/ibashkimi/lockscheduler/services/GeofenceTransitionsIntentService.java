@@ -68,22 +68,22 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 return;
             }
             if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                if (!profile.isEntered()) {
+                if (!profile.isActive()) {
                     Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " enter event accepted.");
-                    profile.setEntered(true);
+                    profile.setActive(true);
                     if (showNotification)
                         sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
-                    doJob(profile.getEnterLockMode());
+                    profile.getLockAction(true).doJob();
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s already entered. ignoring enter event", profile.getName()));
                 }
             } else {
-                if (profile.isEntered()) {
+                if (profile.isActive()) {
                     Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " exit event accepted.");
-                    profile.setEntered(false);
+                    profile.setActive(false);
                     if (showNotification)
                         sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
-                    doJob(profile.getExitLockMode());
+                    profile.getLockAction(false).doJob();
                 } else {
                     Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
                 }
@@ -145,8 +145,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
         if (vibrate)
             notification.defaults |= Notification.DEFAULT_VIBRATE;
         notification.sound = Uri.parse(ringtone);
-
-
 
         mNotifyMgr.notify(notificationId, notification);
     }
