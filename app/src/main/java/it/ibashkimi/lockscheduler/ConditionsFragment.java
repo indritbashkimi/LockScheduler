@@ -1,17 +1,14 @@
 package it.ibashkimi.lockscheduler;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +20,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import it.ibashkimi.lockscheduler.adapters.ChipAdapter;
 import it.ibashkimi.lockscheduler.adapters.ConditionsAdapter;
@@ -39,7 +36,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
 
     private static final String TAG = "ConditionsFragment";
     private static final int PLACE_PICKER_REQUEST = 1;
-    private SparseArray<Condition> conditions;
+    private ArrayList<Condition> conditions;
     private ConditionsAdapter adapter;
     private ChipAdapter chipAdapter;
     private RecyclerView recyclerView;
@@ -78,13 +75,14 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         chipsRecyclerView = (RecyclerView) rootView.findViewById(R.id.chipsRecyclerView);
         chipsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         chipItems = new ArrayList<>();
-        if (conditions.get(Condition.Type.PLACE) == null) {
+
+        if (getCondition(Condition.Type.PLACE) == null) {
             addChip(Condition.Type.PLACE, false);
         }
-        if (conditions.get(Condition.Type.TIME) == null) {
+        if (getCondition(Condition.Type.TIME) == null) {
             addChip(Condition.Type.TIME, false);
         }
-        if (conditions.get(Condition.Type.WIFI) == null) {
+        if (getCondition(Condition.Type.WIFI) == null) {
             addChip(Condition.Type.WIFI, false);
         }
         if (chipItems.size() > 0) {
@@ -109,21 +107,48 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                         break;
                     case Condition.Type.TIME:
                         Log.d(TAG, "onClick: time pressed");
-                        adapter.getConditions().put(Condition.Type.TIME, new TimeCondition("Time"));
+                        adapter.getConditions().add(new TimeCondition("Time"));
                         TransitionManager.beginDelayedTransition(recyclerView);
-                        adapter.notifyDataSetChanged();
+                        adapter.notifyItemInserted(adapter.getConditions().size() - 1);
                         removeChip(Condition.Type.TIME);
                         break;
                     case Condition.Type.WIFI:
-                        adapter.getConditions().put(Condition.Type.WIFI, new WifiCondition("Wifi", getNetworkList()));
+                        adapter.getConditions().add(new WifiCondition("Wifi"));
                         TransitionManager.beginDelayedTransition(recyclerView);
-                        adapter.notifyDataSetChanged();
+                        adapter.notifyItemInserted(adapter.getConditions().size() - 1);
                         removeChip(Condition.Type.WIFI);
                         break;
                 }
             }
         });
         chipsRecyclerView.setAdapter(chipAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
+                        ItemTouchHelper.DOWN | ItemTouchHelper.UP);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                Log.d(TAG, "onMove: " + viewHolder.getAdapterPosition() + ", " + target.getAdapterPosition());
+                int targetPosition = target.getAdapterPosition();
+                if (targetPosition == conditions.size()) {
+                    targetPosition--;
+                }
+                Collections.swap(conditions, viewHolder.getAdapterPosition(), targetPosition);
+                // and notify the adapter that its data set has changed
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), targetPosition);
+                return true;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return rootView;
     }
@@ -134,7 +159,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(getActivity(), data);
                 PlaceCondition placeCondition = null;
-                Condition condition = conditions.get(Condition.Type.PLACE);
+                Condition condition = getCondition(Condition.Type.PLACE);
                 if (condition != null) {
                     placeCondition = (PlaceCondition) condition;
                 }
@@ -143,18 +168,26 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                     parent.onConditionChanged(placeCondition);
                 } else {
                     placeCondition = new PlaceCondition("Place", place.getLatLng(), 300);
-                    conditions.put(Condition.Type.PLACE, placeCondition);
+                    TransitionManager.beginDelayedTransition(recyclerView);
+                    conditions.add(placeCondition);
                     parent.onConditionAdded(placeCondition);
+                    adapter.notifyItemInserted(adapter.getConditions().size() - 1);
                     removeChip(Condition.Type.PLACE);
                 }
                 parent.onPlacePicked(place);
-                TransitionManager.beginDelayedTransition(recyclerView);
-                adapter.notifyDataSetChanged();
             }
         }
     }
 
-    public SparseArray<Condition> getConditions() {
+    public Condition getCondition(@Condition.Type int type) {
+        for (Condition condition : conditions) {
+            if (condition.getType() == type)
+                return condition;
+        }
+        return null;
+    }
+
+    public ArrayList<Condition> getConditions() {
         return conditions;
     }
 
@@ -206,11 +239,6 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             chipsRecyclerView.setVisibility(View.VISIBLE);
             chipAdapter.notifyDataSetChanged();
         }
-    }
-
-    private List<WifiConfiguration> getNetworkList() {
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        return wifiManager.getConfiguredNetworks();
     }
 
     private void removeChip(@Condition.Type int chipId) {

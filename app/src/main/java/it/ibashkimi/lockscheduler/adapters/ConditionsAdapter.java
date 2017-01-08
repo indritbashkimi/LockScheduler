@@ -1,24 +1,23 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.content.Context;
-import android.net.wifi.WifiConfiguration;
 import android.support.annotation.ColorInt;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,9 +34,12 @@ import java.util.Locale;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
+import it.ibashkimi.lockscheduler.WifiListProvider;
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
+import it.ibashkimi.lockscheduler.domain.TimeCondition;
 import it.ibashkimi.lockscheduler.domain.WifiCondition;
+import it.ibashkimi.lockscheduler.domain.WifiItem;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
@@ -51,11 +53,11 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         void onConditionRemoved(Condition condition);
     }
 
-    private SparseArray<Condition> conditions;
+    private ArrayList<Condition> conditions;
     private Callbacks listener;
     private Context context;
 
-    public ConditionsAdapter(Context context, SparseArray<Condition> conditions, Callbacks listener) {
+    public ConditionsAdapter(Context context, ArrayList<Condition> conditions, Callbacks listener) {
         this.context = context;
         this.conditions = conditions;
         this.listener = listener;
@@ -83,21 +85,21 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
-        final Condition condition = conditions.valueAt(position);
+        final Condition condition = conditions.get(position);
         holder.init(context, this, condition, listener);
     }
 
-    public SparseArray<Condition> getConditions() {
+    public ArrayList<Condition> getConditions() {
         return conditions;
     }
 
-    public void setConditions(SparseArray<Condition> conditions) {
+    public void setConditions(ArrayList<Condition> conditions) {
         this.conditions = conditions;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return conditions.keyAt(position);
+        return conditions.get(position).getType();
     }
 
     @Override
@@ -130,8 +132,9 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     if (item.getItemId() == R.id.action_delete) {
-                        adapter.getConditions().remove(condition.getType());
-                        adapter.notifyDataSetChanged();
+                        int index = adapter.getConditions().indexOf(condition);
+                        adapter.getConditions().remove(condition);
+                        adapter.notifyItemRemoved(index);
                         if (listener != null)
                             listener.onConditionRemoved(condition);
                         return true;
@@ -283,33 +286,119 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
     }
 
     private static class TimeViewHolder extends BaseViewHolder {
+        CheckBox[] days = new CheckBox[7];
+
         TimeViewHolder(View itemView) {
             super(itemView);
-        }
-    }
-
-    private static class WifiViewHolder extends BaseViewHolder {
-        Spinner spinner;
-
-        WifiViewHolder(View itemView) {
-            super(itemView);
-            spinner = (Spinner) itemView.findViewById(R.id.spinner);
+            days[0] = (CheckBox) itemView.findViewById(R.id.day_0);
+            days[1] = (CheckBox) itemView.findViewById(R.id.day_1);
+            days[2] = (CheckBox) itemView.findViewById(R.id.day_2);
+            days[3] = (CheckBox) itemView.findViewById(R.id.day_3);
+            days[4] = (CheckBox) itemView.findViewById(R.id.day_4);
+            days[5] = (CheckBox) itemView.findViewById(R.id.day_5);
+            days[6] = (CheckBox) itemView.findViewById(R.id.day_6);
         }
 
         @Override
         public void init(Context context, ConditionsAdapter adapter, Condition condition, Callbacks listener) {
             super.init(context, adapter, condition, listener);
-            WifiCondition wifiCondition = (WifiCondition) condition;
-            List<WifiConfiguration> networks = wifiCondition.getNetworks();
-            ArrayList<String> array = new ArrayList<>(networks.size());
-            for (WifiConfiguration wifi : networks) {
-                array.add(wifi.SSID);
+            final TimeCondition timeCondition = (TimeCondition) condition;
+            CompoundButton.OnCheckedChangeListener checkListener = new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int index = -1;
+                    switch (buttonView.getId()) {
+                        case R.id.day_0:
+                            index = 0;
+                            break;
+                        case R.id.day_1:
+                            index = 1;
+                            break;
+                        case R.id.day_2:
+                            index = 2;
+                            break;
+                        case R.id.day_3:
+                            index = 3;
+                            break;
+                        case R.id.day_4:
+                            index = 4;
+                            break;
+                        case R.id.day_5:
+                            index = 5;
+                            break;
+                        case R.id.day_6:
+                            index = 6;
+                            break;
+                    }
+                    timeCondition.getDaysActive()[index] = isChecked;
+                }
+            };
+            for (int i = 0; i < 7; i++) {
+                Log.d(TAG, "init: day_" + i + ": " + timeCondition.getDaysActive()[i]);
+                days[i].setChecked(timeCondition.getDaysActive()[i]);
+                days[i].setOnCheckedChangeListener(checkListener);
             }
-            ArrayAdapter<String> enterSpinnerAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, array);
-            enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(enterSpinnerAdapter);
-            //spinner.setOnItemSelectedListener(new SpinnerListener(mProfile.getEnterLockMode(), mEnterPasswordLayout, rootView, getSharedPreferences()));
-            //spinner.setSelection(getSpinnerPositionFromLockType(mProfile.getEnterLockMode().getLockType()));
+        }
+    }
+
+    private static class WifiViewHolder extends BaseViewHolder {
+        RecyclerView recyclerView;
+        RecyclerView availableRecyclerView;
+
+        WifiViewHolder(View itemView) {
+            super(itemView);
+            recyclerView = (RecyclerView) itemView.findViewById(R.id.recyclerView);
+            availableRecyclerView = (RecyclerView) itemView.findViewById(R.id.availableRecyclerView);
+        }
+
+        @Override
+        public void init(Context context, ConditionsAdapter adapter, final Condition condition, Callbacks listener) {
+            super.init(context, adapter, condition, listener);
+
+            WifiCondition wifiCondition = (WifiCondition) condition;
+            final List<WifiItem> availableWifiItems = WifiListProvider.getNetworks(context);
+            final List<WifiItem> conditionWifiItems = wifiCondition.getNetworks();
+
+            for (WifiItem item : conditionWifiItems) {
+                for (int i = 0; i < availableWifiItems.size(); i++) {
+                    if (availableWifiItems.get(i).equals(item)) {
+                        availableWifiItems.remove(i);
+                        break;
+                    }
+                }
+            }
+
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(new WifiAdapter(conditionWifiItems, true, new WifiAdapter.Callbacks() {
+                @Override
+                public void onWifiItemClicked(WifiItem item) {
+
+                }
+
+                @Override
+                public void onWifiItemRemoved(WifiItem item) {
+                    conditionWifiItems.remove(item);
+                    availableWifiItems.add(item);
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    availableRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+            }));
+
+            availableRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            availableRecyclerView.setAdapter(new WifiAdapter(availableWifiItems, false, new WifiAdapter.Callbacks() {
+                @Override
+                public void onWifiItemClicked(WifiItem item) {
+                    conditionWifiItems.add(item);
+                    availableWifiItems.remove(item);
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    availableRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+
+                @Override
+                public void onWifiItemRemoved(WifiItem item) {
+
+                }
+            }));
         }
     }
 }

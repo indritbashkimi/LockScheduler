@@ -41,7 +41,7 @@ public class ProfileActivity extends BaseActivity {
                     break;
             }
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, ProfileFragment.newInstance(profile))
+                    .replace(android.R.id.content, ProfileFragment.newInstance(profile, !action.equals(ACTION_NEW)))
                     .commit();
         }
     }

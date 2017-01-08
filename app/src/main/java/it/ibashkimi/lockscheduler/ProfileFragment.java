@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +19,8 @@ import com.google.android.gms.maps.MapsInitializer;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.Profile;
 
@@ -28,15 +29,17 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     private Profile mProfile;
     private EditText mName;
+    private boolean showDeleteOption;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
-    public static ProfileFragment newInstance(String profile) {
+    public static ProfileFragment newInstance(String profile, boolean showDeleteOption) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putString("profile", profile);
+        args.putBoolean("show_delete_option", showDeleteOption);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,6 +53,7 @@ public class ProfileFragment extends Fragment {
             Log.e(TAG, "onCreate: cannot retrieve profile.");
             e.printStackTrace();
         }
+        showDeleteOption = getArguments().getBoolean("show_delete_option");
     }
 
     @Nullable
@@ -58,6 +62,7 @@ public class ProfileFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile_main, container, false);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_profile);
+        toolbar.getMenu().findItem(R.id.action_delete).setVisible(showDeleteOption);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -102,7 +107,7 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
-    public SparseArray<Condition> getConditions() {
+    public ArrayList<Condition> getConditions() {
         return mProfile.getConditions();
     }
 

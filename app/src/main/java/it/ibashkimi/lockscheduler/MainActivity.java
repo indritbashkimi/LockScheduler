@@ -60,28 +60,6 @@ public class MainActivity extends BaseActivity {
             prefs.edit().putBoolean("first_run", false).apply();
         }
 
-        /*ArrayList<Profile> profiles = new ArrayList<>();
-        Profile profile = new Profile();
-        profile.setId(0);
-        profile.setName("Home");
-        profile.setEnabled(true);
-        //profile.setRadius(300);
-        //profile.setPlace(new LatLng(0, 0));
-        profile.setEntered(false);
-        profile.setEnterLockMode(new LockMode(LockMode.LockType.UNCHANGED));
-        profile.setExitLockMode(new LockMode(LockMode.LockType.UNCHANGED));
-        ArrayList<Condition> conditions = new ArrayList<>();
-        PlaceCondition placeCondition = new PlaceCondition("Home", new LatLng(0, 0), 300);
-        conditions.add(placeCondition);
-        profile.setConditions(conditions);
-        profiles.add(profile);
-        Profiles.saveProfiles(this, profiles);*/
-
-        /*AdminApiHelper adminApiHelper = new AdminApiHelper(this);
-        if (!adminApiHelper.isAdminActive()) {
-            startActivityForResult(adminApiHelper.buildAddAdminIntent(), RESULT_ADMIN_ENABLE);
-        }*/
-
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -273,6 +251,7 @@ public class MainActivity extends BaseActivity {
                             if (resultProfile.isEnabled()) {
                                 App.getGeofenceApiHelper().removeGeofence(Long.toString(resultProfile.getId()));
                             }
+                            showSnackBar("Profile deleted");
                             break;
                         case "new":
                             profiles.add(resultProfile);
@@ -312,6 +291,7 @@ public class MainActivity extends BaseActivity {
                                     }
                                     Profiles.saveProfiles(this, profiles);
                                     App.getGeofenceApiHelper().initGeofences();
+                                    showSnackBar("Profile updated");
                                     break;
                                 }
                             }
@@ -327,6 +307,11 @@ public class MainActivity extends BaseActivity {
                 Log.d(TAG, "onActivityResult: unknown request code");
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void showSnackBar(String msg) {
+        View rootView = findViewById(R.id.rootView);
+        Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     public static void sendFeedback(Context context) {

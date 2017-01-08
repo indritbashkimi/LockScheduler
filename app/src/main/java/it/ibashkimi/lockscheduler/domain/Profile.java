@@ -2,7 +2,6 @@ package it.ibashkimi.lockscheduler.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +21,7 @@ public class Profile implements Parcelable {
     private LockMode enterLockMode;
     private LockMode exitLockMode;
     private boolean entered;
-    private SparseArray<Condition> conditions;
+    private ArrayList<Condition> conditions;
     private ArrayList<Action> actions;
     private boolean autoNameAssignment = true;
 
@@ -45,14 +44,14 @@ public class Profile implements Parcelable {
         this.enabled = enabled;
         this.enterLockMode = enterLockMode;
         this.exitLockMode = exitLockMode;
-        this.conditions = new SparseArray<>();
+        this.conditions = new ArrayList<>();
     }
 
-    public SparseArray<Condition> getConditions() {
+    public ArrayList<Condition> getConditions() {
         return conditions;
     }
 
-    public void setConditions(SparseArray<Condition> conditions) {
+    public void setConditions(ArrayList<Condition> conditions) {
         this.conditions = conditions;
     }
 
@@ -122,12 +121,33 @@ public class Profile implements Parcelable {
         //actions = profile.getActions();
     }
 
+    public Condition getCondition(@Condition.Type int type) {
+        for (Condition condition : conditions) {
+            if (condition.getType() == type)
+                return condition;
+        }
+        return null;
+    }
+
     public PlaceCondition getPlaceCondition() {
-        return (PlaceCondition) conditions.get(Condition.Type.PLACE);
+        Condition condition = getCondition(Condition.Type.PLACE);
+        if (condition != null)
+            return (PlaceCondition) condition;
+        return null;
     }
 
     public TimeCondition getTimeCondition() {
-        return (TimeCondition) conditions.get(Condition.Type.TIME);
+        Condition condition = getCondition(Condition.Type.TIME);
+        if (condition != null)
+            return (TimeCondition) condition;
+        return null;
+    }
+
+    public WifiCondition getWifiCondition() {
+        Condition condition = getCondition(Condition.Type.WIFI);
+        if (condition != null)
+            return (WifiCondition) condition;
+        return null;
     }
 
     @Override
@@ -146,8 +166,7 @@ public class Profile implements Parcelable {
             jsonObject.put("exitLock", exitLockMode.toJson().toString());
             jsonObject.put("conditions_len", conditions.size());
             for (int i = 0; i < conditions.size(); i++) {
-                int key = conditions.keyAt(i);
-                jsonObject.put("condition_" + i, conditions.get(key).toJson());
+                jsonObject.put("condition_" + i, conditions.get(i).toJson());
             }
             jsonObject.put("entered", entered);
         } catch (JSONException e) {
@@ -165,7 +184,7 @@ public class Profile implements Parcelable {
         profile.setExitLockMode(LockMode.parseJson(jsonObject.getString("exitLock")));
 
         int conditionsLen = jsonObject.getInt("conditions_len");
-        SparseArray<Condition> conditions = new SparseArray<>(conditionsLen);
+        ArrayList<Condition> conditions = new ArrayList<>(conditionsLen);
         for (int i = 0; i < conditionsLen; i++) {
             String conditionJson = jsonObject.getString("condition_" + i);
             JSONObject conditionJsonObject = new JSONObject(conditionJson);
@@ -174,15 +193,15 @@ public class Profile implements Parcelable {
             switch (type) {
                 case Condition.Type.PLACE:
                     condition = PlaceCondition.parseJson(conditionJson);
-                    conditions.put(Condition.Type.PLACE, condition);
+                    conditions.add(condition);
                     break;
                 case Condition.Type.TIME:
                     condition = TimeCondition.parseJson(conditionJson);
-                    conditions.put(Condition.Type.TIME, condition);
+                    conditions.add(condition);
                     break;
                 case Condition.Type.WIFI:
                     condition = WifiCondition.parseJson(conditionJson);
-                    conditions.put(Condition.Type.WIFI, condition);
+                    conditions.add(condition);
             }
         }
         profile.setConditions(conditions);
