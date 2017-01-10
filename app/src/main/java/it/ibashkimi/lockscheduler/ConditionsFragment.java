@@ -166,6 +166,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                 }
                 if (placeCondition != null) {
                     placeCondition.setPlace(place.getLatLng());
+                    adapter.notifyItemChanged(getConditions().indexOf(placeCondition));
                     parent.onConditionChanged(placeCondition);
                 } else {
                     placeCondition = new PlaceCondition("Place", place.getLatLng(), 300);

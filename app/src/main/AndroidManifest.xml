@@ -3,11 +3,13 @@
     package="it.ibashkimi.lockscheduler">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <user-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <user-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".App"
@@ -67,18 +69,31 @@
         </receiver>
 
         <service
-            android:name=".services.GeofenceTransitionsIntentService"
+            android:name=".services.TransitionsIntentService"
             android:exported="false" />
 
         <receiver
             android:name=".receivers.BootCompleteReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:process=":boot_complete">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receivers.WifiReceiver">
+            <intent-filter android:priority="100">
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receivers.AlarmReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 

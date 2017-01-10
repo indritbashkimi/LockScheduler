@@ -49,6 +49,7 @@ public class TimeCondition extends Condition {
         try {
             jsonObject.put("type", getType());
             jsonObject.put("name", getName());
+            jsonObject.put("true", isTrue());
             for (int i = 0; i < 7; i++) {
                 jsonObject.put("day_" + i, daysActive[i]);
             }
@@ -63,10 +64,13 @@ public class TimeCondition extends Condition {
         JSONObject jsonObject = new JSONObject(json);
         int type = jsonObject.getInt("type");
         String name = jsonObject.getString("name");
+        boolean isTrue = jsonObject.getBoolean("true");
         boolean[] daysActive = new boolean[7];
         for (int i = 0; i < 7; i++) {
             daysActive[i] = jsonObject.getBoolean("day_" + i);
         }
-        return new TimeCondition(name, daysActive);
+        TimeCondition timeCondition = new TimeCondition(name, daysActive);
+        timeCondition.setTrue(isTrue);
+        return timeCondition;
     }
 }

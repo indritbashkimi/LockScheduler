@@ -18,11 +18,11 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.Constants;
-import it.ibashkimi.lockscheduler.Profiles;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
-import it.ibashkimi.lockscheduler.services.GeofenceTransitionsIntentService;
+import it.ibashkimi.lockscheduler.services.TransitionsIntentService;
 
 
 public class GeofenceApiHelper {
@@ -49,10 +49,21 @@ public class GeofenceApiHelper {
 
     private void initGeofences(GoogleApiClient googleApiClient) {
         Log.d(TAG, "initGeofences");
-        if (getProfiles().size() == 0) {
+        List<Profile> profiles = getProfiles();
+        if (profiles.size() == 0) {
             Log.e(TAG, "initGeofences: no profiles found.");
             return;
         }
+        boolean hasPlaceConditions = false;
+        for (Profile profile : profiles) {
+            if (profile.getPlaceCondition() != null) {
+                hasPlaceConditions = true;
+                break;
+            }
+        }
+        if (!hasPlaceConditions)
+            return;
+
         if (ActivityCompat.checkSelfPermission(this.mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "initGeofences: location permission is needed");
             return;
@@ -85,7 +96,7 @@ public class GeofenceApiHelper {
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(mContext, GeofenceTransitionsIntentService.class);
+        Intent intent = new Intent(mContext, TransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         mGeofencePendingIntent = PendingIntent.getService(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -131,7 +142,7 @@ public class GeofenceApiHelper {
     }
 
     private ArrayList<Profile> getProfiles() {
-        return Profiles.restoreProfiles(mContext);
+        return App.getProfileApiHelper().getProfiles();
     }
 
 }

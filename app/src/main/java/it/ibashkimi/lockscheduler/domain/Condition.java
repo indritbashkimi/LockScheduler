@@ -2,9 +2,6 @@ package it.ibashkimi.lockscheduler.domain;
 
 import android.support.annotation.IntDef;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -13,7 +10,7 @@ import static it.ibashkimi.lockscheduler.domain.Condition.Type.TIME;
 import static it.ibashkimi.lockscheduler.domain.Condition.Type.WIFI;
 
 
-public class Condition {
+public abstract class Condition {
     @IntDef({PLACE,
             TIME,
             WIFI
@@ -56,15 +53,5 @@ public class Condition {
         this.isTrue = isTrue;
     }
 
-    public String toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("type", type);
-            jsonObject.put("name", name);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return jsonObject.toString();
-    }
+    public abstract String toJson();
 }

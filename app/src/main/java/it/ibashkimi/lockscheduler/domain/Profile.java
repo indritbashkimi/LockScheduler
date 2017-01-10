@@ -1,5 +1,8 @@
 package it.ibashkimi.lockscheduler.domain;
 
+import android.content.Intent;
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,17 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import it.ibashkimi.lockscheduler.App;
+import it.ibashkimi.lockscheduler.services.TransitionsIntentService;
+
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
 public class Profile {
 
+    private static final String TAG = "Profile";
+
+    public interface ProfileStateListener {
+        void onProfileStateChanged(Profile profile);
+    }
+
     private long id;
     private String name;
     private List<Condition> conditions;
     private List<Action> trueActions;
     private List<Action> falseActions;
+
+    private ProfileStateListener listener;
 
     private boolean active;
 
@@ -37,6 +51,14 @@ public class Profile {
         this.falseActions = falseActions;
     }
 
+    public ProfileStateListener getListener() {
+        return listener;
+    }
+
+    public void setListener(ProfileStateListener listener) {
+        this.listener = listener;
+    }
+
     public List<Condition> getConditions() {
         return conditions;
     }
@@ -50,7 +72,13 @@ public class Profile {
     }
 
     public void setActive(boolean active) {
-        this.active = active;
+        if (this.active != active) {
+            this.active = active;
+            Intent intent = new Intent(App.getInstance(), TransitionsIntentService.class);
+            intent.setAction("condition_state_changed");
+            intent.putExtra("profile_id", getId());
+            App.getInstance().startService(intent);
+        }
     }
 
     public String getName() {
@@ -140,6 +168,89 @@ public class Profile {
             return (WifiCondition) condition;
         return null;
     }
+
+    public synchronized void setConditionState(@Condition.Type int conditionType, boolean state) {
+        Log.d(TAG, "setConditionState() called with: conditionType = [" + conditionType + "], state = [" + state + "]");
+        getCondition(conditionType).setTrue(state);
+        if (state) {
+            if (!isActive() && areConditionsTrue()) {
+                for (Action action : trueActions)
+                    action.doJob();
+                setActive(true);
+            }
+        } else {
+            if (isActive()) {
+                for (Action action : falseActions)
+                    action.doJob();
+                setActive(false);
+            }
+        }
+
+    }
+
+    public synchronized void setConditionState(Condition condition, boolean state) {
+        Log.d(TAG, "setConditionState() called with: condition = [" + condition + "], state = [" + state + "]");
+        condition.setTrue(state);
+        if (state) {
+            if (!active && areConditionsTrue()) {
+                for (Action action : trueActions)
+                    action.doJob();
+                setActive(true);
+            }
+        } else {
+            if (active) {
+                for (Action action : falseActions)
+                    action.doJob();
+                setActive(false);
+            }
+        }
+
+    }
+
+    public void notifyUpdated() {
+        boolean conditionsTrue = areConditionsTrue();
+        if (active) {
+            if (!conditionsTrue) {
+                for (Action action : falseActions)
+                    action.doJob();
+                setActive(false);
+            }
+        } else {
+            if (conditionsTrue) {
+                for (Action action : trueActions)
+                    action.doJob();
+                setActive(true);
+            }
+        }
+    }
+
+    public void notifyConditionChanged(Condition condition) {
+        Log.d(TAG, "notifyConditionChanged() called with: condition = [" + condition + "]");
+        if (condition.isTrue()) {
+            Log.d(TAG, "notifyConditionChanged: condition.isTrue");
+            if (!active && areConditionsTrue()) {
+                for (Action action : trueActions)
+                    action.doJob();
+                setActive(true);
+            }
+        } else {
+            Log.d(TAG, "notifyConditionChanged: condition not true");
+            if (active) {
+                for (Action action : falseActions)
+                    action.doJob();
+                setActive(false);
+            }
+        }
+    }
+
+    public boolean areConditionsTrue() {
+        for (Condition condition : conditions) {
+            if (!condition.isTrue())
+                return false;
+        }
+        return true;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -260,7 +371,7 @@ public class Profile {
         }
         profile.setFalseActions(falseActions);
 
-        profile.setActive(jsonObject.getBoolean("active"));
+        profile.active = jsonObject.getBoolean("active");
         return profile;
     }
 }

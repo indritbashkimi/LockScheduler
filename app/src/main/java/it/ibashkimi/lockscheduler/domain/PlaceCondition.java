@@ -60,6 +60,7 @@ public class PlaceCondition extends Condition {
         try {
             jsonObject.put("type", getType());
             jsonObject.put("name", getName());
+            jsonObject.put("true", isTrue());
             jsonObject.put("latitude", place.latitude);
             jsonObject.put("longitude", place.longitude);
             jsonObject.put("radius", radius);
@@ -77,6 +78,9 @@ public class PlaceCondition extends Condition {
         double latitude = jsonObject.getDouble("latitude");
         double longitude = jsonObject.getDouble("longitude");
         int radius = jsonObject.getInt("radius");
-        return new PlaceCondition(name, new LatLng(latitude, longitude), radius);
+        boolean isTrue = jsonObject.getBoolean("true");
+        PlaceCondition placeCondition = new PlaceCondition(name, new LatLng(latitude, longitude), radius);
+        placeCondition.setTrue(isTrue);
+        return placeCondition;
     }
 }

@@ -31,7 +31,7 @@ public class LockAction extends Action {
 
     @Override
     public void doJob() {
-        LockManager lockManager = App.getInstance().getLockManager();
+        LockManager lockManager = App.getLockManager();
         switch (lockMode.getLockType()) {
             case LockMode.LockType.PASSWORD:
                 lockManager.setPassword(lockMode.getPassword());

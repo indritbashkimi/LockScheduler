@@ -1,18 +1,15 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
-import java.util.ArrayList;
-
 import it.ibashkimi.lockscheduler.api.GeofenceApiHelper;
 import it.ibashkimi.lockscheduler.api.GoogleApiHelper;
-import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.lockscheduler.api.ProfileApiHelper;
 
 
-public class App extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class App extends Application {
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -22,8 +19,8 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     private GoogleApiHelper googleApiHelper;
     private GeofenceApiHelper geofenceApiHelper;
+    private ProfileApiHelper profileApiHelper;
     private static App mInstance;
-    private ArrayList<Profile> mProfiles;
     private LockManager lockManager;
 
     @Override
@@ -35,7 +32,6 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         googleApiHelper = new GoogleApiHelper(this);
         geofenceApiHelper = new GeofenceApiHelper(this, googleApiHelper);
         geofenceApiHelper.initGeofences();
-        //getSharedPreferences("prefs", MODE_PRIVATE).registerOnSharedPreferenceChangeListener(this);
     }
 
     public static synchronized App getInstance() {
@@ -50,11 +46,25 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
         return this.geofenceApiHelper;
     }
 
-    public LockManager getLockManager() {
+    public LockManager getLockManagerInstance() {
         if (lockManager == null) {
             lockManager = new LockManager(this);
         }
         return lockManager;
+    }
+
+    public ProfileApiHelper getProfileApiHelperInstance() {
+        if (profileApiHelper == null)
+            profileApiHelper = new ProfileApiHelper(this);
+        return profileApiHelper;
+    }
+
+    public static LockManager getLockManager() {
+        return getInstance().getLockManagerInstance();
+    }
+
+    public static ProfileApiHelper getProfileApiHelper() {
+        return getInstance().getProfileApiHelperInstance();
     }
 
     public static GoogleApiHelper getGoogleApiHelper() {
@@ -63,19 +73,5 @@ public class App extends Application implements SharedPreferences.OnSharedPrefer
 
     public static GeofenceApiHelper getGeofenceApiHelper() {
         return getInstance().getGeofenceApiHelperInstance();
-    }
-
-    public ArrayList<Profile> getProfiles() {
-        if (mProfiles == null) {
-            mProfiles = Profiles.restoreProfiles(this);
-        }
-        return mProfiles;
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("profiles")) {
-            mProfiles = Profiles.restoreProfiles(this);
-        }
     }
 }

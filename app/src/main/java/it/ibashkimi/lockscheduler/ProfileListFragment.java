@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import it.ibashkimi.lockscheduler.adapters.ProfileAdapter;
 import it.ibashkimi.lockscheduler.domain.Profile;
@@ -32,7 +31,6 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     private int mMapStyle;
     private SharedPreferences mSettings;
     private ItemTouchHelper mItemTouchHelper;
-    private ArrayList<Profile> mProfiles;
 
     public ProfileListFragment() {
     }
@@ -52,7 +50,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         View rootView = inflater.inflate(R.layout.fragment_profile_list, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        final ArrayList<Profile> profiles = getProfiles(true);
+        final ArrayList<Profile> profiles = getProfiles();
         mAdapter = new ProfileAdapter(getContext(), profiles, mItemLayout, mMapStyle, this);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
@@ -69,10 +67,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 if (targetPosition == profiles.size()) {
                     targetPosition--;
                 }
-                Collections.swap(profiles, viewHolder.getAdapterPosition(), targetPosition);
-                // and notify the adapter that its data set has changed
+                App.getProfileApiHelper().swap(viewHolder.getAdapterPosition(), targetPosition);
                 mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), targetPosition);
-                Profiles.saveProfiles(getContext(), profiles);
                 return true;
             }
 
@@ -97,20 +93,17 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         super.onStop();
     }
 
+    public ProfileAdapter getAdapter() {
+        return mAdapter;
+    }
+
     public void notifyDataHasChanged() {
-        mAdapter = new ProfileAdapter(getContext(), getProfiles(true), mItemLayout, mMapStyle, this);
+        mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private ArrayList<Profile> getProfiles() {
-        return Profiles.restoreProfiles(getContext());
-    }
-
-    private ArrayList<Profile> getProfiles(boolean forceLoad) {
-        if (forceLoad || mProfiles == null) {
-            mProfiles = Profiles.restoreProfiles(getContext());
-        }
-        return mProfiles;
+        return App.getProfileApiHelper().getProfiles();
     }
 
     private static int resolveLayout(int itemLayout) {
@@ -130,11 +123,11 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         if (s.equals("item_layout")) {
             mItemLayout = resolveLayout(Integer.parseInt(sharedPreferences.getString("item_layout", "0")));
-            mAdapter = new ProfileAdapter(getContext(), getProfiles(true), mItemLayout, mMapStyle, this);
+            mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
             mRecyclerView.setAdapter(mAdapter);
         } else if (s.equals("map_style")) {
             mMapStyle = Utils.resolveMapStyle(sharedPreferences.getString("map_style", "hybrid"));
-            mAdapter = new ProfileAdapter(getContext(), getProfiles(true), mItemLayout, mMapStyle, this);
+            mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
             mRecyclerView.setAdapter(mAdapter);
         }
     }
@@ -142,11 +135,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     @Override
     public void onProfileRemoved(Profile profile, int position) {
-        mProfiles.remove(position);
-        Profiles.saveProfiles(getContext(), mProfiles);
-        if (profile.isActive()) {
-            App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
-        }
+        App.getProfileApiHelper().removeProfile(profile);
         mAdapter.notifyItemRemoved(position);
     }
 

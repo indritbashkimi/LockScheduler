@@ -18,11 +18,10 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.LockManager;
+import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.MainActivity;
-import it.ibashkimi.lockscheduler.Profiles;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.domain.LockMode;
+import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.Profile;
 
 /**
@@ -30,13 +29,13 @@ import it.ibashkimi.lockscheduler.domain.Profile;
  * a service on a separate handler thread.
  * <p>
  */
-public class GeofenceTransitionsIntentService extends IntentService {
+public class TransitionsIntentService extends IntentService {
     private static final String TAG = "GeofenceTransitionsInte";
 
     private SharedPreferences mSharedPreferences;
 
-    public GeofenceTransitionsIntentService() {
-        super("GeofenceTransitionsIntentService");
+    public TransitionsIntentService() {
+        super("TransitionsIntentService");
     }
 
     @Override
@@ -48,69 +47,52 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "onHandleIntent() called with: intent = [" + intent + "]");
-        GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-        if (geofencingEvent.hasError()) {
+        String action = intent.getAction();
+        if (action != null && action.equals("condition_state_changed")) {
+            boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
+            if (showNotification) {
+                long profileId = intent.getLongExtra("profile_id", -1);
+                Profile profile = App.getProfileApiHelper().getProfileWithId(profileId);
+                assert profile != null;
+                String title;
+                String content;
+                if (profile.isActive()) {
+                    title = "Activated";
+                    content = profile.getName();
+                } else {
+                    title = "Deactivated";
+                    content = profile.getName();
+                }
+                sendNotification(title, content, (int) profile.getId());
+            }
+
+        } else {
+            GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
+            if (geofencingEvent.hasError()) {
             /*String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());*/
-            Log.e(TAG, "geofencing has error");
-            return;
-        }
-
-        boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
-
-        int geofenceTransition = geofencingEvent.getGeofenceTransition();
-        List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
-        ArrayList<Profile> profiles = Profiles.restoreProfiles(this);
-        for (Geofence geofence : geofenceList) {
-            Profile profile = findProfile(profiles, Long.parseLong(geofence.getRequestId()));
-            if (profile == null) {
-                Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
+                Log.e(TAG, "geofencing has error");
                 return;
             }
-            if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL || geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                if (!profile.isActive()) {
-                    Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " enter event accepted.");
-                    profile.setActive(true);
-                    if (showNotification)
-                        sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
-                    profile.getLockAction(true).doJob();
-                } else {
-                    Log.d(TAG, String.format("onHandleIntent: profile %s already entered. ignoring enter event", profile.getName()));
-                }
-            } else {
-                if (profile.isActive()) {
-                    Log.d(TAG, "onHandleIntent: profile " + profile.getName() + " exit event accepted.");
-                    profile.setActive(false);
-                    if (showNotification)
-                        sendNotification(getTransitionName(geofenceTransition).toUpperCase() + ": " + profile.getName(), (int)profile.getId());
-                    profile.getLockAction(false).doJob();
-                } else {
-                    Log.d(TAG, String.format("onHandleIntent: profile %s not entered yet. ignoring exit event.", profile.getName()));
-                }
-            }
-            Profiles.saveProfiles(this, profiles);
-        }
-        Log.d(TAG, "onHandleIntent() returned: notification created");
-    }
 
-    private void doJob(LockMode lockMode) {
-        Log.d(TAG, "doJob() called with: lockMode = [" + LockMode.lockTypeToString(lockMode.getLockType()) + "]");
-        LockManager lockManager = new LockManager(this);
-        switch (lockMode.getLockType()) {
-            case LockMode.LockType.PASSWORD:
-                lockManager.setPassword(lockMode.getPassword());
-                break;
-            case LockMode.LockType.PIN:
-                lockManager.setPin(lockMode.getPin());
-                break;
-            case LockMode.LockType.SEQUENCE:
-                break;
-            case LockMode.LockType.SWIPE:
-                lockManager.resetPassword();
-                break;
-            case LockMode.LockType.UNCHANGED:
-                break;
+            int geofenceTransition = geofencingEvent.getGeofenceTransition();
+            List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
+            for (Geofence geofence : geofenceList) {
+                Profile profile = App.getProfileApiHelper().getProfileWithId(Long.parseLong(geofence.getRequestId()));
+                if (profile == null) {
+                    Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
+                    return;
+                }
+                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
+                        || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
+                    profile.setConditionState(Condition.Type.PLACE, true);
+                } else {
+                    profile.setConditionState(Condition.Type.PLACE, false);
+                }
+                App.getProfileApiHelper().saveProfiles();
+            }
         }
+
     }
 
     private Profile findProfile(ArrayList<Profile> profiles, long id) {
@@ -120,15 +102,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
         return null;
     }
 
-    private void sendNotification(String transitionName, int notificationId) {
+    private void sendNotification(String title, String content, int notificationId) {
         boolean vibrate = mSharedPreferences.getBoolean("notifications_vibrate", true);
         String ringtone = mSharedPreferences.getString("notifications_ringtone", "DEFAULT_SOUND");
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_notif)
-                        .setContentTitle("Geofence")
-                        .setContentText("Transition " + transitionName)
+                        .setContentTitle(title)
+                        .setContentText(content)
                         .setSound(alarmSound);
 
         // Gets an instance of the NotificationManager service

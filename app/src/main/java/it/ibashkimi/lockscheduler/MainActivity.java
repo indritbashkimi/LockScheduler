@@ -27,11 +27,8 @@ import com.google.android.gms.maps.MapsInitializer;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
-
-import it.ibashkimi.lockscheduler.domain.Condition;
-import it.ibashkimi.lockscheduler.domain.LockMode;
-import it.ibashkimi.lockscheduler.domain.PlaceCondition;
+import it.ibashkimi.lockscheduler.adapters.ProfileAdapter;
+import it.ibashkimi.lockscheduler.api.ProfileApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
@@ -62,7 +59,7 @@ public class MainActivity extends BaseActivity {
         }
 
         setContentView(R.layout.activity_main);
-
+        
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -230,84 +227,39 @@ public class MainActivity extends BaseActivity {
                 return;
             case RESULT_PROFILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    final Profile resultProfile;
+                    Profile profile;
                     try {
-                        resultProfile = Profile.parseJson(data.getStringExtra("profile"));
+                        profile = Profile.parseJson(data.getStringExtra("profile"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onActivityResult: wtf");
                         break;
                     }
-                    ArrayList<Profile> profiles = Profiles.restoreProfiles(this);
-                    Log.d(TAG, "onActivityResult: action" + data.getAction());
+                    ProfileListFragment fragment = (ProfileListFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
+                    ProfileAdapter adapter = fragment.getAdapter();
+                    Log.d(TAG, "onActivityResult: adapter == null? " + (adapter == null));
+                    ProfileApiHelper profileApiHelper = App.getProfileApiHelper();
                     switch (data.getAction()) {
                         case "delete":
-                            for (Profile profile : profiles) {
-                                if (profile.getId() == resultProfile.getId()) {
-                                    profiles.remove(profile);
-                                    break;
-                                }
-                            }
-                            Profiles.saveProfiles(this, profiles);
-                            for (Condition condition : resultProfile.getConditions()) {
-                                switch (condition.getType()) {
-                                    case Condition.Type.PLACE:
-                                        App.getGeofenceApiHelper().removeGeofence(Long.toString(resultProfile.getId()));
-                                        break;
-                                    case Condition.Type.TIME:
-                                        break;
-                                    case Condition.Type.WIFI:
-                                        break;
-                                }
-                            }
+                            Profile removedProfile = profileApiHelper.getProfileWithId(profile.getId());
+                            profileApiHelper.removeProfile(removedProfile);
+                            if (adapter != null)
+                                adapter.notifyItemRemoved(profileApiHelper.indexOf(profile.getId()));
                             showSnackBar("Profile deleted");
                             break;
                         case "new":
-                            profiles.add(resultProfile);
-                            Profiles.saveProfiles(this, profiles);
-                            for (Condition condition : resultProfile.getConditions()) {
-                                switch (condition.getType()) {
-                                    case Condition.Type.PLACE:
-                                        App.getGeofenceApiHelper().initGeofences();
-                                        break;
-                                    case Condition.Type.TIME:
-                                        break;
-                                    case Condition.Type.WIFI:
-                                        break;
-                                }
-                            }
+                            profileApiHelper.addProfile(profile);
+                            if (adapter != null)
+                                adapter.notifyItemInserted(profileApiHelper.getProfiles().size() - 1);
                             break;
                         case "update":
-                            for (final Profile profile : profiles) {
-                                if (profile.getId() == resultProfile.getId()) {
-                                    PlaceCondition previousPlaceCondition = (PlaceCondition) profile.getCondition(Condition.Type.PLACE);
-                                    LockMode previousLockMode = profile.getLockAction(true).getLockMode();
-                                    profile.update(resultProfile);
-                                    PlaceCondition newPlaceCondition = (PlaceCondition) profile.getCondition(Condition.Type.PLACE);
-                                    if (previousPlaceCondition != null && !previousPlaceCondition.equals(newPlaceCondition)) {
-                                        App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
-                                    }
-                                    /*if (profile.isActive()) {
-                                        for (Action action : profile.getTrueActions()) {
-                                            action.doJob();
-                                        }
-                                    }*/
-                                    if (profile.isActive() && !(previousLockMode.equals(profile.getLockAction(true).getLockMode()))) {
-                                        profile.getLockAction(true).doJob();
-                                    }
-                                    Profiles.saveProfiles(this, profiles);
-                                    if (profile.getPlaceCondition() != null)
-                                        App.getGeofenceApiHelper().initGeofences();
-                                    showSnackBar("Profile updated");
-                                    break;
-                                }
-                            }
+                            profileApiHelper.update(profile);
+                            if (adapter != null)
+                                adapter.notifyItemChanged(profileApiHelper.indexOf(profile.getId()));
                             break;
                         default:
                             break;
                     }
-                    ProfileListFragment fragment = (ProfileListFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
-                    fragment.notifyDataHasChanged();
                 }
                 return;
             default:
