@@ -87,7 +87,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             addChip(Condition.Type.WIFI, false);
         }
         if (chipItems.size() > 0) {
-            addCondition.setVisibility(View.VISIBLE);
+            //addCondition.setVisibility(View.VISIBLE);
             chipsRecyclerView.setVisibility(View.VISIBLE);
         }
         chipAdapter = new ChipAdapter(chipItems, new ChipAdapter.Callbacks() {
@@ -237,7 +237,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         }
         chipItems.add(chip);
         if (notifyAdapter) {
-            addCondition.setVisibility(View.VISIBLE);
+            //addCondition.setVisibility(View.VISIBLE);
             chipsRecyclerView.setVisibility(View.VISIBLE);
             chipAdapter.notifyDataSetChanged();
         }
