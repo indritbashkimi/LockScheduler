@@ -12,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 
 import it.ibashkimi.lockscheduler.App;
@@ -21,6 +20,7 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.domain.TimeCondition;
 import it.ibashkimi.lockscheduler.domain.WifiCondition;
 import it.ibashkimi.lockscheduler.domain.WifiItem;
+import it.ibashkimi.lockscheduler.receivers.AlarmReceiver;
 
 
 public class ProfileApiHelper {
@@ -184,35 +184,13 @@ public class ProfileApiHelper {
                 break;
             case Condition.Type.TIME:
                 TimeCondition timeCondition = (TimeCondition) condition;
-                Calendar c = Calendar.getInstance();
-                int dayOfWeek = c.get(Calendar.DAY_OF_WEEK); // dayOfWeek = (dayOfWeek + 5) % 6;
-                switch (dayOfWeek) {
-                    case Calendar.MONDAY:
-                        dayOfWeek = 0;
-                        break;
-                    case Calendar.TUESDAY:
-                        dayOfWeek = 1;
-                        break;
-                    case Calendar.WEDNESDAY:
-                        dayOfWeek = 2;
-                        break;
-                    case Calendar.THURSDAY:
-                        dayOfWeek = 3;
-                        break;
-                    case Calendar.FRIDAY:
-                        dayOfWeek = 4;
-                        break;
-                    case Calendar.SATURDAY:
-                        dayOfWeek = 5;
-                        break;
-                    case Calendar.SUNDAY:
-                        dayOfWeek = 6;
-                        break;
+                timeCondition.checkNow();
+                long nextAlarm = timeCondition.getNextAlarm();
+                if (nextAlarm != -1) {
+                    AlarmReceiver.setAlarm(App.getInstance(), nextAlarm);
                 }
-                if (timeCondition.getDaysActive()[dayOfWeek]) {
-                    timeCondition.setTrue(true);
+                if (timeCondition.isTrue())
                     profile.notifyConditionChanged(timeCondition);
-                }
                 break;
             case Condition.Type.WIFI:
                 WifiItem wifiItem = null;
@@ -236,6 +214,7 @@ public class ProfileApiHelper {
                 App.getGeofenceApiHelper().removeGeofence(Long.toString(profile.getId()));
                 break;
             case Condition.Type.TIME:
+                AlarmReceiver.cancelAlarm(App.getInstance());
                 break;
             case Condition.Type.WIFI:
                 break;
@@ -253,6 +232,8 @@ public class ProfileApiHelper {
                 onRegisterCondition(profile, newCondition);
                 break;
             case Condition.Type.TIME:
+                onUnregisterCondition(profile, oldCondition);
+                onRegisterCondition(profile, newCondition);
                 break;
             case Condition.Type.WIFI:
                 break;
