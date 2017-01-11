@@ -39,9 +39,9 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSettings = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        mMapStyle = Utils.resolveMapStyle(mSettings.getString("map_style", "hybrid"));
-        String itemLayout = mSettings.getString("item_layout", "0");
-        mItemLayout = resolveLayout(Integer.parseInt(itemLayout));
+        mMapStyle = Utils.resolveMapStyle(mSettings.getInt("map_style", 0));
+        int itemLayout = mSettings.getInt("item_layout", 0);
+        mItemLayout = resolveLayout(itemLayout);
     }
 
     @Override
@@ -114,6 +114,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 return R.layout.item_profile_1;
             case 2:
                 return R.layout.item_profile_2;
+            case 3:
+                return R.layout.item_profile_3;
             default:
                 return R.layout.item_profile_0;
         }
@@ -126,7 +128,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
             mRecyclerView.setAdapter(mAdapter);
         } else if (s.equals("map_style")) {
-            mMapStyle = Utils.resolveMapStyle(sharedPreferences.getString("map_style", "hybrid"));
+            mMapStyle = Utils.resolveMapStyle(sharedPreferences.getInt("map_style", 0));
             mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
             mRecyclerView.setAdapter(mAdapter);
         }

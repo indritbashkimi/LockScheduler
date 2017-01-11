@@ -23,6 +23,10 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto">Auto</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="dialog_action_cancel">@string/cancel</string>
+    <string name="dialog_action_ok">@string/ok</string>
     <string name="pref_header_general">General</string>
     <string name="pref_title_loitering_delay">Loitering delay</string>
     <string name="pref_title_password_expiration">Reset password</string>

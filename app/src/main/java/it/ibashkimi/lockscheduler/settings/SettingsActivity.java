@@ -47,7 +47,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new SettingsFragment())
+                    .replace(R.id.container, new MaterialDialogsSettingsFragment())
                     .commit();
         }
     }
@@ -95,7 +95,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     }
 
 
-    public static class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static class SettingsFragmentCompat extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
         private static final int REQUEST_CODE_ALERT_RINGTONE = 0;
         private SharedPreferences settings;
 
@@ -122,7 +122,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
             }
         }
 
-        private static final String TAG = "SettingsFragment";
+        private static final String TAG = "SettingsFragmentCompat";
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             DialogFragment dialogFragment = null;

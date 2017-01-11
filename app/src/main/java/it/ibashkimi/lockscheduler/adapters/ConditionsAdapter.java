@@ -168,7 +168,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
             circleColor = ThemeUtils.getColorFromAttribute(itemView.getContext(), R.attr.colorAccent);
             fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
             mapType = Utils.resolveMapStyle(itemView.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                    .getString("map_style", "hybrid"));
+                    .getInt("map_style", 0));
             mapView = (MapView) itemView.findViewById(R.id.mapView);
             mapCover = itemView.findViewById(R.id.mapCover);
         }
