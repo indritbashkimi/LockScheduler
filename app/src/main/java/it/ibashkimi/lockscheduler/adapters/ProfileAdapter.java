@@ -109,7 +109,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         if (holder.viewType == VIEW_TYPE_SPACE) {
             return;
         }
-        setAnimation(holder.rootView);
+        //setAnimation(holder.rootView);
         final Profile profile = mProfiles.get(position);
 
         final PopupMenu popup = new PopupMenu(mContext, holder.settingsView);

@@ -2,29 +2,25 @@ package it.ibashkimi.lockscheduler;
 
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.security.InvalidParameterException;
 
@@ -65,7 +61,7 @@ public class AboutActivity extends BaseActivity {
                 .beginTransaction()
                 .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
                 .replace(android.R.id.content, new LicencesFragment(), "licences_fragment_tag")
-                //.addToBackStack("licence")
+                //.addToBackStack("license")
                 .commit();
         licencesOpen = true;
     }
@@ -118,7 +114,7 @@ public class AboutActivity extends BaseActivity {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_licences, container, false);
+            return inflater.inflate(R.layout.fragment_licenses, container, false);
         }
 
         @Override
@@ -153,46 +149,22 @@ public class AboutActivity extends BaseActivity {
 
         private void populate() {
             libs = new Library[]{
-                    new Library("Android support libraries",
-                            "The Android support libraries offer a number of features that are not built into the framework.",
-                            "https://developer.android.com/topic/libraries/support-library",
-                            "https://developer.android.com/images/android_icon_125.png",
-                            "Licence bla bla"),
-                    new Library("Material Dialogs",
-                            "The Android support libraries offer a number of features that are not built into the framework.",
-                            "https://developer.android.com/topic/libraries/support-library",
-                            "https://developer.android.com/images/android_icon_125.png",
-                            "Licence bla bla"),
-                    new Library("ButterKnife",
-                            "Bind Android views and callbacks to fields and methods.",
-                            "http://jakewharton.github.io/butterknife/",
-                            "https://avatars.githubusercontent.com/u/66577",
-                            "Licence bla bla"),
-                    new Library("Google Play Services",
-                            "Skip the HTML, Bypass takes markdown and renders it directly.",
-                            "https://github.com/Uncodin/bypass",
-                            "https://avatars.githubusercontent.com/u/1072254",
-                            GoogleApiAvailability.getInstance().getOpenSourceSoftwareLicenseInfo(host)),
-                    new Library("Glide",
-                            "An image loading and caching library for Android focused on smooth scrolling.",
-                            "https://github.com/bumptech/glide",
-                            "https://avatars.githubusercontent.com/u/423539",
-                            "Licence bla bla"),
-                    new Library("JSoup",
-                            "Java HTML Parser, with best of DOM, CSS, and jquery.",
-                            "https://github.com/jhy/jsoup/",
-                            "https://avatars.githubusercontent.com/u/76934",
-                            "Licence bla bla"),
-                    new Library("OkHttp",
-                            "An HTTP & HTTP/2 client for Android and Java applications.",
-                            "http://square.github.io/okhttp/",
-                            "https://avatars.githubusercontent.com/u/82592",
-                            "Licence bla bla"),
-                    new Library("Retrofit",
-                            "A type-safe HTTP client for Android and Java.",
-                            "http://square.github.io/retrofit/",
-                            "https://avatars.githubusercontent.com/u/82592",
-                            "Licence bla bla")};
+                    new Library(R.string.android_support_libraries_name,
+                            R.string.android_support_libraries_link,
+                            R.string.android_support_libraries_license,
+                            R.string.apache_license_name,
+                            R.string.apache_license_link),
+                    new Library(R.string.material_dialogs_name,
+                            R.string.material_dialogs_link,
+                            R.string.material_dialogs_license,
+                            R.string.mit_license_name,
+                            R.string.mit_license_link),
+                    new Library(R.string.material_intro_name,
+                            R.string.material_intro_link,
+                            R.string.material_intro_license,
+                            R.string.apache_license_name,
+                            R.string.apache_license_link)
+            };
         }
 
         @Override
@@ -211,19 +183,6 @@ public class AboutActivity extends BaseActivity {
         private LibraryHolder createLibraryHolder(ViewGroup parent) {
             final LibraryHolder holder = new LibraryHolder(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.about_library, parent, false));
-            View.OnClickListener clickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    if (position == RecyclerView.NO_POSITION) return;
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    customTabsIntent.launchUrl(host, Uri.parse(libs[position - 1].link));
-                }
-            };
-            holder.itemView.setOnClickListener(clickListener);
-            holder.link.setOnClickListener(clickListener);
             return holder;
         }
 
@@ -246,19 +205,33 @@ public class AboutActivity extends BaseActivity {
 
         private void bindLibrary(final LibraryHolder holder, final Library lib) {
             holder.name.setText(lib.name);
-            Log.d("AboutActivity", "bindLibrary: " + lib.licence);
-            holder.licence.setOnClickListener(new View.OnClickListener() {
+            holder.link.setText(lib.link);
+            holder.licence.setText(lib.license);
+
+            View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new AlertDialog.Builder(host)
-                            .setTitle("Licence")
-                            .setMessage(lib.licence)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // continue with delete
-                                }
-                            })
-                            .show();
+                    int position = holder.getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) return;
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].link)));
+                }
+            };
+            holder.itemView.setOnClickListener(clickListener);
+            holder.website.setOnClickListener(clickListener);
+            holder.link.setOnClickListener(clickListener);
+            holder.licenseLink.setText(lib.licenseName);
+            holder.licenseLink.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = holder.getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) return;
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
+                    CustomTabsIntent customTabsIntent = builder.build();
+                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].licenseLink)));
                 }
             });
         }
@@ -266,19 +239,20 @@ public class AboutActivity extends BaseActivity {
 
     static class LibraryHolder extends RecyclerView.ViewHolder {
 
-        ImageView image;
         TextView name;
-        TextView description;
-        Button link;
-        Button licence;
+        TextView link;
+        TextView licence;
+        Button licenseLink;
+        Button website;
 
         LibraryHolder(View itemView) {
             super(itemView);
-            //image = (ImageView) itemView.findViewById(R.id.library_image);
             name = (TextView) itemView.findViewById(R.id.library_name);
-            //description = (TextView) itemView.findViewById(R.id.library_description);
-            link = (Button) itemView.findViewById(R.id.library_link);
-            licence = (Button) itemView.findViewById(R.id.library_licence);
+            link = (TextView) itemView.findViewById(R.id.library_link);
+            link.setMovementMethod(LinkMovementMethod.getInstance());
+            licence = (TextView) itemView.findViewById(R.id.library_license);
+            licenseLink = (Button) itemView.findViewById(R.id.library_full_license);
+            website = (Button) itemView.findViewById(R.id.library_website);
         }
     }
 
@@ -295,18 +269,21 @@ public class AboutActivity extends BaseActivity {
      * Models an open source library we want to credit
      */
     private static class Library {
-        final String name;
-        final String link;
-        final String description;
-        final String imageUrl;
-        final String licence;
+        @StringRes
+        final int name;
+        @StringRes
+        final int link;
+        @StringRes
+        final int license;
+        final int licenseName;
+        final int licenseLink;
 
-        Library(String name, String description, String link, String imageUrl, String licence) {
+        Library(@StringRes int name, @StringRes int link, @StringRes int license, int licenseName, int licenseLink) {
             this.name = name;
-            this.description = description;
             this.link = link;
-            this.imageUrl = imageUrl;
-            this.licence = licence;
+            this.license = license;
+            this.licenseName = licenseName;
+            this.licenseLink = licenseLink;
         }
     }
 

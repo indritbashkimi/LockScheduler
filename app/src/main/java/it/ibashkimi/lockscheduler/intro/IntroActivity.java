@@ -21,8 +21,8 @@ public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.
                 .title(R.string.app_name)
                 .description(R.string.app_description)
                 .image(R.mipmap.ic_launcher)
-                .background(R.color.colorPrimary)
-                .backgroundDark(R.color.colorPrimaryDark)
+                .background(R.color.indigo_500)
+                .backgroundDark(R.color.indigo_700)
                 .build());
 
         final AdminApiHelper adminApiHelper = new AdminApiHelper(IntroActivity.this);
@@ -31,8 +31,8 @@ public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.
                     .title(R.string.app_name)
                     .description(R.string.device_admin_permission_rationale)
                     .image(android.R.drawable.ic_lock_idle_lock)
-                    .background(R.color.colorAccent)
-                    .backgroundDark(R.color.colorPrimaryDark)
+                    .background(R.color.pink_a400)
+                    .backgroundDark(R.color.indigo_700)
                     .buttonCtaClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -48,8 +48,8 @@ public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.
                 .title(R.string.app_name)
                 .description(R.string.location_permission_rationale)
                 .image(android.R.drawable.ic_menu_mylocation)
-                .background(R.color.colorPrimary)
-                .backgroundDark(R.color.colorAccent)
+                .background(R.color.indigo_500)
+                .backgroundDark(R.color.pink_a400)
                 .permission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .build());
 
