@@ -79,7 +79,6 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
         View rootView;
         TextView title;
-        View divider;
         ImageView cancel;
 
         public ViewHolder(View itemView) {
@@ -88,7 +87,6 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
             title = (TextView) itemView.findViewById(R.id.title);
             cancel = (ImageView) itemView.findViewById(R.id.cancel);
             cancel.setColorFilter(ThemeUtils.getColorFromAttribute(itemView.getContext(), android.R.attr.textColorPrimary));
-            divider = itemView.findViewById(R.id.divider);
         }
     }
 }

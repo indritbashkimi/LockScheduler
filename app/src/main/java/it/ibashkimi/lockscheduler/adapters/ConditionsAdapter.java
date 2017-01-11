@@ -3,6 +3,7 @@ package it.ibashkimi.lockscheduler.adapters;
 import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -369,6 +370,9 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
             }
 
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                    LinearLayoutManager.VERTICAL);
+            recyclerView.addItemDecoration(dividerItemDecoration);
             recyclerView.setAdapter(new WifiAdapter(conditionWifiItems, true, new WifiAdapter.Callbacks() {
                 @Override
                 public void onWifiItemClicked(WifiItem item) {
@@ -385,6 +389,9 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
             }));
 
             availableRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+            DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(availableRecyclerView.getContext(),
+                    LinearLayoutManager.VERTICAL);
+            availableRecyclerView.addItemDecoration(dividerItemDecoration2);
             availableRecyclerView.setAdapter(new WifiAdapter(availableWifiItems, false, new WifiAdapter.Callbacks() {
                 @Override
                 public void onWifiItemClicked(WifiItem item) {

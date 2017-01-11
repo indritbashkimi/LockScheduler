@@ -35,14 +35,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/enterToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="56dp"
                 android:background="@color/transparent"
                 app:title="Conditions true" />
 
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/lock_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="56dp"
                 android:layout_gravity="start"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp" />
@@ -76,14 +76,14 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/exitToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="56dp"
                 android:background="@color/transparent"
                 app:title="Conditions false" />
 
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/otherwise_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="56dp"
                 android:layout_gravity="start"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp" />

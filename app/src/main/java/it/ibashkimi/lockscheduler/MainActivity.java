@@ -1,7 +1,6 @@
 package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -203,11 +202,11 @@ public class MainActivity extends BaseActivity {
                 startActivityForResult(intent, 0);
                 return true;
             case R.id.action_feedback:
-                sendFeedback(this);
+                Utils.sendFeedback(this);
                 return true;
             case R.id.action_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
-                startActivity(aboutIntent);
+                startActivityForResult(aboutIntent, 0);
                 return true;
         }
 
@@ -271,19 +270,6 @@ public class MainActivity extends BaseActivity {
     private void showSnackBar(String msg) {
         View rootView = findViewById(R.id.rootView);
         Snackbar.make(rootView, msg, Snackbar.LENGTH_SHORT).show();
-    }
-
-    public static void sendFeedback(Context context) {
-        // http://stackoverflow.com/a/16217921
-        // https://developer.android.com/guide/components/intents-common.html#Email
-        String address = context.getString(R.string.developer_email);
-        String subject = context.getString(R.string.feedback_subject);
-
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + address));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-
-        String chooserTitle = context.getString(R.string.feedback_chooser_title);
-        context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
     }
 
     public static class PermissionDeniedFragment extends Fragment {

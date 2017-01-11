@@ -47,11 +47,7 @@
         <activity android:name=".TimeActivity" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/title_about"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.ibashkimi.lockscheduler.MainActivity" />
+            android:label="@string/title_about">
         </activity>
 
         <receiver

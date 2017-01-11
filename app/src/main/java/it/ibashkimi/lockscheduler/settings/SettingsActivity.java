@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.XmlRes;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.EditTextPreference;
@@ -20,7 +19,10 @@ import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import it.ibashkimi.lockscheduler.AboutActivity;
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
@@ -65,8 +67,26 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     }
 
     @Override
-    public void onBackPressed() {
-        NavUtils.navigateUpFromSameTask(this);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_feedback:
+                Utils.sendFeedback(this);
+                return true;
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivityForResult(aboutIntent, 0);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

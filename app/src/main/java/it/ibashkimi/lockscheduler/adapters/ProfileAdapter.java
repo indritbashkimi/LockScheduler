@@ -76,6 +76,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.mFillColor = ColorUtils.setAlphaComponent(mCircleColor, 0x25);
     }
 
+    public void setData(List<Profile> data) {
+        this.mProfiles = data;
+        notifyDataSetChanged();
+    }
+
+    public List<Profile> getData() {
+        return mProfiles;
+    }
+
     @Override
     public int getItemViewType(int position) {
         return position == mProfiles.size() ? VIEW_TYPE_SPACE : VIEW_TYPE_PROFILE;
@@ -100,7 +109,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         if (holder.viewType == VIEW_TYPE_SPACE) {
             return;
         }
-
+        setAnimation(holder.rootView);
         final Profile profile = mProfiles.get(position);
 
         final PopupMenu popup = new PopupMenu(mContext, holder.settingsView);
@@ -200,12 +209,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             holder.mapView.onPause();
             holder.mapView.onStop();
             holder.mapView.onDestroy();
+            holder.mapCover.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public int getItemCount() {
         return mProfiles.size() + 1;
+    }
+
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+        viewToAnimate.startAnimation(animation);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

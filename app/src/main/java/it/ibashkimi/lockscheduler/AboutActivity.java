@@ -3,7 +3,6 @@ package it.ibashkimi.lockscheduler;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -51,18 +51,30 @@ public class AboutActivity extends BaseActivity {
             super.onBackPressed();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void showLicenceFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
-                //.setCustomAnimations(android.R.anim.)
+                .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
                 .replace(android.R.id.content, new LicencesFragment(), "licences_fragment_tag")
+                //.addToBackStack("licence")
                 .commit();
         licencesOpen = true;
     }
 
     public void closeLicenceFragment() {
+        //getFragmentManager().popBackStackImmediate();
         getSupportFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.anim.push_bottom_in, R.anim.push_bottom_out)
                 .replace(android.R.id.content, new AboutFragment(), "about_fragment_tag")
                 .commit();
         licencesOpen = false;
@@ -96,7 +108,7 @@ public class AboutActivity extends BaseActivity {
             view.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MainActivity.sendFeedback(getContext());
+                    Utils.sendFeedback(getContext());
                 }
             });
         }
@@ -142,6 +154,11 @@ public class AboutActivity extends BaseActivity {
         private void populate() {
             libs = new Library[]{
                     new Library("Android support libraries",
+                            "The Android support libraries offer a number of features that are not built into the framework.",
+                            "https://developer.android.com/topic/libraries/support-library",
+                            "https://developer.android.com/images/android_icon_125.png",
+                            "Licence bla bla"),
+                    new Library("Material Dialogs",
                             "The Android support libraries offer a number of features that are not built into the framework.",
                             "https://developer.android.com/topic/libraries/support-library",
                             "https://developer.android.com/images/android_icon_125.png",
