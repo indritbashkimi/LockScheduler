@@ -54,6 +54,11 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     }
 
     @Override
+    public void onBackPressed() {
+        onSupportNavigateUp();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
