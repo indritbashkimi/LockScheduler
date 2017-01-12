@@ -23,13 +23,6 @@
             android:background="@color/transparent"
             app:title="Wifi">
 
-            <Spinner
-                android:id="@+id/spinner_nav"
-                android:gravity="end"
-                android:prompt="@string/spinner_prompt_policy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
         </android.support.v7.widget.Toolbar>
 
         <android.support.v7.widget.RecyclerView
