@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="uninstall_title">How to uninstall</string>
+    <string name="uninstall_content">Go to Setting -> Security -> Device Manager and deselect Lock Scheduler from the list. Than uninstall.</string>
+    <string name="forgot_password_title">I forgot my PIN</string>
+    <string name="forgot_password_content">Lock Manager doesn\'t save your pin or password. There is nothing we can do to unlock your phone.</string>
+    <string name="device_admin_title">Why the app need Device Admin permission</string>
+    <string name="device_admin_content">Lock Scheduler needs Device Admin permission in order to change the password, pin or remove them as it is specified in the actions.</string>
+    <string name="location_permission_title">Why Lock Scheduler needs location</string>
+    <string name="location_permission_content">Lock Scheduler needs location permission for the place condition.</string>
+    <string name="access_to_wifi_title">Why Lock Manager needs access to WiFi info</string>
+    <string name="access_to_wifi_content">Lock Manager needs access to WiFi information for the WiFi condition.</string>
+</resources>

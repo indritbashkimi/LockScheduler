@@ -8,6 +8,7 @@
     android:layout_marginLeft="4dp"
     android:layout_marginRight="4dp"
     android:layout_marginTop="4dp"
+    card:cardBackgroundColor="?attr/colorPrimary"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
     card:cardCornerRadius="2dp"

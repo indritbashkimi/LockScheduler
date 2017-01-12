@@ -138,6 +138,10 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 return R.layout.item_profile_2;
             case 3:
                 return R.layout.item_profile_3;
+            case 4:
+                return R.layout.item_profile_4;
+            case 5:
+                return R.layout.item_profile_5;
             default:
                 return R.layout.item_profile_0;
         }

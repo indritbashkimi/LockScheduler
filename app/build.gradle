@@ -49,13 +49,13 @@ dependencies {
     compile "com.android.support:preference-v7:${supportLibVersion}"
     compile "com.android.support:preference-v14:${supportLibVersion}"
     compile "com.android.support:customtabs:${supportLibVersion}"
-    compile "com.android.support.constraint:constraint-layout:1.0.0-beta4"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-maps:${playServicesVersion}"
     compile "com.google.android.gms:play-services-places:${playServicesVersion}"
     compile "com.google.android.gms:play-services-location:${playServicesVersion}"
-    compile "com.google.maps.android:android-maps-utils:0.4"
-    compile "com.heinrichreimersoftware:material-intro:1.6"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.google.maps.android:android-maps-utils:0.4'
+    compile 'com.heinrichreimersoftware:material-intro:1.6'
     compile 'com.afollestad.material-dialogs:core:0.9.2.3'
     testCompile 'junit:junit:4.12'
 }

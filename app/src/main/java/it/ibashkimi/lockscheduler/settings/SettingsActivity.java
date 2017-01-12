@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import it.ibashkimi.lockscheduler.AboutActivity;
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;

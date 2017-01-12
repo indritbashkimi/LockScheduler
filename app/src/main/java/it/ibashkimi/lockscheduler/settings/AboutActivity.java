@@ -1,4 +1,4 @@
-package it.ibashkimi.lockscheduler;
+package it.ibashkimi.lockscheduler.settings;
 
 
 import android.app.Activity;
@@ -24,6 +24,9 @@ import android.widget.TextView;
 
 import java.security.InvalidParameterException;
 
+import it.ibashkimi.lockscheduler.BaseActivity;
+import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 public class AboutActivity extends BaseActivity {
@@ -33,19 +36,32 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, new AboutFragment(), "about_fragment_tag")
-                .commit();
+        if (savedInstanceState == null) {
+            String action = getIntent().getAction();
+            if (action != null && action.equals("help")) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, HelpFragment.newInstance(true), "help_fragment_tag")
+                        .addToBackStack("help_fragment_tag")
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(android.R.id.content, new AboutFragment(), "about_fragment_tag")
+                        .addToBackStack("about_fragment_tag")
+                        .commit();
+            }
+        }
+
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         if (licencesOpen)
             closeLicenceFragment();
         else
             super.onBackPressed();
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -61,9 +77,18 @@ public class AboutActivity extends BaseActivity {
                 .beginTransaction()
                 .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
                 .replace(android.R.id.content, new LicencesFragment(), "licences_fragment_tag")
-                //.addToBackStack("license")
+                .addToBackStack("license")
                 .commit();
         licencesOpen = true;
+    }
+
+    public void showHelpFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
+                .replace(android.R.id.content, new HelpFragment(), "help_fragment_tag")
+                .addToBackStack("help_fragment_tag")
+                .commit();
     }
 
     public void closeLicenceFragment() {
@@ -105,6 +130,13 @@ public class AboutActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Utils.sendFeedback(getContext());
+                }
+            });
+
+            view.findViewById(R.id.help).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((AboutActivity) getActivity()).showHelpFragment();
                 }
             });
         }

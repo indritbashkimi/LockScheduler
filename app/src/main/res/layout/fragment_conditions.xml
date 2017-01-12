@@ -8,14 +8,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="16sp"
         android:gravity="center_vertical"
         android:text="Conditions"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textColor="?android:attr/textColorPrimary" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/conditionsRecyclerView"

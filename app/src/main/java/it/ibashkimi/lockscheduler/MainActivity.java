@@ -30,6 +30,7 @@ import it.ibashkimi.lockscheduler.adapters.ProfileAdapter;
 import it.ibashkimi.lockscheduler.api.ProfileApiHelper;
 import it.ibashkimi.lockscheduler.domain.Profile;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
+import it.ibashkimi.lockscheduler.settings.AboutActivity;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 
 
@@ -199,10 +200,12 @@ public class MainActivity extends BaseActivity {
             case R.id.action_settings:
                 Intent intent = new Intent();
                 intent.setClass(this, SettingsActivity.class);
-                startActivityForResult(intent, 0);
+                startActivity(intent);
                 return true;
             case R.id.action_feedback:
-                Utils.sendFeedback(this);
+                Intent helpIntent = new Intent(this, AboutActivity.class);
+                helpIntent.setAction("help");
+                startActivityForResult(helpIntent, 0);
                 return true;
             case R.id.action_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
