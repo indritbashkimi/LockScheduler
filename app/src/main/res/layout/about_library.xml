@@ -13,10 +13,7 @@
         android:id="@+id/lib_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:listPreferredItemHeight"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:minHeight="?android:listPreferredItemHeight">
 
         <TextView
             android:id="@+id/library_name"
@@ -24,7 +21,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|start"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             tools:text="Android Support Library" />
 
@@ -33,33 +33,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/library_name"
-            android:textColor="?attr/colorAccent"
+            android:gravity="start"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="?android:attr/textColorSecondary"
             tools:text="www.google.com" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/library_website"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/library_link"
+            android:layout_toEndOf="@+id/library_full_license"
+            android:padding="8dp"
+            android:text="@string/website" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/library_full_license"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/library_link"
+            android:padding="16dp"
+            tools:text="Apache 2.0" />
 
         <TextView
             android:id="@+id/library_license"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/library_link"
-            android:paddingTop="16dp" />
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/library_website"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/library_license"
-            android:text="@string/website" />
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/library_full_license"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/library_license"
-            android:layout_toStartOf="@+id/library_website"
-            tools:text="Apache 2.0" />
+            android:layout_below="@id/library_website"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            tools:text="@string/material_dialogs_license" />
 
     </RelativeLayout>
 
