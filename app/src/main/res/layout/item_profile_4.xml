@@ -26,6 +26,7 @@
             android:orientation="horizontal">
 
             <FrameLayout
+                android:id="@+id/map_container"
                 android:layout_width="96dp"
                 android:layout_height="96dp">
 

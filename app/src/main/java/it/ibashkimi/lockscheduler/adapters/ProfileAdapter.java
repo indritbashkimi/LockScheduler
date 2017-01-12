@@ -199,6 +199,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                     });
                 }
             });
+        } else {
+            holder.mapContainer.setVisibility(View.GONE);
         }
     }
 
@@ -237,6 +239,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         View settingsView;
         View mapCover;
         boolean mapActive;
+        View mapContainer;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -249,6 +252,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
                 this.settingsView = itemView.findViewById(R.id.options_menu);
                 this.mapCover = itemView.findViewById(R.id.mapCover);
+                this.mapContainer = itemView.findViewById(R.id.map_container);
             }
         }
     }
