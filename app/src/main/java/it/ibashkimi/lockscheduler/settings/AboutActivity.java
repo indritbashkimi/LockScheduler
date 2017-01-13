@@ -1,67 +1,45 @@
 package it.ibashkimi.lockscheduler.settings;
 
-
-import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-
-import java.security.InvalidParameterException;
 
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.Utils;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+
 
 public class AboutActivity extends BaseActivity {
 
-    public boolean licencesOpen;
+    public static final String ACTION_HELP = "it.ibashkimi.lockscheduler.settings.help";
+    public static final String ACTION_ABOUT = "it.ibashkimi.lockscheduler.settings.about";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            String action = getIntent().getAction();
-            if (action != null && action.equals("help")) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(android.R.id.content, HelpFragment.newInstance(true), "help_fragment_tag")
-                        .addToBackStack("help_fragment_tag")
-                        .commit();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            if (getIntent().getAction() != null && getIntent().getAction().equals(ACTION_HELP)) {
+                fragmentTransaction
+                        .replace(android.R.id.content, getHelpFragment(), "help_fragment_tag");
             } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(android.R.id.content, new AboutFragment(), "about_fragment_tag")
-                        .addToBackStack("about_fragment_tag")
-                        .commit();
+                fragmentTransaction
+                        .replace(android.R.id.content, getAboutFragment(), "about_fragment_tag");
             }
+            fragmentTransaction.commit();
         }
-
     }
-
-    /*@Override
-    public void onBackPressed() {
-        if (licencesOpen)
-            closeLicenceFragment();
-        else
-            super.onBackPressed();
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -75,30 +53,56 @@ public class AboutActivity extends BaseActivity {
     public void showLicenceFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
-                .replace(android.R.id.content, new LicencesFragment(), "licences_fragment_tag")
-                .addToBackStack("license")
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(android.R.id.content, getLicensesFragment(), "licences_fragment_tag")
+                .addToBackStack("licenses")
                 .commit();
-        licencesOpen = true;
     }
 
     public void showHelpFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.push_top_in, R.anim.push_top_out)
-                .replace(android.R.id.content, new HelpFragment(), "help_fragment_tag")
-                .addToBackStack("help_fragment_tag")
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .replace(android.R.id.content, getHelpFragment(), "help_fragment_tag")
+                .addToBackStack("help")
                 .commit();
     }
 
-    public void closeLicenceFragment() {
-        //getFragmentManager().popBackStackImmediate();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.push_bottom_in, R.anim.push_bottom_out)
-                .replace(android.R.id.content, new AboutFragment(), "about_fragment_tag")
-                .commit();
-        licencesOpen = false;
+    public AboutFragment getAboutFragment() {
+        AboutFragment fragment = (AboutFragment) getSupportFragmentManager().findFragmentByTag("about_fragment_tag");
+        if (fragment == null) {
+            fragment = new AboutFragment();
+        }
+        return fragment;
+    }
+
+    public HelpFragment getHelpFragment() {
+        HelpFragment fragment = (HelpFragment) getSupportFragmentManager().findFragmentByTag("help_fragment_tag");
+        if (fragment == null) {
+            fragment = new HelpFragment();
+        }
+        return fragment;
+    }
+
+    public LicensesFragment getLicensesFragment() {
+        LicensesFragment fragment = (LicensesFragment) getSupportFragmentManager().findFragmentByTag("licenses_fragment_tag");
+        if (fragment == null) {
+            fragment = new LicensesFragment();
+        }
+        return fragment;
+    }
+
+    public static void sendFeedback(Context context) {
+        // http://stackoverflow.com/a/16217921
+        // https://developer.android.com/guide/components/intents-common.html#Email
+        String address = context.getString(R.string.developer_email);
+        String subject = context.getString(R.string.feedback_subject);
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + address));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+
+        String chooserTitle = context.getString(R.string.feedback_chooser_title);
+        context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
     }
 
     public static class AboutFragment extends Fragment {
@@ -129,7 +133,7 @@ public class AboutActivity extends BaseActivity {
             view.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.sendFeedback(getContext());
+                    AboutActivity.sendFeedback(getContext());
                 }
             });
 
@@ -141,182 +145,4 @@ public class AboutActivity extends BaseActivity {
             });
         }
     }
-
-    public static class LicencesFragment extends Fragment {
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_licenses, container, false);
-        }
-
-        @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            //toolbar.setTitle("Licences");
-            toolbar.findViewById(R.id.cancel_view).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((AboutActivity) getActivity()).closeLicenceFragment();
-                }
-            });
-            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            recyclerView.setAdapter(new LibraryAdapter(getActivity()));
-        }
-    }
-
-    private static class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        private static final int VIEW_TYPE_INTRO = 0;
-        private static final int VIEW_TYPE_LIBRARY = 1;
-        Library[] libs;
-
-        //private final CircleTransform circleCrop;
-        final Activity host;
-
-        LibraryAdapter(Activity host) {
-            this.host = host;
-            populate();
-        }
-
-        private void populate() {
-            libs = new Library[]{
-                    new Library(R.string.android_support_libraries_name,
-                            R.string.android_support_libraries_link,
-                            R.string.android_support_libraries_license,
-                            R.string.apache_license_name,
-                            R.string.apache_license_link),
-                    new Library(R.string.material_dialogs_name,
-                            R.string.material_dialogs_link,
-                            R.string.material_dialogs_license,
-                            R.string.mit_license_name,
-                            R.string.mit_license_link),
-                    new Library(R.string.material_intro_name,
-                            R.string.material_intro_link,
-                            R.string.material_intro_license,
-                            R.string.apache_license_name,
-                            R.string.apache_license_link)
-            };
-        }
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            switch (viewType) {
-                case VIEW_TYPE_INTRO:
-                    return new LibraryIntroHolder(LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.about_lib_intro, parent, false));
-                case VIEW_TYPE_LIBRARY:
-                    return createLibraryHolder(parent);
-            }
-            throw new InvalidParameterException();
-        }
-
-        @NonNull
-        private LibraryHolder createLibraryHolder(ViewGroup parent) {
-            final LibraryHolder holder = new LibraryHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.about_library, parent, false));
-            return holder;
-        }
-
-        @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-            if (getItemViewType(position) == VIEW_TYPE_LIBRARY) {
-                bindLibrary((LibraryHolder) holder, libs[position - 1]); // adjust for intro
-            }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return position == 0 ? VIEW_TYPE_INTRO : VIEW_TYPE_LIBRARY;
-        }
-
-        @Override
-        public int getItemCount() {
-            return libs.length + 1; // + 1 for the static intro view
-        }
-
-        private void bindLibrary(final LibraryHolder holder, final Library lib) {
-            holder.name.setText(lib.name);
-            holder.link.setText(lib.link);
-            holder.licence.setText(lib.license);
-
-            View.OnClickListener clickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    if (position == RecyclerView.NO_POSITION) return;
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].link)));
-                }
-            };
-            holder.itemView.setOnClickListener(clickListener);
-            holder.website.setOnClickListener(clickListener);
-            holder.link.setOnClickListener(clickListener);
-            holder.licenseLink.setText(lib.licenseName);
-            holder.licenseLink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    if (position == RecyclerView.NO_POSITION) return;
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].licenseLink)));
-                }
-            });
-        }
-    }
-
-    static class LibraryHolder extends RecyclerView.ViewHolder {
-
-        TextView name;
-        TextView link;
-        TextView licence;
-        Button licenseLink;
-        Button website;
-
-        LibraryHolder(View itemView) {
-            super(itemView);
-            name = (TextView) itemView.findViewById(R.id.library_name);
-            link = (TextView) itemView.findViewById(R.id.library_link);
-            link.setMovementMethod(LinkMovementMethod.getInstance());
-            licence = (TextView) itemView.findViewById(R.id.library_license);
-            licenseLink = (Button) itemView.findViewById(R.id.library_full_license);
-            website = (Button) itemView.findViewById(R.id.library_website);
-        }
-    }
-
-    static class LibraryIntroHolder extends RecyclerView.ViewHolder {
-        TextView intro;
-
-        LibraryIntroHolder(View itemView) {
-            super(itemView);
-            intro = (TextView) itemView;
-        }
-    }
-
-    /**
-     * Models an open source library we want to credit
-     */
-    private static class Library {
-        @StringRes
-        final int name;
-        @StringRes
-        final int link;
-        @StringRes
-        final int license;
-        final int licenseName;
-        final int licenseLink;
-
-        Library(@StringRes int name, @StringRes int link, @StringRes int license, int licenseName, int licenseLink) {
-            this.name = name;
-            this.link = link;
-            this.license = license;
-            this.licenseName = licenseName;
-            this.licenseLink = licenseLink;
-        }
-    }
-
 }

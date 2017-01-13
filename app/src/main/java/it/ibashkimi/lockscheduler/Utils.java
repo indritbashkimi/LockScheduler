@@ -1,8 +1,6 @@
 package it.ibashkimi.lockscheduler;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.util.TypedValue;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -34,19 +32,6 @@ public class Utils {
             default:
                 return GoogleMap.MAP_TYPE_HYBRID;
         }
-    }
-
-    public static void sendFeedback(Context context) {
-        // http://stackoverflow.com/a/16217921
-        // https://developer.android.com/guide/components/intents-common.html#Email
-        String address = context.getString(R.string.developer_email);
-        String subject = context.getString(R.string.feedback_subject);
-
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + address));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-
-        String chooserTitle = context.getString(R.string.feedback_chooser_title);
-        context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
     }
 
     public static float dpToPx(Context context, int px) {

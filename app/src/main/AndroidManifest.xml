@@ -14,8 +14,8 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:installLocation="internalOnly"
         android:icon="@mipmap/ic_launcher"
+        android:installLocation="internalOnly"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.DayNight">
@@ -48,7 +48,7 @@
         <activity android:name=".TimeActivity" />
         <activity
             android:name=".settings.AboutActivity"
-            android:label="@string/title_about"></activity>
+            android:label="@string/title_about" />
 
         <receiver
             android:name=".LockSchedulerAdmin"
@@ -97,7 +97,7 @@
                 android:value="it.ibashkimi.lockscheduler.MainActivity" />
         </activity>
         <activity android:name=".intro.IntroActivity" />
-        <activity android:name=".GoPremiumActivity"></activity>
+        <activity android:name=".GoPremiumActivity" />
     </application>
 
 </manifest>

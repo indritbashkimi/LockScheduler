@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="it.ibashkimi.lockscheduler.MainActivity">
     <item
-        android:id="@+id/action_feedback"
+        android:id="@+id/action_help"
         android:orderInCategory="200"
-        android:title="@string/action_feedback"
+        android:title="@string/action_help"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"

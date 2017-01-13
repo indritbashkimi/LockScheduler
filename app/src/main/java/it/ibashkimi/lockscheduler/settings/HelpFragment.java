@@ -16,26 +16,12 @@ import it.ibashkimi.lockscheduler.adapters.HelpAdapter.HelpItem;
 
 public class HelpFragment extends Fragment {
 
-    private HelpAdapter.HelpItem[] items;
     private HelpAdapter adapter;
-    private boolean exitOnClose;
 
-    public static HelpFragment newInstance(boolean exitOnClose) {
-        HelpFragment helpFragment = new HelpFragment();
-        Bundle args = new Bundle();
-        args.putBoolean("exit_on_close", exitOnClose);
-        helpFragment.setArguments(args);
-        return helpFragment;
-    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey("exit_on_close")) {
-            exitOnClose = getArguments().getBoolean("exit_on_close", false);
-        } else {
-            exitOnClose = false;
-        }
-        items = new HelpItem[]{
+        HelpItem[] items = new HelpItem[]{
                 new HelpItem(R.string.uninstall_title, R.string.uninstall_content),
                 new HelpItem(R.string.forgot_password_title, R.string.forgot_password_content),
                 new HelpItem(R.string.device_admin_title, R.string.device_admin_content),
@@ -52,11 +38,7 @@ public class HelpFragment extends Fragment {
         rootView.findViewById(R.id.cancel_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (exitOnClose) {
-                    ((AboutActivity) getActivity()).finish();
-                } else {
-                    ((AboutActivity) getActivity()).getSupportFragmentManager().popBackStack();
-                }
+                getActivity().onBackPressed();
             }
         });
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);

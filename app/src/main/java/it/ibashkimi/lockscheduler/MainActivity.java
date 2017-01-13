@@ -202,14 +202,14 @@ public class MainActivity extends BaseActivity {
                 intent.setClass(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_feedback:
+            case R.id.action_help:
                 Intent helpIntent = new Intent(this, AboutActivity.class);
-                helpIntent.setAction("help");
-                startActivityForResult(helpIntent, 0);
+                helpIntent.setAction(AboutActivity.ACTION_HELP);
+                startActivity(helpIntent);
                 return true;
             case R.id.action_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
-                startActivityForResult(aboutIntent, 0);
+                startActivity(aboutIntent);
                 return true;
         }
 
