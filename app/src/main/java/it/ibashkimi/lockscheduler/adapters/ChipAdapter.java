@@ -30,7 +30,7 @@ public class ChipAdapter extends RecyclerView.Adapter<ChipAdapter.ChipViewHolder
     public ChipViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.
                 from(parent.getContext()).
-                inflate(R.layout.chip, parent, false);
+                inflate(R.layout.chip_alternative, parent, false);
         return new ChipViewHolder(itemView);
     }
 
