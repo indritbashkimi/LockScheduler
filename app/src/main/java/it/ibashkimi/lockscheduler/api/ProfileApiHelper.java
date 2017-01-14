@@ -91,7 +91,29 @@ public class ProfileApiHelper {
      * Method called on phone reboot
      */
     public void initProfiles() {
-
+        Log.d(TAG, "initProfiles() called");
+        for (Profile profile : getProfiles()) {
+            for (Condition condition : profile.getConditions()) {
+                condition.setTrue(false);
+            }
+        }
+        App.getInstance().getGeofenceApiHelperInstance().initGeofences();
+        for (Profile profile : getProfiles()) {
+            for (Condition condition : profile.getConditions()) {
+                switch (condition.getType()) {
+                    case Condition.Type.PLACE:
+                        break;
+                    case Condition.Type.TIME:
+                        onRegisterCondition(profile, condition);
+                        break;
+                    case Condition.Type.WIFI:
+                        onRegisterCondition(profile, condition);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     /**
