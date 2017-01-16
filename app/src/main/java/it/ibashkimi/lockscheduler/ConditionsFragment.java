@@ -1,10 +1,16 @@
 package it.ibashkimi.lockscheduler;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -36,9 +42,11 @@ import static android.app.Activity.RESULT_OK;
 public class ConditionsFragment extends Fragment implements ConditionsAdapter.Callbacks {
 
     private static final String TAG = "ConditionsFragment";
+    private static final int RESULT_LOCATION_PERMISSION = 0;
     private static final int PLACE_PICKER_REQUEST = 1;
     private List<Condition> conditions;
     private ConditionsAdapter adapter;
+    private View rootView;
     private ChipAdapter chipAdapter;
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
@@ -65,7 +73,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_conditions, container, false);
+        rootView = inflater.inflate(R.layout.fragment_conditions, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.conditionsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setNestedScrollingEnabled(false);
@@ -96,14 +104,18 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                 switch (chipItem.id) {
                     case Condition.Type.PLACE:
                         Log.d(TAG, "onClick: place pressed");
-                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                        try {
-                            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-                        } catch (GooglePlayServicesRepairableException e) {
-                            e.printStackTrace();
-                        } catch (GooglePlayServicesNotAvailableException e) {
-                            Log.d(TAG, "onClick: play service not available");
-                            e.printStackTrace();
+                        // You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
+                        if (ContextCompat.checkSelfPermission(getContext(),
+                                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                                showLocationPermissionRationale();
+                            } else {
+                                // No explanation needed, we can request the permission.
+                                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                        RESULT_LOCATION_PERMISSION);
+                            }
+                        } else {
+                            showAddPlaceDialog();
                         }
                         break;
                     case Condition.Type.TIME:
@@ -152,6 +164,76 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return rootView;
+    }
+
+    private void showAddPlaceDialog() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Log.d(TAG, "onClick: play service not available");
+            e.printStackTrace();
+        }
+    }
+
+    private void showLocationPermissionRationale() {
+        Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+                Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        RESULT_LOCATION_PERMISSION);
+            }
+        });
+        snackbar.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == RESULT_LOCATION_PERMISSION) {
+            String permission = permissions[0];
+            int grantResult = grantResults[0];
+            if (permission.equals(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    onLocationPermissionGranted();
+                } else {
+                    onLocationPermissionDenied();
+                }
+            }
+        }
+    }
+
+    private void onLocationPermissionDenied() {
+        if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            showLocationPermissionRationale();
+        } else {
+            Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+                    Snackbar.LENGTH_LONG);
+            snackbar.setAction(R.string.action_go_settings, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Intent i = new Intent();
+                    i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    i.setData(Uri.parse("package:" + getContext().getPackageName()));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    getContext().startActivity(i);
+                }
+            });
+            snackbar.show();
+        }
+    }
+
+    private void onLocationPermissionGranted() {
+        Snackbar.make(rootView, R.string.location_permission_granted,
+                Snackbar.LENGTH_SHORT).show();
+        showAddPlaceDialog();
     }
 
     @Override

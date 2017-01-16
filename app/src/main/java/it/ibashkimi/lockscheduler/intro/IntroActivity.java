@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.intro;
 
-import android.Manifest;
 import android.os.Bundle;
 import android.view.View;
 
@@ -44,14 +43,14 @@ public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.
             addSlide(slide);
         }
 
-        addSlide(new SimpleSlide.Builder()
+        /*addSlide(new SimpleSlide.Builder()
                 .title(R.string.app_name)
                 .description(R.string.location_permission_rationale)
                 .image(android.R.drawable.ic_menu_mylocation)
                 .background(R.color.indigo_500)
                 .backgroundDark(R.color.pink_a400)
                 .permission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .build());
+                .build());*/
 
         /**
          * Custom fragment slide
