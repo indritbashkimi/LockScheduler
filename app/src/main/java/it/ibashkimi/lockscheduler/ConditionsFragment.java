@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
@@ -103,6 +104,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             public void onChipClicked(ChipAdapter.ChipItem chipItem) {
                 switch (chipItem.id) {
                     case Condition.Type.PLACE:
+                        //showLocationPermissionRationale();
                         Log.d(TAG, "onClick: place pressed");
                         // You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
                         if (ContextCompat.checkSelfPermission(getContext(),
@@ -162,7 +164,6 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
             }
         });
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
         return rootView;
     }
 
@@ -179,7 +180,27 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
     }
 
     private void showLocationPermissionRationale() {
-        Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+
+        View view1 = getLayoutInflater(null).inflate(R.layout.location_permission, null);
+        view1.findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        RESULT_LOCATION_PERMISSION);
+            }
+        });
+        view1.findViewById(R.id.negative_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        bottomSheetDialog.setContentView(view1);
+
+        bottomSheetDialog.show();
+        /*Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
                 Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
             @Override
@@ -188,7 +209,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                         RESULT_LOCATION_PERMISSION);
             }
         });
-        snackbar.show();
+        snackbar.show();*/
     }
 
     @Override
@@ -211,7 +232,33 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         if (shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             showLocationPermissionRationale();
         } else {
-            Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+
+            View view1 = getLayoutInflater(null).inflate(R.layout.location_permission, null);
+            view1.findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Intent i = new Intent();
+                    i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    i.setData(Uri.parse("package:" + getContext().getPackageName()));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    getContext().startActivity(i);
+                }
+            });
+            view1.findViewById(R.id.negative_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    bottomSheetDialog.dismiss();
+                }
+            });
+
+            bottomSheetDialog.setContentView(view1);
+
+            bottomSheetDialog.show();
+            /*Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
                     Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.action_go_settings, new View.OnClickListener() {
                 @Override
@@ -226,7 +273,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                     getContext().startActivity(i);
                 }
             });
-            snackbar.show();
+            snackbar.show();*/
         }
     }
 
