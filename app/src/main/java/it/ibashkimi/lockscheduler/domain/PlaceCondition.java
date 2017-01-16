@@ -16,11 +16,13 @@ public class PlaceCondition extends Condition {
 
     private LatLng place;
     private int radius;
+    private String address;
 
     public PlaceCondition(String name, LatLng place, int radius) {
         super(Type.PLACE, name);
         this.place = place;
         this.radius = radius;
+        this.address = "";
     }
 
     public LatLng getPlace() {
@@ -37,6 +39,14 @@ public class PlaceCondition extends Condition {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
@@ -64,6 +74,7 @@ public class PlaceCondition extends Condition {
             jsonObject.put("latitude", place.latitude);
             jsonObject.put("longitude", place.longitude);
             jsonObject.put("radius", radius);
+            jsonObject.put("address", address);
         } catch (JSONException e) {
             Log.d(TAG, "toJson: cannot create json");
             e.printStackTrace();
@@ -81,6 +92,7 @@ public class PlaceCondition extends Condition {
         boolean isTrue = jsonObject.getBoolean("true");
         PlaceCondition placeCondition = new PlaceCondition(name, new LatLng(latitude, longitude), radius);
         placeCondition.setTrue(isTrue);
+        placeCondition.setAddress(jsonObject.getString("address"));
         return placeCondition;
     }
 }

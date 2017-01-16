@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -162,6 +163,8 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         private GoogleMap googleMap;
         private PlaceCondition placeCondition;
         private View mapCover;
+        private TextView coordinates;
+        private TextView address;
 
         PlaceViewHolder(View itemView) {
             super(itemView);
@@ -172,6 +175,8 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                     .getInt("map_style", 0));
             mapView = (MapView) itemView.findViewById(R.id.mapView);
             mapCover = itemView.findViewById(R.id.mapCover);
+            coordinates = (TextView) itemView.findViewById(R.id.coordinates);
+            address = (TextView) itemView.findViewById(R.id.address);
         }
 
         @Override
@@ -254,6 +259,8 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
 
                 }
             });
+            coordinates.setText(String.format(Locale.ENGLISH, "%f, %f", placeCondition.getPlace().latitude, placeCondition.getPlace().longitude));
+            address.setText(placeCondition.getAddress());
         }
 
         private void updateMap() {
