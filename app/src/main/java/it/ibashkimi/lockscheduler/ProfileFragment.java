@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.MapsInitializer;
@@ -23,6 +26,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.domain.Condition;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
 public class ProfileFragment extends Fragment {
@@ -30,6 +34,8 @@ public class ProfileFragment extends Fragment {
     private Profile mProfile;
     private EditText mName;
     private boolean showDeleteOption;
+    @StringRes
+    private int title;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -54,12 +60,13 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
         }
         showDeleteOption = getArguments().getBoolean("show_delete_option");
+        title = showDeleteOption ? R.string.profile_title : R.string.new_profile_title;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile_main, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_profile);
         toolbar.getMenu().findItem(R.id.action_delete).setVisible(showDeleteOption);
@@ -76,14 +83,15 @@ public class ProfileFragment extends Fragment {
                 return false;
             }
         });
-        View cancelView = toolbar.findViewById(R.id.cancel_view);
-        cancelView.setOnClickListener(new View.OnClickListener() {
+        ImageView cancel = (ImageView) rootView.findViewById(R.id.cancel_view);
+        cancel.setColorFilter(ThemeUtils.getColorFromAttribute(toolbar.getContext(), android.R.attr.textColorPrimary));
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancel();
             }
         });
-
+        ((TextView) toolbar.findViewById(R.id.title_text)).setText(title);
         mName = (EditText) rootView.findViewById(R.id.input_name);
         mName.setText(mProfile.getName());
         mName.addTextChangedListener(new TextWatcher() {

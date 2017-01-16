@@ -12,7 +12,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.preference.Theme2Adapter;
 import it.ibashkimi.support.design.preference.ThemeAdapter;
 import it.ibashkimi.support.design.preference.ThemeItem;
 import it.ibashkimi.support.design.preference.Themes;
@@ -61,9 +60,9 @@ public class MaterialDialogsSettingsFragment extends SettingsFragment {
                         break;
                     }
                 }
-                Theme2Adapter themeAdapter = new Theme2Adapter(getContext(), Themes.getThemeItems(), themeIndex, new ThemeAdapter.ColorChooserListener() {
+                ThemeAdapter themeAdapter = new ThemeAdapter(getContext(), Themes.getThemeItems(), themeIndex, new ThemeAdapter.ThemeSelectedListener() {
                     @Override
-                    public void onColorClicked(ThemeItem item) {
+                    public void onThemeSelected(ThemeItem item) {
                         mSharedPreferences.edit().putInt("theme", item.id).apply();
                         if (themeDialog != null) themeDialog.dismiss();
                         themeDialog = null;

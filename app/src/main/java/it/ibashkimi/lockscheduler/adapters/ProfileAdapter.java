@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -29,6 +30,7 @@ import it.ibashkimi.lockscheduler.Utils;
 import it.ibashkimi.lockscheduler.domain.LockMode;
 import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.lockscheduler.domain.WifiItem;
 import it.ibashkimi.support.design.utils.ThemeUtils;
 
 /**
@@ -74,6 +76,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         this.mCallback = callback;
         this.mCircleColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorAccent);
         this.mFillColor = ColorUtils.setAlphaComponent(mCircleColor, 0x25);
+        this.mCircleColor = ColorUtils.setAlphaComponent(mCircleColor, 200);
     }
 
     public void setData(List<Profile> data) {
@@ -145,6 +148,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
         final PlaceCondition placeCondition = profile.getPlaceCondition();
         if (placeCondition != null) {
+            if (holder.place != null) {
+                holder.place.setText("" + placeCondition.getPlace().latitude + ", " + placeCondition.getPlace().longitude);
+            }
             holder.mapActive = true;
             holder.mapView.onCreate(null);
             holder.mapView.onResume();
@@ -202,6 +208,25 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         } else {
             holder.mapContainer.setVisibility(View.GONE);
         }
+        if (holder.weekLayout != null && profile.getTimeCondition() != null) {
+            boolean[] week = profile.getTimeCondition().getDaysActive();
+            for (int i = 0; i < 7; i++) {
+                if (week[i]) {
+                    holder.week[i].setVisibility(View.VISIBLE);
+                }
+            }
+        }
+        if (profile.getWifiCondition() != null) {
+            if (holder.wifiLayout != null) {
+                StringBuilder text = new StringBuilder();
+                for (WifiItem wifi : profile.getWifiCondition().getNetworks()) {
+                    text.append(wifi.SSID).append(" ");
+                }
+                holder.wifiConnections.setText(text.toString());
+            }
+        } else {
+            if (holder.wifiLayout != null) holder.wifiLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -240,6 +265,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         View mapCover;
         boolean mapActive;
         View mapContainer;
+        View wifiLayout;
+        View weekLayout;
+        TextView wifiConnections;
+        View lockLayout;
+        ImageView[] week;
+        TextView place;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -253,6 +284,23 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.settingsView = itemView.findViewById(R.id.options_menu);
                 this.mapCover = itemView.findViewById(R.id.mapCover);
                 this.mapContainer = itemView.findViewById(R.id.map_container);
+                place = (TextView) itemView.findViewById(R.id.place);
+                this.weekLayout = itemView.findViewById(R.id.week_layout);
+                if (weekLayout != null) {
+                    week = new ImageView[7];
+                    week[0] = (ImageView) weekLayout.findViewById(R.id.monday_circle);
+                    week[1] = (ImageView) weekLayout.findViewById(R.id.tuesday_circle);
+                    week[2] = (ImageView) weekLayout.findViewById(R.id.wednesday_circle);
+                    week[3] = (ImageView) weekLayout.findViewById(R.id.thursday_circle);
+                    week[4] = (ImageView) weekLayout.findViewById(R.id.friday_circle);
+                    week[5] = (ImageView) weekLayout.findViewById(R.id.saturday_circle);
+                    week[6] = (ImageView) weekLayout.findViewById(R.id.sunday_circle);
+                }
+                wifiLayout = itemView.findViewById(R.id.wifi_layout);
+                if (wifiLayout != null) {
+                    wifiConnections = (TextView) wifiLayout.findViewById(R.id.wifi_connections);
+                }
+                lockLayout = itemView.findViewById(R.id.lock_layout);
             }
         }
     }

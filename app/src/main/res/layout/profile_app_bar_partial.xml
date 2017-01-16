@@ -12,7 +12,7 @@
             android:id="@+id/cancel_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="?android:attr/textColorPrimary"
+            android:tint="@color/ib_textColorPrimary"
             app:srcCompat="@drawable/ic_cancel" />
 
     </android.support.v7.widget.Toolbar>

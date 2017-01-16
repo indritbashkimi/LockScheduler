@@ -4,11 +4,11 @@
     android:id="@+id/placeCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="8dp"
-    android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="2dp"
     app:cardUseCompatPadding="true">
 
@@ -48,6 +48,28 @@
 
         </android.support.percent.PercentRelativeLayout>
 
+        <TextView
+            android:id="@+id/coordinates"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/address"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:ellipsize="end" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/divider" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -59,22 +81,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:text="Radius:" />
+                android:text="Radius:"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/radiusInput"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="start"
                 android:layout_weight="1"
+                android:gravity="start"
                 android:inputType="number" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:text="m" />
+                android:text="m"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
         </LinearLayout>
 

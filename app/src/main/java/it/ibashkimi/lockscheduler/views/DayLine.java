@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 import it.ibashkimi.lockscheduler.R;
@@ -20,13 +21,16 @@ public class DayLine extends View {
 
     private Paint mActivePaint;
     private Paint mInactivePaint;
+    private Paint mTextPaint;
     private double[][] mSegments;
     private double[][] mPeriods;
+    private float mCenterX;
     private float mCenterY;
     private int[] mDaySegment = new int[2];
     private int startX;
     private double dayMillis = 86400000;
     private double widthWithPadding;
+    private float textWidth;
 
     public DayLine(Context context) {
         this(context, null);
@@ -57,6 +61,14 @@ public class DayLine extends View {
         mInactivePaint.setAntiAlias(true);
         //mInactivePaint.setColor(ThemeUtils.getColorFromAttribute(context, R.attr.colorAccent));
         mInactivePaint.setStrokeWidth(ThemeUtils.dpToPx(context, 2));
+
+        mTextPaint = new Paint();
+        mTextPaint.setAntiAlias(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
+        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
+                12, getResources().getDisplayMetrics()));
+        mTextPaint.setColor(ThemeUtils.getColorFromAttribute(context, android.R.attr.textColorSecondary));
+        textWidth = mTextPaint.measureText("00", 0, 2);
     }
 
     @Override
@@ -80,27 +92,33 @@ public class DayLine extends View {
         mSegments[0][1] = 36000000;
         mSegments[1][0] = 57600000;
         mSegments[1][1] = 72000000;
+        double width = widthWithPadding - textWidth;
+        mSegments[0][0] = mSegments[0][0] * (width / dayMillis);
+        mSegments[0][1] = mSegments[0][1] * (width / dayMillis);
 
-        mSegments[0][0] = mSegments[0][0] * (widthWithPadding / dayMillis);
-        mSegments[0][1] = mSegments[0][1] * (widthWithPadding / dayMillis);
-
-        mSegments[1][0] = mSegments[1][0] * (widthWithPadding / dayMillis);
-        mSegments[1][1] = mSegments[1][1] * (widthWithPadding / dayMillis);
+        mSegments[1][0] = mSegments[1][0] * (width / dayMillis);
+        mSegments[1][1] = mSegments[1][1] * (width / dayMillis);
 
         Log.d(TAG, "onDraw: mSegments[0][0]=" + mSegments[0][0] + ", mSegments[0][1]" + mSegments[0][1]);
 
 
-        canvas.drawLine(mDaySegment[0], mCenterY, mDaySegment[1], mCenterY, mInactivePaint);
+        canvas.drawLine(mDaySegment[0] + textWidth / 2, mCenterY, mDaySegment[1] - textWidth / 2, mCenterY, mInactivePaint);
         for (double[] mSegment : mSegments) {
-            canvas.drawLine((int) mSegment[0], mCenterY, (int) mSegment[1], mCenterY, mActivePaint);
+            canvas.drawLine((int) mSegment[0] + textWidth / 2, mCenterY, (int) mSegment[1], mCenterY, mActivePaint);
         }
+
+        canvas.drawText("00", 0 + textWidth / 2, mCenterY - 20, mTextPaint);
+        canvas.drawText("06", mCenterX / 2 - textWidth / 2, mCenterY - 20, mTextPaint);
+        canvas.drawText("12", mCenterX - textWidth / 2, mCenterY - 20, mTextPaint);
+        canvas.drawText("18", 3 * mCenterX / 2 - textWidth / 2, mCenterY - 20, mTextPaint);
+        canvas.drawText("24", (float) widthWithPadding - textWidth / 2, mCenterY - 20, mTextPaint);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         Log.d(TAG, "onSizeChanged() called with: w = [" + w + "], h = [" + h + "]");
-        float mCenterX = w / 2;
+        mCenterX = w / 2;
         mCenterY = h / 2;
         widthWithPadding = w - getPaddingLeft() - getPaddingRight();
         int heightWithPadding = h - getPaddingTop() - getPaddingBottom();

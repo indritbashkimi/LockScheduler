@@ -23,8 +23,16 @@
                 android:id="@+id/cancel_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tint="?android:attr/textColorPrimary"
+                android:tint="@color/ib_textColorPrimary"
                 app:srcCompat="@drawable/ic_cancel" />
+
+            <TextView
+                android:id="@+id/title_text"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="56dp"
+                tools:text="@string/profile_title" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -42,27 +50,30 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center_vertical"
-                android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
-                android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:text="Name"
                 android:textAppearance="@style/Preference_TextAppearanceMaterialBody2"
                 android:textColor="?attr/colorAccent"
                 android:textSize="16sp"
-                android:textStyle="normal" />
+                android:textStyle="normal" />-->
 
             <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:hint="@string/profile_name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <fragment
                 android:id="@+id/conditions"

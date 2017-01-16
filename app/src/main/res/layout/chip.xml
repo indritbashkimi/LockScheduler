@@ -54,7 +54,7 @@
                 android:layout_gravity="center"
                 android:foreground="?attr/selectableItemBackground"
                 android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/circle" />
+                app:srcCompat="@drawable/mycircle" />
 
             <ImageView
                 android:id="@+id/icon"

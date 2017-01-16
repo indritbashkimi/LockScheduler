@@ -202,6 +202,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
             case R.id.vibrateSwitchView:
                 mSharedPreferences.edit().putBoolean("notifications_vibrate", isChecked).apply();
                 break;
+            default:
+                Toast.makeText(getContext(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.security.InvalidParameterException;
@@ -35,7 +36,9 @@ public class LicensesFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.findViewById(R.id.cancel_view).setOnClickListener(new View.OnClickListener() {
+        ImageView cancel = (ImageView) toolbar.findViewById(R.id.cancel_view);
+        cancel.setColorFilter(ThemeUtils.getColorFromAttribute(toolbar.getContext(), android.R.attr.textColorPrimary));
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();

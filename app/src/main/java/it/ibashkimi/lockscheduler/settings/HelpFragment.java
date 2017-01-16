@@ -8,10 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.adapters.HelpAdapter;
 import it.ibashkimi.lockscheduler.adapters.HelpAdapter.HelpItem;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 
 public class HelpFragment extends Fragment {
@@ -35,14 +37,23 @@ public class HelpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_help, container, false);
-        rootView.findViewById(R.id.cancel_view).setOnClickListener(new View.OnClickListener() {
+        ImageView cancel = (ImageView) rootView.findViewById(R.id.cancel_view);
+        cancel.setColorFilter(ThemeUtils.getColorFromAttribute(rootView.findViewById(R.id.toolbar).getContext(), android.R.attr.textColorPrimary));
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
             }
         });
+        rootView.findViewById(R.id.feedback_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AboutActivity.sendFeedback(getContext());
+            }
+        });
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
         return rootView;
     }
