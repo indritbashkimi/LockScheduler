@@ -69,7 +69,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         super.onCreate(savedInstanceState);
         mSettings = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
         mMapStyle = Utils.resolveMapStyle(mSettings.getInt("map_style", 0));
-        int itemLayout = mSettings.getInt("item_layout", 0);
+        int itemLayout = mSettings.getInt("item_layout", 1);
         mItemLayout = resolveLayout(itemLayout);
 
         getActivity().getSupportLoaderManager().initLoader(0, null, mLoaderCallbacks);
@@ -130,8 +130,6 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     private static int resolveLayout(int itemLayout) {
         switch (itemLayout) {
-            case 0:
-                return R.layout.item_profile_0;
             case 1:
                 return R.layout.item_profile_1;
             case 2:
@@ -142,8 +140,18 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 return R.layout.item_profile_4;
             case 5:
                 return R.layout.item_profile_5;
+            case 6:
+                return R.layout.item_profile_6;
+            case 7:
+                return R.layout.item_profile_7;
+            case 8:
+                return R.layout.item_profile_8;
+            case 9:
+                return R.layout.item_profile_9;
+            case 10:
+                return R.layout.item_profile_a;
             default:
-                return R.layout.item_profile_0;
+                return R.layout.item_profile_a;
         }
     }
 

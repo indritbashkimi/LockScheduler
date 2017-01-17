@@ -4,10 +4,8 @@ import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.ColorUtils;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -115,7 +113,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         //setAnimation(holder.rootView);
         final Profile profile = mProfiles.get(position);
 
-        final PopupMenu popup = new PopupMenu(mContext, holder.settingsView);
+        /*final PopupMenu popup = new PopupMenu(mContext, holder.settingsView);
         popup.getMenuInflater().inflate(R.menu.menu_profile_popup, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -135,7 +133,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             public void onClick(View v) {
                 popup.show();
             }
-        });
+        });*/
         holder.name.setText(profile.getName());
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
         holder.exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
@@ -149,75 +147,87 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         final PlaceCondition placeCondition = profile.getPlaceCondition();
         if (placeCondition != null) {
             if (holder.place != null) {
-                holder.place.setText("" + placeCondition.getPlace().latitude + ", " + placeCondition.getPlace().longitude);
+                holder.place.setText(placeCondition.getAddress() + "\n" + placeCondition.getRadius() + " m");
             }
-            holder.mapActive = true;
-            holder.mapView.onCreate(null);
-            holder.mapView.onResume();
-            holder.mapView.onStart();
-            holder.mapView.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(final GoogleMap googleMap) {
-                    googleMap.setMapType(mMapType);
-                    googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-                    googleMap.getUiSettings().setZoomGesturesEnabled(false);
-                    googleMap.getUiSettings().setScrollGesturesEnabled(false);
-                    googleMap.getUiSettings().setRotateGesturesEnabled(false);
-                    googleMap.getUiSettings().setTiltGesturesEnabled(false);
-                    googleMap.getUiSettings().setMapToolbarEnabled(false);
-                    googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                        @Override
-                        public void onMapClick(LatLng latLng) {
-                            mCallback.onProfileClicked(profile);
-                        }
-                    });
-                    googleMap.addCircle(new CircleOptions()
-                            .center(placeCondition.getPlace())
-                            .radius(placeCondition.getRadius())
-                            .strokeColor(mCircleColor)
-                            .fillColor(mFillColor));
-                    googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(placeCondition.getPlace(), placeCondition.getRadius()), mCirclePadding);
-                            googleMap.moveCamera(cameraUpdate);
-                            if (holder.mapCover.getVisibility() == View.VISIBLE) {
-                                Animation fadeAnimation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
-                                fadeAnimation.setAnimationListener(new Animation.AnimationListener() {
-                                    @Override
-                                    public void onAnimationStart(Animation animation) {
-
-                                    }
-
-                                    @Override
-                                    public void onAnimationEnd(Animation animation) {
-                                        holder.mapCover.setVisibility(View.GONE);
-                                    }
-
-                                    @Override
-                                    public void onAnimationRepeat(Animation animation) {
-
-                                    }
-                                });
-                                holder.mapCover.startAnimation(fadeAnimation);
+            if (holder.mapView != null) {
+                holder.mapActive = true;
+                holder.mapView.onCreate(null);
+                holder.mapView.onResume();
+                holder.mapView.onStart();
+                holder.mapView.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(final GoogleMap googleMap) {
+                        googleMap.setMapType(mMapType);
+                        googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                        googleMap.getUiSettings().setZoomGesturesEnabled(false);
+                        googleMap.getUiSettings().setScrollGesturesEnabled(false);
+                        googleMap.getUiSettings().setRotateGesturesEnabled(false);
+                        googleMap.getUiSettings().setTiltGesturesEnabled(false);
+                        googleMap.getUiSettings().setMapToolbarEnabled(false);
+                        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                            @Override
+                            public void onMapClick(LatLng latLng) {
+                                mCallback.onProfileClicked(profile);
                             }
-                        }
-                    });
-                }
-            });
+                        });
+                        googleMap.addCircle(new CircleOptions()
+                                .center(placeCondition.getPlace())
+                                .radius(placeCondition.getRadius())
+                                .strokeColor(mCircleColor)
+                                .strokeWidth(Utils.dpToPx(mContext, 2))
+                                .fillColor(mFillColor));
+                        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                            @Override
+                            public void onMapLoaded() {
+                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(placeCondition.getPlace(), placeCondition.getRadius()), mCirclePadding);
+                                googleMap.moveCamera(cameraUpdate);
+                                if (holder.mapCover.getVisibility() == View.VISIBLE) {
+                                    Animation fadeAnimation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_out);
+                                    fadeAnimation.setAnimationListener(new Animation.AnimationListener() {
+                                        @Override
+                                        public void onAnimationStart(Animation animation) {
+
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(Animation animation) {
+                                            holder.mapCover.setVisibility(View.GONE);
+                                        }
+
+                                        @Override
+                                        public void onAnimationRepeat(Animation animation) {
+
+                                        }
+                                    });
+                                    holder.mapCover.startAnimation(fadeAnimation);
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         } else {
-            holder.mapContainer.setVisibility(View.GONE);
+            if (holder.mapContainer != null)
+                holder.mapContainer.setVisibility(View.GONE);
+            if (holder.placeLayout != null)
+                holder.placeLayout.setVisibility(View.GONE);
         }
-        if (holder.weekLayout != null && profile.getTimeCondition() != null) {
-            boolean[] week = profile.getTimeCondition().getDaysActive();
-            for (int i = 0; i < 7; i++) {
-                if (week[i]) {
-                    holder.week[i].setVisibility(View.VISIBLE);
+        if (profile.getTimeCondition() != null) {
+            if (holder.weekLayout != null) {
+                boolean[] week = profile.getTimeCondition().getDaysActive();
+                for (int i = 0; i < 7; i++) {
+                    if (week[i] && holder.week[i] != null) {
+                        holder.week[i].setVisibility(View.VISIBLE);
+                    }
                 }
+            }
+        } else {
+            if (holder.weekLayout != null) {
+                holder.weekLayout.setVisibility(View.GONE);
             }
         }
         if (profile.getWifiCondition() != null) {
-            if (holder.wifiLayout != null) {
+            if (holder.wifiLayout != null && holder.wifiConnections != null) {
                 StringBuilder text = new StringBuilder();
                 for (WifiItem wifi : profile.getWifiCondition().getNetworks()) {
                     text.append(wifi.SSID).append(" ");
@@ -271,6 +281,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         View lockLayout;
         ImageView[] week;
         TextView place;
+        View placeLayout;
 
         ViewHolder(View itemView, int viewType) {
             super(itemView);
@@ -284,7 +295,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 this.settingsView = itemView.findViewById(R.id.options_menu);
                 this.mapCover = itemView.findViewById(R.id.mapCover);
                 this.mapContainer = itemView.findViewById(R.id.map_container);
-                place = (TextView) itemView.findViewById(R.id.place);
+                this.placeLayout = itemView.findViewById(R.id.place_layout);
+                this.place = (TextView) itemView.findViewById(R.id.place);
                 this.weekLayout = itemView.findViewById(R.id.week_layout);
                 if (weekLayout != null) {
                     week = new ImageView[7];

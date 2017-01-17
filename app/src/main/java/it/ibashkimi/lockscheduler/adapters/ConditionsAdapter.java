@@ -165,6 +165,8 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         private View mapCover;
         private TextView coordinates;
         private TextView address;
+        private Context context;
+        private float circleStrokeWidth;
 
         PlaceViewHolder(View itemView) {
             super(itemView);
@@ -182,6 +184,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         @Override
         public void init(final Context context, ConditionsAdapter adapter, Condition condition, final Callbacks listener) {
             super.init(context, adapter, condition, listener);
+            this.context = context;
             this.placeCondition = (PlaceCondition) condition;
             mapView.onCreate(null);
             //mapView.onSaveInstanceState(null);
@@ -209,6 +212,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                             .center(placeCondition.getPlace())
                             .radius(placeCondition.getRadius())
                             .fillColor(fillColor)
+                            .strokeWidth(Utils.dpToPx(itemView.getContext(), 2))
                             .strokeColor(circleColor));
                     googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                         @Override
@@ -270,6 +274,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                             .center(placeCondition.getPlace())
                             .radius(placeCondition.getRadius())
                             .strokeColor(circleColor)
+                            .strokeWidth(Utils.dpToPx(itemView.getContext(), 2))
                             .fillColor(fillColor));
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(Utils.calculateBounds(placeCondition.getPlace(), placeCondition.getRadius()), circlePadding);
                     googleMap.moveCamera(cameraUpdate);
