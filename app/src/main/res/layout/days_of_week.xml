@@ -5,7 +5,7 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <android.support.v7.widget.AppCompatCheckBox
+    <!--<android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/day_0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -59,13 +59,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:checked="true"
-        android:text="S" />
+        android:text="S" />-->
 
-    <!--<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+    <CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/day_0"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="4dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="2dp"
         android:background="@drawable/toggle_circle"
         android:button="@null"
         android:foreground="?attr/selectableItemBackgroundBorderless"
@@ -77,8 +77,8 @@
 
     <CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/day_1"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_margin="4dp"
         android:background="@drawable/toggle_circle"
         android:button="@null"
@@ -157,5 +157,5 @@
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:text="S"
-        android:textSize="16sp" />-->
+        android:textSize="16sp" />
 </LinearLayout>

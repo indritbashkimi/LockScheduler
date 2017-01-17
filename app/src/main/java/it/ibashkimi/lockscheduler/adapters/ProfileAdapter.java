@@ -1,9 +1,12 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.content.Context;
+import android.os.Vibrator;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +38,12 @@ import it.ibashkimi.support.design.utils.ThemeUtils;
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
+public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ViewHolder> {
 
-    public interface Callback {
-        void onProfileRemoved(Profile profile, int position);
+    public interface ClickListener {
+        void onItemClicked(int position);
 
-        void onProfileClicked(Profile profile);
+        boolean onItemLongClicked(int position);
     }
 
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
@@ -54,27 +57,31 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private int mCirclePadding;
     private int mMapType;
     private int mItemLayout;
-    private Callback mCallback;
     @ColorInt
     private int mCircleColor;
     @ColorInt
     private int mFillColor;
+    private ClickListener clickListener;
+    Vibrator vb;// = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    private boolean selectedModeActive;
 
     @SuppressWarnings("unused")
-    public ProfileAdapter(Context context, List<Profile> profiles, @NonNull Callback callback) {
-        this(context, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE, callback);
+    public ProfileAdapter(Context context, List<Profile> profiles, @NonNull ClickListener clickListener) {
+        this(context, profiles, DEFAULT_ITEM_LAYOUT, DEFAULT_MAP_STYLE, clickListener);
     }
 
-    public ProfileAdapter(Context context, List<Profile> profiles, int itemLayout, int mapType, @NonNull Callback callback) {
+    public ProfileAdapter(Context context, List<Profile> profiles, int itemLayout, int mapType, @NonNull ClickListener clickListener) {
+        super();
         this.mContext = context;
         this.mProfiles = profiles;
         this.mCirclePadding = (int) Utils.dpToPx(context, 8);
         this.mItemLayout = itemLayout;
         this.mMapType = mapType;
-        this.mCallback = callback;
+        this.clickListener = clickListener;
         this.mCircleColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorAccent);
         this.mFillColor = ColorUtils.setAlphaComponent(mCircleColor, 0x25);
         this.mCircleColor = ColorUtils.setAlphaComponent(mCircleColor, 200);
+        vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void setData(List<Profile> data) {
@@ -97,12 +104,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             View itemView = LayoutInflater.
                     from(parent.getContext()).
                     inflate(R.layout.item_space, parent, false);
-            return new ViewHolder(itemView, VIEW_TYPE_SPACE);
+            return new ViewHolder(itemView, VIEW_TYPE_SPACE, clickListener);
         }
         View itemView = LayoutInflater.
                 from(parent.getContext()).
                 inflate(mItemLayout, parent, false);
-        return new ViewHolder(itemView, VIEW_TYPE_PROFILE);
+        return new ViewHolder(itemView, VIEW_TYPE_PROFILE, clickListener);
     }
 
     @Override
@@ -134,15 +141,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 popup.show();
             }
         });*/
+        if (holder.rootView instanceof CardView) {
+            CardView cardView = (CardView) holder.rootView;
+            int color = ContextCompat.getColor(mContext, isSelected(position) ? R.color.card_background_color_selected : R.color.card_background_color);
+            cardView.setBackgroundColor(color);
+            //cardView.setOnLongClickListener(holder);
+        }
         holder.name.setText(profile.getName());
         holder.enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
         holder.exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
+       /* holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCallback.onProfileClicked(profile);
             }
-        });
+        });*/
 
         final PlaceCondition placeCondition = profile.getPlaceCondition();
         if (placeCondition != null) {
@@ -167,7 +180,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                             @Override
                             public void onMapClick(LatLng latLng) {
-                                mCallback.onProfileClicked(profile);
+                                if (clickListener != null)
+                                    clickListener.onItemClicked(position);
                             }
                         });
                         googleMap.addCircle(new CircleOptions()
@@ -264,7 +278,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         viewToAnimate.startAnimation(animation);
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
         View rootView;
         TextView name;
         MapView mapView;
@@ -282,10 +297,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         ImageView[] week;
         TextView place;
         View placeLayout;
+        ClickListener listener;
 
-        ViewHolder(View itemView, int viewType) {
+        ViewHolder(View itemView, int viewType, ClickListener listener) {
             super(itemView);
             this.viewType = viewType;
+            this.listener = listener;
             if (viewType == VIEW_TYPE_PROFILE) {
                 this.rootView = itemView;
                 this.name = (TextView) itemView.findViewById(R.id.name_view);
@@ -314,6 +331,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
                 }
                 lockLayout = itemView.findViewById(R.id.lock_layout);
             }
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (listener != null) {
+                listener.onItemClicked(this.getAdapterPosition());
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            //vb.vibrate();
+            return listener != null && listener.onItemLongClicked(this.getAdapterPosition());
         }
     }
 }

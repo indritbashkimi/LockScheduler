@@ -8,11 +8,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -25,7 +29,7 @@ import it.ibashkimi.lockscheduler.domain.Profile;
 /**
  * Fragment used to display profile list.
  */
-public class ProfileListFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, ProfileAdapter.Callback {
+public class ProfileListFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener, ProfileAdapter.ClickListener {
     private static final String TAG = "ProfileListFragment";
 
     private ProfileAdapter mAdapter;
@@ -34,6 +38,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     private int mMapStyle;
     private SharedPreferences mSettings;
     private ItemTouchHelper mItemTouchHelper;
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
 
     private final LoaderManager.LoaderCallbacks<List<Profile>> mLoaderCallbacks =
             new LoaderManager.LoaderCallbacks<List<Profile>>() {
@@ -82,6 +88,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         //mRecyclerView.setItemAnimator(new SlideInRightAnimator(new LinearOutSlowInInterpolator()));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mAdapter = new ProfileAdapter(getContext(), new ArrayList<Profile>(0), mItemLayout, mMapStyle, this);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
@@ -169,7 +176,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     }
 
 
-    @Override
+    /*@Override
     public void onProfileRemoved(Profile profile, int position) {
         App.getProfileApiHelper().removeProfile(profile);
         mAdapter.notifyItemRemoved(position);
@@ -177,9 +184,95 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     @Override
     public void onProfileClicked(Profile profile) {
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        *//*Intent intent = new Intent(getActivity(), ProfileActivity.class);
         intent.setAction(ProfileActivity.ACTION_VIEW);
         intent.putExtra("profile", profile.toJson());
-        getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+        getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);*//*
+    }*/
+
+    @Override
+    public void onItemClicked(int position) {
+        if (actionMode != null) {
+            toggleSelection(position);
+        } else {
+            Profile profile = mAdapter.getData().get(position);
+            Intent intent = new Intent(getActivity(), ProfileActivity.class);
+            intent.setAction(ProfileActivity.ACTION_VIEW);
+            intent.putExtra("profile", profile.toJson());
+            getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+        }
+    }
+
+    @Override
+    public boolean onItemLongClicked(int position) {
+        Log.d(TAG, "onItemLongClicked: position=" + position);
+        if (actionMode == null) {
+            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
+        }
+
+        toggleSelection(position);
+
+        return true;
+    }
+
+    /**
+     * Toggle the selection state of an item.
+     * <p>
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        mAdapter.toggleSelection(position);
+        int count = mAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.profile_selected, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    Log.d(TAG, "menu_remove");
+                    List<Integer> items = mAdapter.getSelectedItems();
+                    for (int i = items.size() - 1; i > -1; i--) {
+                        App.getProfileApiHelper().removeProfile(mAdapter.getData().get(i));
+                        mAdapter.notifyItemRemoved(i);
+                    }
+                    mAdapter.clearSelection(false);
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mAdapter.clearSelection();
+            actionMode = null;
+        }
     }
 }
