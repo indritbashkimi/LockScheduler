@@ -48,7 +48,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
         } else {
             selectedItems.put(position, true);
         }
-        notifyItemChanged(position);
+        //notifyItemChanged(position);
     }
 
     /**

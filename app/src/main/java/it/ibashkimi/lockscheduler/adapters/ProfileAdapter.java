@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,11 +43,19 @@ import it.ibashkimi.support.design.utils.ThemeUtils;
 
 public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHolder> {
 
+    private static final String TAG = "ProfileAdapter";
+
     public interface ClickListener {
         void onItemClicked(int position);
 
         boolean onItemLongClicked(int position);
     }
+
+    /*public interface ItemTouchHelperAdapter {
+        void onItemMove(int fromPosition, int toPosition);
+
+        void onItemDismiss(int position);
+    }*/
 
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
     private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile_6;
@@ -103,8 +112,9 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             return;
         }
 
-        holder.setPos(position);
+        //holder.setPos(position);
         final Profile profile = mProfiles.get(position);
+        Log.d(TAG, "onBindViewHolder: position = " + position + ", profile = " + profile);
         holder.setSelected(isSelected(position));
         holder.init(profile);
     }
@@ -164,11 +174,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         public abstract void recycle();
 
         public int getPos() {
-            return pos;
-        }
-
-        public void setPos(int pos) {
-            this.pos = pos;
+            return getLayoutPosition();
         }
     }
 
@@ -206,81 +212,16 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
 
         @Override
         public void onClick(View v) {
+            Log.d(TAG, "onClick: pos = " + getPos());
             if (listener != null) {
-                listener.onItemClicked(this.getAdapterPosition());
+                listener.onItemClicked(getPos());
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            return listener != null && listener.onItemLongClicked(this.getAdapterPosition());
-        }
-    }
-
-    static class MinimalViewHolder extends SimpleViewHolder {
-        TextView title;
-        TextView enterLock;
-        TextView exitLock;
-        View placeLayout;
-        View timeLayout;
-        View wifiLayout;
-
-        public MinimalViewHolder(View itemView, ClickListener listener) {
-            super(itemView, listener);
-            title = (TextView) itemView.findViewById(R.id.name_view);
-            placeLayout = itemView.findViewById(R.id.place_icon);
-            timeLayout = itemView.findViewById(R.id.time_icon);
-            wifiLayout = itemView.findViewById(R.id.wifi_icon);
-            enterLock = (TextView) itemView.findViewById(R.id.enter_lock_mode);
-            exitLock = (TextView) itemView.findViewById(R.id.exit_lock_mode);
-        }
-
-        @Override
-        public void setLock(Profile profile) {
-            enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
-            exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
-        }
-
-        @Override
-        public void setName(String name) {
-            title.setText(name);
-        }
-
-        @Override
-        public void setPlace(PlaceCondition placeCondition) {
-            if (placeCondition == null) {
-                placeLayout.setVisibility(View.GONE);
-            } else {
-                placeLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void setTime(TimeCondition timeCondition) {
-            if (timeCondition == null) {
-                timeLayout.setVisibility(View.GONE);
-            } else {
-                timeLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void setWifi(WifiCondition wifiCondition) {
-            if (wifiCondition == null) {
-                wifiLayout.setVisibility(View.GONE);
-            } else {
-                wifiLayout.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void setSelected(boolean selected) {
-
-        }
-
-        @Override
-        public void recycle() {
-
+            Log.d(TAG, "onLongClick: pos = " + getPos() + ", ViewHolder = " + this);
+            return listener != null && listener.onItemLongClicked(getPos());
         }
     }
 
@@ -307,6 +248,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         private int mCircleColor;
         @ColorInt
         private int mFillColor;
+        private boolean mapActive;
 
         ViewHolder(View itemView, int mapType, ClickListener listener) {
             super(itemView, listener);
@@ -321,6 +263,8 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             rootView = itemView;
             if (itemView instanceof CardView) {
                 cardView = (CardView) itemView;
+            } else {
+                cardView = null;
             }
             name = (TextView) itemView.findViewById(R.id.name_view);
             mapContainer = itemView.findViewById(R.id.map_container);
@@ -341,10 +285,14 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
                 week[4] = (ImageView) weekLayout.findViewById(R.id.friday_circle);
                 week[5] = (ImageView) weekLayout.findViewById(R.id.saturday_circle);
                 week[6] = (ImageView) weekLayout.findViewById(R.id.sunday_circle);
+            } else {
+                week = null;
             }
             wifiLayout = itemView.findViewById(R.id.wifi_layout);
             if (wifiLayout != null) {
                 wifiConnections = (TextView) wifiLayout.findViewById(R.id.wifi_connections);
+            } else {
+                wifiConnections = null;
             }
         }
 
@@ -356,6 +304,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
 
         @Override
         public void setSelected(boolean selected) {
+            Log.d(TAG, "setSelected() called with: selected = [" + selected + "]");
             if (cardView != null) {
                 int color = ContextCompat.getColor(itemView.getContext(), selected ? R.color.card_background_color_selected : R.color.card_background_color);
                 cardView.setBackgroundColor(color);
@@ -430,6 +379,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         }
 
         protected void configureMap(final PlaceCondition placeCondition) {
+            mapActive = true;
             mapContainer.setVisibility(View.VISIBLE);
             mapView.onCreate(null);
             mapView.onResume();
@@ -488,17 +438,18 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             });
         }
 
-        protected boolean containsMap() {
+        private boolean containsMap() {
             return mapView != null;
         }
 
         @Override
         public void recycle() {
-            if (mapView != null) {
+            if (mapActive) {
                 mapView.onPause();
                 mapView.onStop();
                 mapView.onDestroy();
                 mapCover.setVisibility(View.VISIBLE);
+                mapActive = false;
             }
         }
     }

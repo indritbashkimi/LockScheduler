@@ -36,7 +36,7 @@ public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.V
 
     @Override
     public void onBindViewHolder(ProfileAdapter.ViewHolder holder, int position) {
-        holder.setPos(position);
+        //holder.setPos(position);
         holder.init(profile);
     }
 

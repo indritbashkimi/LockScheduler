@@ -3,11 +3,15 @@ package it.ibashkimi.lockscheduler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +29,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.adapters.ProfileAdapter;
 import it.ibashkimi.lockscheduler.domain.Profile;
+import it.ibashkimi.support.design.utils.ThemeUtils;
 
 /**
  * Fragment used to display profile list.
@@ -38,7 +43,6 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     private int mMapStyle;
     private SharedPreferences mSettings;
     private ItemTouchHelper mItemTouchHelper;
-    private ActionModeCallback actionModeCallback = new ActionModeCallback();
     private ActionMode actionMode;
 
     private final LoaderManager.LoaderCallbacks<List<Profile>> mLoaderCallbacks =
@@ -99,6 +103,17 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             }
 
             @Override
+            public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+                super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
+                /*if (mAdapter.isSelected(fromPos)) {
+                    toggleSelection(fromPos);
+                }
+                if (mAdapter.isSelected(toPos)) {
+                    toggleSelection(toPos);
+                }*/
+            }
+
+            @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 Log.d(TAG, "onMove: " + viewHolder.getAdapterPosition() + ", " + target.getAdapterPosition());
                 int targetPosition = target.getAdapterPosition();
@@ -106,6 +121,16 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                     targetPosition--;
                 }
                 App.getProfileApiHelper().swap(viewHolder.getAdapterPosition(), targetPosition);
+                if (mAdapter.isSelected(viewHolder.getAdapterPosition()) != mAdapter.isSelected(targetPosition)) {
+                    mAdapter.toggleSelection(viewHolder.getAdapterPosition());
+                    mAdapter.toggleSelection(targetPosition);
+                }
+                /*if (mAdapter.isSelected(viewHolder.getAdapterPosition())) {
+                    toggleSelection(viewHolder.getAdapterPosition());
+                }
+                if (mAdapter.isSelected(targetPosition)) {
+                    toggleSelection(targetPosition);
+                }*/
                 mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), targetPosition);
                 return true;
             }
@@ -186,6 +211,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     @Override
     public void onItemClicked(int position) {
+        Log.d(TAG, "onItemClicked: position = " + position);
         if (actionMode != null) {
             toggleSelection(position);
         } else {
@@ -201,10 +227,11 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public boolean onItemLongClicked(int position) {
         Log.d(TAG, "onItemLongClicked: position=" + position);
         if (actionMode == null) {
+            Log.d(TAG, "onItemLongClicked: actionMode == null");
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
         }
-
-        //toggleSelection(position);
+        Log.d(TAG, "onItemLongClicked: action != null");
+        toggleSelection(position);
 
         return true;
     }
@@ -219,6 +246,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
      */
     private void toggleSelection(int position) {
         mAdapter.toggleSelection(position);
+        mAdapter.notifyDataSetChanged();
+       // mAdapter.notifyItemChanged(position);
         int count = mAdapter.getSelectedItemCount();
 
         if (count == 0) {
@@ -236,6 +265,13 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate(R.menu.profile_selected, menu);
+            // Tint drawable
+            Drawable drawable = menu.findItem(R.id.action_delete).getIcon();
+            drawable = DrawableCompat.wrap(drawable);
+            // TODO: it works but it's a strange dependency
+            Context context = getActivity().findViewById(R.id.toolbar).getContext();
+            DrawableCompat.setTint(drawable, ThemeUtils.getColorFromAttribute(context, android.R.attr.textColorPrimary));
+            menu.findItem(R.id.action_delete).setIcon(drawable);
             return true;
         }
 
