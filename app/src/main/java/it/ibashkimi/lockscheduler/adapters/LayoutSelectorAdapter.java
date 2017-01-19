@@ -10,7 +10,7 @@ import com.google.android.gms.maps.GoogleMap;
 import it.ibashkimi.lockscheduler.domain.Profile;
 
 
-public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> implements ProfileAdapter.ClickListener {
+public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> implements ProfileAdapter.ClickListener {
     private int[] layouts;
     private Profile profile;
     private ProfileAdapter.ClickListener listener;
@@ -28,14 +28,14 @@ public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.V
     }
 
     @Override
-    public ProfileAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProfileAdapter.ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(viewType, parent, false);
-        return new ProfileAdapter.ViewHolder(itemView, GoogleMap.MAP_TYPE_HYBRID, this);
+        return new ProfileAdapter.ProfileViewHolder(itemView, GoogleMap.MAP_TYPE_HYBRID, this);
     }
 
     @Override
-    public void onBindViewHolder(ProfileAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ProfileAdapter.ProfileViewHolder holder, int position) {
         //holder.setPos(position);
         holder.init(profile);
     }
@@ -46,13 +46,13 @@ public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.V
     }
 
     @Override
-    public void onItemClicked(int position, ProfileAdapter.ViewHolder viewholder) {
+    public void onItemClicked(int position, ProfileAdapter.ProfileViewHolder viewholder) {
         /*if (listener != null)
             listener.onItemClicked(position);*/
     }
 
     @Override
-    public boolean onItemLongClicked(int position, ProfileAdapter.ViewHolder viewholder) {
+    public boolean onItemLongClicked(int position, ProfileAdapter.ProfileViewHolder viewholder) {
         /*if (listener != null) {
             return listener.onItemLongClicked(position, null);
         }*/

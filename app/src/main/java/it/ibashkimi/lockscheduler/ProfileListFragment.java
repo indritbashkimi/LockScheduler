@@ -115,9 +115,6 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 Log.d(TAG, "onMove: " + viewHolder.getAdapterPosition() + ", " + target.getAdapterPosition());
                 int targetPosition = target.getAdapterPosition();
-                if (targetPosition == mAdapter.getData().size()) {
-                    targetPosition--;
-                }
                 App.getProfileApiHelper().swap(viewHolder.getAdapterPosition(), targetPosition);
                 if (mAdapter.isSelected(viewHolder.getAdapterPosition()) != mAdapter.isSelected(targetPosition)) {
                     mAdapter.toggleSelection(viewHolder.getAdapterPosition());
@@ -189,7 +186,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     }
 
     @Override
-    public void onItemClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
+    public void onItemClicked(int position, ProfileAdapter.ProfileViewHolder viewHolder) {
         //Log.d(TAG, "onItemClicked: position = " + position);
         if (actionMode != null) {
             toggleSelection(position, viewHolder);
@@ -203,7 +200,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     }
 
     @Override
-    public boolean onItemLongClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
+    public boolean onItemLongClicked(int position, ProfileAdapter.ProfileViewHolder viewHolder) {
         //Log.d(TAG, "onItemLongClicked: position=" + position);
         if (actionMode == null) {
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
@@ -221,7 +218,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
      *
      * @param position Position of the item to toggle the selection state
      */
-    private void toggleSelection(int position, ProfileAdapter.ViewHolder viewHolder) {
+    private void toggleSelection(int position, ProfileAdapter.ProfileViewHolder viewHolder) {
         mAdapter.toggleSelection(position);
         viewHolder.setSelected(mAdapter.isSelected(position));
         //mAdapter.notifyDataSetChanged();

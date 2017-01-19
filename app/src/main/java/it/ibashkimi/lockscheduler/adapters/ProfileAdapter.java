@@ -40,21 +40,15 @@ import it.ibashkimi.support.design.utils.ThemeUtils;
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
+public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 
     private static final String TAG = "ProfileAdapter";
 
     public interface ClickListener {
-        void onItemClicked(int position, ViewHolder viewholder);
+        void onItemClicked(int position, ProfileViewHolder viewHolder);
 
-        boolean onItemLongClicked(int position, ViewHolder viewholder);
+        boolean onItemLongClicked(int position, ProfileViewHolder viewHolder);
     }
-
-    /*public interface ItemTouchHelperAdapter {
-        void onItemMove(int fromPosition, int toPosition);
-
-        void onItemDismiss(int position);
-    }*/
 
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
     private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile_6;
@@ -87,55 +81,32 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return position == mProfiles.size() ? -1 : mItemLayout;
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == -1) {
-            View itemView = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.item_space, parent, false);
-            return new SpaceViewHolder(itemView);
-        }
+    public ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(mItemLayout, parent, false);
-        return new ViewHolder(itemView, mapType, clickListener);
+        return new ProfileViewHolder(itemView, mapType, clickListener);
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == -1) {
-            return;
-        }
-
+    public void onBindViewHolder(final ProfileViewHolder holder, int position) {
         final Profile profile = mProfiles.get(position);
-        ViewHolder myHolder = (ViewHolder) holder;
-        //Log.d(TAG, "onBindViewHolder: position = " + position + ", profile = " + profile);
-        myHolder.setSelected(isSelected(position));
-        myHolder.init(profile);
+        holder.setSelected(isSelected(position));
+        holder.init(profile);
     }
 
     @Override
-    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+    public void onViewRecycled(ProfileViewHolder holder) {
         super.onViewRecycled(holder);
-        if (holder instanceof ViewHolder) {
-            ((ViewHolder) holder).recycle();
-        }
+        holder.recycle();
     }
 
     @Override
     public int getItemCount() {
-        return mProfiles.size() + 1;
+        return mProfiles.size();
     }
 
-    public static class SpaceViewHolder extends RecyclerView.ViewHolder {
-        SpaceViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         View rootView;
         CardView cardView;
         TextView name;
@@ -160,7 +131,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
         int mFillColor;
         boolean mapActive;
 
-        ViewHolder(View itemView, int mapType, ClickListener listener) {
+        ProfileViewHolder(View itemView, int mapType, ClickListener listener) {
             super(itemView);
             this.listener = listener;
             itemView.setOnClickListener(this);
@@ -309,7 +280,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                         @Override
                         public void onMapClick(LatLng latLng) {
                             if (listener != null)
-                                listener.onItemClicked(getLayoutPosition(), ViewHolder.this);
+                                listener.onItemClicked(getLayoutPosition(), ProfileViewHolder.this);
                         }
                     });
                     googleMap.addCircle(new CircleOptions()
@@ -363,7 +334,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
         @Override
         public boolean onLongClick(View v) {
-            //Log.d(TAG, "onLongClick: pos = " + getAdapterPosition() + ", ViewHolder = " + this);
+            //Log.d(TAG, "onLongClick: pos = " + getAdapterPosition() + ", ProfileViewHolder = " + this);
             return listener != null && listener.onItemLongClicked(getAdapterPosition(), this);
         }
 
