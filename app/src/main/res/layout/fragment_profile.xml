@@ -19,12 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
 
-            <ImageView
-                android:id="@+id/cancel_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:tint="@color/ib_textColorPrimary"
-                app:srcCompat="@drawable/ic_cancel" />
+            <include layout="@layout/cancel_button" />
 
             <TextView
                 android:id="@+id/title_text"

@@ -25,6 +25,7 @@
     <string name="off">Off</string>
     <string name="auto">Auto</string>
     <string name="cancel">Cancel</string>
+    <string name="cancel_description">@string/cancel</string>
     <string name="ok">OK</string>
     <string name="website">Website</string>
     <string name="profile_name">Profile name</string>
