@@ -3,13 +3,11 @@ package it.ibashkimi.lockscheduler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -210,10 +208,10 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     }*/
 
     @Override
-    public void onItemClicked(int position) {
+    public void onItemClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
         Log.d(TAG, "onItemClicked: position = " + position);
         if (actionMode != null) {
-            toggleSelection(position);
+            toggleSelection(position, viewHolder);
         } else {
             Profile profile = mAdapter.getData().get(position);
             Intent intent = new Intent(getActivity(), ProfileActivity.class);
@@ -224,14 +222,14 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     }
 
     @Override
-    public boolean onItemLongClicked(int position) {
+    public boolean onItemLongClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
         Log.d(TAG, "onItemLongClicked: position=" + position);
         if (actionMode == null) {
             Log.d(TAG, "onItemLongClicked: actionMode == null");
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
         }
         Log.d(TAG, "onItemLongClicked: action != null");
-        toggleSelection(position);
+        toggleSelection(position, viewHolder);
 
         return true;
     }
@@ -244,10 +242,11 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
      *
      * @param position Position of the item to toggle the selection state
      */
-    private void toggleSelection(int position) {
+    private void toggleSelection(int position, ProfileAdapter.ViewHolder viewHolder) {
         mAdapter.toggleSelection(position);
-        mAdapter.notifyDataSetChanged();
-       // mAdapter.notifyItemChanged(position);
+        viewHolder.setSelected(mAdapter.isSelected(position));
+        //mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyItemChanged(position);
         int count = mAdapter.getSelectedItemCount();
 
         if (count == 0) {
@@ -292,7 +291,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                         App.getProfileApiHelper().removeProfile(mAdapter.getData().get(position));
                         mAdapter.notifyItemRemoved(position);
                     }
-                    mAdapter.clearSelection(false);
+                    mAdapter.clearSelection();
                     mode.finish();
                     return true;
 

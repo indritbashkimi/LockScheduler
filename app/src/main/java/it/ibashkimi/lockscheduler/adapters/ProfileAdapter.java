@@ -41,14 +41,14 @@ import it.ibashkimi.support.design.utils.ThemeUtils;
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHolder> {
+public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "ProfileAdapter";
 
     public interface ClickListener {
-        void onItemClicked(int position);
+        void onItemClicked(int position, ViewHolder viewholder);
 
-        boolean onItemLongClicked(int position);
+        boolean onItemLongClicked(int position, ViewHolder viewholder);
     }
 
     /*public interface ItemTouchHelperAdapter {
@@ -78,6 +78,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         this.clickListener = clickListener;
         this.mItemLayout = itemLayout;
         this.mapType = mapType;
+        //setHasStableIds(true);
     }
 
     public void setData(List<Profile> data) {
@@ -95,7 +96,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
     }
 
     @Override
-    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == -1) {
             View itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.item_space, parent, false);
@@ -107,22 +108,25 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
     }
 
     @Override
-    public void onBindViewHolder(final BaseViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == -1) {
             return;
         }
 
         //holder.setPos(position);
         final Profile profile = mProfiles.get(position);
+        ViewHolder myHolder = (ViewHolder) holder;
         Log.d(TAG, "onBindViewHolder: position = " + position + ", profile = " + profile);
-        holder.setSelected(isSelected(position));
-        holder.init(profile);
+        myHolder.setSelected(isSelected(position));
+        myHolder.init(profile);
     }
 
     @Override
-    public void onViewRecycled(BaseViewHolder holder) {
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
         super.onViewRecycled(holder);
-        holder.recycle();
+        if (holder instanceof ViewHolder) {
+            ((ViewHolder) holder).recycle();
+        }
     }
 
     @Override
@@ -139,93 +143,13 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         viewToAnimate.startAnimation(animation);
     }
 
-    static class SpaceViewHolder extends BaseViewHolder {
+    public static class SpaceViewHolder extends RecyclerView.ViewHolder {
         SpaceViewHolder(View itemView) {
             super(itemView);
         }
-
-        @Override
-        public void init(Profile profile) {
-
-        }
-
-        @Override
-        public void setSelected(boolean selected) {
-
-        }
-
-        @Override
-        public void recycle() {
-
-        }
     }
 
-    static abstract class BaseViewHolder extends RecyclerView.ViewHolder {
-        int pos;
-
-        public BaseViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        public abstract void init(Profile profile);
-
-        public abstract void setSelected(boolean selected);
-
-        public abstract void recycle();
-
-        public int getPos() {
-            return getLayoutPosition();
-        }
-    }
-
-    static abstract class SimpleViewHolder extends BaseViewHolder implements View.OnLongClickListener, View.OnClickListener {
-
-        ClickListener listener;
-
-        public SimpleViewHolder(View itemView, ClickListener listener) {
-            super(itemView);
-            this.listener = listener;
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
-        }
-
-        @Override
-        public void init(Profile profile) {
-            setName(profile.getName());
-            setLock(profile);
-            setPlace(profile.getPlaceCondition());
-            setTime(profile.getTimeCondition());
-            setWifi(profile.getWifiCondition());
-        }
-
-        public abstract void setLock(Profile profile);
-
-        public abstract void setName(String name);
-
-        public abstract void setPlace(PlaceCondition placeCondition);
-
-        public abstract void setTime(TimeCondition timeCondition);
-
-        public abstract void setWifi(WifiCondition wifiCondition);
-
-        public abstract void setSelected(boolean selected);
-
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "onClick: pos = " + getPos());
-            if (listener != null) {
-                listener.onItemClicked(getPos());
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            Log.d(TAG, "onLongClick: pos = " + getPos() + ", ViewHolder = " + this);
-            return listener != null && listener.onItemLongClicked(getPos());
-        }
-    }
-
-    static class ViewHolder extends SimpleViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         View rootView;
         CardView cardView;
         TextView name;
@@ -251,7 +175,10 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         private boolean mapActive;
 
         ViewHolder(View itemView, int mapType, ClickListener listener) {
-            super(itemView, listener);
+            super(itemView);
+            this.listener = listener;
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
 
             this.mCirclePadding = (int) Utils.dpToPx(itemView.getContext(), 8);
             this.mMapType = mapType;
@@ -296,13 +223,19 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             }
         }
 
-        @Override
+        public void init(Profile profile) {
+            setName(profile.getName());
+            setLock(profile);
+            setPlace(profile.getPlaceCondition());
+            setTime(profile.getTimeCondition());
+            setWifi(profile.getWifiCondition());
+        }
+
         public void setLock(Profile profile) {
             enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
             exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
         }
 
-        @Override
         public void setSelected(boolean selected) {
             Log.d(TAG, "setSelected() called with: selected = [" + selected + "]");
             if (cardView != null) {
@@ -334,13 +267,11 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             return wifiLayout != null;
         }
 
-        @Override
         public void setName(String name) {
             if (hasNameField())
                 this.name.setText(name);
         }
 
-        @Override
         public void setPlace(PlaceCondition placeCondition) {
             if (placeCondition == null || !hasPlaceField())
                 return;
@@ -351,7 +282,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             }
         }
 
-        @Override
         public void setTime(TimeCondition timeCondition) {
             if (timeCondition == null || !hasTimeFiled())
                 return;
@@ -366,7 +296,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
             }
         }
 
-        @Override
         public void setWifi(WifiCondition wifiCondition) {
             if (!hasWifiField() || wifiCondition == null)
                 return;
@@ -398,7 +327,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
                         @Override
                         public void onMapClick(LatLng latLng) {
                             if (listener != null)
-                                listener.onItemClicked(getPos());
+                                listener.onItemClicked(getLayoutPosition(), ViewHolder.this);
                         }
                     });
                     googleMap.addCircle(new CircleOptions()
@@ -443,6 +372,19 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.BaseViewHol
         }
 
         @Override
+        public void onClick(View v) {
+            Log.d(TAG, "onClick: pos = " + getAdapterPosition());
+            if (listener != null) {
+                listener.onItemClicked(getAdapterPosition(), this);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d(TAG, "onLongClick: pos = " + getAdapterPosition() + ", ViewHolder = " + this);
+            return listener != null && listener.onItemLongClicked(getAdapterPosition(), this);
+        }
+
         public void recycle() {
             if (mapActive) {
                 mapView.onPause();

@@ -63,13 +63,6 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
     }
 
     /**
-     * Clear the selection status for all items
-     */
-    public void clearSelection(boolean notify) {
-        selectedItems.clear();
-    }
-
-    /**
      * Count the profile_selected items
      *
      * @return Selected items count

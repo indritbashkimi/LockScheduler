@@ -46,16 +46,16 @@ public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.V
     }
 
     @Override
-    public void onItemClicked(int position) {
-        if (listener != null)
-            listener.onItemClicked(position);
+    public void onItemClicked(int position, ProfileAdapter.ViewHolder viewholder) {
+        /*if (listener != null)
+            listener.onItemClicked(position);*/
     }
 
     @Override
-    public boolean onItemLongClicked(int position) {
-        if (listener != null) {
-            return listener.onItemLongClicked(position);
-        }
+    public boolean onItemLongClicked(int position, ProfileAdapter.ViewHolder viewholder) {
+        /*if (listener != null) {
+            return listener.onItemLongClicked(position, null);
+        }*/
         return false;
     }
 }
