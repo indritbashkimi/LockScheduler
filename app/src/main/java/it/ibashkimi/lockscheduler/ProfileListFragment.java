@@ -183,33 +183,14 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         if (s.equals("item_layout")) {
             mItemLayout = resolveLayout(Integer.parseInt(sharedPreferences.getString("item_layout", "0")));
-            //mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
-            //mRecyclerView.setAdapter(mAdapter);
         } else if (s.equals("map_style")) {
             mMapStyle = Utils.resolveMapStyle(sharedPreferences.getInt("map_style", 0));
-            //mAdapter = new ProfileAdapter(getContext(), getProfiles(), mItemLayout, mMapStyle, this);
-            //mRecyclerView.setAdapter(mAdapter);
         }
     }
 
-
-    /*@Override
-    public void onProfileRemoved(Profile profile, int position) {
-        App.getProfileApiHelper().removeProfile(profile);
-        mAdapter.notifyItemRemoved(position);
-    }
-
-    @Override
-    public void onProfileClicked(Profile profile) {
-        *//*Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.setAction(ProfileActivity.ACTION_VIEW);
-        intent.putExtra("profile", profile.toJson());
-        getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);*//*
-    }*/
-
     @Override
     public void onItemClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
-        Log.d(TAG, "onItemClicked: position = " + position);
+        //Log.d(TAG, "onItemClicked: position = " + position);
         if (actionMode != null) {
             toggleSelection(position, viewHolder);
         } else {
@@ -223,12 +204,10 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     @Override
     public boolean onItemLongClicked(int position, ProfileAdapter.ViewHolder viewHolder) {
-        Log.d(TAG, "onItemLongClicked: position=" + position);
+        //Log.d(TAG, "onItemLongClicked: position=" + position);
         if (actionMode == null) {
-            Log.d(TAG, "onItemLongClicked: actionMode == null");
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
         }
-        Log.d(TAG, "onItemLongClicked: action != null");
         toggleSelection(position, viewHolder);
 
         return true;
@@ -267,7 +246,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             // Tint drawable
             Drawable drawable = menu.findItem(R.id.action_delete).getIcon();
             drawable = DrawableCompat.wrap(drawable);
-            // TODO: it works but it's a strange dependency
+            // It works but it's a strange dependency
             Context context = getActivity().findViewById(R.id.toolbar).getContext();
             DrawableCompat.setTint(drawable, ThemeUtils.getColorFromAttribute(context, android.R.attr.textColorPrimary));
             menu.findItem(R.id.action_delete).setIcon(drawable);
@@ -283,10 +262,9 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    Log.d(TAG, "menu_remove");
                     List<Integer> items = mAdapter.getSelectedItems();
                     for (int i = items.size() - 1; i > -1; i--) {
-                        Log.d(TAG, "onActionItemClicked: i = " + i);
+                        //Log.d(TAG, "onActionItemClicked: i = " + i);
                         int position = items.get(i);
                         App.getProfileApiHelper().removeProfile(mAdapter.getData().get(position));
                         mAdapter.notifyItemRemoved(position);

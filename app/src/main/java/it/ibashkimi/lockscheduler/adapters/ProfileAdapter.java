@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,6 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
     private static final int DEFAULT_MAP_STYLE = GoogleMap.MAP_TYPE_HYBRID;
     private static final int DEFAULT_ITEM_LAYOUT = R.layout.item_profile_6;
 
-    private Context mContext;
     private List<Profile> mProfiles;
     private int mItemLayout;
     private ClickListener clickListener;
@@ -73,12 +71,10 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
     public ProfileAdapter(Context context, List<Profile> profiles, int itemLayout, int mapType, @NonNull ClickListener clickListener) {
         super();
-        this.mContext = context;
         this.mProfiles = profiles;
         this.clickListener = clickListener;
         this.mItemLayout = itemLayout;
         this.mapType = mapType;
-        //setHasStableIds(true);
     }
 
     public void setData(List<Profile> data) {
@@ -113,10 +109,9 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
             return;
         }
 
-        //holder.setPos(position);
         final Profile profile = mProfiles.get(position);
         ViewHolder myHolder = (ViewHolder) holder;
-        Log.d(TAG, "onBindViewHolder: position = " + position + ", profile = " + profile);
+        //Log.d(TAG, "onBindViewHolder: position = " + position + ", profile = " + profile);
         myHolder.setSelected(isSelected(position));
         myHolder.init(profile);
     }
@@ -132,15 +127,6 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return mProfiles.size() + 1;
-    }
-
-    /**
-     * Here is the key method to apply the animation
-     */
-    private void setAnimation(View viewToAnimate) {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
-        viewToAnimate.startAnimation(animation);
     }
 
     public static class SpaceViewHolder extends RecyclerView.ViewHolder {
@@ -166,13 +152,13 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
         TextView place;
         View placeLayout;
         ClickListener listener;
-        private int mCirclePadding;
-        private int mMapType;
+        int mCirclePadding;
+        int mMapType;
         @ColorInt
-        private int mCircleColor;
+        int mCircleColor;
         @ColorInt
-        private int mFillColor;
-        private boolean mapActive;
+        int mFillColor;
+        boolean mapActive;
 
         ViewHolder(View itemView, int mapType, ClickListener listener) {
             super(itemView);
@@ -237,7 +223,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
         }
 
         public void setSelected(boolean selected) {
-            Log.d(TAG, "setSelected() called with: selected = [" + selected + "]");
+            //Log.d(TAG, "setSelected() called with: selected = [" + selected + "]");
             if (cardView != null) {
                 int color = ContextCompat.getColor(itemView.getContext(), selected ? R.color.card_background_color_selected : R.color.card_background_color);
                 cardView.setBackgroundColor(color);
@@ -245,10 +231,6 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                 int color = Color.WHITE; // TODO: 17/01/17
                 itemView.setBackgroundColor(color);
             }
-        }
-
-        protected boolean hasLockLayout() {
-            return lockLayout != null;
         }
 
         protected boolean hasNameField() {
@@ -373,7 +355,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick: pos = " + getAdapterPosition());
+            //Log.d(TAG, "onClick: pos = " + getAdapterPosition());
             if (listener != null) {
                 listener.onItemClicked(getAdapterPosition(), this);
             }
@@ -381,7 +363,7 @@ public class ProfileAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
         @Override
         public boolean onLongClick(View v) {
-            Log.d(TAG, "onLongClick: pos = " + getAdapterPosition() + ", ViewHolder = " + this);
+            //Log.d(TAG, "onLongClick: pos = " + getAdapterPosition() + ", ViewHolder = " + this);
             return listener != null && listener.onItemLongClicked(getAdapterPosition(), this);
         }
 
