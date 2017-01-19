@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/monday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="#80ffffff"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/monday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="M"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/tuesday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/tuesday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="T"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/wednesday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/wednesday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="W"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/thursday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/thursday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="T"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/friday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/friday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="F"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/saturday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/saturday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="S"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/sunday_circle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:tint="@color/ib_text_disabled_light"
+                android:visibility="gone"
+                card:srcCompat="@drawable/mycircle" />
+
+            <TextView
+                android:id="@+id/sunday"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="S"
+                android:textColor="@color/ib_textColorSecondary" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</merge>

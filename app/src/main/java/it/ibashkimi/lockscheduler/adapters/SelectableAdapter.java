@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler.adapters;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import java.util.ArrayList;
@@ -85,6 +86,7 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
     public List<Integer> getSelectedItems() {
         List<Integer> items = new ArrayList<>(selectedItems.size());
         for (int i = 0; i < selectedItems.size(); ++i) {
+            Log.d(TAG, "getSelectedItems: " + selectedItems.keyAt(i));
             items.add(selectedItems.keyAt(i));
         }
         return items;

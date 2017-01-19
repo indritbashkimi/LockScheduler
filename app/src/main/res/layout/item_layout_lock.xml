@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge>
+
+    <LinearLayout android:id="@+id/lock_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+        <TextView
+            android:id="@+id/enter_lock_mode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="PIN" />
+
+        <TextView
+            android:id="@+id/exit_lock_mode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Swipe" />
+
+    </LinearLayout>
+
+</merge>

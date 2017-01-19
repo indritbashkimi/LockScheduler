@@ -21,6 +21,7 @@ public class MaterialDialogsSettingsFragment extends SettingsFragment {
     private static final String TAG = "MaterialDialogsSettings";
 
     private MaterialDialog themeDialog;
+    private MaterialDialog layoutDialog;
 
     @Override
     public void onClick(View v) {
@@ -139,6 +140,42 @@ public class MaterialDialogsSettingsFragment extends SettingsFragment {
                             }
                         })
                         .show();
+                /*Profile profile = App.getProfileApiHelper().getProfiles().get(0);
+                int[] layouts = new int[]{
+                        R.layout.item_profile_0,
+                        R.layout.item_profile_1,
+                        R.layout.item_profile_2,
+                        R.layout.item_profile_3,
+                        R.layout.item_profile_4,
+                        R.layout.item_profile_5,
+                        R.layout.item_profile_6
+                };
+                LayoutSelectorAdapter layoutAdapter = new LayoutSelectorAdapter(layouts, profile, new ProfileAdapter.ClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        if (layoutDialog != null) layoutDialog.dismiss();
+                        layoutDialog = null;
+                    }
+
+                    @Override
+                    public boolean onItemLongClicked(int position) {
+                        return false;
+                    }
+                });
+                layoutDialog = new MaterialDialog.Builder(getContext())
+                        .title(R.string.pref_title_theme)
+                        // second parameter is an optional layout manager. Must be a LinearLayoutManager or GridLayoutManager.
+                        .adapter(layoutAdapter, new LinearLayoutManager(getContext()))
+                        .negativeText(R.string.dialog_action_cancel)
+                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                mSharedPreferences.edit().putInt("item_layout", which).apply();
+                                profileItemSummary.setText(text);
+                                return true;
+                            }
+                        })
+                        .show();*/
                 break;
             case R.id.password_expiration:
                 final String[] passwordValues = getResources().getStringArray(R.array.pref_password_expiration_timeout_values);

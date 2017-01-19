@@ -137,6 +137,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
 
     private static int resolveLayout(int itemLayout) {
         switch (itemLayout) {
+            case 0:
+                return R.layout.item_profile_0;
             case 1:
                 return R.layout.item_profile_1;
             case 2:
@@ -149,16 +151,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 return R.layout.item_profile_5;
             case 6:
                 return R.layout.item_profile_6;
-            case 7:
-                return R.layout.item_profile_7;
-            case 8:
-                return R.layout.item_profile_8;
-            case 9:
-                return R.layout.item_profile_9;
-            case 10:
-                return R.layout.item_profile_a;
             default:
-                return R.layout.item_profile_a;
+                return R.layout.item_profile_6;
         }
     }
 
@@ -210,7 +204,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
         }
 
-        toggleSelection(position);
+        //toggleSelection(position);
 
         return true;
     }
@@ -257,8 +251,10 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                     Log.d(TAG, "menu_remove");
                     List<Integer> items = mAdapter.getSelectedItems();
                     for (int i = items.size() - 1; i > -1; i--) {
-                        App.getProfileApiHelper().removeProfile(mAdapter.getData().get(i));
-                        mAdapter.notifyItemRemoved(i);
+                        Log.d(TAG, "onActionItemClicked: i = " + i);
+                        int position = items.get(i);
+                        App.getProfileApiHelper().removeProfile(mAdapter.getData().get(position));
+                        mAdapter.notifyItemRemoved(position);
                     }
                     mAdapter.clearSelection(false);
                     mode.finish();
