@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.adapters.HelpAdapter;
@@ -45,6 +46,8 @@ public class HelpFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        TextView title = (TextView) rootView.findViewById(R.id.title_view);
+        title.setText(getString(R.string.fragment_help_title));
         rootView.findViewById(R.id.feedback_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

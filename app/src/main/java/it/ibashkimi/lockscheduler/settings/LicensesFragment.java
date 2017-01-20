@@ -44,6 +44,8 @@ public class LicensesFragment extends Fragment {
                 getActivity().onBackPressed();
             }
         });
+        TextView title = (TextView) toolbar.findViewById(R.id.title_view);
+        title.setText(getString(R.string.fragment_licences_title));
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new LibraryAdapter(getActivity()));

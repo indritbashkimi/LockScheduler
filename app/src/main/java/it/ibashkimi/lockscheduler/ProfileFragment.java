@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment {
                 cancel();
             }
         });
-        ((TextView) toolbar.findViewById(R.id.title_text)).setText(title);
+        ((TextView) toolbar.findViewById(R.id.title_view)).setText(title);
         mName = (EditText) rootView.findViewById(R.id.input_name);
         mName.setText(mProfile.getName());
         mName.addTextChangedListener(new TextWatcher() {
