@@ -20,8 +20,8 @@ import android.util.Log;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.Utils;
-import it.ibashkimi.support.design.preference.ThemePreference;
-import it.ibashkimi.support.design.preference.ThemePreferenceDialogFragmentCompat;
+import it.ibashkimi.support.preference.ThemePreference;
+import it.ibashkimi.support.preference.ThemePreferenceDialogFragmentCompat;
 
 
 public class SettingsFragmentCompat extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {

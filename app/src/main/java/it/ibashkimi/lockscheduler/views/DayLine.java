@@ -12,7 +12,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class DayLine extends View {

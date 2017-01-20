@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.security.InvalidParameterException;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class LicensesFragment extends Fragment {

@@ -27,7 +27,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.adapters.ProfileAdapter;
 import it.ibashkimi.lockscheduler.domain.Profile;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 /**
  * Fragment used to display profile list.

@@ -42,7 +42,7 @@ import it.ibashkimi.lockscheduler.domain.PlaceCondition;
 import it.ibashkimi.lockscheduler.domain.TimeCondition;
 import it.ibashkimi.lockscheduler.domain.WifiCondition;
 import it.ibashkimi.lockscheduler.domain.WifiItem;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.BaseViewHolder> {

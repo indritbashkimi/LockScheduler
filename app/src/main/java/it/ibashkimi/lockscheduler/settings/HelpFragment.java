@@ -14,7 +14,7 @@ import android.widget.TextView;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.adapters.HelpAdapter;
 import it.ibashkimi.lockscheduler.adapters.HelpAdapter.HelpItem;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class HelpFragment extends Fragment {

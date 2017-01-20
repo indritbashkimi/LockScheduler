@@ -12,9 +12,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.preference.ThemeAdapter;
-import it.ibashkimi.support.design.preference.ThemeItem;
-import it.ibashkimi.support.design.preference.Themes;
+import it.ibashkimi.support.preference.ThemeAdapter;
+import it.ibashkimi.support.preference.ThemeItem;
+import it.ibashkimi.support.preference.Themes;
 
 public class MaterialDialogsSettingsFragment extends SettingsFragment {
 

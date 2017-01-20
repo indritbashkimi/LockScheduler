@@ -13,8 +13,8 @@ import android.view.MenuItem;
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.design.preference.Themes;
-import it.ibashkimi.support.design.utils.ThemeUtils;
+import it.ibashkimi.support.preference.Themes;
+import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class SettingsActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
