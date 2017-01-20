@@ -44,7 +44,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
                 android:hint="@string/profile_name"
-                android:inputType="textCapSentences"
+                android:inputType="textCapSentences|textMultiLine"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
             <fragment
