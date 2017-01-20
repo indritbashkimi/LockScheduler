@@ -1,10 +1,8 @@
 package it.ibashkimi.lockscheduler.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -57,6 +55,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     private int mItemLayout;
     private ClickListener clickListener;
     private int mapType;
+    private int coverColor;
 
     @SuppressWarnings("unused")
     public ProfileAdapter(Context context, List<Profile> profiles, @NonNull ClickListener clickListener) {
@@ -69,6 +68,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         this.clickListener = clickListener;
         this.mItemLayout = itemLayout;
         this.mapType = mapType;
+        this.coverColor = ColorUtils.setAlphaComponent(ThemeUtils.getColorFromAttribute(context, R.attr.colorPrimaryDark), 80);
     }
 
     public void setData(List<Profile> data) {
@@ -84,7 +84,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     public ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(mItemLayout, parent, false);
-        return new ProfileViewHolder(itemView, mapType, clickListener);
+        return new ProfileViewHolder(itemView, mapType, coverColor, clickListener);
     }
 
     @Override
@@ -130,13 +130,11 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         @ColorInt
         int mFillColor;
         boolean mapActive;
+        View cover;
 
-        ProfileViewHolder(View itemView, int mapType, ClickListener listener) {
+        ProfileViewHolder(View itemView, int mapType, int coverColor, ClickListener listener) {
             super(itemView);
             this.listener = listener;
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
-
             this.mCirclePadding = (int) Utils.dpToPx(itemView.getContext(), 8);
             this.mMapType = mapType;
             this.mCircleColor = ThemeUtils.getColorFromAttribute(itemView.getContext(), R.attr.colorAccent);
@@ -144,12 +142,13 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             this.mCircleColor = ColorUtils.setAlphaComponent(mCircleColor, 200);
 
             this.listener = listener;
-            rootView = itemView;
-            if (itemView instanceof CardView) {
-                cardView = (CardView) itemView;
-            } else {
-                cardView = null;
-            }
+            rootView = itemView.findViewById(R.id.rootView);
+            cardView = (CardView) itemView.findViewById(R.id.cardView);
+            cover = itemView.findViewById(R.id.cover);
+            cover.setBackgroundColor(coverColor);
+            cover.setVisibility(View.GONE);
+            rootView.setOnClickListener(this);
+            rootView.setOnLongClickListener(this);
             name = (TextView) itemView.findViewById(R.id.name_view);
             mapContainer = itemView.findViewById(R.id.map_container);
             mapView = (MapView) itemView.findViewById(R.id.mapView);
@@ -194,14 +193,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         }
 
         public void setSelected(boolean selected) {
-            //Log.d(TAG, "setSelected() called with: selected = [" + selected + "]");
-            if (cardView != null) {
-                int color = ContextCompat.getColor(itemView.getContext(), selected ? R.color.card_background_color_selected : R.color.card_background_color);
-                cardView.setBackgroundColor(color);
-            } else {
-                int color = Color.WHITE; // TODO: 17/01/17
-                itemView.setBackgroundColor(color);
-            }
+            cover.setVisibility(selected ? View.VISIBLE : View.GONE);
         }
 
         protected boolean hasNameField() {

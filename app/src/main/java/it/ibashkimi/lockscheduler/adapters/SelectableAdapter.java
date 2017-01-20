@@ -57,9 +57,10 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
     public void clearSelection() {
         List<Integer> selection = getSelectedItems();
         selectedItems.clear();
-        for (Integer i : selection) {
+        notifyDataSetChanged();
+        /*for (Integer i : selection) {
             notifyItemChanged(i);
-        }
+        }*/
     }
 
     /**
