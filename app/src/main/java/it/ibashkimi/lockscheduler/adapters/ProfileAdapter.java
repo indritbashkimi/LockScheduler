@@ -55,7 +55,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     private int mItemLayout;
     private ClickListener clickListener;
     private int mapType;
-    private int coverColor;
 
     @SuppressWarnings("unused")
     public ProfileAdapter(Context context, List<Profile> profiles, @NonNull ClickListener clickListener) {
@@ -68,7 +67,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         this.clickListener = clickListener;
         this.mItemLayout = itemLayout;
         this.mapType = mapType;
-        this.coverColor = ColorUtils.setAlphaComponent(ThemeUtils.getColorFromAttribute(context, R.attr.colorPrimaryDark), 80);
     }
 
     public void setData(List<Profile> data) {
@@ -84,7 +82,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     public ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(mItemLayout, parent, false);
-        return new ProfileViewHolder(itemView, mapType, coverColor, clickListener);
+        return new ProfileViewHolder(itemView, mapType, clickListener);
     }
 
     @Override
@@ -132,7 +130,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         boolean mapActive;
         View cover;
 
-        ProfileViewHolder(View itemView, int mapType, int coverColor, ClickListener listener) {
+        ProfileViewHolder(View itemView, int mapType, ClickListener listener) {
             super(itemView);
             this.listener = listener;
             this.mCirclePadding = (int) Utils.dpToPx(itemView.getContext(), 8);
@@ -145,7 +143,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             rootView = itemView.findViewById(R.id.rootView);
             cardView = (CardView) itemView.findViewById(R.id.cardView);
             cover = itemView.findViewById(R.id.cover);
-            cover.setBackgroundColor(coverColor);
             cover.setVisibility(View.GONE);
             rootView.setOnClickListener(this);
             rootView.setOnLongClickListener(this);

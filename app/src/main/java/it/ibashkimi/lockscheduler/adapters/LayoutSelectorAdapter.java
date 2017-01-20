@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.adapters;
 
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +7,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 
-import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.domain.Profile;
-import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> implements ProfileAdapter.ClickListener {
@@ -34,8 +31,7 @@ public class LayoutSelectorAdapter extends RecyclerView.Adapter<ProfileAdapter.P
     public ProfileAdapter.ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(viewType, parent, false);
-        int coverColor = ColorUtils.setAlphaComponent(ThemeUtils.getColorFromAttribute(itemView.getContext(), R.attr.colorPrimaryDark), 90);
-        return new ProfileAdapter.ProfileViewHolder(itemView, GoogleMap.MAP_TYPE_HYBRID, coverColor, this);
+        return new ProfileAdapter.ProfileViewHolder(itemView, GoogleMap.MAP_TYPE_HYBRID, this);
     }
 
     @Override
