@@ -104,7 +104,7 @@
 
                 </LinearLayout>
 
-                <it.ibashkimi.lockscheduler.views.DayLine
+                <it.ibashkimi.lockscheduler.ui.widget.DayLine
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

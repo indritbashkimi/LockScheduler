@@ -6,7 +6,7 @@ import android.view.View;
 import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.api.AdminApiHelper;
+import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 
 public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.IntroActivity {
 

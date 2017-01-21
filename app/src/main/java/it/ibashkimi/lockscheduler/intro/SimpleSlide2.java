@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.intro;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -28,7 +27,7 @@ import com.heinrichreimersoftware.materialintro.view.parallax.ParallaxSlideFragm
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import it.ibashkimi.lockscheduler.api.AdminApiHelper;
+import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 
 /**
  * @author Indrit Bashkimi <indrit.bashkimi@gmail.com>

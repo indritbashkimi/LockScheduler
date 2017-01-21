@@ -11,8 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.BaseActivity;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.about.AboutActivity;
+import it.ibashkimi.lockscheduler.ui.BaseActivity;
 import it.ibashkimi.support.preference.Themes;
 import it.ibashkimi.support.utils.ThemeUtils;
 

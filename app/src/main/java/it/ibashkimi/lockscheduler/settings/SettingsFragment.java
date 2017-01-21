@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.Utils;
+import it.ibashkimi.lockscheduler.util.Utils;
 
 
 public class SettingsFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {

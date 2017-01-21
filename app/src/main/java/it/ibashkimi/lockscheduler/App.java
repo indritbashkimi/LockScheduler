@@ -4,9 +4,10 @@ import android.app.Application;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
-import it.ibashkimi.lockscheduler.api.GeofenceApiHelper;
-import it.ibashkimi.lockscheduler.api.GoogleApiHelper;
-import it.ibashkimi.lockscheduler.api.ProfileApiHelper;
+import it.ibashkimi.lockscheduler.model.api.GeofenceApiHelper;
+import it.ibashkimi.lockscheduler.model.api.GoogleApiHelper;
+import it.ibashkimi.lockscheduler.model.api.LockManager;
+import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
 
 
 public class App extends Application {

@@ -19,7 +19,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.Utils;
+import it.ibashkimi.lockscheduler.util.Utils;
 import it.ibashkimi.support.preference.ThemePreference;
 import it.ibashkimi.support.preference.ThemePreferenceDialogFragmentCompat;
 

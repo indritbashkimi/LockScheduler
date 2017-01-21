@@ -47,7 +47,7 @@
 
     </LinearLayout>
 
-    <it.ibashkimi.lockscheduler.views.PasswordInputLayout
+    <it.ibashkimi.lockscheduler.ui.widget.PasswordInputLayout
         android:id="@+id/enter_password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
 
     </LinearLayout>
 
-    <it.ibashkimi.lockscheduler.views.PasswordInputLayout
+    <it.ibashkimi.lockscheduler.ui.widget.PasswordInputLayout
         android:id="@+id/exit_password_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
