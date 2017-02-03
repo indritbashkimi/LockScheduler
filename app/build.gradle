@@ -30,7 +30,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.1.0'
+    supportLibVersion = '25.1.1'
     playServicesVersion = '10.0.1' //10.0.1 latest version. For emulator: 9.8.0
 }
 
@@ -57,6 +57,7 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4'
     compile 'com.heinrichreimersoftware:material-intro:1.6'
     compile 'com.afollestad.material-dialogs:core:0.9.2.3'
+    compile 'com.github.TouchBoarder:weekdays-buttons-bar:v1.0.2'
     testCompile 'junit:junit:4.12'
 }
 
