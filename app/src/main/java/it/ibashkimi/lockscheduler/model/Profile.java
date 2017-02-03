@@ -279,6 +279,13 @@ public class Profile {
         return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, conditions=%d, trueActions=%d, falseActions=%d}", id, name, conditions.size(), trueActions.size(), falseActions.size());
     }
 
+    public boolean isEmpty() {
+        return (name == null) ||
+                (name.equals("")) ||
+                (conditions == null) ||
+                (conditions.size() == 0);
+    }
+
 
     public String toJson() {
         JSONObject jsonObject = new JSONObject();

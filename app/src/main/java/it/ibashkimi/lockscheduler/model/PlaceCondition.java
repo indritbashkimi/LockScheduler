@@ -22,7 +22,7 @@ public class PlaceCondition extends Condition {
         super(Type.PLACE, name);
         this.place = place;
         this.radius = radius;
-        this.address = "";
+        this.address = name;
     }
 
     public LatLng getPlace() {

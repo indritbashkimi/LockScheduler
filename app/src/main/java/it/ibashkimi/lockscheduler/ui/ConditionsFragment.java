@@ -302,7 +302,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
                     parent.onConditionChanged(placeCondition);
                 } else {
                     placeCondition = new PlaceCondition("Place", place.getLatLng(), 300);
-                    placeCondition.setAddress(place.getAddress().toString());
+                    //placeCondition.setAddress(place.getAddress().toString());
                     TransitionManager.beginDelayedTransition(recyclerView);
                     conditions.add(placeCondition);
                     parent.onConditionAdded(placeCondition);

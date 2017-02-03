@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <include layout="@layout/cancel_app_bar" />
+
+    <!--This ViewStub will be replaced by a RecyclerView displaying the weekdays -->
+    <ViewStub
+        android:id="@+id/weekdays_stub_frag"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize" />
+
+</LinearLayout>

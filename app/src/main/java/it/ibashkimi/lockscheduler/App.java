@@ -26,9 +26,9 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate: ");
+        Log.d(TAG, "onCreateView: ");
         super.onCreate();
-        //Toast.makeText(this, "App onCreate", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "App onCreateView", Toast.LENGTH_LONG).show();
         mInstance = this;
         googleApiHelper = new GoogleApiHelper(this);
         geofenceApiHelper = new GeofenceApiHelper(this, googleApiHelper);

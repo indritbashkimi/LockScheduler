@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler.about;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.ui.recyclerview.HelpAdapter;
-import it.ibashkimi.lockscheduler.ui.recyclerview.HelpAdapter.HelpItem;
 import it.ibashkimi.support.utils.ThemeUtils;
 
 
@@ -59,5 +58,58 @@ public class HelpFragment extends Fragment {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
         return rootView;
+    }
+
+
+    private static class HelpItem {
+        @StringRes
+        public final int title;
+        @StringRes
+        public final int content;
+
+        HelpItem(int title, int content) {
+            this.title = title;
+            this.content = content;
+        }
+    }
+
+    static class HelpAdapter extends RecyclerView.Adapter<HelpAdapter.HelpViewHolder> {
+
+        private HelpItem[] items;
+
+        HelpAdapter(HelpItem[] items) {
+            this.items = items;
+        }
+
+        @Override
+        public HelpViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.
+                    from(parent.getContext()).
+                    inflate(R.layout.item_help, parent, false);
+            return new HelpViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(HelpAdapter.HelpViewHolder holder, int position) {
+            holder.title.setText(items[position].title);
+            holder.content.setText(items[position].content);
+        }
+
+        @Override
+        public int getItemCount() {
+            return items.length;
+        }
+
+
+        static class HelpViewHolder extends RecyclerView.ViewHolder {
+            TextView title;
+            TextView content;
+
+            HelpViewHolder(View itemView) {
+                super(itemView);
+                title = (TextView) itemView.findViewById(R.id.help_title);
+                content = (TextView) itemView.findViewById(R.id.help_content);
+            }
+        }
     }
 }

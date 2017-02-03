@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.addeditprofile.WifiAdapter;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
@@ -79,7 +80,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                 return new TimeViewHolder(timeItemView);
             case Condition.Type.WIFI:
                 View wifiItemView = LayoutInflater.from(parent.getContext()).
-                        inflate(R.layout.item_wifi, parent, false);
+                        inflate(R.layout.item_wifi_old, parent, false);
                 return new WifiViewHolder(wifiItemView);
 
         }
@@ -159,7 +160,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
         @ColorInt
         private int fillColor;
         private int circlePadding;
-        private int mapType;
+        //private int mapType;
         private Circle circle;
         private GoogleMap googleMap;
         private PlaceCondition placeCondition;
@@ -174,8 +175,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
             circlePadding = (int) ThemeUtils.dpToPx(itemView.getContext(), 8);
             circleColor = ThemeUtils.getColorFromAttribute(itemView.getContext(), R.attr.colorAccent);
             fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
-            mapType = MapUtils.resolveMapStyle(itemView.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                    .getInt("map_style", 0));
+            //mapType = MapUtils.resolveMapStyle(itemView.getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE).getInt("map_style", 0));
             mapView = (MapView) itemView.findViewById(R.id.mapView);
             mapCover = itemView.findViewById(R.id.mapCover);
             coordinates = (TextView) itemView.findViewById(R.id.coordinates);
@@ -195,7 +195,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                 @Override
                 public void onMapReady(final GoogleMap googleMap) {
                     PlaceViewHolder.this.googleMap = googleMap;
-                    googleMap.setMapType(mapType);
+                    //googleMap.setMapType(mapType);
                     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                     googleMap.getUiSettings().setZoomGesturesEnabled(false);
                     googleMap.getUiSettings().setScrollGesturesEnabled(false);
@@ -386,8 +386,13 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                     LinearLayoutManager.VERTICAL);
             recyclerView.addItemDecoration(dividerItemDecoration);
-            recyclerView.setAdapter(new WifiAdapter(conditionWifiItems, true, new WifiAdapter.Callbacks() {
+            recyclerView.setAdapter(new WifiAdapter(conditionWifiItems, new WifiAdapter.Callbacks() {
                 @Override
+                public void onWifiItemSelectChange(WifiItem item, boolean selected) {
+
+                }
+
+                /*@Override
                 public void onWifiItemClicked(WifiItem item) {
 
                 }
@@ -398,15 +403,20 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                     availableWifiItems.add(item);
                     recyclerView.getAdapter().notifyDataSetChanged();
                     availableRecyclerView.getAdapter().notifyDataSetChanged();
-                }
+                }*/
             }));
 
             availableRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             DividerItemDecoration dividerItemDecoration2 = new DividerItemDecoration(availableRecyclerView.getContext(),
                     LinearLayoutManager.VERTICAL);
             availableRecyclerView.addItemDecoration(dividerItemDecoration2);
-            availableRecyclerView.setAdapter(new WifiAdapter(availableWifiItems, false, new WifiAdapter.Callbacks() {
+            availableRecyclerView.setAdapter(new WifiAdapter(availableWifiItems, new WifiAdapter.Callbacks() {
                 @Override
+                public void onWifiItemSelectChange(WifiItem item, boolean selected) {
+
+                }
+
+                /*@Override
                 public void onWifiItemClicked(WifiItem item) {
                     conditionWifiItems.add(item);
                     availableWifiItems.remove(item);
@@ -417,7 +427,7 @@ public class ConditionsAdapter extends RecyclerView.Adapter<ConditionsAdapter.Ba
                 @Override
                 public void onWifiItemRemoved(WifiItem item) {
 
-                }
+                }*/
             }));
         }
     }

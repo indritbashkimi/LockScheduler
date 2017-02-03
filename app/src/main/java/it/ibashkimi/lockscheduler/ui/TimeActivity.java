@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.ui.recyclerview.TimeIntervalAdapter;
 
+@Deprecated
 public class TimeActivity extends BaseActivity {
 
     @Override
@@ -21,7 +22,7 @@ public class TimeActivity extends BaseActivity {
     }
 
     public void showTimePickerDialog() {
-        DialogFragment newFragment = new TimePickerFragment();
+        DialogFragment newFragment = new TimeDialogFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }

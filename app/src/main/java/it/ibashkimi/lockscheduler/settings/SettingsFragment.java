@@ -76,7 +76,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
         TextView mapStyleTitle = (TextView) mapStyle.findViewById(android.R.id.title);
         mapStyleTitle.setText(getString(R.string.pref_title_map_style));
         mapStyleSummary = (TextView) mapStyle.findViewById(android.R.id.summary);
-        mapStyleSummary.setText(getResources().getStringArray(R.array.pref_map_style_human)[mSharedPreferences.getInt("map_style", 0)]);
+        //mapStyleSummary.setText(getResources().getStringArray(R.array.pref_map_style_human)[mSharedPreferences.getInt("map_style", 0)]);
         mapStyle.setOnClickListener(this);
 
         View profileItem = rootView.findViewById(R.id.profile_item_layout);

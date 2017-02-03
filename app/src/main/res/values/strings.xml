@@ -34,7 +34,7 @@
     <string name="website">Website</string>
     <string name="profile_name">Profile name</string>
     <string name="profile_title">Profile</string>
-    <string name="new_profile_title">New profile</string>
+    <string name="new_profile">New profile</string>
     <string name="dialog_action_cancel">@string/cancel</string>
     <string name="dialog_action_ok">@string/ok</string>
     <string name="pref_header_general">General</string>
@@ -72,4 +72,24 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="pref_colored_navigation_bar">Colored Navigation bar</string>
     <string name="pref_colored_navigation_bar_summary">Whether or not the system navigation bar is colored with the skin</string>
+    <string name="loading_profiles_error">Error while loading profiles</string>
+    <string name="no_profiles_all">You have no Profiles!</string>
+    <string name="successfully_saved_profile_message">Profile saved</string>
+    <string name="successfully_removed_profile_message">Profile deleted</string>
+    <string name="empty_profile_message">Profiles cannot be empty</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="conditions_title">Conditions</string>
+    <string name="actions_title">Screen lock</string>
+    <string name="set_place">Set place</string>
+    <string name="place_condition_title">Place</string>
+    <string name="time_condition_title">Time</string>
+    <string name="wifi_condition_title">Wifi</string>
+    <string name="turn_on_wifi">Turn on Wi-Fi</string>
+    <string name="place_picker_search">Search</string>
+    <string name="place_picker_activity">Pick Place</string>
+    <string name="wifi_picker_activity">Wi-Fi</string>
+    <string name="new_profile_title">New profile</string>
+
+
+    <style name="empty_profile_message">Profiles cannot be empty</style>
 </resources>

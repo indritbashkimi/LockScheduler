@@ -1,4 +1,4 @@
-package it.ibashkimi.lockscheduler.ui;
+package it.ibashkimi.lockscheduler.profiles;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,11 +9,9 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.gms.maps.MapsInitializer;
 
 import org.json.JSONException;
 
@@ -32,23 +28,22 @@ import it.ibashkimi.lockscheduler.about.AboutActivity;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
-import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapter;
+import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 
-public class MainActivity extends BaseActivity {
+public class ProfilesActivity extends BaseActivity {
 
-    // http://stackoverflow.com/a/36899459
-    static {
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-    }
-
-    private static final String TAG = MainActivity.class.getCanonicalName();
-    private static final String FRAGMENT_TAG_MAIN = "main_fragment";
+    private static final String TAG = ProfilesActivity.class.getCanonicalName();
+    private static final String FRAGMENT_TAG_PROFILES = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
     public static final int RESULT_PROFILE = 0;
     private static final int RESULT_LOCATION_PERMISSION = 2;
+
+    private ProfilesPresenter profilesPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,44 +60,19 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                intent.setAction(ProfileActivity.ACTION_NEW);
-                startActivityForResult(intent, 0);
-            }
-        });
-
-        /*// You do not need ACCESS_COARSE_LOCATION permission when you define ACCESS_FINE_LOCATION permission.
-        if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                onShowLocationPermissionRationale();
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        RESULT_LOCATION_PERMISSION);
-            }
-        } else*/
-        if (savedInstanceState == null) {
-            attachMainFragment();
+        ProfilesFragment profilesFragment =
+                (ProfilesFragment) getSupportFragmentManager().findFragmentById(R.id.profiles_container);
+        if (profilesFragment == null) {
+            profilesFragment = ProfilesFragment.newInstance();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.profiles_container, profilesFragment)
+                    .commit();
         }
 
-        MapsInitializer.initialize(this);
+        profilesPresenter = new ProfilesPresenter(
+                ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)),
+                profilesFragment);
     }
 
     @Override
@@ -129,7 +99,7 @@ public class MainActivity extends BaseActivity {
         snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityCompat.requestPermissions(MainActivity.this,
+                ActivityCompat.requestPermissions(ProfilesActivity.this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         RESULT_LOCATION_PERMISSION);
             }
@@ -169,12 +139,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void attachMainFragment() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_PROFILES);
         if (fragment == null)
-            fragment = new ProfileListFragment();
+            fragment = new ProfilesFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment, FRAGMENT_TAG_MAIN)
+                .replace(R.id.profiles_container, fragment, FRAGMENT_TAG_PROFILES)
                 .commit();
     }
 
@@ -184,7 +154,7 @@ public class MainActivity extends BaseActivity {
             fragment = new PermissionDeniedFragment();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment, FRAGMENT_TAG_PERMISSION_DENIED)
+                .replace(R.id.profiles_container, fragment, FRAGMENT_TAG_PERMISSION_DENIED)
                 .commit();
     }
 
@@ -239,27 +209,23 @@ public class MainActivity extends BaseActivity {
                         Log.e(TAG, "onActivityResult: wtf");
                         break;
                     }
-                    ProfileListFragment fragment = (ProfileListFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_MAIN);
-                    ProfileAdapter adapter = fragment.getAdapter();
-                    Log.d(TAG, "onActivityResult: adapter == null? " + (adapter == null));
-                    ProfileApiHelper profileApiHelper = App.getProfileApiHelper();
+                    /*ProfilesFragment fragment = (ProfilesFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_PROFILES);
+                    ProfileAdapter adapter = fragment.getAdapter();*/
+
+                    //ProfileApiHelper profileApiHelper = App.getProfileApiHelper();
                     switch (data.getAction()) {
                         case "delete":
-                            Profile removedProfile = profileApiHelper.getProfileWithId(profile.getId());
-                            profileApiHelper.removeProfile(removedProfile);
-                            if (adapter != null)
-                                adapter.notifyItemRemoved(profileApiHelper.indexOf(profile.getId()));
+                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).deleteProfile(profile.getId());
+
                             showSnackBar("Profile deleted");
                             break;
                         case "new":
-                            profileApiHelper.addProfile(profile);
-                            if (adapter != null)
-                                adapter.notifyItemInserted(profileApiHelper.getProfiles().size() - 1);
+                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).saveProfile(profile);
+
                             break;
                         case "update":
-                            profileApiHelper.update(profile);
-                            if (adapter != null)
-                                adapter.notifyItemChanged(profileApiHelper.indexOf(profile.getId()));
+                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).saveProfile(profile);
+
                             break;
                         default:
                             break;

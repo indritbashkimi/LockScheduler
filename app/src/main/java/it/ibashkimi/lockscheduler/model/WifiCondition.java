@@ -77,7 +77,7 @@ public class WifiCondition extends Condition {
         List<Profile> profiles = App.getProfileApiHelper().getProfiles();
         if (interesting) {
             String ssid = wifiInfo.getSSID();
-            WifiItem wifiItem = new WifiItem(ssid);
+            WifiItem wifiItem = new WifiItem(wifiInfo.getNetworkId(), ssid);
             for (Profile profile : profiles) {
                 WifiCondition wifiCondition = profile.getWifiCondition();
                 if (wifiCondition != null && wifiCondition.isPresent(wifiItem)) {

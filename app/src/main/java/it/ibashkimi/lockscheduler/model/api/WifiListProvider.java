@@ -19,7 +19,7 @@ public class WifiListProvider {
             for (WifiConfiguration wifiConfiguration : wifiManager.getConfiguredNetworks()) {
                 String title = wifiConfiguration.SSID;
                 title = title.substring(1, title.length() - 1); // Remove " at the start and end.
-                wifiList.add(new WifiItem(title));
+                wifiList.add(new WifiItem(wifiConfiguration.networkId, title));
             }
         }
         return wifiList;

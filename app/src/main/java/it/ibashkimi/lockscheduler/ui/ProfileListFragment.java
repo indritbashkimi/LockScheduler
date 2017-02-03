@@ -12,6 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -29,6 +30,7 @@ import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileLoader;
+import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
 import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapter;
 import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapterImpl;
 import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapterImpl2;
@@ -96,6 +98,9 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         //mRecyclerView.setItemAnimator(new SlideInRightAnimator(new LinearOutSlowInInterpolator()));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
+                LinearLayoutManager.VERTICAL);
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         if (mItemLayout == R.layout.item_profile_7) {
             mAdapter = new ProfileAdapterImpl2(new ArrayList<Profile>(0), mItemLayout, this);
@@ -207,7 +212,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
             Intent intent = new Intent(getActivity(), ProfileActivity.class);
             intent.setAction(ProfileActivity.ACTION_VIEW);
             intent.putExtra("profile", profile.toJson());
-            getActivity().startActivityForResult(intent, MainActivity.RESULT_PROFILE);
+            getActivity().startActivityForResult(intent, ProfilesActivity.RESULT_PROFILE);
         }
     }
 

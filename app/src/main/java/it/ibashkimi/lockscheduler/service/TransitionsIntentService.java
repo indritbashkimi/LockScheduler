@@ -22,7 +22,7 @@ import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.ui.MainActivity;
+import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -117,7 +117,7 @@ public class TransitionsIntentService extends IntentService {
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, ProfilesActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder.setContentIntent(intent);

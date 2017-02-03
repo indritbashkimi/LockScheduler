@@ -16,8 +16,8 @@ import it.ibashkimi.lockscheduler.ui.recyclerview.TimeIntervalAdapter;
 /**
  * Created by indrit on 19/11/16.
  */
-
-public class TimePickerFragment extends DialogFragment
+@Deprecated
+public class TimeDialogFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     private TextView timeViewer;

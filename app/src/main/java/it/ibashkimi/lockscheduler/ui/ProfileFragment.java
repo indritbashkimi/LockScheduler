@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile_old, container, false);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_profile);
         toolbar.getMenu().findItem(R.id.action_delete).setVisible(showDeleteOption);

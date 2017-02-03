@@ -47,15 +47,13 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-            <fragment
+            <FrameLayout
                 android:id="@+id/conditions"
-                class="it.ibashkimi.lockscheduler.ui.ConditionsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <fragment
+            <FrameLayout
                 android:id="@+id/actions"
-                class="it.ibashkimi.lockscheduler.ui.ActionsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

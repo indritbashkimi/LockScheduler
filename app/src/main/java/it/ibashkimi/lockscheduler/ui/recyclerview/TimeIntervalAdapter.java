@@ -12,12 +12,12 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.ui.TimeActivity;
-import it.ibashkimi.lockscheduler.ui.TimePickerFragment;
+import it.ibashkimi.lockscheduler.ui.TimeDialogFragment;
 
 /**
  * @author Indrit Bashkimi <indrit.bashkimi@gmail.com>
  */
-
+@Deprecated
 public class TimeIntervalAdapter extends RecyclerView.Adapter<TimeIntervalAdapter.ViewHolder> {
     private static final String TAG = "ProfileAdapterImpl";
     private TimeActivity activity;
@@ -63,7 +63,7 @@ public class TimeIntervalAdapter extends RecyclerView.Adapter<TimeIntervalAdapte
     }
 
     public void showTimePickerDialog() {
-        TimePickerFragment newFragment = new TimePickerFragment();
+        TimeDialogFragment newFragment = new TimeDialogFragment();
         newFragment.setListener(this);
         newFragment.show(activity.getSupportFragmentManager(), "timePicker");
     }

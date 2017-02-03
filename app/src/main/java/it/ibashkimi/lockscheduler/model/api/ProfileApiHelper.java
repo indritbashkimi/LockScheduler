@@ -32,7 +32,7 @@ public class ProfileApiHelper {
 
 
     public ProfileApiHelper(Context context) {
-        this.sharedPreferences = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        this.sharedPreferences = context.getSharedPreferences("profiles", Context.MODE_PRIVATE);
     }
 
     /**
@@ -221,7 +221,7 @@ public class ProfileApiHelper {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                     if (wifiInfo != null) {
                         String ssid = wifiInfo.getSSID();
-                        wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
+                        wifiItem = new WifiItem(wifiInfo.getNetworkId(), ssid.substring(1, ssid.length() - 1));
                     }
                 }
                 ((WifiCondition) condition).onWifiStateChanged(wifiItem);

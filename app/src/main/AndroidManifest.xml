@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -39,7 +38,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".profiles.ProfilesActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,6 +48,10 @@
         </activity>
         <activity
             android:name=".ui.ProfileActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity
+            android:name=".addeditprofile.AddEditProfileActivity"
             android:label="@string/profile_modifier"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.TimeActivity" />
@@ -80,6 +83,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
@@ -89,21 +93,29 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".receiver.AlarmReceiver">
-            <!--<intent-filter>
+
+            <!--
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>-->
+            </intent-filter>
+            -->
         </receiver>
 
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.MainActivity">
+            android:parentActivityName=".profiles.ProfilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.ibashkimi.lockscheduler.ui.MainActivity" />
+                android:value=".profiles.ProfilesActivity" />
         </activity>
         <activity android:name=".intro.IntroActivity" />
         <activity android:name=".ui.GoPremiumActivity" />
+        <activity
+            android:name=".addeditprofile.conditions.picker.PlacePickerActivity"
+            android:label="@string/place_picker_activity" />
+        <activity android:name=".addeditprofile.conditions.picker.WifiPickerActivity"
+            android:label="@string/wifi_picker_activity" />
     </application>
 
 </manifest>
