@@ -13,39 +13,60 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/icon"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                app:srcCompat="@mipmap/ic_launcher"/>
+                app:srcCompat="@mipmap/ic_launcher" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/name"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="@string/app_name"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/version"
-                android:text="Version 0.1"/>
+                android:text="@string/app_name"
+                android:textSize="20sp"
+                android:fontFamily="monospace"
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_version_full" />
+
+            <TextView
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
                 android:gravity="center"
-                android:id="@+id/description"
-                android:text="Lock Scheduler is an awesome app.\nAutomatically change lock screen settings.\nBla bla bla bla bla bla bla awesome bla bla." />
+                android:padding="16dp"
+                android:text="@string/app_description" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:text="Feedback"
+                    style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:text="Rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.Button.Colored" />
+
+            </LinearLayout>
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/view_on_play_store"
@@ -53,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="View on Google Play Store"/>
+                android:text="View on Google Play Store" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/feedback"
@@ -61,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="Feedback"/>
+                android:text="Feedback" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/help"
@@ -69,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="Help"/>
+                android:text="Help" />
 
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/licences"
@@ -77,7 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:text="Licences"/>
+                android:text="Licences" />
 
         </LinearLayout>
 

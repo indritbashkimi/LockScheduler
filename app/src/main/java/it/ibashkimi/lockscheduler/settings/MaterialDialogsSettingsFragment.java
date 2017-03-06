@@ -150,7 +150,7 @@ public class MaterialDialogsSettingsFragment extends SettingsFragment {
                         R.layout.item_profile_5,
                         R.layout.item_profile_6
                 };
-                LayoutSelectorAdapter layoutAdapter = new LayoutSelectorAdapter(layouts, profile, new ProfileAdapter.ClickListener() {
+                LayoutSelectorAdapter layoutAdapter = new LayoutSelectorAdapter(layouts, profile, new ProfileAdapterImpl.ClickListener() {
                     @Override
                     public void onItemClicked(int position) {
                         if (layoutDialog != null) layoutDialog.dismiss();

@@ -184,7 +184,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
     private void showLocationPermissionRationale() {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
 
-        View view1 = getLayoutInflater(null).inflate(R.layout.location_permission, null);
+        View view1 = View.inflate(getContext(), R.layout.location_permission, null);
         view1.findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,7 +236,7 @@ public class ConditionsFragment extends Fragment implements ConditionsAdapter.Ca
         } else {
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
 
-            View view1 = getLayoutInflater(null).inflate(R.layout.location_permission, null);
+            View view1 = View.inflate(getContext(), R.layout.location_permission, null);
             view1.findViewById(R.id.positive_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

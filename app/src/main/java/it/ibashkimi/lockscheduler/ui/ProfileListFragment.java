@@ -30,6 +30,8 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileLoader;
 import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapter;
+import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapterImpl;
+import it.ibashkimi.lockscheduler.ui.recyclerview.ProfileAdapterImpl2;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.support.utils.ThemeUtils;
 
@@ -95,7 +97,11 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         //mRecyclerView.setItemAnimator(new SlideInRightAnimator(new LinearOutSlowInInterpolator()));
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mAdapter = new ProfileAdapter(getContext(), new ArrayList<Profile>(0), mItemLayout, mMapStyle, this);
+        if (mItemLayout == R.layout.item_profile_7) {
+            mAdapter = new ProfileAdapterImpl2(new ArrayList<Profile>(0), mItemLayout, this);
+        } else {
+            mAdapter = new ProfileAdapterImpl(getContext(), new ArrayList<Profile>(0), mItemLayout, mMapStyle, this);
+        }
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
@@ -175,6 +181,8 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                 return R.layout.item_profile_5;
             case 6:
                 return R.layout.item_profile_6;
+            case 7:
+                return R.layout.item_profile_7;
             default:
                 return R.layout.item_profile_6;
         }
@@ -195,7 +203,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
         if (actionMode != null) {
             toggleSelection(position, viewHolder);
         } else {
-            Profile profile = mAdapter.getData().get(position);
+            Profile profile = (Profile) mAdapter.getData().get(position);
             Intent intent = new Intent(getActivity(), ProfileActivity.class);
             intent.setAction(ProfileActivity.ACTION_VIEW);
             intent.putExtra("profile", profile.toJson());
@@ -267,7 +275,7 @@ public class ProfileListFragment extends Fragment implements SharedPreferences.O
                     for (int i = items.size() - 1; i > -1; i--) {
                         //Log.d(TAG, "onActionItemClicked: i = " + i);
                         int position = items.get(i);
-                        App.getProfileApiHelper().removeProfile(mAdapter.getData().get(position));
+                        App.getProfileApiHelper().removeProfile((Profile) mAdapter.getData().get(position));
                         mAdapter.notifyItemRemoved(position);
                     }
                     mAdapter.clearSelection();

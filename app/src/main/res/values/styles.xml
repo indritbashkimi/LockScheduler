@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="WifiConnectionText" parent="TextAppearance.AppCompat.Body1">
+        <!--<item name="android:background">@color/gray_500</item>-->
+    </style>
+
+    <style name="ProfileItemTitle">
+        <item name="android:fontFamily">sans-serif-regular</item>
+        <item name="android:minLines">1</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">start|top</item>
+    </style>
+</resources>

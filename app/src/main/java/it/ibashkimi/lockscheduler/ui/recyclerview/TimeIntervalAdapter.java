@@ -19,7 +19,7 @@ import it.ibashkimi.lockscheduler.ui.TimePickerFragment;
  */
 
 public class TimeIntervalAdapter extends RecyclerView.Adapter<TimeIntervalAdapter.ViewHolder> {
-    private static final String TAG = "ProfileAdapter";
+    private static final String TAG = "ProfileAdapterImpl";
     private TimeActivity activity;
     private List<int[]> intervals;
 
