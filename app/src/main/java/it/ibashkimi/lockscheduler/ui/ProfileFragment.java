@@ -4,12 +4,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,35 +68,27 @@ public class ProfileFragment extends Fragment {
         title = showDeleteOption ? R.string.profile_title : R.string.new_profile_title;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_profile_old, container, false);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu_profile);
-        toolbar.getMenu().findItem(R.id.action_delete).setVisible(showDeleteOption);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.action_save) {
-                    save();
-                    return true;
-                } else if (item.getItemId() == R.id.action_delete) {
-                    delete();
-                    return true;
-                }
-                return false;
-            }
-        });
-        ImageView cancel = (ImageView) rootView.findViewById(R.id.cancel_view);
-        cancel.setColorFilter(ThemeUtils.getColorFromAttribute(toolbar.getContext(), android.R.attr.textColorPrimary));
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancel();
-            }
-        });
-        ((TextView) toolbar.findViewById(R.id.title_view)).setText(title);
+        toolbar.setTitle(title);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         mName = (EditText) rootView.findViewById(R.id.input_name);
         mName.setText(mProfile.getName());
         mName.addTextChangedListener(new TextWatcher() {
@@ -114,6 +110,34 @@ public class ProfileFragment extends Fragment {
 
         MapsInitializer.initialize(getActivity());
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_profile, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_delete).setVisible(showDeleteOption);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            case R.id.action_save:
+                save();
+                return true;
+            case R.id.action_delete:
+                delete();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public List<Condition> getConditions() {

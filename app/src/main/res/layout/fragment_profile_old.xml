@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context="it.ibashkimi.lockscheduler.ui.ProfileActivity">
 
-    <include layout="@layout/cancel_app_bar" />
+    <include layout="@layout/app_bar" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
@@ -49,13 +49,13 @@
 
             <fragment
                 android:id="@+id/conditions"
-                class="it.ibashkimi.lockscheduler.ui.ConditionsFragment"
+                android:name="it.ibashkimi.lockscheduler.ui.ConditionsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <fragment
                 android:id="@+id/actions"
-                class="it.ibashkimi.lockscheduler.ui.ActionsFragment"
+                android:name="it.ibashkimi.lockscheduler.ui.ActionsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

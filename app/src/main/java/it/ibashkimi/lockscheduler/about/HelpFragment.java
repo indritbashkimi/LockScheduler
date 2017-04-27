@@ -4,16 +4,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class HelpFragment extends Fragment {
@@ -37,16 +38,19 @@ public class HelpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_help, container, false);
-        ImageView cancel = (ImageView) rootView.findViewById(R.id.cancel_view);
-        cancel.setColorFilter(ThemeUtils.getColorFromAttribute(rootView.findViewById(R.id.toolbar).getContext(), android.R.attr.textColorPrimary));
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });
-        TextView title = (TextView) rootView.findViewById(R.id.title_view);
-        title.setText(getString(R.string.fragment_help_title));
+
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.fragment_help_title);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         rootView.findViewById(R.id.feedback_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
