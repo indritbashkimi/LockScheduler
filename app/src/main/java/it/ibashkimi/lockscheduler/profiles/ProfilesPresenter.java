@@ -4,13 +4,11 @@ package it.ibashkimi.lockscheduler.profiles;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 /**
  * Listens to user actions from the UI ({@link ProfilesFragment}), retrieves the data and updates the
@@ -22,18 +20,14 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
 
     private final ProfilesContract.View profilesView;
 
-    private boolean mFirstLoad = true;
-
     public ProfilesPresenter(@NonNull ProfilesDataSource profilesRepository, @NonNull ProfilesContract.View profilesView) {
         this.profilesRepository = profilesRepository;
         this.profilesView = profilesView;
-
-        profilesView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        loadProfiles(false);
+        loadProfiles();
     }
 
     @Override
@@ -45,37 +39,16 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
     }
 
     @Override
-    public void loadProfiles(boolean forceUpdate) {
-        // Simplification for sample: a network reload will be forced on first load.
-        loadProfiles(false, true);
-        //loadProfiles(forceUpdate || mFirstLoad, true);
-        mFirstLoad = false;
-    }
-
-    /**
-     * @param forceUpdate   Pass in true to refresh the data in the {@link ProfilesDataSource}
-     * @param showLoadingUI Pass in true to display a loading icon in the UI
-     */
-    private void loadProfiles(boolean forceUpdate, final boolean showLoadingUI) {
-        if (showLoadingUI) {
-            profilesView.setLoadingIndicator(true);
-        }
-
-        // The network request might be handled in a different thread so make sure Espresso knows
-        // that the app is busy until the response is handled.
-        //EspressoIdlingResource.increment(); // App is busy until further notice
-
-        List<Profile> profiles = profilesRepository.getProfiles();
+    public void loadProfiles() {
         if (!profilesView.isActive()) {
             return;
         }
+        List<Profile> profiles = profilesRepository.getProfiles();
         if (profiles == null) {
             profilesView.showLoadingProfilesError();
         } else {
             profilesView.showProfiles(profiles);
         }
-
-        profilesView.showProfiles(profiles);
     }
 
     @Override

@@ -7,9 +7,7 @@ import android.util.Log;
 
 import it.ibashkimi.lockscheduler.model.LockAction;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
@@ -30,13 +28,13 @@ public class ProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            long profileId = getIntent().getLongExtra(ARGUMENT_EDIT_PROFILE_ID, -1);
+            String profileId = getIntent().getStringExtra(ARGUMENT_EDIT_PROFILE_ID);
             Log.d(TAG, "onCreate: profileId = " + profileId);
-            if (profileId != -1) {
+            if (profileId != null) {
                 Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
                 attachFragment(profile.toJson(), true);
             } else {
-                Profile profile = new Profile(System.currentTimeMillis());
+                Profile profile = new Profile(Long.toString(System.currentTimeMillis()));
                 profile.getTrueActions().add(new LockAction());
                 profile.getFalseActions().add(new LockAction());
                 attachFragment(profile.toJson(), false);

@@ -149,7 +149,7 @@ public class ProfileApiHelper {
     private void onUnregisterCondition(Profile profile, Condition condition) {
         switch (condition.getType()) {
             case Condition.Type.PLACE:
-                mGeofenceApiHelper.removeGeofence(Long.toString(profile.getId()));
+                mGeofenceApiHelper.removeGeofence(profile.getId());
                 break;
             case Condition.Type.TIME:
                 AlarmReceiver.cancelAlarm(App.getInstance());

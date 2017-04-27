@@ -21,7 +21,7 @@ public interface ProfilesContract {
 
         void showAddProfile();
 
-        void showProfileDetailsUi(long profileId);
+        void showProfileDetailsUi(String profileId);
 
         void showLoadingProfilesError();
 
@@ -40,7 +40,7 @@ public interface ProfilesContract {
 
         void result(int requestCode, int resultCode);
 
-        void loadProfiles(boolean forceUpdate);
+        void loadProfiles();
 
         void addNewProfile();
 

@@ -71,7 +71,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         mTitle = (EditText) findViewById(R.id.input_name);
 
-        long profileId = getIntent().getLongExtra(ARGUMENT_EDIT_TASK_ID, -1);
+        String profileId = getIntent().getStringExtra(ARGUMENT_EDIT_TASK_ID);
 
         mPresenter = new AddEditProfilePresenter(
                 profileId,
@@ -224,7 +224,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     private Profile getProfile() {
         if (mProfile == null) {
-            mProfile = new Profile(System.currentTimeMillis());
+            mProfile = new Profile(Long.toString(System.currentTimeMillis()));
             mProfile.getTrueActions().add(new LockAction());
             mProfile.getFalseActions().add(new LockAction());
         }

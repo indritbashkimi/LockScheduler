@@ -45,7 +45,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreferences = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        mSharedPreferences = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
     }
 
     @Nullable

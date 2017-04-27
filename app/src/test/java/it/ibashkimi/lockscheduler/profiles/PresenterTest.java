@@ -23,7 +23,7 @@ public class PresenterTest {
 
         // when
         ProfilesPresenter presenter = new ProfilesPresenter(repository, view);
-        presenter.loadProfiles(true);
+        presenter.loadProfiles();
 
         // then
         Assert.assertEquals(true, ((MockView) view).showProfilesCalled);
@@ -38,8 +38,8 @@ public class PresenterTest {
                 profiles = new ArrayList<>();
             else {
                 profiles = new ArrayList<>();
-                profiles.add(new Profile(0));
-                profiles.add(new Profile(1));
+                profiles.add(new Profile("0"));
+                profiles.add(new Profile("1"));
             }
         }
 
@@ -49,7 +49,7 @@ public class PresenterTest {
         }
 
         @Override
-        public Profile getProfile(long profileId) {
+        public Profile getProfile(String profileId) {
             return null;
         }
 
@@ -64,7 +64,7 @@ public class PresenterTest {
         }
 
         @Override
-        public void deleteProfile(long profileId) {
+        public void deleteProfile(String profileId) {
 
         }
 
@@ -104,7 +104,7 @@ public class PresenterTest {
         }
 
         @Override
-        public void showProfileDetailsUi(long profileId) {
+        public void showProfileDetailsUi(String profileId) {
 
         }
 

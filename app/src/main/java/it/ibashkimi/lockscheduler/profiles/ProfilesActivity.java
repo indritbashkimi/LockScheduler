@@ -66,6 +66,7 @@ public class ProfilesActivity extends BaseActivity {
 
         profilesPresenter = new ProfilesPresenter(
                 ProfilesRepository.getInstance(), profilesFragment);
+        profilesFragment.setPresenter(profilesPresenter);
     }
 
     @Override

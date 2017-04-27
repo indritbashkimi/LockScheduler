@@ -119,7 +119,7 @@ public class GeofenceApiHelper {
             placeCondition = profile.getPlaceCondition();
             if (placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
-                        .setRequestId(Long.toString(profile.getId()))
+                        .setRequestId(profile.getId())
                         .setCircularRegion(
                                 placeCondition.getPlace().latitude,
                                 placeCondition.getPlace().longitude,

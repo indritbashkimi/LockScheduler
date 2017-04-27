@@ -25,7 +25,7 @@ public class Profile {
         void onProfileStateChanged(Profile profile);
     }
 
-    private long id;
+    private String id;
     private String name;
     private List<Condition> conditions;
     private List<Action> trueActions;
@@ -35,15 +35,15 @@ public class Profile {
 
     private boolean active;
 
-    public Profile(long id) {
+    public Profile(String id) {
         this(id, "");
     }
 
-    public Profile(long id, String name) {
+    public Profile(String id, String name) {
         this(id, name, new ArrayList<Condition>(), new ArrayList<Action>(), new ArrayList<Action>());
     }
 
-    public Profile(long id, String name, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+    public Profile(String id, String name, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
         this.id = id;
         this.name = name;
         this.conditions = conditions;
@@ -93,11 +93,11 @@ public class Profile {
         this.name = name;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -276,7 +276,7 @@ public class Profile {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "Profile{id=%d, name=%s, conditions=%d, trueActions=%d, falseActions=%d}", id, name, conditions.size(), trueActions.size(), falseActions.size());
+        return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, trueActions=%d, falseActions=%d}", id, name, conditions.size(), trueActions.size(), falseActions.size());
     }
 
     public boolean isEmpty() {
@@ -316,7 +316,7 @@ public class Profile {
 
     public static Profile parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        Profile profile = new Profile(Long.parseLong(jsonObject.getString("id")));
+        Profile profile = new Profile(jsonObject.getString("id"));
         profile.setName(jsonObject.getString("name"));
 
         int conditionsLen = jsonObject.getInt("conditions_len");

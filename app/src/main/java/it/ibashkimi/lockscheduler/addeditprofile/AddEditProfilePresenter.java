@@ -20,11 +20,11 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     @NonNull
     private final AddEditProfileContract.View mAddProfileView;
 
-    private long mProfileId;
+    private String mProfileId;
 
     private boolean mIsDataMissing;
 
-    public AddEditProfilePresenter(long profileId, @NonNull ProfilesDataSource mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
+    public AddEditProfilePresenter(String profileId, @NonNull ProfilesDataSource mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
         this.mProfileId = profileId;
         this.mProfilesRepository = mProfilesRepository;
         this.mAddProfileView = mAddProfileView;
@@ -80,12 +80,12 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     }
 
     private boolean isNewProfile() {
-        return mProfileId == -1;
+        return mProfileId == null;
     }
 
     private void createProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
         Profile newProfile = new Profile(
-                System.currentTimeMillis(),
+                Long.toString(System.currentTimeMillis()),
                 title,
                 conditions,
                 trueActions,

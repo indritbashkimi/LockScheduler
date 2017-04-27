@@ -56,7 +56,7 @@ public class ProfilesRepository implements ProfilesDataSource {
     }
 
     @Override
-    public Profile getProfile(long profileId) {
+    public Profile getProfile(String profileId) {
         return mProfilesLocalDataSource.getProfile(profileId);
     }
 
@@ -73,7 +73,7 @@ public class ProfilesRepository implements ProfilesDataSource {
     }
 
     @Override
-    public void deleteProfile(long profileId) {
+    public void deleteProfile(String profileId) {
         mProfileApiHelper.removeProfile(getProfile(profileId));
         mProfilesLocalDataSource.deleteProfile(profileId);
     }

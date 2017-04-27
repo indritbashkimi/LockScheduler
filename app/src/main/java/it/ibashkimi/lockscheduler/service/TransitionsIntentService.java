@@ -50,7 +50,7 @@ public class TransitionsIntentService extends IntentService {
         if (action != null && action.equals("condition_state_changed")) {
             boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
             if (showNotification) {
-                long profileId = intent.getLongExtra("profile_id", -1);
+                String profileId = intent.getStringExtra("profile_id");
                 Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
                 assert profile != null;
                 String title;
@@ -62,7 +62,7 @@ public class TransitionsIntentService extends IntentService {
                     title = "Deactivated";
                     content = profile.getName();
                 }
-                sendNotification(title, content, (int) profile.getId());
+                sendNotification(title, content, (int) Long.parseLong(profile.getId()));
             }
 
         } else {
@@ -77,7 +77,7 @@ public class TransitionsIntentService extends IntentService {
             int geofenceTransition = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
             for (Geofence geofence : geofenceList) {
-                Profile profile = ProfilesRepository.getInstance().getProfile(Long.parseLong(geofence.getRequestId()));
+                Profile profile = ProfilesRepository.getInstance().getProfile(geofence.getRequestId());
                 if (profile == null) {
                     Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
                     return;

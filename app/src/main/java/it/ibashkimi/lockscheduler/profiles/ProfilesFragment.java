@@ -83,6 +83,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void onResume() {
+        Log.d(TAG, "onResume() called");
         super.onResume();
         mPresenter.start();
     }
@@ -294,7 +295,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     }
 
     @Override
-    public void showProfileDetailsUi(long profileId) {
+    public void showProfileDetailsUi(String profileId) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
         // TODO: 27/04/17
