@@ -20,16 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONException;
-
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.about.AboutActivity;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
-import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
@@ -71,8 +65,7 @@ public class ProfilesActivity extends BaseActivity {
         }
 
         profilesPresenter = new ProfilesPresenter(
-                ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)),
-                profilesFragment);
+                ProfilesRepository.getInstance(), profilesFragment);
     }
 
     @Override
@@ -197,39 +190,6 @@ public class ProfilesActivity extends BaseActivity {
                     Log.i(TAG, "Admin enabled!");
                 } else {
                     Log.i(TAG, "Admin enable FAILED!");
-                }
-                return;
-            case RESULT_PROFILE:
-                if (resultCode == Activity.RESULT_OK) {
-                    Profile profile;
-                    try {
-                        profile = Profile.parseJson(data.getStringExtra("profile"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onActivityResult: wtf");
-                        break;
-                    }
-                    /*ProfilesFragment fragment = (ProfilesFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_PROFILES);
-                    ProfileAdapter adapter = fragment.getAdapter();*/
-
-                    //ProfileApiHelper profileApiHelper = App.getProfileApiHelper();
-                    switch (data.getAction()) {
-                        case "delete":
-                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).deleteProfile(profile.getId());
-
-                            showSnackBar("Profile deleted");
-                            break;
-                        case "new":
-                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).saveProfile(profile);
-
-                            break;
-                        case "update":
-                            ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)).saveProfile(profile);
-
-                            break;
-                        default:
-                            break;
-                    }
                 }
                 return;
             default:

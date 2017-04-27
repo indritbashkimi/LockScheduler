@@ -6,6 +6,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.App;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 
 public class ProfileLoader extends AsyncTaskLoader<List<Profile>> {
@@ -29,7 +30,7 @@ public class ProfileLoader extends AsyncTaskLoader<List<Profile>> {
 
     @Override
     public List<Profile> loadInBackground() {
-        mData = App.getInstance().getProfileApiHelperInstance().getProfiles();
+        mData = ProfilesRepository.getInstance().getProfiles();
         return mData;
     }
 

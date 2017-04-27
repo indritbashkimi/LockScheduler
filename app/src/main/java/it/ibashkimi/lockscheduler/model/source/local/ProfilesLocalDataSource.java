@@ -3,18 +3,17 @@ package it.ibashkimi.lockscheduler.model.source.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
-
 
 /**
  * Concrete implementation of a data source as a db.
@@ -22,11 +21,10 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
 public class ProfilesLocalDataSource implements ProfilesDataSource {
 
     private static final String TAG = "ProfilesLocalDataSource";
+
     private static ProfilesLocalDataSource INSTANCE;
 
     private SharedPreferences sharedPreferences;
-    @Nullable
-    private ArrayList<Profile> profiles;
 
     private ProfilesLocalDataSource(@NonNull Context context) {
         sharedPreferences = context.getSharedPreferences("profiles", Context.MODE_PRIVATE);
@@ -39,33 +37,24 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         return INSTANCE;
     }
 
-    /**
-     * Note: {@link ProfilesDataSource.LoadProfilesCallback#onDataNotAvailable()} is fired if the database doesn't exist
-     * or the table is empty.
-     */
     @Override
-    public void getProfiles(@NonNull LoadProfilesCallback callback) {
-        callback.onProfilesLoaded(getProfiles());
+    public List<Profile> getProfiles() {
+        return restoreProfiles();
     }
 
     @Override
-    public void getProfile(long profileId, @NonNull GetProfileCallback callback) {
-        Profile profile = getProfileWithId(profileId);
-        if (profile != null)
-            callback.onProfileLoaded(profile);
-        else
-            callback.onDataNotAvailable();
+    public Profile getProfile(long profileId) {
+        for (Profile profile : getProfiles()) {
+            if (profile.getId() == profileId)
+                return profile;
+        }
+        return null;
     }
 
     @Override
     public void saveProfile(@NonNull Profile profile) {
         getProfiles().add(profile);
         saveProfiles();
-    }
-
-    @Override
-    public void refreshProfiles() {
-        restoreProfiles();
     }
 
     @Override
@@ -85,8 +74,23 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
+    public void updateProfile(Profile profile) {
+        List<Profile> profiles = getProfiles();
+        Profile targetProfile = null;
+        for (Profile p : profiles) {
+            if (p.getId() == profile.getId()) {
+                targetProfile = p;
+                break;
+            }
+        }
+        targetProfile.update(profile);
+        saveProfiles();
+    }
+
+    @Override
     public void swapProfiles(int pos1, int pos2) {
-        throw new RuntimeException("Not implemented yet");
+        Collections.swap(getProfiles(), pos1, pos2);
+        saveProfiles();
     }
 
     private synchronized ArrayList<Profile> restoreProfiles() {
@@ -120,44 +124,5 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
 
         sharedPreferences.edit().putString("profiles", jsonArray.toString()).apply();
         Log.d(TAG, "saveProfiles: " + jsonArray.toString());
-    }
-
-    /**
-     * Return the profile with the given id. Null if there is any.
-     *
-     * @param profileId Profile id
-     * @return Profile with the given id.
-     */
-    @Nullable
-    public Profile getProfileWithId(long profileId) {
-        for (Profile profile : getProfiles()) {
-            if (profile.getId() == profileId)
-                return profile;
-        }
-        return null;
-    }
-
-    public int getIndexOfProfileId(long profileId) {
-        for (int i = 0; i < getProfiles().size(); i++) {
-            if (getProfiles().get(i).getId() == profileId)
-                return i;
-        }
-        return -1;
-    }
-
-    @NonNull
-    public ArrayList<Profile> getProfiles() {
-        if (profiles == null) {
-            profiles = restoreProfiles();
-        }
-        return profiles;
-    }
-
-    public int indexOf(long profileId) {
-        for (int i = 0; i < getProfiles().size(); i++) {
-            if (getProfiles().get(i).getId() == profileId)
-                return i;
-        }
-        return -1;
     }
 }

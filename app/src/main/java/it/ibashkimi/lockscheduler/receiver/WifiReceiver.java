@@ -14,6 +14,7 @@ import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.model.WifiItem;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 
 public class WifiReceiver extends BroadcastReceiver {
@@ -36,14 +37,14 @@ public class WifiReceiver extends BroadcastReceiver {
 
             }
         }
-        List<Profile> profiles = App.getProfileApiHelper().getProfiles();
+        List<Profile> profiles = ProfilesRepository.getInstance().getProfiles();
         for (Profile profile : profiles) {
             WifiCondition condition = profile.getWifiCondition();
             if (condition != null) {
                 condition.onWifiStateChanged(wifiItem);
                 profile.notifyConditionChanged(condition);
+                ProfilesRepository.getInstance().updateProfile(profile);
             }
         }
-        App.getProfileApiHelper().saveProfiles();
     }
 }

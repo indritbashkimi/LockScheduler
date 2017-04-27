@@ -33,6 +33,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
@@ -230,7 +231,8 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
             if (actionMode != null) {
                 toggleSelection(position);
             } else {
-                mPresenter.openProfileDetails(profile);
+                Profile p = (Profile) mAdapter.getProfiles().get(position);
+                mPresenter.openProfileDetails(p);
             }
         }
 
@@ -274,6 +276,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showProfiles(List<Profile> profiles) {
+        Log.d(TAG, "showProfiles() called with: profiles = [" + profiles + "]");
         mAdapter.setData(profiles);
 
         mProfileView.setVisibility(View.VISIBLE);
@@ -287,7 +290,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         //startActivityForResult(intent, AddEditProfileActivity.REQUEST_ADD_TASK);
 
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.setAction(ProfileActivity.ACTION_NEW);
         getActivity().startActivityForResult(intent, 0);
     }
 
@@ -300,20 +302,11 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         intent.putExtra(AddEditProfileActivity.EXTRA_PROFILE_ID, profileId);
         startActivity(intent);*/
 
-        ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(getContext())).getProfile(profileId, new ProfilesDataSource.GetProfileCallback() {
-            @Override
-            public void onProfileLoaded(Profile profile) {
-                Intent intent = new Intent(getActivity(), ProfileActivity.class);
-                intent.setAction(ProfileActivity.ACTION_VIEW);
-                intent.putExtra("profile", profile.toJson());
-                getActivity().startActivityForResult(intent, ProfilesActivity.RESULT_PROFILE);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
+        Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
+        Log.d(TAG, "onProfileLoaded() called with: profile = [" + profile + "]");
+        Intent intent = new Intent(getActivity(), ProfileActivity.class);
+        intent.putExtra(ProfileActivity.ARGUMENT_EDIT_PROFILE_ID, profile.getId());
+        getActivity().startActivityForResult(intent, ProfilesActivity.RESULT_PROFILE);
     }
 
     @Override
@@ -406,7 +399,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                     for (int i = items.size() - 1; i > -1; i--) {
                         //Log.d(TAG, "onActionItemClicked: i = " + i);
                         int position = items.get(i);
-                        App.getProfileApiHelper().removeProfile((Profile) mAdapter.getData().get(position));
+                        //ProfilesRepository.getInstance().deleteProfile((Profile) mAdapter.getProfiles().get(position));
                         mAdapter.notifyItemRemoved(position);
                     }
                     mAdapter.clearSelection();

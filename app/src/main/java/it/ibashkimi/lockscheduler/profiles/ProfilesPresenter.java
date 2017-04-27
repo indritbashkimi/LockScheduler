@@ -60,62 +60,22 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
         if (showLoadingUI) {
             profilesView.setLoadingIndicator(true);
         }
-        if (forceUpdate) {
-            profilesRepository.refreshProfiles();
-        }
 
         // The network request might be handled in a different thread so make sure Espresso knows
         // that the app is busy until the response is handled.
         //EspressoIdlingResource.increment(); // App is busy until further notice
 
-        profilesRepository.getProfiles(new ProfilesDataSource.LoadProfilesCallback() {
-            @Override
-            public void onProfilesLoaded(List<Profile> profiles) {
-                List<Profile> profilesToShow = new ArrayList<>();
-
-                // This callback may be called twice, once for the cache and once for loading
-                // the data from the server API, so we check before decrementing, otherwise
-                // it throws "Counter has been corrupted!" exception.
-                /*if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
-                    EspressoIdlingResource.decrement(); // Set app as idle.
-                }*/
-
-                // We filter the tasks based on the requestType
-
-                // The view may not be able to handle UI updates anymore
-                if (!profilesView.isActive()) {
-                    return;
-                }
-                if (showLoadingUI) {
-                    profilesView.setLoadingIndicator(false);
-                }
-
-                processProfiles(profilesToShow);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                // The view may not be able to handle UI updates anymore
-                if (!profilesView.isActive()) {
-                    return;
-                }
-                profilesView.showLoadingProfilesError();
-            }
-        });
-    }
-
-    private void processProfiles(List<Profile> profiles) {
-        if (profiles.isEmpty()) {
-            // Show a message indicating there are no tasks for that filter type.
-            processEmptyTasks();
+        List<Profile> profiles = profilesRepository.getProfiles();
+        if (!profilesView.isActive()) {
+            return;
+        }
+        if (profiles == null) {
+            profilesView.showLoadingProfilesError();
         } else {
-            // Show the list of tasks
             profilesView.showProfiles(profiles);
         }
-    }
 
-    private void processEmptyTasks() {
-        profilesView.showNoProfiles();
+        profilesView.showProfiles(profiles);
     }
 
     @Override

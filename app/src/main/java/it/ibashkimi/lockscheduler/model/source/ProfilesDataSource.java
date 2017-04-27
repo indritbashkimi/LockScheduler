@@ -16,31 +16,17 @@ import it.ibashkimi.lockscheduler.model.Profile;
  */
 public interface ProfilesDataSource {
 
-    interface LoadProfilesCallback {
+    List<Profile> getProfiles();
 
-        void onProfilesLoaded(List<Profile> profiles);
-
-        void onDataNotAvailable();
-    }
-
-    interface GetProfileCallback {
-
-        void onProfileLoaded(Profile profile);
-
-        void onDataNotAvailable();
-    }
-
-    void getProfiles(@NonNull LoadProfilesCallback callback);
-
-    void getProfile(long profileId, @NonNull GetProfileCallback callback);
+    Profile getProfile(long profileId);
 
     void saveProfile(@NonNull Profile profile);
-
-    void refreshProfiles();
 
     void deleteAllProfiles();
 
     void deleteProfile(long profileId);
+
+    void updateProfile(Profile profile);
 
     void swapProfiles(int pos1, int pos2);
 }

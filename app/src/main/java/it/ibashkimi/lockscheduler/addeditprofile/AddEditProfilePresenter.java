@@ -10,7 +10,7 @@ import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
 
-public class AddEditProfilePresenter implements AddEditProfileContract.Presenter, ProfilesDataSource.GetProfileCallback {
+public class AddEditProfilePresenter implements AddEditProfileContract.Presenter {
 
     private static final String TAG = "AddEditProfilePresenter";
 
@@ -32,9 +32,13 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     @Override
     public void start() {
-        if (!isNewProfile())
-            mProfilesRepository.getProfile(mProfileId, this);
-        else
+        if (!isNewProfile()) {
+            Profile profile = mProfilesRepository.getProfile(mProfileId);
+            if (mAddProfileView.isActive()) {
+                mAddProfileView.showProfile(profile);
+            }
+            mIsDataMissing = false;
+        } else
             mAddProfileView.showEmptyProfile();
     }
 
@@ -58,7 +62,11 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (isNewProfile()) {
             throw new RuntimeException("populateProfile() was called but profile is new.");
         }
-        mProfilesRepository.getProfile(mProfileId, this);
+        Profile profile = mProfilesRepository.getProfile(mProfileId);
+        if (mAddProfileView.isActive()) {
+            mAddProfileView.showProfile(profile);
+        }
+        mIsDataMissing = false;
     }
 
     @Override
@@ -70,24 +78,6 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     public boolean isDataMissing() {
         return mIsDataMissing;
     }
-
-    @Override
-    public void onProfileLoaded(Profile profile) {
-        // The view may not be able to handle UI updates anymore
-        if (mAddProfileView.isActive()) {
-            mAddProfileView.showProfile(profile);
-        }
-        mIsDataMissing = false;
-    }
-
-    @Override
-    public void onDataNotAvailable() {
-        // The view may not be able to handle UI updates anymore
-        if (mAddProfileView.isActive()) {
-            mAddProfileView.showEmptyProfileError();
-        }
-    }
-
 
     private boolean isNewProfile() {
         return mProfileId == -1;

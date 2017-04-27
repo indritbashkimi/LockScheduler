@@ -51,7 +51,7 @@ public class ProfileAdapterImpl2 extends ProfileAdapter<ProfileAdapterImpl2.Prof
 
     @Override
     public void onBindViewHolder(final ProfileViewHolder holder, int position) {
-        final Profile profile = getData().get(position);
+        final Profile profile = getProfiles().get(position);
         holder.setSelected(isSelected(position));
         holder.init(profile);
     }

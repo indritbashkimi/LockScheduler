@@ -29,7 +29,7 @@ public abstract class ProfileAdapter<VH extends ProfileAdapter.ProfileViewHolder
         notifyDataSetChanged();
     }
 
-    public List<Profile> getData() {
+    public List<Profile> getProfiles() {
         return mProfiles;
     }
 

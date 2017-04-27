@@ -18,7 +18,6 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.Config;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
@@ -37,19 +36,18 @@ public class GeofenceApiHelper {
         this.mGoogleApiHandler = googleApiHelper;
     }
 
-    public void initGeofences() {
+    public void initGeofences(final List<Profile> profiles) {
         Log.d(TAG, "initGeofences: adding job");
         mGoogleApiHandler.doJob(new Runnable() {
             @Override
             public void run() {
-                initGeofences(mGoogleApiHandler.getGoogleApiClient());
+                initGeofences(mGoogleApiHandler.getGoogleApiClient(), profiles);
             }
         });
     }
 
-    private void initGeofences(GoogleApiClient googleApiClient) {
+    private void initGeofences(GoogleApiClient googleApiClient, List<Profile> profiles) {
         Log.d(TAG, "initGeofences");
-        List<Profile> profiles = getProfiles();
         if (profiles.size() == 0) {
             Log.e(TAG, "initGeofences: no profiles found.");
             return;
@@ -70,7 +68,7 @@ public class GeofenceApiHelper {
         }
         LocationServices.GeofencingApi.addGeofences(
                 googleApiClient,
-                getGeofencingRequest(),
+                getGeofencingRequest(profiles),
                 getGeofencePendingIntent()
         ).setResultCallback(new ResultCallback<Status>() {
             @Override
@@ -103,21 +101,21 @@ public class GeofenceApiHelper {
         return mGeofencePendingIntent;
     }
 
-    private GeofencingRequest getGeofencingRequest() {
+    private GeofencingRequest getGeofencingRequest(List<Profile> profiles) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER | GeofencingRequest.INITIAL_TRIGGER_EXIT);
-        builder.addGeofences(getGeofenceList());
+        builder.addGeofences(getGeofenceList(profiles));
         return builder.build();
     }
 
-    private List<Geofence> getGeofenceList() {
+    private List<Geofence> getGeofenceList(List<Profile> profiles) {
         String delayStr = mContext.getSharedPreferences(Config.MAIN_PREFS, Context.MODE_PRIVATE)
                 .getString("loitering_delay", "0");
         int loiteringDelay = Integer.parseInt(delayStr);
         Log.d(TAG, "getGeofenceList: loitering " + loiteringDelay);
         ArrayList<Geofence> geofences = new ArrayList<>();
         PlaceCondition placeCondition;
-        for (Profile profile : getProfiles()) {
+        for (Profile profile : profiles) {
             placeCondition = profile.getPlaceCondition();
             if (placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
@@ -140,9 +138,4 @@ public class GeofenceApiHelper {
         }
         return geofences;
     }
-
-    private ArrayList<Profile> getProfiles() {
-        return App.getProfileApiHelper().getProfiles();
-    }
-
 }

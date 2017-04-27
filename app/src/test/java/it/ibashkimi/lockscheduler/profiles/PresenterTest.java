@@ -2,15 +2,12 @@ package it.ibashkimi.lockscheduler.profiles;
 
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.common.data.DataBufferObserver;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
@@ -47,22 +44,17 @@ public class PresenterTest {
         }
 
         @Override
-        public void getProfiles(@NonNull LoadProfilesCallback callback) {
-            callback.onProfilesLoaded(profiles);
+        public List<Profile> getProfiles() {
+            return profiles;
         }
 
         @Override
-        public void getProfile(long profileId, @NonNull GetProfileCallback callback) {
-
+        public Profile getProfile(long profileId) {
+            return null;
         }
 
         @Override
         public void saveProfile(@NonNull Profile profile) {
-
-        }
-
-        @Override
-        public void refreshProfiles() {
 
         }
 
@@ -73,6 +65,11 @@ public class PresenterTest {
 
         @Override
         public void deleteProfile(long profileId) {
+
+        }
+
+        @Override
+        public void updateProfile(Profile profile) {
 
         }
 

@@ -23,7 +23,6 @@ import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.LockAction;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 /**
@@ -76,7 +75,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         mPresenter = new AddEditProfilePresenter(
                 profileId,
-                ProfilesRepository.getInstance(ProfilesLocalDataSource.getInstance(this)),
+                ProfilesRepository.getInstance(),
                 this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();

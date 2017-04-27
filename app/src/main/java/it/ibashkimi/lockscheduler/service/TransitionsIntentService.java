@@ -15,13 +15,12 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
 
 /**
@@ -52,7 +51,7 @@ public class TransitionsIntentService extends IntentService {
             boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
             if (showNotification) {
                 long profileId = intent.getLongExtra("profile_id", -1);
-                Profile profile = App.getProfileApiHelper().getProfileWithId(profileId);
+                Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
                 assert profile != null;
                 String title;
                 String content;
@@ -78,7 +77,7 @@ public class TransitionsIntentService extends IntentService {
             int geofenceTransition = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
             for (Geofence geofence : geofenceList) {
-                Profile profile = App.getProfileApiHelper().getProfileWithId(Long.parseLong(geofence.getRequestId()));
+                Profile profile = ProfilesRepository.getInstance().getProfile(Long.parseLong(geofence.getRequestId()));
                 if (profile == null) {
                     Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
                     return;
@@ -89,17 +88,10 @@ public class TransitionsIntentService extends IntentService {
                 } else {
                     profile.setConditionState(Condition.Type.PLACE, false);
                 }
-                App.getProfileApiHelper().saveProfiles();
+                ProfilesRepository.getInstance().updateProfile(profile);
             }
         }
 
-    }
-
-    private Profile findProfile(ArrayList<Profile> profiles, long id) {
-        for (Profile profile : profiles)
-            if (profile.getId() == id)
-                return profile;
-        return null;
     }
 
     private void sendNotification(String title, String content, int notificationId) {

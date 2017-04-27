@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.about.AboutActivity;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 import it.ibashkimi.support.preference.Themes;
 import it.ibashkimi.support.utils.ThemeUtils;
@@ -95,7 +96,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
                 recreate();
                 break;
             case "loitering_delay":
-                App.getGeofenceApiHelper().initGeofences();
+                App.getGeofenceApiHelper().initGeofences(ProfilesRepository.getInstance().getProfiles());
                 break;
             case "colored_navigation_bar":
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

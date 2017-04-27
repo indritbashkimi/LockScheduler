@@ -7,7 +7,6 @@ import android.util.Log;
 import it.ibashkimi.lockscheduler.model.api.GeofenceApiHelper;
 import it.ibashkimi.lockscheduler.model.api.GoogleApiHelper;
 import it.ibashkimi.lockscheduler.model.api.LockManager;
-import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
 
 
 public class App extends Application {
@@ -20,8 +19,9 @@ public class App extends Application {
 
     private GoogleApiHelper googleApiHelper;
     private GeofenceApiHelper geofenceApiHelper;
-    private ProfileApiHelper profileApiHelper;
-    private static App mInstance;
+
+    private static App sInstance;
+
     private LockManager lockManager;
 
     @Override
@@ -29,14 +29,14 @@ public class App extends Application {
         Log.d(TAG, "onCreateView: ");
         super.onCreate();
         //Toast.makeText(this, "App onCreateView", Toast.LENGTH_LONG).show();
-        mInstance = this;
+        sInstance = this;
         googleApiHelper = new GoogleApiHelper(this);
         geofenceApiHelper = new GeofenceApiHelper(this, googleApiHelper);
-        geofenceApiHelper.initGeofences();
+        //geofenceApiHelper.initGeofences(ProfilesRepository.getInstance().getProfiles());
     }
 
     public static synchronized App getInstance() {
-        return mInstance;
+        return sInstance;
     }
 
     public GoogleApiHelper getGoogleApiHelperInstance() {
@@ -54,18 +54,8 @@ public class App extends Application {
         return lockManager;
     }
 
-    public ProfileApiHelper getProfileApiHelperInstance() {
-        if (profileApiHelper == null)
-            profileApiHelper = new ProfileApiHelper(this);
-        return profileApiHelper;
-    }
-
     public static LockManager getLockManager() {
         return getInstance().getLockManagerInstance();
-    }
-
-    public static ProfileApiHelper getProfileApiHelper() {
-        return getInstance().getProfileApiHelperInstance();
     }
 
     public static GoogleApiHelper getGoogleApiHelper() {

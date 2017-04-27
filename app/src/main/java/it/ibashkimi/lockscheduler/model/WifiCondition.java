@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.App;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 
 public class WifiCondition extends Condition {
@@ -74,7 +75,7 @@ public class WifiCondition extends Condition {
                 }
             }
         }
-        List<Profile> profiles = App.getProfileApiHelper().getProfiles();
+        List<Profile> profiles = ProfilesRepository.getInstance().getProfiles();
         if (interesting) {
             String ssid = wifiInfo.getSSID();
             WifiItem wifiItem = new WifiItem(wifiInfo.getNetworkId(), ssid);

@@ -10,10 +10,10 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -31,7 +31,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.d(TAG, "onReceive: ALARM RECEIVED PORCA PUTTANA!!!");
 
         long nextAlarm = Long.MAX_VALUE;
-        for (Profile profile : App.getProfileApiHelper().getProfiles()) {
+        for (Profile profile : ProfilesRepository.getInstance().getProfiles()) {
             TimeCondition timeCondition = (TimeCondition) profile.getCondition(Condition.Type.TIME);
             if (timeCondition != null) {
                 timeCondition.checkNow();
