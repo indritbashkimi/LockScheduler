@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -14,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
@@ -105,11 +109,14 @@ public class AboutActivity extends BaseActivity {
         context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
     }
 
-    public static class AboutFragment extends Fragment {
+    public static class AboutFragment extends Fragment implements View.OnClickListener {
+
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_about, container, false);
+            View root = inflater.inflate(R.layout.fragment_about, container, false);
+            ButterKnife.bind(this, root);
+            return root;
         }
 
         @Override
@@ -121,28 +128,63 @@ public class AboutActivity extends BaseActivity {
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
+            view.findViewById(R.id.email).setOnClickListener(this);
+            view.findViewById(R.id.facebook).setOnClickListener(this);
+            view.findViewById(R.id.google_plus).setOnClickListener(this);
+            view.findViewById(R.id.twitter).setOnClickListener(this);
+            view.findViewById(R.id.github).setOnClickListener(this);
+        }
 
-            Button licences = (Button) view.findViewById(R.id.licences);
-            licences.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((AboutActivity) getActivity()).showLicenceFragment();
-                }
-            });
+        @OnClick(R.id.help)
+        public void onHelpClicked() {
+            ((AboutActivity) getActivity()).showHelpFragment();
+        }
 
-            view.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AboutActivity.sendFeedback(getContext());
-                }
-            });
+        @OnClick(R.id.feedback)
+        public void onSendFeedbackClicked() {
+            AboutActivity.sendFeedback(getContext());
+        }
 
-            view.findViewById(R.id.help).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((AboutActivity) getActivity()).showHelpFragment();
-                }
-            });
+        @OnClick(R.id.privacy_policy)
+        public void onPrivacyPolicyClicked() {
+            Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+        }
+
+        @OnClick(R.id.licenses)
+        public void onLicensesClicked() {
+            ((AboutActivity) getActivity()).showLicenceFragment();
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.email:
+                    sendFeedback(getContext());
+                    break;
+                case R.id.facebook:
+                    openUrl(R.string.social_facebook);
+                    break;
+                case R.id.twitter:
+                    openUrl(R.string.social_twitter);
+                    break;
+                case R.id.google_plus:
+                    openUrl(R.string.social_google_plus);
+                    break;
+                case R.id.github:
+                    openUrl(R.string.social_github);
+                    break;
+            }
+        }
+
+        private void openUrl(@StringRes int link) {
+            openUrl(getString(link));
+        }
+
+        private void openUrl(String url) {
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            //builder.setToolbarColor(ContextCompat.getColor(this, R.color.primary));
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(getContext(), Uri.parse(url));
         }
     }
 }

@@ -51,7 +51,7 @@ public class HelpFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        rootView.findViewById(R.id.feedback_layout).setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AboutActivity.sendFeedback(getContext());
