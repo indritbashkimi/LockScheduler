@@ -31,14 +31,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
-import it.ibashkimi.lockscheduler.ui.ProfileActivity;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.support.utils.ThemeUtils;
 
@@ -46,14 +41,17 @@ import it.ibashkimi.support.utils.ThemeUtils;
  * Fragment used to display profile list.
  */
 public class ProfilesFragment extends Fragment implements ProfilesContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
+
     private static final String TAG = "ProfilesFragment";
 
     private ProfilesContract.Presenter mPresenter;
 
     private ProfileAdapter mAdapter;
-    private RecyclerView mRecyclerView;
+
     private int mItemLayout;
+
     private int mMapStyle;
+
     private SharedPreferences mSettings;
 
     private ActionMode actionMode;
@@ -83,7 +81,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume() called");
         super.onResume();
         mPresenter.start();
     }
@@ -106,7 +103,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.result(requestCode, resultCode);
+        mPresenter.result(requestCode, resultCode, data != null ? data.getExtras() : null);
     }
 
     @Override
@@ -114,7 +111,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profile_list, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
@@ -277,7 +274,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showProfiles(List<Profile> profiles) {
-        Log.d(TAG, "showProfiles() called with: profiles = [" + profiles + "]");
         mAdapter.setData(profiles);
 
         mProfileView.setVisibility(View.VISIBLE);
@@ -286,28 +282,15 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showAddProfile() {
-        // TODO: 27/04/17
-        //Intent intent = new Intent(getContext(), AddEditProfileActivity.class);
-        //startActivityForResult(intent, AddEditProfileActivity.REQUEST_ADD_TASK);
-
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        getActivity().startActivityForResult(intent, 0);
+        Intent intent = new Intent(getContext(), AddEditProfileActivity.class);
+        startActivityForResult(intent, AddEditProfileActivity.REQUEST_ADD_PROFILE);
     }
 
     @Override
     public void showProfileDetailsUi(String profileId) {
-        // in it's own Activity, since it makes more sense that way and it gives us the flexibility
-        // to show some Intent stubbing.
-        // TODO: 27/04/17
-        /*Intent intent = new Intent(getContext(), AddEditProfileActivity.class);
-        intent.putExtra(AddEditProfileActivity.EXTRA_PROFILE_ID, profileId);
-        startActivity(intent);*/
-
-        Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
-        Log.d(TAG, "onProfileLoaded() called with: profile = [" + profile + "]");
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.putExtra(ProfileActivity.ARGUMENT_EDIT_PROFILE_ID, profile.getId());
-        getActivity().startActivityForResult(intent, ProfilesActivity.RESULT_PROFILE);
+        Intent intent = new Intent(getContext(), AddEditProfileActivity.class);
+        intent.putExtra(AddEditProfileActivity.ARGUMENT_EDIT_PROFILE_ID, profileId);
+        startActivityForResult(intent, AddEditProfileActivity.REQUEST_EDIT_PROFILE);
     }
 
     @Override
@@ -335,12 +318,18 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showSuccessfullySavedMessage() {
+        Log.d(TAG, "showSuccessfullySavedMessage() called");
         showMessage(getString(R.string.successfully_saved_profile_message));
     }
 
     @Override
     public void showSuccessfullyRemovedMessage(int profilesRemoved) {
         showMessage(getString(R.string.successfully_removed_profile_message));
+    }
+
+    @Override
+    public void showSuccessfullyUpdatedMessage() {
+        showMessage("Profile updated.");
     }
 
     private void showNoTasksViews(String mainText, int iconRes, boolean showAddView) {

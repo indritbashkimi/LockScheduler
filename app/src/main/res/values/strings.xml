@@ -89,6 +89,13 @@
     <string name="place_picker_activity">Pick Place</string>
     <string name="wifi_picker_activity">Wi-Fi</string>
     <string name="new_profile_title">New profile</string>
+    <string name="pin_input_hint">Insert PIN</string>
+    <string name="password_input_hint">Insert Password</string>
+    <string name="pin_mismatch_error">PINs don\'t match</string>
+    <string name="pin_short_error">PIN too short.</string>
+    <string name="password_mismatch_error">Passwords don\'t match.</string>
+    <string name="password_short_error">Password too short.</string>
+    <string name="action_delete_profile">Delete</string>
 
 
     <style name="empty_profile_message">Profiles cannot be empty</style>

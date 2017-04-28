@@ -14,20 +14,49 @@ public class TimeCondition extends Condition {
 
     private boolean[] daysActive;
 
+    private int[] startTime;
+
+    private int[] endTime;
+
     public TimeCondition(String name) {
         this(name, new boolean[]{true, true, true, true, true, true, true});
     }
 
     public TimeCondition(String name, boolean[] daysActive) {
+        this(name, daysActive, new int[]{0, 0}, new int[]{0, 0});
+    }
+
+    public TimeCondition(String name, boolean[] daysActive, int[] startTime, int[] endTime) {
         super(Type.TIME, name);
         this.daysActive = daysActive;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public boolean[] getDaysActive() {
         return daysActive;
     }
 
+    public int[] getStartTime() {
+        return startTime;
+    }
+
+    public int[] getEndTime() {
+        return endTime;
+    }
+
+    public void setStartTime(int[] startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(int[] endTime) {
+        this.endTime = endTime;
+    }
+
     public void setDaysActive(boolean[] daysActive) {
+        Log.d(TAG, "setDaysActive() called with: daysActive = [" + daysActive + "]");
+        for (boolean day : daysActive)
+            Log.d(TAG, "setDaysActive: day " + day);
         this.daysActive = daysActive;
     }
 
@@ -159,7 +188,12 @@ public class TimeCondition extends Condition {
             if (condition.getDaysActive()[i] != daysActive[i])
                 return false;
         }
-        return true;
+        int[] startTime = condition.getStartTime();
+        int[] endTime = condition.getEndTime();
+        return this.startTime[0] == startTime[0] &&
+                this.startTime[1] == startTime[1] &&
+                this.endTime[0] == endTime[0] &&
+                this.endTime[1] == endTime[1];
     }
 
     @Override
@@ -172,6 +206,10 @@ public class TimeCondition extends Condition {
             for (int i = 0; i < 7; i++) {
                 jsonObject.put("day_" + i, daysActive[i]);
             }
+            jsonObject.put("start_time_hour", startTime[0]);
+            jsonObject.put("start_time_minute", startTime[1]);
+            jsonObject.put("end_time_hour", endTime[0]);
+            jsonObject.put("end_time_minute", endTime[1]);
         } catch (JSONException e) {
             e.printStackTrace();
             return "";
@@ -188,7 +226,13 @@ public class TimeCondition extends Condition {
         for (int i = 0; i < 7; i++) {
             daysActive[i] = jsonObject.getBoolean("day_" + i);
         }
-        TimeCondition timeCondition = new TimeCondition(name, daysActive);
+        int hours = jsonObject.getInt("start_time_hour");
+        int minutes = jsonObject.getInt("start_time_minute");
+        int[] startTime = new int[]{hours, minutes};
+        hours = jsonObject.getInt("end_time_hour");
+        minutes = jsonObject.getInt("end_time_minute");
+        int[] endTime = new int[]{hours, minutes};
+        TimeCondition timeCondition = new TimeCondition(name, daysActive, startTime, endTime);
         timeCondition.setTrue(isTrue);
         return timeCondition;
     }

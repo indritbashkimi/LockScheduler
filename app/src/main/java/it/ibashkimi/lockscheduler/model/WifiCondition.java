@@ -43,6 +43,9 @@ public class WifiCondition extends Condition {
         return wifiItemList;
     }
 
+    public void setNetworks(List<WifiItem> networks) {
+        this.wifiItemList = networks;
+    }
     public void update(Context context) {
 
     }

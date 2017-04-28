@@ -15,36 +15,25 @@ public interface AddEditProfileContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showEmptyProfileError();
+        void showLoadProfileError();
 
-        void showProfileList();
+        void showProfileList(boolean success, boolean deleted);
 
         void showProfile(Profile profile);
 
         void showEmptyProfile();
 
-        void save();
+        void showTitle(int title);
 
         boolean isActive();
     }
 
     interface Presenter extends BasePresenter {
 
-        /**
-         * Called by the view when data is ready to be saved.
-         * @param title
-         * @param conditions
-         * @param trueActions
-         * @param falseActions
-         */
         void saveProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions);
 
         void deleteProfile();
 
-        void populateProfile();
-
-        void requestSave();
-
-        boolean isDataMissing();
+        void discard();
     }
 }

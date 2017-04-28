@@ -152,7 +152,7 @@ public class PlaceConditionView {
     }
 
     public void showPlacePicker() {
-        parent.showPlacePicker();
+        //parent.showPlacePicker();
     }
 
     public void showMap(LatLng center, int radius, String address) {
@@ -182,7 +182,7 @@ public class PlaceConditionView {
                 googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng latLng) {
-                        parent.showPlacePicker();
+                        //parent.showPlacePicker();
                     }
                 });
                 circle = googleMap.addCircle(new CircleOptions()

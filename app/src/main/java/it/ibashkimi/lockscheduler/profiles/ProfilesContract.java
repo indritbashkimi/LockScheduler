@@ -1,5 +1,6 @@
 package it.ibashkimi.lockscheduler.profiles;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -33,12 +34,14 @@ public interface ProfilesContract {
 
         void showSuccessfullyRemovedMessage(int profilesRemoved);
 
+        void showSuccessfullyUpdatedMessage();
+
         boolean isActive();
     }
 
     interface Presenter extends BasePresenter {
 
-        void result(int requestCode, int resultCode);
+        void result(int requestCode, int resultCode, Bundle extras);
 
         void loadProfiles();
 

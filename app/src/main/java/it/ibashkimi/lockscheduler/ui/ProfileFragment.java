@@ -18,8 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.MapsInitializer;
@@ -31,7 +29,6 @@ import java.util.List;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.support.utils.ThemeUtils;
 
 
 public class ProfileFragment extends Fragment {
@@ -89,7 +86,7 @@ public class ProfileFragment extends Fragment {
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        mName = (EditText) rootView.findViewById(R.id.input_name);
+        mName = (EditText) rootView.findViewById(R.id.profile_name);
         mName.setText(mProfile.getName());
         mName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -130,9 +127,9 @@ public class ProfileFragment extends Fragment {
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
-            case R.id.action_save:
+            /*case R.id.action_save:
                 save();
-                return true;
+                return true;*/
             case R.id.action_delete:
                 delete();
                 return true;

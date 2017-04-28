@@ -22,10 +22,9 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <!--<TextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center_vertical"
@@ -35,10 +34,10 @@
                 android:textAppearance="@style/Preference_TextAppearanceMaterialBody2"
                 android:textColor="?attr/colorAccent"
                 android:textSize="16sp"
-                android:textStyle="normal" />-->
+                android:textStyle="normal" />
 
             <android.support.v7.widget.AppCompatEditText
-                android:id="@+id/input_name"
+                android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -47,7 +46,7 @@
                 android:gravity="start"
                 android:hint="@string/profile_name"
                 android:inputType="textCapSentences|textMultiLine"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
             <TextView
                 android:id="@+id/actions_title"
@@ -88,8 +87,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <android.support.v4.widget.Space
+                android:layout_width="match_parent"
+                android:layout_height="92dp" />
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/ic_done" />
 
 </android.support.design.widget.CoordinatorLayout>

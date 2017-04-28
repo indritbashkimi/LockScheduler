@@ -4,23 +4,25 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.addeditprofile.actions.ActionsContract;
 import it.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
-import it.ibashkimi.lockscheduler.addeditprofile.actions.ActionsPresenter;
-import it.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsContract;
 import it.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
-import it.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsPresenter;
+import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
-import it.ibashkimi.lockscheduler.model.LockAction;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
@@ -29,108 +31,84 @@ import it.ibashkimi.lockscheduler.ui.BaseActivity;
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
-public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View, ConditionsProvider {
-
-    public static final int REQUEST_ADD_TASK = 1;
-
-    public static final String ACTION_NEW = "it.ibashkimi.lockscheduler.profile.new";
-    public static final String ACTION_VIEW = "it.ibashkimi.lockscheduler.profile.view";
+public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View {
 
     private static final String TAG = "AddEditProfileActivity";
 
-    public static final String EXTRA_PROFILE_ID = "extra_profile_id";
+    public static final int REQUEST_ADD_PROFILE = 1;
+    public static final int REQUEST_EDIT_PROFILE = 2;
 
-    private static final String ARGUMENT_EDIT_TASK_ID = "edit_task_id";
+    public static final String ARGUMENT_EDIT_PROFILE_ID = "ARGUMENT_EDIT_PROFILE_ID";
 
-    private EditText mTitle;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.profile_name)
+    EditText mProfileName;
+
+    private boolean mShowDelete;
 
     private AddEditProfileContract.Presenter mPresenter;
-
-    private ConditionsContract.Presenter mConditionsPresenter;
-
-    private ActionsContract.Presenter mActionsPresenter;
-
-    private ActionsFragment mActionsFragment;
-
-    private ConditionsFragment mConditionsFragment;
-
-    private Profile mProfile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_profile);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
             actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel);
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mTitle = (EditText) findViewById(R.id.input_name);
-
-        String profileId = getIntent().getStringExtra(ARGUMENT_EDIT_TASK_ID);
+        String profileId = getIntent().getStringExtra(ARGUMENT_EDIT_PROFILE_ID);
 
         mPresenter = new AddEditProfilePresenter(
                 profileId,
                 ProfilesRepository.getInstance(),
                 this);
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        ConditionsFragment conditionsFragment = (ConditionsFragment) fragmentManager
-                .findFragmentByTag(ConditionsFragment.class.getName());
-        if (conditionsFragment == null) {
-            conditionsFragment = ConditionsFragment.newInstance();
-        }
-        //ConditionsPresenter mConditionsPresenter = new ConditionsPresenter(conditions, conditionsFragment);
-        //conditionsFragment.setPresenter(mConditionsPresenter);
-
-        fragmentManager
-                .beginTransaction()
-                .replace(R.id.conditions_container, conditionsFragment, ConditionsFragment.class.getName())
-                .commit();
-
-        /*FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        ConditionsFragment conditionsFragment = (ConditionsFragment) fragmentManager.findFragmentByTag(ConditionsFragment.class.getName());
-        if (conditionsFragment == null) {
-            conditionsFragment = ConditionsFragment.newInstance();
-            fragmentTransaction.replace(R.id.conditions_container, conditionsFragment, ConditionsFragment.class.getName());
-        }
-        mConditionsPresenter = new ConditionsPresenter(conditionsFragment);
-        conditionsFragment.setPresenter(mConditionsPresenter);
-        ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(ActionsFragment.class.getName());
-        if (actionsFragment == null) {
-            actionsFragment = ActionsFragment.newInstance();
-            fragmentTransaction.replace(R.id.actions_container, actionsFragment, ActionsFragment.class.getName());
-        }
-        mActionsPresenter = new ActionsPresenter(actionsFragment);
-        fragmentTransaction.commit();*/
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
         mPresenter.start();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem deleteMenu = menu.findItem(R.id.action_delete);
+        deleteMenu.setVisible(mShowDelete);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mPresenter.discard();
+                return true;
+            case R.id.action_delete:
+                mPresenter.deleteProfile();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
-    }
-
-    @Deprecated
-    public void cancel() {
-        finish();
     }
 
     @Deprecated
@@ -142,98 +120,92 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         finish();
     }
 
-    @Deprecated
-    public void save(Profile profile) {
-        mConditionsFragment.requestSave();
-
-        /*Intent resultIntent = new Intent();
-        resultIntent.putExtra("profile", profile.toJson());
-        String action = getIntent().getAction().equals(ACTION_NEW) ? "new" : "update";
-        resultIntent.setAction(action);
-        setResult(Activity.RESULT_OK, resultIntent);
-        Log.d(TAG, "save: returning: " + profile.toString());
-        finish();*/
-    }
-
     @Override
     public void setPresenter(AddEditProfileContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
     @Override
-    public void showEmptyProfileError() {
+    public void showLoadProfileError() {
 
     }
 
     @Override
-    public void showProfileList() {
-
+    public void showProfileList(boolean success, boolean deleted) {
+        Log.d(TAG, "showProfileList() called");
+        setResult(success ? Activity.RESULT_OK : Activity.RESULT_CANCELED);
+        if (deleted) {
+            Intent intent = new Intent();
+            intent.putExtra("deleted", true);
+            setResult(success ? Activity.RESULT_OK : Activity.RESULT_CANCELED, intent);
+        }
+        finish();
     }
 
     @Override
     public void showProfile(Profile profile) {
-        mProfile = profile;
-        showFragments();
+        mShowDelete = true;
+        mProfileName.setText(profile.getName());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        ActionsFragment actionsFragment = getActionsFragment(fragmentManager);
+        actionsFragment.setData(profile.getTrueActions(), profile.getFalseActions());
+
+        ConditionsFragment conditionsFragment = getConditionsFragment(fragmentManager);
+        conditionsFragment.setData(profile.getConditions());
+
+        showFragments(fragmentManager, actionsFragment, conditionsFragment);
     }
 
     @Override
     public void showEmptyProfile() {
-        showFragments();
+        Log.d(TAG, "showEmptyProfile() called");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        showFragments(fragmentManager,
+                getActionsFragment(fragmentManager),
+                getConditionsFragment(fragmentManager));
     }
 
     @Override
-    public void save() {
-
+    public void showTitle(int title) {
+        getSupportActionBar().setTitle(title);
+        //toolbar.setTitle(title);
     }
 
-    public void showFragments() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    @OnClick(R.id.fab)
+    public void onSave() {
+        Log.d(TAG, "onSave: ");
+        List<List<Action>> actionData = getActionsFragment(getSupportFragmentManager()).assembleData();
+        List<Action> enterActions = actionData.get(0);
+        for (Action action : enterActions)
+            Log.d(TAG, action.toJson());
 
-        mConditionsFragment = (ConditionsFragment) fragmentManager
-                .findFragmentByTag(ConditionsFragment.class.getName());
-        if (mConditionsFragment == null) {
-            mConditionsFragment = ConditionsFragment.newInstance();
-        }
-        mConditionsPresenter = new ConditionsPresenter(this, mConditionsFragment);
-        mConditionsFragment.setPresenter(mConditionsPresenter);
+        List<Condition> conditions = getConditionsFragment(getSupportFragmentManager()).assembleConditions();
+        for (Condition condition : conditions)
+            Log.d(TAG, condition.toJson());
+        mPresenter.saveProfile(mProfileName.getText().toString(), conditions, actionData.get(0), actionData.get(1));
+    }
 
-        mActionsFragment = (ActionsFragment) fragmentManager
-                .findFragmentByTag(ActionsFragment.class.getName());
-        if (mActionsFragment == null) {
-            mActionsFragment = ActionsFragment.newInstance();
-        }
-        mActionsPresenter = new ActionsPresenter(mActionsFragment);
-        mActionsFragment.setPresenter(mActionsPresenter);
-
+    public void showFragments(FragmentManager fragmentManager, Fragment actions, Fragment conditions) {
         fragmentManager
                 .beginTransaction()
-                .replace(R.id.actions_container, mActionsFragment, ActionsFragment.class.getName())
-                .replace(R.id.conditions_container, mConditionsFragment, ConditionsFragment.class.getName())
+                .replace(R.id.actions_container, actions, ActionsFragment.class.getName())
+                .replace(R.id.conditions_container, conditions, ConditionsFragment.class.getName())
                 .commit();
-    }
-
-    @Override
-    public List<Condition> getConditions() {
-        return mProfile != null ? mProfile.getConditions() : null;
-    }
-
-    @Override
-    public void updateConditions(List<Condition> conditions) {
-        getProfile().setConditions(conditions);
-    }
-
-    private Profile getProfile() {
-        if (mProfile == null) {
-            mProfile = new Profile(Long.toString(System.currentTimeMillis()));
-            mProfile.getTrueActions().add(new LockAction());
-            mProfile.getFalseActions().add(new LockAction());
-        }
-        return mProfile;
     }
 
     @Override
     public boolean isActive() {
         return true;
+    }
+
+    private ActionsFragment getActionsFragment(FragmentManager fragmentManager) {
+        ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(ActionsFragment.class.getName());
+        if (actionsFragment == null) {
+            actionsFragment = ActionsFragment.newInstance();
+        }
+        return actionsFragment;
     }
 
     private ConditionsFragment getConditionsFragment(FragmentManager fragmentManager) {

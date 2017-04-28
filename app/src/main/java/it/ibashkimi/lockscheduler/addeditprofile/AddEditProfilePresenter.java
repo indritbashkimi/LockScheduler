@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.List;
 
+import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
@@ -22,7 +23,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     private String mProfileId;
 
-    private boolean mIsDataMissing;
+    private boolean mDataLoaded = false;
 
     public AddEditProfilePresenter(String profileId, @NonNull ProfilesDataSource mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
         this.mProfileId = profileId;
@@ -32,14 +33,23 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     @Override
     public void start() {
-        if (!isNewProfile()) {
-            Profile profile = mProfilesRepository.getProfile(mProfileId);
-            if (mAddProfileView.isActive()) {
-                mAddProfileView.showProfile(profile);
+        if (mAddProfileView.isActive()) {
+
+        }
+        mAddProfileView.showTitle(isNewProfile() ? R.string.new_profile : R.string.edit_profile);
+        if (!mDataLoaded) {
+            if (!isNewProfile()) {
+                Profile profile = mProfilesRepository.getProfile(mProfileId);
+                Log.d(TAG, "start: profile = " + profile);
+                if (mAddProfileView.isActive()) {
+                    mAddProfileView.showProfile(profile);
+                }
+            } else {
+                Log.d(TAG, "start: here");
+                mAddProfileView.showEmptyProfile();
             }
-            mIsDataMissing = false;
-        } else
-            mAddProfileView.showEmptyProfile();
+        }
+        mDataLoaded = true;
     }
 
     @Override
@@ -54,29 +64,12 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     @Override
     public void deleteProfile() {
         mProfilesRepository.deleteProfile(mProfileId);
-        mAddProfileView.showProfileList();
+        mAddProfileView.showProfileList(true, true);
     }
 
     @Override
-    public void populateProfile() {
-        if (isNewProfile()) {
-            throw new RuntimeException("populateProfile() was called but profile is new.");
-        }
-        Profile profile = mProfilesRepository.getProfile(mProfileId);
-        if (mAddProfileView.isActive()) {
-            mAddProfileView.showProfile(profile);
-        }
-        mIsDataMissing = false;
-    }
-
-    @Override
-    public void requestSave() {
-        mAddProfileView.save();
-    }
-
-    @Override
-    public boolean isDataMissing() {
-        return mIsDataMissing;
+    public void discard() {
+        mAddProfileView.showProfileList(false, false);
     }
 
     private boolean isNewProfile() {
@@ -84,6 +77,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     }
 
     private void createProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+        Log.d(TAG, "createProfile: ");
         Profile newProfile = new Profile(
                 Long.toString(System.currentTimeMillis()),
                 title,
@@ -91,10 +85,10 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
                 trueActions,
                 falseActions);
         if (newProfile.isEmpty()) {
-            mAddProfileView.showEmptyProfileError();
+            mAddProfileView.showLoadProfileError();
         } else {
             mProfilesRepository.saveProfile(newProfile);
-            mAddProfileView.showProfileList();
+            mAddProfileView.showProfileList(true, false);
         }
     }
 
@@ -109,10 +103,10 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
                 trueActions,
                 falseActions);
         if (newProfile.isEmpty()) {
-            mAddProfileView.showEmptyProfileError();
+            mAddProfileView.showLoadProfileError();
         } else {
             mProfilesRepository.saveProfile(newProfile);
-            mAddProfileView.showProfileList();
+            mAddProfileView.showProfileList(true, false);
         }
     }
 }

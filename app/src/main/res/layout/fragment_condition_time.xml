@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/time_body"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:paddingStart="56dp"
+    android:paddingEnd="16dp"
+    android:divider="?android:listDivider"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/days"
+        style="@style/MyPreference"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/days_title"
+            style="@style/MyPreferenceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Days" />
+
+        <TextView
+            android:id="@+id/days_summary"
+            style="@style/MyPreferenceSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Everyday" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/start_time"
+        style="@style/MyPreference"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/start_time_title"
+            style="@style/MyPreferenceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start time" />
+
+        <TextView
+            android:id="@+id/start_time_summary"
+            style="@style/MyPreferenceSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00" />
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/end_time"
+        style="@style/MyPreference"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/end_time_title"
+            style="@style/MyPreferenceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="End time" />
+
+        <TextView
+            android:id="@+id/end_time_summary"
+            style="@style/MyPreferenceSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00" />
+    </LinearLayout>
+
+</LinearLayout>

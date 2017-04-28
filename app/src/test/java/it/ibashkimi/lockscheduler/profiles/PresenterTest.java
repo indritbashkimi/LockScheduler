@@ -134,6 +134,11 @@ public class PresenterTest {
         }
 
         @Override
+        public void showSuccessfullyUpdatedMessage() {
+
+        }
+
+        @Override
         public boolean isActive() {
             return true;
         }

@@ -2,7 +2,9 @@ package it.ibashkimi.lockscheduler.profiles;
 
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
  * UI as required.
  */
 public class ProfilesPresenter implements ProfilesContract.Presenter {
-
+    private static final String TAG = "ProfilesPresenter";
     private final ProfilesDataSource profilesRepository;
 
     private final ProfilesContract.View profilesView;
@@ -31,10 +33,17 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
     }
 
     @Override
-    public void result(int requestCode, int resultCode) {
-        // If a task was successfully added, show snackbar
-        if (AddEditProfileActivity.REQUEST_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
+    public void result(int requestCode, int resultCode, Bundle extras) {
+        // If a profile was successfully added, show snackbar
+        if (resultCode == Activity.RESULT_CANCELED)
+            return;
+        if (AddEditProfileActivity.REQUEST_ADD_PROFILE == requestCode) {
             profilesView.showSuccessfullySavedMessage();
+        } else if (AddEditProfileActivity.REQUEST_EDIT_PROFILE == requestCode){
+            if (extras != null && extras.containsKey("deleted"))
+                profilesView.showSuccessfullyUpdatedMessage();
+            else
+                profilesView.showSuccessfullyRemovedMessage(1);
         }
     }
 
