@@ -24,25 +24,15 @@ public abstract class Condition {
 
     @Condition.Type
     private int type;
-    private String name;
     private boolean isTrue;
 
-    public Condition(int type, String name) {
+    public Condition(int type) {
         this.type = type;
-        this.name = name;
     }
 
     @Type
     public int getType() {
         return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public boolean isTrue() {

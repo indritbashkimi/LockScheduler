@@ -22,12 +22,12 @@ public class WifiCondition extends Condition {
 
     private List<WifiItem> wifiItemList;
 
-    public WifiCondition(String name) {
-        this(name, new ArrayList<WifiItem>());
+    public WifiCondition() {
+        this(new ArrayList<WifiItem>());
     }
 
-    private WifiCondition(String name, ArrayList<WifiItem> items) {
-        super(Type.WIFI, name);
+    private WifiCondition(ArrayList<WifiItem> items) {
+        super(Type.WIFI);
         this.wifiItemList = items;
     }
 
@@ -119,7 +119,6 @@ public class WifiCondition extends Condition {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("type", getType());
-            jsonObject.put("name", getName());
             jsonObject.put("true", isTrue());
             jsonObject.put("wifi_items_len", wifiItemList.size());
             for (int i = 0; i < wifiItemList.size(); i++) {
@@ -135,7 +134,6 @@ public class WifiCondition extends Condition {
     public static WifiCondition parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int type = jsonObject.getInt("type");
-        String name = jsonObject.getString("name");
         boolean isTrue = jsonObject.getBoolean("true");
         int wifiItemSize = jsonObject.getInt("wifi_items_len");
         ArrayList<WifiItem> items = new ArrayList<>(wifiItemSize);
@@ -144,7 +142,7 @@ public class WifiCondition extends Condition {
             WifiItem item = WifiItem.parseJson(wifiItemJson);
             items.add(item);
         }
-        WifiCondition wifiCondition = new WifiCondition(name, items);
+        WifiCondition wifiCondition = new WifiCondition(items);
         wifiCondition.setTrue(isTrue);
         return wifiCondition;
     }

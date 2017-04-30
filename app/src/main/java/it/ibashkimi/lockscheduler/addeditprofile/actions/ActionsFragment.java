@@ -257,7 +257,7 @@ public class ActionsFragment extends Fragment {
                     enterPinView.setVisibility(View.VISIBLE);
                     enterPreviousChoice = LockMode.LockType.PIN;
                     enterLockMode.setLockType(LockMode.LockType.PIN);
-                    enterLockMode.setPin(input);
+                    enterLockMode.setInput(input);
                     break;
                 case REQUEST_ENTER_PASSWORD:
                     enterPinView.setText(input);
@@ -265,7 +265,7 @@ public class ActionsFragment extends Fragment {
                     enterPinView.setVisibility(View.VISIBLE);
                     enterPreviousChoice = LockMode.LockType.PASSWORD;
                     enterLockMode.setLockType(LockMode.LockType.PASSWORD);
-                    enterLockMode.setPassword(input);
+                    enterLockMode.setInput(input);
                     break;
                 case REQUEST_EXIT_PIN:
                     exitPinView.setText(input);
@@ -273,7 +273,7 @@ public class ActionsFragment extends Fragment {
                     exitPinView.setVisibility(View.VISIBLE);
                     exitPreviousChoice = LockMode.LockType.PIN;
                     exitLockMode.setLockType(LockMode.LockType.PIN);
-                    exitLockMode.setPin(input);
+                    exitLockMode.setInput(input);
                     break;
                 case REQUEST_EXIT_PASSWORD:
                     exitPinView.setText(input);
@@ -281,7 +281,7 @@ public class ActionsFragment extends Fragment {
                     exitPinView.setVisibility(View.VISIBLE);
                     exitPreviousChoice = LockMode.LockType.PASSWORD;
                     exitLockMode.setLockType(LockMode.LockType.PASSWORD);
-                    exitLockMode.setPassword(input);
+                    exitLockMode.setInput(input);
                     break;
             }
         }
@@ -297,12 +297,8 @@ public class ActionsFragment extends Fragment {
                 return 1;
             case LockMode.LockType.PIN:
                 return 2;
-            case LockMode.LockType.SEQUENCE:
-                return 0;
             case LockMode.LockType.SWIPE:
                 return 3;
-            case LockMode.LockType.FINGERPRINT:
-                return 0;
             default:
                 return 0;
         }
@@ -316,8 +312,6 @@ public class ActionsFragment extends Fragment {
                 return LockMode.LockType.PASSWORD;
             case "pin":
                 return LockMode.LockType.PIN;
-            case "sequence":
-                return LockMode.LockType.SEQUENCE;
             case "swipe":
                 return LockMode.LockType.SWIPE;
             default:

@@ -34,19 +34,15 @@ public class LockAction extends Action {
         LockManager lockManager = App.getLockManager();
         switch (lockMode.getLockType()) {
             case LockMode.LockType.PASSWORD:
-                lockManager.setPassword(lockMode.getPassword());
+                lockManager.setPassword(lockMode.getInput());
                 break;
             case LockMode.LockType.PIN:
-                lockManager.setPin(lockMode.getPin());
-                break;
-            case LockMode.LockType.SEQUENCE:
+                lockManager.setPin(lockMode.getInput());
                 break;
             case LockMode.LockType.SWIPE:
                 lockManager.resetPassword();
                 break;
             case LockMode.LockType.UNCHANGED:
-                break;
-            case LockMode.LockType.FINGERPRINT:
                 break;
         }
     }

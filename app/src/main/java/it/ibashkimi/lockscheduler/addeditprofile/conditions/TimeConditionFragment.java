@@ -48,7 +48,7 @@ public class TimeConditionFragment extends Fragment {
     }
 
     public TimeCondition assembleCondition() {
-        TimeCondition result = new TimeCondition("Time");
+        TimeCondition result = new TimeCondition();
         if (days != null)
             result.setDaysActive(days);
         if (startTime != null)
@@ -159,7 +159,7 @@ public class TimeConditionFragment extends Fragment {
 
     public TimeCondition getCondition() {
         if (condition == null) {
-            condition = new TimeCondition("Time");
+            condition = new TimeCondition();
         }
         return condition;
     }

@@ -98,7 +98,7 @@ public class WifiConditionFragment extends Fragment {
             int[] ids = data.getIntArrayExtra("ids");
             String[] ssids = data.getStringArrayExtra("ssid");
             if (condition == null) {
-                condition = new WifiCondition("Wifi");
+                condition = new WifiCondition();
             }
             List<WifiItem> items = new ArrayList<>(ids.length);
             for (int i = 0; i < ids.length; i++)

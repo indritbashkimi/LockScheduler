@@ -18,16 +18,16 @@ public class TimeCondition extends Condition {
 
     private int[] endTime;
 
-    public TimeCondition(String name) {
-        this(name, new boolean[]{true, true, true, true, true, true, true});
+    public TimeCondition() {
+        this(new boolean[]{true, true, true, true, true, true, true});
     }
 
-    public TimeCondition(String name, boolean[] daysActive) {
-        this(name, daysActive, new int[]{0, 0}, new int[]{0, 0});
+    public TimeCondition(boolean[] daysActive) {
+        this(daysActive, new int[]{0, 0}, new int[]{0, 0});
     }
 
-    public TimeCondition(String name, boolean[] daysActive, int[] startTime, int[] endTime) {
-        super(Type.TIME, name);
+    public TimeCondition(boolean[] daysActive, int[] startTime, int[] endTime) {
+        super(Type.TIME);
         this.daysActive = daysActive;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -201,7 +201,6 @@ public class TimeCondition extends Condition {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("type", getType());
-            jsonObject.put("name", getName());
             jsonObject.put("true", isTrue());
             for (int i = 0; i < 7; i++) {
                 jsonObject.put("day_" + i, daysActive[i]);
@@ -220,7 +219,6 @@ public class TimeCondition extends Condition {
     public static TimeCondition parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int type = jsonObject.getInt("type");
-        String name = jsonObject.getString("name");
         boolean isTrue = jsonObject.getBoolean("true");
         boolean[] daysActive = new boolean[7];
         for (int i = 0; i < 7; i++) {
@@ -232,7 +230,7 @@ public class TimeCondition extends Condition {
         hours = jsonObject.getInt("end_time_hour");
         minutes = jsonObject.getInt("end_time_minute");
         int[] endTime = new int[]{hours, minutes};
-        TimeCondition timeCondition = new TimeCondition(name, daysActive, startTime, endTime);
+        TimeCondition timeCondition = new TimeCondition(daysActive, startTime, endTime);
         timeCondition.setTrue(isTrue);
         return timeCondition;
     }

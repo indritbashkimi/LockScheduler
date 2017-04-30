@@ -9,36 +9,20 @@ public class ConditionTest {
 
     @Test
     public void getType() throws Exception {
-        Condition condition = new ConditionImpl(Condition.Type.PLACE, "Place");
+        Condition condition = new ConditionImpl(Condition.Type.PLACE);
         assertTrue(condition.getType() == Condition.Type.PLACE);
-        condition = new ConditionImpl(Condition.Type.TIME, "Time");
+        condition = new ConditionImpl(Condition.Type.TIME);
         assertTrue(condition.getType() != Condition.Type.PLACE);
         assertTrue(condition.getType() == Condition.Type.TIME);
-        condition = new ConditionImpl(Condition.Type.WIFI, "Wifi");
+        condition = new ConditionImpl(Condition.Type.WIFI);
         assertTrue(condition.getType() != Condition.Type.PLACE);
         assertTrue(condition.getType() != Condition.Type.TIME);
         assertTrue(condition.getType() == Condition.Type.WIFI);
     }
 
     @Test
-    public void getName() throws Exception {
-        Condition condition = new ConditionImpl(Condition.Type.PLACE, "Place");
-        assertTrue(condition.getName().equals("Place"));
-        condition = new ConditionImpl(Condition.Type.PLACE, "Time");
-        assertTrue(condition.getName().equals("Time"));
-    }
-
-    @Test
-    public void setName() throws Exception {
-        Condition condition = new ConditionImpl(Condition.Type.PLACE, "Place");
-        assertTrue(condition.getName().equals("Place"));
-        condition.setName("Time");
-        assertTrue(condition.getName().equals("Time"));
-    }
-
-    @Test
     public void isTrue() throws Exception {
-        Condition condition = new ConditionImpl(Condition.Type.PLACE, "Place");
+        Condition condition = new ConditionImpl(Condition.Type.PLACE);
         assertTrue(!condition.isTrue());
         condition.setTrue(true);
         assertTrue(condition.isTrue());
@@ -46,7 +30,7 @@ public class ConditionTest {
 
     @Test
     public void setTrue() throws Exception {
-        Condition condition = new ConditionImpl(Condition.Type.PLACE, "Place");
+        Condition condition = new ConditionImpl(Condition.Type.PLACE);
         condition.setTrue(false);
         assertTrue(!condition.isTrue());
         condition.setTrue(true);
@@ -56,8 +40,8 @@ public class ConditionTest {
 
     private class ConditionImpl extends Condition {
 
-        ConditionImpl(int type, String name) {
-            super(type, name);
+        ConditionImpl(int type) {
+            super(type);
         }
 
         @Override

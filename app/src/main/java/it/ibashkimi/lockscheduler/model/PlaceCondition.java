@@ -18,11 +18,10 @@ public class PlaceCondition extends Condition {
     private int radius;
     private String address;
 
-    public PlaceCondition(String name, LatLng place, int radius) {
-        super(Type.PLACE, name);
+    public PlaceCondition(LatLng place, int radius) {
+        super(Type.PLACE);
         this.place = place;
         this.radius = radius;
-        this.address = name;
     }
 
     public LatLng getPlace() {
@@ -69,7 +68,6 @@ public class PlaceCondition extends Condition {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("type", getType());
-            jsonObject.put("name", getName());
             jsonObject.put("true", isTrue());
             jsonObject.put("latitude", place.latitude);
             jsonObject.put("longitude", place.longitude);
@@ -85,12 +83,11 @@ public class PlaceCondition extends Condition {
     public static PlaceCondition parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int type = jsonObject.getInt("type");
-        String name = jsonObject.getString("name");
         double latitude = jsonObject.getDouble("latitude");
         double longitude = jsonObject.getDouble("longitude");
         int radius = jsonObject.getInt("radius");
         boolean isTrue = jsonObject.getBoolean("true");
-        PlaceCondition placeCondition = new PlaceCondition(name, new LatLng(latitude, longitude), radius);
+        PlaceCondition placeCondition = new PlaceCondition(new LatLng(latitude, longitude), radius);
         placeCondition.setTrue(isTrue);
         placeCondition.setAddress(jsonObject.getString("address"));
         return placeCondition;

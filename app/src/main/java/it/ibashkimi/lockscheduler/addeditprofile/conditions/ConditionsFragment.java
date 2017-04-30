@@ -79,7 +79,7 @@ public class ConditionsFragment extends Fragment {
         if (timeCondition != null)
             conditions.add(timeCondition);
         if (wifiItems != null && wifiItems.size() > 0) {
-            WifiCondition wifiCondition = new WifiCondition("Wifi");
+            WifiCondition wifiCondition = new WifiCondition();
             wifiCondition.setNetworks(wifiItems);
             conditions.add(wifiCondition);
         }
@@ -155,7 +155,7 @@ public class ConditionsFragment extends Fragment {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(getActivity(), data);
-                PlaceCondition placeCondition = new PlaceCondition("Place", place.getLatLng(), 300);
+                PlaceCondition placeCondition = new PlaceCondition(place.getLatLng(), 300);
                 CharSequence name = place.getName();
                 String address;
                 if (name != null) {

@@ -11,52 +11,38 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
-import static it.ibashkimi.lockscheduler.model.LockMode.LockType.FINGERPRINT;
 import static it.ibashkimi.lockscheduler.model.LockMode.LockType.PASSWORD;
 import static it.ibashkimi.lockscheduler.model.LockMode.LockType.PIN;
-import static it.ibashkimi.lockscheduler.model.LockMode.LockType.SEQUENCE;
 import static it.ibashkimi.lockscheduler.model.LockMode.LockType.SWIPE;
 import static it.ibashkimi.lockscheduler.model.LockMode.LockType.UNCHANGED;
 
 
 public class LockMode implements Parcelable {
 
-    @IntDef({FINGERPRINT, PIN, PASSWORD, SEQUENCE, SWIPE, UNCHANGED})
+    @IntDef({PIN, PASSWORD, SWIPE, UNCHANGED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface LockType {
         int PIN = 0;
         int PASSWORD = 1;
-        int SEQUENCE = 2;
-        int SWIPE = 3;
-        int UNCHANGED = 4;
-        int FINGERPRINT = 5;
+        int SWIPE = 2;
+        int UNCHANGED = 3;
     }
 
     @LockType
     private int lockType;
-    private String pin;
-    private String password;
+    private String input;
 
     public LockMode(@LockType int lockType) {
         this.lockType = lockType;
-        this.pin = "";
-        this.password = "";
+        this.input = "";
     }
 
-    public String getPin() {
-        return pin;
+    public String getInput() {
+        return input;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setInput(String input) {
+        this.input = input;
     }
 
     @LockMode.LockType
@@ -76,15 +62,11 @@ public class LockMode implements Parcelable {
         if (lockType != lockMode.lockType)
             return false;
         switch (lockType) {
-            case LockType.FINGERPRINT:
-                break;
             case LockType.PASSWORD:
-                if (!password.equals(lockMode.getPassword())) return false;
+                if (!input.equals(lockMode.getInput())) return false;
                 break;
             case LockType.PIN:
-                if (!pin.equals(lockMode.getPin())) return false;
-                break;
-            case LockType.SEQUENCE:
+                if (!input.equals(lockMode.getInput())) return false;
                 break;
             case LockType.SWIPE:
                 break;
@@ -102,19 +84,15 @@ public class LockMode implements Parcelable {
     public static String lockTypeToString(@LockType int lockType) {
         switch (lockType) {
             case UNCHANGED:
-                return "UNCHANGED";
+                return "Unchanged";
             case LockType.PASSWORD:
-                return "PASSWORD";
+                return "Password";
             case LockType.PIN:
                 return "PIN";
-            case LockType.SEQUENCE:
-                return "SEQUENCE";
             case LockType.SWIPE:
-                return "SWIPE";
-            case FINGERPRINT:
-                return "FINGERPRINT";
+                return "Swipe";
             default:
-                return "UNKNOWN";
+                return "Unknown";
         }
     }
 
@@ -122,8 +100,7 @@ public class LockMode implements Parcelable {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("lockType", "" + lockType);
-            jsonObject.put("pin", pin);
-            jsonObject.put("password", password);
+            jsonObject.put("input", input);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -135,8 +112,7 @@ public class LockMode implements Parcelable {
         JSONObject jsonObject = new JSONObject(json);
         @LockType int lockType = Integer.parseInt(jsonObject.getString("lockType"));
         LockMode lockMode = new LockMode(lockType);
-        lockMode.setPin(jsonObject.getString("pin"));
-        lockMode.setPassword(jsonObject.getString("password"));
+        lockMode.setInput(jsonObject.getString("input"));
         return lockMode;
     }
 
@@ -149,8 +125,7 @@ public class LockMode implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(lockType);
-        dest.writeString(pin);
-        dest.writeString(password);
+        dest.writeString(input);
     }
 
     public static final Parcelable.Creator<LockMode> CREATOR = new Parcelable.Creator<LockMode>() {
@@ -166,7 +141,6 @@ public class LockMode implements Parcelable {
     private LockMode(Parcel in) {
         @LockType int lock = in.readInt();
         lockType = lock;
-        pin = in.readString();
-        password = in.readString();
+        input = in.readString();
     }
 }
