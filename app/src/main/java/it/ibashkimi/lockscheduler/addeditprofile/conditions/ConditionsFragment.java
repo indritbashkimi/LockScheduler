@@ -95,7 +95,7 @@ public class ConditionsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_conditions_test2, container, false);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_conditions, container, false);
         ButterKnife.bind(this, root);
 
         if (savedInstanceState == null) {

@@ -26,8 +26,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.MapsInitializer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,12 +91,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         int itemLayout = mSettings.getInt("item_layout", 1);
         mItemLayout = resolveLayout(itemLayout);
 
-        if (mItemLayout == R.layout.item_profile_7) {
-            mAdapter = new ProfileAdapterImpl2(new ArrayList<Profile>(0), mItemLayout, mItemListener);
-        } else {
-            MapsInitializer.initialize(getActivity());
-            mAdapter = new ProfileAdapterImpl(getContext(), new ArrayList<Profile>(0), mItemLayout, mMapStyle, mItemListener);
-        }
+        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), mItemLayout, mItemListener);
     }
 
     @Override
@@ -194,23 +187,9 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     private static int resolveLayout(int itemLayout) {
         switch (itemLayout) {
             case 0:
-                return R.layout.item_profile_0;
-            case 1:
                 return R.layout.item_profile_1;
-            case 2:
-                return R.layout.item_profile_2;
-            case 3:
-                return R.layout.item_profile_3;
-            case 4:
-                return R.layout.item_profile_4;
-            case 5:
-                return R.layout.item_profile_5;
-            case 6:
-                return R.layout.item_profile_6;
-            case 7:
-                return R.layout.item_profile_7;
             default:
-                return R.layout.item_profile_6;
+                return R.layout.item_profile_1;
         }
     }
 

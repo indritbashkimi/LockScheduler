@@ -10,105 +10,172 @@
     android:layout_marginRight="4dp"
     android:layout_marginTop="4dp"
     android:foreground="?attr/selectableItemBackground"
+    android:hapticFeedbackEnabled="true"
     card:cardCornerRadius="2dp"
     card:cardElevation="2dp"
     card:cardUseCompatPadding="false">
 
     <LinearLayout
-        android:id="@+id/rootView"
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:minHeight="96dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="end"
+            android:gravity="start|top"
+            android:maxLines="2"
+            android:minLines="1"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="Profile 1" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <FrameLayout
-                android:id="@+id/map_container"
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:visibility="gone"
-                tools:visibility="visible">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:tint="@color/ib_textColorDisabled"
+                card:srcCompat="@drawable/ic_lock" />
 
-                <com.google.android.gms.maps.MapView
-                    android:id="@+id/mapView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    card:mapType="hybrid" />
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/lock_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <View
-                    android:id="@+id/mapCover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/gray_500" />
+                <TextView
+                    android:id="@+id/enter_lock_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="16dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:gravity="center"
+                    tools:text="PIN" />
 
-            </FrameLayout>
+                <TextView
+                    android:id="@+id/exit_lock_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    tools:text="Swipe" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/place_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/place_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:tint="@color/ib_textColorDisabled"
+                card:srcCompat="@drawable/ic_place" />
+
+            <TextView
+                android:id="@+id/place_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                tools:text="Via Antonio Gramsci 14, Villa Verucchio 47827 RN" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/time_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/time_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:tint="@color/ib_textColorDisabled"
+                card:srcCompat="@drawable/ic_time" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/name_view"
-                    android:layout_width="match_parent"
+                    android:id="@+id/days"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:fontFamily="sans-serif-condensed"
-                    android:gravity="top"
-                    android:maxLines="2"
-                    android:padding="4dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="16sp"
-                    tools:text="Profile 1" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="Mon, Tue, Wed, Thu, Fri, Sat, Sun" />
 
-                <include layout="@layout/item_layout_lock" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/interval"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/place_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:tint="@color/ib_textColorDisabled"
-                        card:srcCompat="@drawable/ic_place" />
-
-                    <ImageView
-                        android:id="@+id/time_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:tint="@color/ib_textColorDisabled"
-                        card:srcCompat="@drawable/ic_time" />
-
-                    <ImageView
-                        android:id="@+id/wifi_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:tint="@color/ib_textColorDisabled"
-                        card:srcCompat="@drawable/ic_wifi" />
-
-                </LinearLayout>
-
-                <it.ibashkimi.lockscheduler.ui.widget.DayLine
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    tools:text="00:00 - 00:00" />
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wifi_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/wifi_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:tint="@color/ib_textColorDisabled"
+                card:srcCompat="@drawable/ic_wifi" />
+
+            <TextView
+                android:id="@+id/wifi_summary"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                tools:text="WiFi-23, Cantinetta, asjkdlfj asdkjf akjasdkjf kòasdjfk ljaskdjlf klasdkjl fasdklf jasdklj " />
 
         </LinearLayout>
 

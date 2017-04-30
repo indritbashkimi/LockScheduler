@@ -69,23 +69,11 @@
     <string-array name="pref_profile_item_layout_human">
         <item>Layout 1</item>
         <item>Layout 2</item>
-        <item>Layout 3</item>
-        <item>Layout 4</item>
-        <item>Layout 5</item>
-        <item>Layout 6</item>
-        <item>Layout 7</item>
-        <item>Layout 8</item>
     </string-array>
 
     <integer-array name="pref_profile_item_layout_value">
         <item>1</item>
         <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
     </integer-array>
 
     <string name="lock_mode_nothing">Do nothing</string>
