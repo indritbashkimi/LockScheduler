@@ -47,12 +47,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ProfileActivity"
-            android:label="@string/app_name"></activity>
-        <activity
             android:name=".addeditprofile.AddEditProfileActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.TimeActivity" />
         <activity
             android:name=".about.AboutActivity"
             android:label="@string/title_about" />
