@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler.addeditprofile.conditions;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,10 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.addeditprofile.conditions.picker.PlacePickerActivity;
 import it.ibashkimi.lockscheduler.addeditprofile.conditions.picker.WifiPickerActivity;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
@@ -125,16 +124,17 @@ public class ConditionsFragment extends Fragment {
     }
 
     public void showPlacePicker() {
-        //startActivityForResult(new Intent(getContext(), PlacePickerActivity.class), 1);
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException e) {
-            e.printStackTrace();
-        } catch (GooglePlayServicesNotAvailableException e) {
-            Log.d(TAG, "onClick: play service not available");
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(getContext(), PlacePickerActivity.class);
+        intent.putExtra("radius", 300);
+        startActivityForResult(intent, PLACE_PICKER_REQUEST);
+    }
+
+    public void showPlacePicker(@NonNull PlaceCondition placeCondition) {
+        Intent intent = new Intent(getContext(), PlacePickerActivity.class);
+        intent.putExtra("latitude", placeCondition.getPlace().latitude);
+        intent.putExtra("longitude", placeCondition.getPlace().longitude);
+        intent.putExtra("radius", placeCondition.getRadius());
+        startActivityForResult(intent, PLACE_PICKER_REQUEST);
     }
 
     public void showWifiPicker(List<WifiItem> items) {
@@ -154,15 +154,12 @@ public class ConditionsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(getActivity(), data);
-                PlaceCondition placeCondition = new PlaceCondition(place.getLatLng(), 300);
-                CharSequence name = place.getName();
-                String address;
-                if (name != null) {
-                    address = name.toString();
-                } else {
-                    address = place.getLatLng().latitude + ", " + place.getLatLng().longitude;
-                }
+                double latitude = data.getDoubleExtra("latitude", 0);
+                double longitude = data.getDoubleExtra("longitude", 0);
+                float radius = data.getFloatExtra("radius", 0);
+                String address = data.getStringExtra("address");
+
+                PlaceCondition placeCondition = new PlaceCondition(new LatLng(latitude, longitude), (int) radius);
                 placeCondition.setAddress(address);
 
                 FragmentTransaction transaction = fragmentManager.beginTransaction();

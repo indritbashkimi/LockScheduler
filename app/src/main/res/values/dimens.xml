@@ -5,4 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <!-- fab_height + 2 * fab_margin -->
     <dimen name="profile_list_bottom_margin">88dp</dimen>
+    <dimen name="place_picker_circle_margin">64dp</dimen>
 </resources>
