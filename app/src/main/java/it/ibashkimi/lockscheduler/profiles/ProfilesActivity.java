@@ -34,7 +34,6 @@ public class ProfilesActivity extends BaseActivity {
     private static final String FRAGMENT_TAG_PROFILES = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
-    public static final int RESULT_PROFILE = 0;
     private static final int RESULT_LOCATION_PERMISSION = 2;
 
     private ProfilesPresenter profilesPresenter;

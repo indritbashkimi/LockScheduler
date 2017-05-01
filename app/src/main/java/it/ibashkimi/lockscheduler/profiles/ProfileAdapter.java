@@ -1,10 +1,10 @@
 package it.ibashkimi.lockscheduler.profiles;
 
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,16 +25,24 @@ import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.support.utils.SelectableAdapter;
 
 public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
+    private static final String TAG = "ProfileAdapter";
+
+    public interface Callback {
+
+        void onProfileClick(int position);
+
+        void onProfileLongClick(int position);
+    }
 
     private List<Profile> mProfiles;
-    private ProfilesFragment.ProfileItemListener itemListener;
-    private @LayoutRes
-    int mItemLayout;
+    private Callback mItemListener;
+    @LayoutRes
+    private int mItemLayout;
 
-    public ProfileAdapter(List<Profile> profiles, @LayoutRes int itemLayout, @NonNull ProfilesFragment.ProfileItemListener listener) {
+    public ProfileAdapter(List<Profile> profiles, @LayoutRes int itemLayout, @NonNull Callback listener) {
         this.mProfiles = profiles;
         this.mItemLayout = itemLayout;
-        this.itemListener = listener;
+        this.mItemListener = listener;
     }
 
     @Override
@@ -46,6 +54,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
 
     @Override
     public void onBindViewHolder(final ProfileViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
         final Profile profile = getProfiles().get(position);
         holder.init(profile);
         holder.setSelected(isSelected(position));
@@ -65,18 +74,17 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         return mProfiles;
     }
 
-    public ProfilesFragment.ProfileItemListener getItemListener() {
-        return itemListener;
+    public Callback getItemListener() {
+        return mItemListener;
     }
 
-    public void setItemListener(ProfilesFragment.ProfileItemListener itemListener) {
-        this.itemListener = itemListener;
+    public void setItemListener(Callback itemListener) {
+        this.mItemListener = itemListener;
     }
 
 
     static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        private ProfilesFragment.ProfileItemListener listener;
-        Context context;
+        Callback listener;
 
         @BindView(R.id.name)
         TextView name;
@@ -111,15 +119,14 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         @BindView(R.id.cover)
         View cover;
 
-        ProfileViewHolder(View itemView, ProfilesFragment.ProfileItemListener listener) {
+        ProfileViewHolder(View itemView, @NonNull Callback listener) {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
             this.listener = listener;
-            this.context = itemView.getContext();
         }
 
-        public void init(Profile profile) {
+        public void init(@NonNull Profile profile) {
             name.setText(profile.getName());
             enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
             exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
@@ -145,28 +152,16 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             cover.setVisibility(selected ? View.VISIBLE : View.GONE);
         }
 
-        public ProfilesFragment.ProfileItemListener getListener() {
-            return listener;
-        }
-
-        public void setListener(ProfilesFragment.ProfileItemListener listener) {
-            this.listener = listener;
-        }
-
         @Override
         @OnClick(R.id.root)
         public void onClick(View v) {
-            if (getListener() != null) {
-                getListener().onProfileClick(getAdapterPosition(), null);
-            }
+            listener.onProfileClick(getAdapterPosition());
         }
 
         @Override
         @OnLongClick(R.id.root)
         public boolean onLongClick(View v) {
-            if (getListener() != null) {
-                getListener().onProfileLongClick(getAdapterPosition(), null);
-            }
+            listener.onProfileLongClick(getAdapterPosition());
             return true;
         }
     }

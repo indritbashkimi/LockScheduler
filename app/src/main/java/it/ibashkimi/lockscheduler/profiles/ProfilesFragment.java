@@ -9,11 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -23,46 +21,40 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.util.MapUtils;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.support.utils.ThemeUtils;
 
 /**
  * Fragment used to display profile list.
  */
-public class ProfilesFragment extends Fragment implements ProfilesContract.View, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ProfilesFragment extends Fragment implements ProfilesContract.View, ProfileAdapter.Callback {
 
     private static final String TAG = "ProfilesFragment";
+
+    @BindView(R.id.root)
+    ViewGroup mRootView;
+
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.noTasks)
+    View mNoTasksView;
 
     private ProfilesContract.Presenter mPresenter;
 
     private ProfileAdapter mAdapter;
 
-    private int mItemLayout;
+    private ActionMode mActionMode;
 
-    private int mMapStyle;
-
-    private SharedPreferences mSettings;
-
-    private ActionMode actionMode;
-
-    private View mNoTasksView;
-
-    private ImageView mNoTaskIcon;
-
-    private TextView mNoTaskMainView;
-
-    private TextView mNoTaskAddView;
-
-    private View mProfileView;
 
     public static ProfilesFragment newInstance() {
         return new ProfilesFragment();
@@ -86,12 +78,11 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSettings = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
-        mMapStyle = MapUtils.resolveMapStyle(mSettings.getInt("map_style", 0));
-        int itemLayout = mSettings.getInt("item_layout", 1);
-        mItemLayout = resolveLayout(itemLayout);
+        setHasOptionsMenu(true);
 
-        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), mItemLayout, mItemListener);
+        SharedPreferences settings = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        int itemLayout = resolveLayout(settings.getInt("item_layout", 1));
+        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), itemLayout, this);
     }
 
     @Override
@@ -102,60 +93,22 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
+        ButterKnife.bind(this, rootView);
 
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
-                LinearLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(dividerItemDecoration);
-        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         mRecyclerView.setAdapter(mAdapter);
-
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
         final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 mPresenter.addNewProfile();
             }
         });
 
-        mProfileView = mRecyclerView;//(LinearLayout) rootView.findViewById(R.id.recyclerView);
-
-        // Set up  no tasks view
-        mNoTasksView = rootView.findViewById(R.id.noTasks);
-        mNoTaskIcon = (ImageView) rootView.findViewById(R.id.noTasksIcon);
-        mNoTaskMainView = (TextView) rootView.findViewById(R.id.noTasksMain);
-        mNoTaskAddView = (TextView) rootView.findViewById(R.id.noTasksAdd);
-        mNoTaskAddView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddProfile();
-            }
-        });
-
-        setHasOptionsMenu(true);
-
         return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mSettings.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        mSettings.unregisterOnSharedPreferenceChangeListener(this);
-        super.onStop();
-    }
-
-    public ProfileAdapter getAdapter() {
-        return mAdapter;
     }
 
     private ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
@@ -172,7 +125,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            Log.d(TAG, "onMove: " + viewHolder.getAdapterPosition() + ", " + target.getAdapterPosition());
             int targetPosition = target.getAdapterPosition();
             mPresenter.swapProfiles(viewHolder.getAdapterPosition(), targetPosition);
             return true;
@@ -193,56 +145,25 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        if (s.equals("item_layout")) {
-            mItemLayout = resolveLayout(Integer.parseInt(sharedPreferences.getString("item_layout", "0")));
-        } else if (s.equals("map_style")) {
-            mMapStyle = MapUtils.resolveMapStyle(sharedPreferences.getInt("map_style", 0));
-        }
-    }
-
-    private ProfileItemListener mItemListener = new ProfileItemListener() {
-        @Override
-        public void onProfileClick(int position, Profile profile) {
-            if (actionMode != null) {
-                toggleSelection(position);
-            } else {
-                Profile p = (Profile) mAdapter.getProfiles().get(position);
-                mPresenter.openProfileDetails(p);
-            }
-        }
-
-        @Override
-        public void onProfileLongClick(int position, Profile profile) {
-            if (actionMode == null) {
-                actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
-            }
-            toggleSelection(position);
-
-            mAdapter.toggleSelection(position);
-            mAdapter.notifyItemChanged(position);
-        }
-    };
-
     /**
      * Toggle the selection state of an item.
      * <p>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
-     * Note that the selection must already be started (actionMode must not be null).
+     * Note that the selection must already be started (mActionMode must not be null).
      *
      * @param position Position of the item to toggle the selection state
      */
     private void toggleSelection(int position) {
         mAdapter.toggleSelection(position);
-        mAdapter.notifyItemChanged(position);
+        mAdapter.notifyDataSetChanged();
+        // Bug: It's better to call mAdapter.notifyItemChanged(position) but it shows the wrong item.
 
         int count = mAdapter.getSelectedItemCount();
         if (count == 0) {
-            actionMode.finish();
+            mActionMode.finish();
         } else {
-            actionMode.setTitle(String.valueOf(count));
-            actionMode.invalidate();
+            mActionMode.setTitle(String.valueOf(count));
+            mActionMode.invalidate();
         }
     }
 
@@ -255,7 +176,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     public void showProfiles(List<Profile> profiles) {
         mAdapter.setData(profiles);
 
-        mProfileView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         mNoTasksView.setVisibility(View.GONE);
     }
 
@@ -279,11 +200,8 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showNoProfiles() {
-        showNoTasksViews(
-                getResources().getString(R.string.no_profiles_all),
-                R.drawable.ic_no_profiles,
-                false
-        );
+        mRecyclerView.setVisibility(View.GONE);
+        mNoTasksView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -311,17 +229,8 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         showMessage("Profile updated.");
     }
 
-    private void showNoTasksViews(String mainText, int iconRes, boolean showAddView) {
-        mProfileView.setVisibility(View.GONE);
-        mNoTasksView.setVisibility(View.VISIBLE);
-
-        mNoTaskMainView.setText(mainText);
-        mNoTaskIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), iconRes));
-        mNoTaskAddView.setVisibility(showAddView ? View.VISIBLE : View.GONE);
-    }
-
     private void showMessage(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mRootView, message, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -329,12 +238,22 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         return isAdded();
     }
 
+    @Override
+    public void onProfileClick(int position) {
+        if (mActionMode != null) {
+            toggleSelection(position);
+        } else {
+            Profile p = mAdapter.getProfiles().get(position);
+            mPresenter.openProfileDetails(p);
+        }
+    }
 
-    public interface ProfileItemListener {
-
-        void onProfileClick(int position, Profile profile);
-
-        void onProfileLongClick(int position, Profile profile);
+    @Override
+    public void onProfileLongClick(int position) {
+        if (mActionMode == null) {
+            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
+        }
+        toggleSelection(position);
     }
 
 
@@ -366,12 +285,13 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                 case R.id.action_delete:
                     List<Integer> items = mAdapter.getSelectedItems();
                     for (int i = items.size() - 1; i > -1; i--) {
-                        //Log.d(TAG, "onActionItemClicked: i = " + i);
                         int position = items.get(i);
-                        //ProfilesRepository.getInstance().deleteProfile((Profile) mAdapter.getProfiles().get(position));
-                        mAdapter.notifyItemRemoved(position);
+                        ProfilesRepository.getInstance().deleteProfile(mAdapter.getProfiles().get(position).getId());
+                        mAdapter.getProfiles().remove(i);
+                        //mAdapter.notifyItemRemoved(position);
                     }
                     mAdapter.clearSelection();
+                    mAdapter.notifyDataSetChanged();
                     mode.finish();
                     return true;
 
@@ -383,7 +303,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mAdapter.clearSelection();
-            actionMode = null;
+            mActionMode = null;
         }
     }
 }
