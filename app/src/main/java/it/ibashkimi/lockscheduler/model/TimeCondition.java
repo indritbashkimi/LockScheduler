@@ -1,16 +1,48 @@
 package it.ibashkimi.lockscheduler.model;
 
+import android.support.annotation.IntDef;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Calendar;
+
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.FRIDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.MONDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.SATURDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.SUNDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.THURSDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.TUESDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.WEDNESDAY;
 
 
 public class TimeCondition extends Condition {
 
     private static final String TAG = "TimeCondition";
+
+    @IntDef({MONDAY,
+            TUESDAY,
+            WEDNESDAY,
+            THURSDAY,
+            FRIDAY,
+            SATURDAY,
+            SUNDAY
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Day {
+        int MONDAY = 0;
+        int TUESDAY = 1;
+        int WEDNESDAY = 2;
+        int THURSDAY = 3;
+        int FRIDAY = 4;
+        int SATURDAY = 5;
+        int SUNDAY = 6;
+    }
+
+    public static final int[] ALL_DAYS = new int[]{MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
 
     private boolean[] daysActive;
 
@@ -234,4 +266,248 @@ public class TimeCondition extends Condition {
         timeCondition.setTrue(isTrue);
         return timeCondition;
     }
+
+    /*public int[] getActiveDays() {
+        int size = 0;
+        for (int i = 0; i < activeDays.size(); i++)
+            if (activeDays.valueAt(i))
+                size++;
+        int[] result = new int[size];
+        int j = 0;
+        for (int i = 0; i < activeDays.size(); i++)
+            if (activeDays.valueAt(i)) {
+                result[j] = activeDays.keyAt(i);
+                j++;
+            }
+        return result;
+    }
+
+    public boolean[] getWeek() {
+        boolean[] week = new boolean[7];
+        for (int i = 0; i < 7; i++) {
+            @Day int day = MONDAY;
+            switch ()
+        }
+    }
+
+    public int[] getStartTime() {
+        return startTime;
+    }
+
+    public int[] getEndTime() {
+        return endTime;
+    }
+
+    public void setStartTime(int[] startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(int[] endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setActiveDays(int[] activeDays) {
+        for (int day : activeDays)
+            this.activeDays.put(day, true);
+    }
+
+    public boolean isDayActive(@Day int day) {
+        return activeDays.get(day);
+    }
+
+    public void setDayActive(@Day int day, boolean isActive) {
+        activeDays.put(day, isActive);
+    }
+
+    private int getIndex(int day) {
+        switch (day) {
+            case Calendar.MONDAY:
+                return 0;
+            case Calendar.TUESDAY:
+                return 1;
+            case Calendar.WEDNESDAY:
+                return 2;
+            case Calendar.THURSDAY:
+                return 3;
+            case Calendar.FRIDAY:
+                return 4;
+            case Calendar.SATURDAY:
+                return 5;
+            case Calendar.SUNDAY:
+                return 6;
+            default:
+                return -1;
+        }
+    }
+
+    public void checkNow() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        switch (dayOfWeek) {
+            case Calendar.MONDAY:
+                dayOfWeek = MONDAY;
+                break;
+            case Calendar.TUESDAY:
+                dayOfWeek = TUESDAY;
+                break;
+            case Calendar.WEDNESDAY:
+                dayOfWeek = WEDNESDAY;
+                break;
+            case Calendar.THURSDAY:
+                dayOfWeek = THURSDAY;
+                break;
+            case Calendar.FRIDAY:
+                dayOfWeek = FRIDAY;
+                break;
+            case Calendar.SATURDAY:
+                dayOfWeek = SATURDAY;
+                break;
+            case Calendar.SUNDAY:
+                dayOfWeek = SUNDAY;
+                break;
+        }
+        setTrue(activeDays.get(dayOfWeek));
+    }
+
+    public long getNextAlarm() {
+        boolean allTrue = true;
+        boolean allFalse = true;
+        for (int i = 0; i < activeDays.size(); i++) {
+            if (!activeDays.valueAt(i))
+                allTrue = false;
+            if (activeDays.valueAt(i))
+                allFalse = false;
+        }
+        if (allTrue || allFalse) {
+            return -1;
+        }
+
+        @Day int today = dayOfWeek();
+        @Day int nextDay = nextDay(today);
+        while (today == nextDay) {
+            today = nextDay;
+            nextDay = nextDay(today);
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, calendarDay(nextDay));
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Log.d(TAG, "getNextAlarm: " + cal);
+        return cal.getTimeInMillis();
+    }
+
+    @Day
+    private int dayOfWeek() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        @Day int dayOfWeek = -1;
+        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
+            case Calendar.MONDAY:
+                dayOfWeek = MONDAY;
+                break;
+            case Calendar.TUESDAY:
+                dayOfWeek = TUESDAY;
+                break;
+            case Calendar.WEDNESDAY:
+                dayOfWeek = WEDNESDAY;
+                break;
+            case Calendar.THURSDAY:
+                dayOfWeek = THURSDAY;
+                break;
+            case Calendar.FRIDAY:
+                dayOfWeek = FRIDAY;
+                break;
+            case Calendar.SATURDAY:
+                dayOfWeek = SATURDAY;
+                break;
+            case Calendar.SUNDAY:
+                dayOfWeek = SUNDAY;
+                break;
+        }
+        return dayOfWeek;
+    }
+
+    @Day
+    private int nextDay(@Day int day) {
+        switch (day) {
+            case MONDAY:
+                return TUESDAY;
+            case Day.TUESDAY:
+                return WEDNESDAY;
+            case Day.WEDNESDAY:
+                return THURSDAY;
+            case Day.THURSDAY:
+                return FRIDAY;
+            case Day.FRIDAY:
+                return SATURDAY;
+            case Day.SATURDAY:
+                return SUNDAY;
+            case Day.SUNDAY:
+                return MONDAY;
+        }
+        throw new RuntimeException("Invalid day number " + day + ".");
+    }
+
+    @Day
+    private int previousDay(@Day int day) {
+        switch (day) {
+            case MONDAY:
+                return SUNDAY;
+            case Day.TUESDAY:
+                return MONDAY;
+            case Day.WEDNESDAY:
+                return TUESDAY;
+            case Day.THURSDAY:
+                return TUESDAY;
+            case Day.FRIDAY:
+                return THURSDAY;
+            case Day.SATURDAY:
+                return FRIDAY;
+            case Day.SUNDAY:
+                return SATURDAY;
+        }
+        throw new RuntimeException("Invalid day number " + day + ".");
+    }
+
+    private int calendarDay(@Day int day) {
+        switch (day) {
+            case MONDAY:
+                return Calendar.MONDAY;
+            case Day.FRIDAY:
+                return Calendar.FRIDAY;
+            case Day.SATURDAY:
+                return Calendar.SATURDAY;
+            case Day.SUNDAY:
+                return Calendar.SUNDAY;
+            case Day.THURSDAY:
+                return Calendar.THURSDAY;
+            case Day.TUESDAY:
+                return Calendar.TUESDAY;
+            case Day.WEDNESDAY:
+                return Calendar.WEDNESDAY;
+        }
+        throw new RuntimeException("Invalid day number " + day + ".");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TimeCondition)) {
+            return false;
+        }
+        TimeCondition condition = (TimeCondition) obj;
+        for (int i = 0; i < 7; i++) {
+            if (condition.activeDays.get(i) != activeDays.get(i))
+                return false;
+        }
+        int[] startTime = condition.getStartTime();
+        int[] endTime = condition.getEndTime();
+        return this.startTime[0] == startTime[0] &&
+                this.startTime[1] == startTime[1] &&
+                this.endTime[0] == endTime[0] &&
+                this.endTime[1] == endTime[1];
+    }*/
 }

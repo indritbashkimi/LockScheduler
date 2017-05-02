@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -66,9 +68,9 @@ public class TimeConditionFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (startTime != null)
-                startTimeSummary.setText(startTime[0] + ":" + startTime[1]);
+                startTimeSummary.setText(formatTime(startTime[0], startTime[1]));
             if (endTime != null)
-                endTimeSummary.setText(endTime[0] + ":" + endTime[1]);
+                endTimeSummary.setText(formatTime(endTime[0], endTime[1]));
         }
 
         return root;
@@ -91,7 +93,7 @@ public class TimeConditionFragment extends Fragment {
         }
         new MaterialDialog.Builder(getContext())
                 .title(R.string.time_condition_title)
-                .items(new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
+                .items(R.array.days_of_week)
                 .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
@@ -115,11 +117,11 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                if (endTime != null && i > endTime[0] && i1 > endTime[1]) {
+                if (endTime != null && endTime[0] != 0 && endTime[i] != 0 && i > endTime[0] && i1 > endTime[1]) {
                         showIntervalError();
                         return;
                 }
-                startTimeSummary.setText(i + ":" +i1);
+                startTimeSummary.setText(formatTime(i, i1));
                 if (startTime == null)
                     startTime = new int[2];
                 startTime[0] = i;
@@ -137,11 +139,11 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                if (startTime != null && i < startTime[0] && i1 < startTime[1]) {
+                if (startTime != null && startTime[0] != 0 && startTime[1] != 0 && i < startTime[0] && i1 < startTime[1]) {
                     showIntervalError();
                     return;
                 }
-                endTimeSummary.setText(i + ":" +i1);
+                endTimeSummary.setText(formatTime(i, i1));
                 if (endTime == null)
                     endTime = new int[2];
                 endTime[0] = i;
@@ -162,5 +164,9 @@ public class TimeConditionFragment extends Fragment {
             condition = new TimeCondition();
         }
         return condition;
+    }
+
+    private String formatTime(int hours, int minutes) {
+        return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
     }
 }
