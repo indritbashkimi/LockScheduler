@@ -17,9 +17,9 @@ public class WifiListProvider {
         ArrayList<WifiItem> wifiList = new ArrayList<>();
         if (wifiManager.isWifiEnabled()) {
             for (WifiConfiguration wifiConfiguration : wifiManager.getConfiguredNetworks()) {
-                String title = wifiConfiguration.SSID;
-                title = title.substring(1, title.length() - 1); // Remove " at the start and end.
-                wifiList.add(new WifiItem(wifiConfiguration.networkId, title));
+                String ssid = wifiConfiguration.SSID;
+                ssid = ssid.substring(1, ssid.length() - 1); // Remove " at the start and end.
+                wifiList.add(new WifiItem(ssid));
             }
         }
         return wifiList;

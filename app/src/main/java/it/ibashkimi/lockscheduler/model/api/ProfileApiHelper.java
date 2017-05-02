@@ -137,7 +137,7 @@ public class ProfileApiHelper {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                     if (wifiInfo != null) {
                         String ssid = wifiInfo.getSSID();
-                        wifiItem = new WifiItem(wifiInfo.getNetworkId(), ssid.substring(1, ssid.length() - 1));
+                        wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
                     }
                 }
                 ((WifiCondition) condition).onWifiStateChanged(wifiItem);

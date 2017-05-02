@@ -143,9 +143,9 @@ public class ConditionsFragment extends Fragment {
         if (items != null && items.size() > 0) {
             String[] itemReps = new String[items.size()];
             for (int i = 0; i < items.size(); i++) {
-                itemReps[i] = items.get(i).toJson();
+                itemReps[i] = items.get(i).SSID;
             }
-            intent.putExtra("items", itemReps);
+            intent.putExtra("ssids", itemReps);
         }
         startActivityForResult(intent, REQUEST_WIFI_PICKER);
     }
@@ -171,14 +171,10 @@ public class ConditionsFragment extends Fragment {
             }
         } else if (requestCode == REQUEST_WIFI_PICKER) {
             if (resultCode == RESULT_OK) {
-                String[] itemReps = data.getStringArrayExtra("items");
-                Log.d(TAG, "onActivityResult: itemReps.size = " + itemReps.length);
-                if (wifiItems == null)
-                    wifiItems = new ArrayList<>(itemReps.length);
-                wifiItems.clear();
-                for (String itemRep : itemReps) {
-                    wifiItems.add(WifiItem.parseJson(itemRep));
-                }
+                String[] ssids = data.getStringArrayExtra("ssids");
+                wifiItems = new ArrayList<>(ssids.length);
+                for (int i = 0; i < ssids.length; i++)
+                    wifiItems.add(new WifiItem(ssids[i]));
                 showWifiCondition(wifiItems);
             }
         }

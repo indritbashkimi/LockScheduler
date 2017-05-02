@@ -5,18 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.google.android.flexbox.AlignItems;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.android.flexbox.JustifyContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +38,7 @@ public class WifiConditionFragment extends Fragment {
     }
 
     public WifiCondition assembleCondition() {
-        return null;
+        return condition;
     }
 
     @Override
@@ -82,11 +74,11 @@ public class WifiConditionFragment extends Fragment {
 
         if (condition != null) {
             List<WifiItem> items = condition.getNetworks();
-            String[] itemReps = new String[items.size()];
+            String[] ssids = new String[items.size()];
             for (int i = 0; i < items.size(); i++) {
-                itemReps[i] = items.get(i).toJson();
+                ssids[i] = items.get(i).SSID;
             }
-            intent.putExtra("items", itemReps);
+            intent.putExtra("ssids", ssids);
         }
 
         startActivityForResult(intent, REQUEST_WIFI_PICKER);
@@ -95,14 +87,14 @@ public class WifiConditionFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_WIFI_PICKER && resultCode == Activity.RESULT_OK) {
-            int[] ids = data.getIntArrayExtra("ids");
-            String[] ssids = data.getStringArrayExtra("ssid");
+            String[] ssids = data.getStringArrayExtra("ssids");
             if (condition == null) {
                 condition = new WifiCondition();
             }
-            List<WifiItem> items = new ArrayList<>(ids.length);
-            for (int i = 0; i < ids.length; i++)
-                items.add(new WifiItem(ids[i], ssids[i]));
+            List<WifiItem> items = new ArrayList<>(ssids.length);
+            for (int i = 0; i < ssids.length; i++)
+                items.add(new WifiItem(ssids[i]));
+            condition.setNetworks(items);
         }
     }
 }
