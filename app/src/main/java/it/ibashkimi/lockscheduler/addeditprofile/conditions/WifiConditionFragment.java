@@ -60,10 +60,10 @@ public class WifiConditionFragment extends Fragment {
 
     public void showWifiItems(List<WifiItem> networks) {
         StringBuilder text = new StringBuilder();
-        for (int i = 0; i < networks.size() -1; i++)
-            text.append(networks.get(i).SSID).append(", ");
+        for (int i = 0; i < networks.size() - 1; i++)
+            text.append(networks.get(i).getSsid()).append(", ");
         if (networks.size() > 0)
-            text.append(networks.get(networks.size()-1).SSID);
+            text.append(networks.get(networks.size() - 1).getSsid());
         networksSummary.setText(text.toString());
         networksSummary.setVisibility(View.VISIBLE);
     }
@@ -76,7 +76,7 @@ public class WifiConditionFragment extends Fragment {
             List<WifiItem> items = condition.getNetworks();
             String[] ssids = new String[items.size()];
             for (int i = 0; i < items.size(); i++) {
-                ssids[i] = items.get(i).SSID;
+                ssids[i] = items.get(i).getSsid();
             }
             intent.putExtra("ssids", ssids);
         }
@@ -92,8 +92,7 @@ public class WifiConditionFragment extends Fragment {
                 condition = new WifiCondition();
             }
             List<WifiItem> items = new ArrayList<>(ssids.length);
-            for (int i = 0; i < ssids.length; i++)
-                items.add(new WifiItem(ssids[i]));
+            for (String ssid : ssids) items.add(new WifiItem(ssid));
             condition.setNetworks(items);
         }
     }

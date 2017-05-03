@@ -143,7 +143,7 @@ public class ConditionsFragment extends Fragment {
         if (items != null && items.size() > 0) {
             String[] itemReps = new String[items.size()];
             for (int i = 0; i < items.size(); i++) {
-                itemReps[i] = items.get(i).SSID;
+                itemReps[i] = items.get(i).getSsid();
             }
             intent.putExtra("ssids", itemReps);
         }
@@ -181,12 +181,11 @@ public class ConditionsFragment extends Fragment {
     }
 
     private void showWifiCondition(List<WifiItem> networks) {
-        Log.d(TAG, "showWifiCondition() called with: networks.size = [" + networks.size() + "]");
         StringBuilder text = new StringBuilder();
         for (int i = 0; i < networks.size() -1; i++)
-            text.append(networks.get(i).SSID).append(", ");
+            text.append(networks.get(i).getSsid()).append(", ");
         if (networks.size() > 0)
-            text.append(networks.get(networks.size()-1).SSID);
+            text.append(networks.get(networks.size()-1).getSsid());
         wifiSummary.setText(text.toString());
         wifiBody.setVisibility(View.VISIBLE);
         wifiDelete.setVisibility(View.VISIBLE);

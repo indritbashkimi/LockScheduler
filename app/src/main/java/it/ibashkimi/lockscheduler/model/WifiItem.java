@@ -6,12 +6,14 @@ import org.json.JSONObject;
 
 public class WifiItem {
 
-    public final String SSID;
+    private final String ssid;
 
-    public boolean isSelected;
+    public WifiItem(String ssid) {
+        this.ssid = ssid;
+    }
 
-    public WifiItem(String SSID) {
-        this.SSID = SSID;
+    public String getSsid() {
+        return ssid;
     }
 
     @Override
@@ -19,18 +21,18 @@ public class WifiItem {
         if (!(obj instanceof WifiItem))
             return false;
         WifiItem wifiItem = (WifiItem) obj;
-        return wifiItem.SSID.equals(SSID);
+        return wifiItem.ssid.equals(ssid);
     }
 
     @Override
     public String toString() {
-        return "WiFi[" + SSID + "]";
+        return "WiFi[" + ssid + "]";
     }
 
     public String toJson() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("ssid", SSID);
+            jsonObject.put("ssid", ssid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
