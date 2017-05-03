@@ -12,15 +12,10 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
-import java.util.List;
-
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.model.Condition;
-import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
 import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
 
 /**
@@ -47,51 +42,20 @@ public class TransitionsIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "onHandleIntent() called with: intent = [" + intent + "]");
         String action = intent.getAction();
-        if (action != null && action.equals("condition_state_changed")) {
+        if (action != null && action.equals("profile_state_changed")) {
             boolean showNotification = mSharedPreferences.getBoolean("notifications_show", true);
             if (showNotification) {
                 String profileId = intent.getStringExtra("profile_id");
-                Profile profile = ProfilesRepository.getInstance().getProfile(profileId);
-                assert profile != null;
-                String title;
-                String content;
-                if (profile.isActive()) {
-                    title = "Activated";
-                    content = profile.getName();
-                } else {
-                    title = "Deactivated";
-                    content = profile.getName();
-                }
-                sendNotification(title, content, (int) Long.parseLong(profile.getId()));
+                String profileName = intent.getStringExtra("profile_name");
+                boolean isActive = intent.getBooleanExtra("profile_active", false);
+                String notificationTitle = isActive ? "Activated" : "Deactivated";
+                sendNotification(notificationTitle, profileName, (int) Long.parseLong(profileId));
             }
-
         } else {
-            GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
-            if (geofencingEvent.hasError()) {
-            /*String errorMessage = GeofenceErrorMessages.getErrorString(this,
-                    geofencingEvent.getErrorCode());*/
-                Log.e(TAG, "geofencing has error");
-                return;
-            }
-
-            int geofenceTransition = geofencingEvent.getGeofenceTransition();
-            List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
-            for (Geofence geofence : geofenceList) {
-                Profile profile = ProfilesRepository.getInstance().getProfile(geofence.getRequestId());
-                if (profile == null) {
-                    Log.wtf(TAG, "onHandleIntent: no profile found with id " + geofence.getRequestId());
-                    return;
-                }
-                if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER
-                        || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL) {
-                    profile.setConditionState(Condition.Type.PLACE, true);
-                } else {
-                    profile.setConditionState(Condition.Type.PLACE, false);
-                }
-                ProfilesRepository.getInstance().updateProfile(profile);
-            }
+            Log.d(TAG, "onHandleIntent: wow geofence");
+            ProfileScheduler.Companion.getInstance().getPlaceHandler()
+                    .onGeofenceEvent(GeofencingEvent.fromIntent(intent));
         }
-
     }
 
     private void sendNotification(String title, String content, int notificationId) {
@@ -121,18 +85,5 @@ public class TransitionsIntentService extends IntentService {
         notification.sound = Uri.parse(ringtone);
 
         mNotifyMgr.notify(notificationId, notification);
-    }
-
-    private String getTransitionName(int transitionType) {
-        switch (transitionType) {
-            case Geofence.GEOFENCE_TRANSITION_ENTER:
-                return "enter";
-            case Geofence.GEOFENCE_TRANSITION_DWELL:
-                return "dwell";
-            case Geofence.GEOFENCE_TRANSITION_EXIT:
-                return "exit";
-            default:
-                return "unknown";
-        }
     }
 }

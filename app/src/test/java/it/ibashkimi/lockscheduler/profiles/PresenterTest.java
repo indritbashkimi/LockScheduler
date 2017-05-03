@@ -1,6 +1,7 @@
 package it.ibashkimi.lockscheduler.profiles;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import junit.framework.Assert;
 
@@ -65,6 +66,11 @@ public class PresenterTest {
 
         @Override
         public void deleteProfile(String profileId) {
+
+        }
+
+        @Override
+        public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
 
         }
 

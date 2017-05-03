@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.model.api.GeofenceApiHelper;
-import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
 
 
 public class BootCompletedReceiver extends BroadcastReceiver {
@@ -18,7 +15,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
-        ProfileApiHelper.getInstance(App.getGeofenceApiHelper())
-                .initProfiles(ProfilesRepository.getInstance().getProfiles());
+        ProfileScheduler.Companion.getInstance().init();
     }
 }

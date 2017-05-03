@@ -1,8 +1,5 @@
 package it.ibashkimi.lockscheduler.receiver;
 
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +7,7 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import it.ibashkimi.lockscheduler.model.Condition;
-import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.TimeCondition;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
 
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -30,35 +24,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Toast.makeText(context, "AlarmReceiver !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
         Log.d(TAG, "onReceive: ALARM RECEIVED PORCA PUTTANA!!!");
 
-        long nextAlarm = Long.MAX_VALUE;
-        for (Profile profile : ProfilesRepository.getInstance().getProfiles()) {
-            TimeCondition timeCondition = (TimeCondition) profile.getCondition(Condition.Type.TIME);
-            if (timeCondition != null) {
-                timeCondition.checkNow();
-                profile.notifyConditionChanged(timeCondition);
-                long nNextAlarm = timeCondition.getNextAlarm();
-                if (nNextAlarm < nextAlarm)
-                    nextAlarm = nNextAlarm;
-            }
-        }
-        if (nextAlarm != Long.MAX_VALUE) {
-            setAlarm(context, nextAlarm);
-        }
+        String profileId = intent.getStringExtra("profileId");
+        ProfileScheduler.Companion.getInstance().getTimeHandler().onAlarm(profileId);
 
         wl.release();
-    }
-
-    public static void setAlarm(Context context, long nextAlarm) {
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
-        am.set(AlarmManager.ELAPSED_REALTIME, nextAlarm, pi);
-    }
-
-    public static void cancelAlarm(Context context) {
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
     }
 }

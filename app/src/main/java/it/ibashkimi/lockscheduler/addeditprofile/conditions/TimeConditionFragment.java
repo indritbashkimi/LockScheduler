@@ -21,7 +21,7 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 
 /**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
+ * @author Indrit Bashkimi (mailto: indrit.bashkimi@gmail.com)
  */
 public class TimeConditionFragment extends Fragment {
 
@@ -38,9 +38,9 @@ public class TimeConditionFragment extends Fragment {
 
     private boolean[] days = null;
 
-    private int[] startTime = null;
+    private TimeCondition.Time startTime = null;
 
-    private int[] endTime = null;
+    private TimeCondition.Time endTime = null;
 
     public void setData(TimeCondition condition) {
         this.condition = condition;
@@ -68,9 +68,9 @@ public class TimeConditionFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (startTime != null)
-                startTimeSummary.setText(formatTime(startTime[0], startTime[1]));
+                startTimeSummary.setText(formatTime(startTime.hour, startTime.minute));
             if (endTime != null)
-                endTimeSummary.setText(formatTime(endTime[0], endTime[1]));
+                endTimeSummary.setText(formatTime(endTime.hour, endTime.minute));
         }
 
         return root;
@@ -117,15 +117,13 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                if (endTime != null && endTime[0] != 0 && endTime[i] != 0 && i > endTime[0] && i1 > endTime[1]) {
+                TimeCondition.Time time = new TimeCondition.Time(i, i1);
+                if (endTime != null && !endTime.isMidnight() && endTime.compareTo(time).isNotHigher()) {
                         showIntervalError();
                         return;
                 }
                 startTimeSummary.setText(formatTime(i, i1));
-                if (startTime == null)
-                    startTime = new int[2];
-                startTime[0] = i;
-                startTime[1] = i1;
+                startTime = new TimeCondition.Time(i, i1);
             }
         });
     }
@@ -139,15 +137,13 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                if (startTime != null && startTime[0] != 0 && startTime[1] != 0 && i < startTime[0] && i1 < startTime[1]) {
+                TimeCondition.Time time = new TimeCondition.Time(i, i1);
+                if (startTime != null && !startTime.isMidnight() && startTime.compareTo(time).isNotLower()) {
                     showIntervalError();
                     return;
                 }
                 endTimeSummary.setText(formatTime(i, i1));
-                if (endTime == null)
-                    endTime = new int[2];
-                endTime[0] = i;
-                endTime[1] = i1;
+                endTime = time;
             }
         });
     }

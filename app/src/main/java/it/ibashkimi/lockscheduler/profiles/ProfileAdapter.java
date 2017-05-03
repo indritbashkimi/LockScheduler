@@ -17,9 +17,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.LockMode;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
+import it.ibashkimi.lockscheduler.model.ProfileUtils;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.support.utils.SelectableAdapter;
@@ -83,6 +85,28 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     }
 
 
+    static PlaceCondition getPlaceCondition(Profile profile) {
+        Condition condition = profile.getCondition(Condition.Type.PLACE);
+        if (condition != null)
+            return (PlaceCondition) condition;
+        return null;
+    }
+
+    static TimeCondition getTimeCondition(Profile profile) {
+        Condition condition = profile.getCondition(Condition.Type.TIME);
+        if (condition != null)
+            return (TimeCondition) condition;
+        return null;
+    }
+
+    static WifiCondition getWifiCondition(Profile profile) {
+        Condition condition = profile.getCondition(Condition.Type.WIFI);
+        if (condition != null)
+            return (WifiCondition) condition;
+        return null;
+    }
+
+
     static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         Callback listener;
 
@@ -128,20 +152,20 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
 
         public void init(@NonNull Profile profile) {
             name.setText(profile.getName());
-            enterLock.setText(LockMode.lockTypeToString(profile.getLockAction(true).getLockMode().getLockType()));
-            exitLock.setText(LockMode.lockTypeToString(profile.getLockAction(false).getLockMode().getLockType()));
-            PlaceCondition placeCondition = profile.getPlaceCondition();
+            enterLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockMode().getLockType()));
+            exitLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockMode().getLockType()));
+            PlaceCondition placeCondition = getPlaceCondition(profile);
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());
                 placeLayout.setVisibility(View.VISIBLE);
             }
-            TimeCondition timeCondition = profile.getTimeCondition();
+            TimeCondition timeCondition = getTimeCondition(profile);
             if (timeCondition != null) {
                 days.setText("Mon, Tue, Wed, Thu, Fri, Sat, Sun TODO");
                 interval.setText("00:00 - 00:00 TODO");
                 timeLayout.setVisibility(View.VISIBLE);
             }
-            WifiCondition wifiCondition = profile.getWifiCondition();
+            WifiCondition wifiCondition = getWifiCondition(profile);
             if (wifiCondition != null) {
                 wifi.setText("TODO");
                 wifiLayout.setVisibility(View.VISIBLE);

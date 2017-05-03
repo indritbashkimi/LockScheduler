@@ -3,6 +3,7 @@ package it.ibashkimi.lockscheduler.model.source.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -102,7 +103,12 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
-    public void updateProfile(Profile profile) {
+    public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
+        saveProfile(newProfile);
+    }
+
+    @Override
+    public void updateProfile(@NonNull Profile profile) {
         saveProfile(profile);
     }
 

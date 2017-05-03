@@ -61,6 +61,10 @@ public class ConditionsFragment extends Fragment {
     private List<Condition> conditions;
     private List<WifiItem> wifiItems;
 
+    private boolean placeConditionAdded = false;
+    private boolean timeConditionAdded = false;
+    private boolean wifiConditionAdded = false;
+
     public static ConditionsFragment newInstance() {
         return new ConditionsFragment();
     }
@@ -71,16 +75,22 @@ public class ConditionsFragment extends Fragment {
 
     public List<Condition> assembleConditions() {
         List<Condition> conditions = new ArrayList<>(3);
-        PlaceCondition placeCondition = getPlaceConditionFragment().assembleCondition();
-        if (placeCondition != null)
-            conditions.add(placeCondition);
-        TimeCondition timeCondition = getTimeConditionFragment().assembleCondition();
-        if (timeCondition != null)
-            conditions.add(timeCondition);
-        if (wifiItems != null && wifiItems.size() > 0) {
-            WifiCondition wifiCondition = new WifiCondition();
-            wifiCondition.setNetworks(wifiItems);
-            conditions.add(wifiCondition);
+        if (placeConditionAdded) {
+            PlaceCondition placeCondition = getPlaceConditionFragment().assembleCondition();
+            if (placeCondition != null)
+                conditions.add(placeCondition);
+        }
+        if (timeConditionAdded) {
+            TimeCondition timeCondition = getTimeConditionFragment().assembleCondition();
+            if (timeCondition != null)
+                conditions.add(timeCondition);
+        }
+        if (wifiConditionAdded) {
+            if (wifiItems != null && wifiItems.size() > 0) {
+                WifiCondition wifiCondition = new WifiCondition();
+                wifiCondition.setNetworks(wifiItems);
+                conditions.add(wifiCondition);
+            }
         }
         return conditions;
     }
@@ -193,17 +203,20 @@ public class ConditionsFragment extends Fragment {
 
     @OnClick(R.id.place_layout)
     public void onPlaceLayoutClick() {
+        placeConditionAdded = true;
         showPlacePicker();
     }
 
     @OnClick(R.id.place_delete)
     public void onPlaceDeleteClick() {
+        placeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getPlaceConditionFragment()).commit();
         placeDelete.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.time_layout)
     public void onTimeLayoutClick() {
+        timeConditionAdded = true;
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.time_condition_container, getTimeConditionFragment(), "time_condition")
@@ -213,17 +226,20 @@ public class ConditionsFragment extends Fragment {
 
     @OnClick(R.id.time_delete)
     public void onTimeDeleteClick() {
+        timeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getTimeConditionFragment()).commit();
         timeDelete.setVisibility(View.GONE);
     }
 
     @OnClick({R.id.wifi_layout, R.id.wifi_body})
     public void onWifiLayoutClicked() {
+        wifiConditionAdded = true;
         showWifiPicker(wifiItems);
     }
 
     @OnClick(R.id.wifi_delete)
     public void onWifiDeleteClicked() {
+        wifiConditionAdded = false;
         //fragmentManager.beginTransaction().remove(getWifiConditionFragment()).commit();
         wifiDelete.setVisibility(View.GONE);
         wifiBody.setVisibility(View.GONE);

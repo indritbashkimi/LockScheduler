@@ -21,6 +21,7 @@ import java.util.List;
 import it.ibashkimi.lockscheduler.Config;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
+import it.ibashkimi.lockscheduler.model.ProfileUtils;
 import it.ibashkimi.lockscheduler.service.TransitionsIntentService;
 
 
@@ -46,6 +47,12 @@ public class GeofenceApiHelper {
         });
     }
 
+    public void register(final Profile profile) {
+        List<Profile> profiles = new ArrayList<>(0);
+        profiles.add(profile);
+        initGeofences(profiles);
+    }
+
     private void initGeofences(GoogleApiClient googleApiClient, List<Profile> profiles) {
         Log.d(TAG, "initGeofences");
         if (profiles.size() == 0) {
@@ -54,7 +61,7 @@ public class GeofenceApiHelper {
         }
         boolean hasPlaceConditions = false;
         for (Profile profile : profiles) {
-            if (profile.getPlaceCondition() != null) {
+            if (ProfileUtils.getPlaceCondition(profile) != null) {
                 hasPlaceConditions = true;
                 break;
             }
@@ -116,7 +123,7 @@ public class GeofenceApiHelper {
         ArrayList<Geofence> geofences = new ArrayList<>();
         PlaceCondition placeCondition;
         for (Profile profile : profiles) {
-            placeCondition = profile.getPlaceCondition();
+            placeCondition = ProfileUtils.getPlaceCondition(profile);
             if (placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(profile.getId())

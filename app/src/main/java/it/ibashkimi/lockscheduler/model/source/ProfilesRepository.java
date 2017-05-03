@@ -1,12 +1,13 @@
 package it.ibashkimi.lockscheduler.model.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.api.ProfileApiHelper;
+import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
 import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
 
 /**
@@ -24,12 +25,12 @@ public class ProfilesRepository implements ProfilesDataSource {
 
     private final ProfilesDataSource mProfilesLocalDataSource;
 
-    private final ProfileApiHelper mProfileApiHelper;
+    private final ProfileScheduler mScheduler;
 
     // Prevent direct instantiation.
-    private ProfilesRepository(@NonNull ProfilesDataSource profilesLocalDataSource, @NonNull ProfileApiHelper profileApiHelper) {
+    private ProfilesRepository(@NonNull ProfilesDataSource profilesLocalDataSource, @NonNull ProfileScheduler scheduler) {
         mProfilesLocalDataSource = profilesLocalDataSource;
-        mProfileApiHelper = profileApiHelper;
+        mScheduler = scheduler;
     }
 
     /**
@@ -40,8 +41,8 @@ public class ProfilesRepository implements ProfilesDataSource {
     public static ProfilesRepository getInstance() {
         if (INSTANCE == null) {
             ProfilesDataSource profilesLocalDataSource = ProfilesLocalDataSource.getInstance(App.getInstance());
-            ProfileApiHelper profileApiHelper = ProfileApiHelper.getInstance(App.getGeofenceApiHelper());
-            INSTANCE = new ProfilesRepository(profilesLocalDataSource, profileApiHelper);
+            ProfileScheduler scheduler = ProfileScheduler.Companion.getInstance();
+            INSTANCE = new ProfilesRepository(profilesLocalDataSource, scheduler);
         }
         return INSTANCE;
     }
@@ -56,32 +57,46 @@ public class ProfilesRepository implements ProfilesDataSource {
     }
 
     @Override
-    public Profile getProfile(String profileId) {
+    @Nullable
+    public Profile getProfile(@NonNull String profileId) {
         return mProfilesLocalDataSource.getProfile(profileId);
     }
 
     @Override
     public void saveProfile(@NonNull Profile profile) {
         mProfilesLocalDataSource.saveProfile(profile);
-        mProfileApiHelper.addProfile(profile);
+        mScheduler.register(profile);
     }
 
     @Override
     public void deleteAllProfiles() {
-        mProfileApiHelper.removeAll(getProfiles());
+        for (Profile profile : getProfiles())
+            mScheduler.unregister(profile);
         mProfilesLocalDataSource.deleteAllProfiles();
     }
 
     @Override
-    public void deleteProfile(String profileId) {
-        mProfileApiHelper.removeProfile(getProfile(profileId));
-        mProfilesLocalDataSource.deleteProfile(profileId);
+    public void deleteProfile(@NonNull String profileId) {
+        Profile profile = getProfile(profileId);
+        if (profile != null) {
+            mScheduler.unregister(profile);
+            mProfilesLocalDataSource.deleteProfile(profileId);
+        }
     }
 
     @Override
-    public void updateProfile(Profile profile) {
-        mProfileApiHelper.update(getProfile(profile.getId()), profile);
-        mProfilesLocalDataSource.updateProfile(profile);
+    public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
+        if (oldProfile == null)
+            oldProfile = getProfile(newProfile.getId());
+        mProfilesLocalDataSource.substituteProfile(newProfile, oldProfile);
+        mScheduler.unregister(oldProfile);
+        mScheduler.register(newProfile);
+        //mScheduler.substitute(newProfile, oldProfile);
+    }
+
+    @Override
+    public void updateProfile(@NonNull Profile profile) {
+       mProfilesLocalDataSource.updateProfile(profile);
     }
 
     @Override

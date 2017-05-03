@@ -150,7 +150,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         ActionsFragment actionsFragment = getActionsFragment(fragmentManager);
-        actionsFragment.setData(profile.getTrueActions(), profile.getFalseActions());
+        actionsFragment.setData(profile.getEnterActions(), profile.getExitActions());
 
         ConditionsFragment conditionsFragment = getConditionsFragment(fragmentManager);
         conditionsFragment.setData(profile.getConditions());

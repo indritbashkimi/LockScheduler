@@ -1,64 +1,129 @@
 package it.ibashkimi.lockscheduler.model;
 
-import android.support.annotation.IntDef;
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Calendar;
+import java.util.Locale;
 
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.FRIDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.MONDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.SATURDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.SUNDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.THURSDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.TUESDAY;
-import static it.ibashkimi.lockscheduler.model.TimeCondition.Day.WEDNESDAY;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.CompareResult.EQUAL;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.CompareResult.HIGHER;
+import static it.ibashkimi.lockscheduler.model.TimeCondition.CompareResult.LOWER;
 
 
 public class TimeCondition extends Condition {
 
     private static final String TAG = "TimeCondition";
 
-    @IntDef({MONDAY,
-            TUESDAY,
-            WEDNESDAY,
-            THURSDAY,
-            FRIDAY,
-            SATURDAY,
-            SUNDAY
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Day {
-        int MONDAY = 0;
-        int TUESDAY = 1;
-        int WEDNESDAY = 2;
-        int THURSDAY = 3;
-        int FRIDAY = 4;
-        int SATURDAY = 5;
-        int SUNDAY = 6;
+    public static class CompareResult {
+        public static final int LOWER = -1;
+        public static final int EQUAL = 0;
+        public static final int HIGHER = 1;
+
+        private final int result;
+
+        public CompareResult(int result) {
+            this.result = result;
+        }
+
+        public boolean isLower() {
+            return result == LOWER;
+        }
+
+        public boolean isNotLower() {
+            return result != LOWER;
+        }
+
+        public boolean isEqual() {
+            return result == EQUAL;
+        }
+
+        public boolean isNotEqual() {
+            return result != EQUAL;
+        }
+
+        public boolean isHigher() {
+            return result == HIGHER;
+        }
+
+        public boolean isNotHigher() {
+            return result != HIGHER;
+        }
+
+        public int getResult() {
+            return result;
+        }
     }
 
-    public static final int[] ALL_DAYS = new int[]{MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
+    public static class Time {
+        public final int hour;
+        public final int minute;
+
+        public Time(int hour, int minute) {
+            this.hour = hour;
+            this.minute = minute;
+        }
+
+        public boolean isMidnight() {
+            return hour == 0 && minute == 0;
+        }
+
+        /**
+         * -1 this < time
+         * 0  this equals time
+         * 1  this > time
+         */
+        public CompareResult compareTo(Time time) {
+            if (this.equals(time))
+                return new CompareResult(EQUAL);
+            if (hour == time.hour) {
+                int result = minute < time.minute ? LOWER : HIGHER;
+                return new CompareResult(result);
+            }
+            if (hour < time.hour) {
+                return new CompareResult(LOWER);
+            }
+            return new CompareResult(HIGHER);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Time))
+                return false;
+            Time time = (Time) obj;
+            return time.hour == hour && time.minute == minute;
+        }
+
+        @Override
+        public String toString() {
+            return String.format(Locale.ENGLISH, "Time[%02d:%02d]", hour, minute);
+        }
+
+        public static Time now() {
+            return fromTimeStamp(System.currentTimeMillis());
+        }
+        public static Time fromTimeStamp(long timeStamp) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(timeStamp);
+            return new Time(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        }
+    }
 
     private boolean[] daysActive;
 
-    private int[] startTime;
+    private Time startTime;
 
-    private int[] endTime;
+    private Time endTime;
 
     public TimeCondition() {
         this(new boolean[]{true, true, true, true, true, true, true});
     }
 
     public TimeCondition(boolean[] daysActive) {
-        this(daysActive, new int[]{0, 0}, new int[]{0, 0});
+        this(daysActive, new Time(0, 0), new Time(0, 0));
     }
 
-    public TimeCondition(boolean[] daysActive, int[] startTime, int[] endTime) {
+    public TimeCondition(boolean[] daysActive, Time startTime, Time endTime) {
         super(Type.TIME);
         this.daysActive = daysActive;
         this.startTime = startTime;
@@ -69,257 +134,27 @@ public class TimeCondition extends Condition {
         return daysActive;
     }
 
-    public int[] getStartTime() {
+    public Time getStartTime() {
         return startTime;
     }
 
-    public int[] getEndTime() {
+    public Time getEndTime() {
         return endTime;
     }
 
-    public void setStartTime(int[] startTime) {
+    public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(int[] endTime) {
+    public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
 
     public void setDaysActive(boolean[] daysActive) {
-        Log.d(TAG, "setDaysActive() called with: daysActive = [" + daysActive + "]");
-        for (boolean day : daysActive)
-            Log.d(TAG, "setDaysActive: day " + day);
         this.daysActive = daysActive;
     }
 
-    public void checkNow() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.get(Calendar.DAY_OF_WEEK);
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // dayOfWeek = (dayOfWeek + 5) % 6;
-        switch (dayOfWeek) {
-            case Calendar.MONDAY:
-                dayOfWeek = 0;
-                break;
-            case Calendar.TUESDAY:
-                dayOfWeek = 1;
-                break;
-            case Calendar.WEDNESDAY:
-                dayOfWeek = 2;
-                break;
-            case Calendar.THURSDAY:
-                dayOfWeek = 3;
-                break;
-            case Calendar.FRIDAY:
-                dayOfWeek = 4;
-                break;
-            case Calendar.SATURDAY:
-                dayOfWeek = 5;
-                break;
-            case Calendar.SUNDAY:
-                dayOfWeek = 6;
-                break;
-        }
-        setTrue(getDaysActive()[dayOfWeek]);
-    }
-
-    public long getNextAlarm() {
-        boolean allTrue = true;
-        for (int i = 0; i < 7; i++)
-            if (!daysActive[i]) {
-                allTrue = false;
-                break;
-            }
-        if (allTrue) {
-            Log.d(TAG, "getNextAlarm: -1");
-            return -1;
-        }
-        boolean allFalse = true;
-        for (int i = 0; i < 7; i++)
-            if (daysActive[i]) {
-                allFalse = false;
-                break;
-            }
-        if (allFalse) {
-            Log.d(TAG, "getNextAlarm: -1");
-            return -1;
-        }
-        int dayOfWeek = dayOfWeek();
-        boolean dayVal = daysActive[dayOfWeek];
-        int specialDay = -1;
-        for (int i = dayOfWeek + 1; i < 7; i++) {
-            if (dayVal != daysActive[i]) {
-                specialDay = i - dayOfWeek;
-                break;
-            }
-        }
-        if (specialDay > -1) {
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DAY_OF_MONTH, specialDay);
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            Log.d(TAG, "getNextAlarm: " + cal);
-            return cal.getTimeInMillis();
-        }
-        for (int i = dayOfWeek - 1; i > -1; i--) {
-            if (dayVal != daysActive[i]) {
-                specialDay = 7 - dayOfWeek + i;
-                break;
-            }
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, specialDay);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Log.d(TAG, "getNextAlarm: " + cal);
-        return cal.getTimeInMillis();
-    }
-
-    private int dayOfWeek() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.get(Calendar.DAY_OF_WEEK);
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // dayOfWeek = (dayOfWeek + 5) % 6;
-        switch (dayOfWeek) {
-            case Calendar.MONDAY:
-                dayOfWeek = 0;
-                break;
-            case Calendar.TUESDAY:
-                dayOfWeek = 1;
-                break;
-            case Calendar.WEDNESDAY:
-                dayOfWeek = 2;
-                break;
-            case Calendar.THURSDAY:
-                dayOfWeek = 3;
-                break;
-            case Calendar.FRIDAY:
-                dayOfWeek = 4;
-                break;
-            case Calendar.SATURDAY:
-                dayOfWeek = 5;
-                break;
-            case Calendar.SUNDAY:
-                dayOfWeek = 6;
-                break;
-        }
-        return dayOfWeek;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof TimeCondition)) {
-            return false;
-        }
-        TimeCondition condition = (TimeCondition) obj;
-        for (int i = 0; i < 7; i++) {
-            if (condition.getDaysActive()[i] != daysActive[i])
-                return false;
-        }
-        int[] startTime = condition.getStartTime();
-        int[] endTime = condition.getEndTime();
-        return this.startTime[0] == startTime[0] &&
-                this.startTime[1] == startTime[1] &&
-                this.endTime[0] == endTime[0] &&
-                this.endTime[1] == endTime[1];
-    }
-
-    @Override
-    public String toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("type", getType());
-            jsonObject.put("true", isTrue());
-            for (int i = 0; i < 7; i++) {
-                jsonObject.put("day_" + i, daysActive[i]);
-            }
-            jsonObject.put("start_time_hour", startTime[0]);
-            jsonObject.put("start_time_minute", startTime[1]);
-            jsonObject.put("end_time_hour", endTime[0]);
-            jsonObject.put("end_time_minute", endTime[1]);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "";
-        }
-        return jsonObject.toString();
-    }
-
-    public static TimeCondition parseJson(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        int type = jsonObject.getInt("type");
-        boolean isTrue = jsonObject.getBoolean("true");
-        boolean[] daysActive = new boolean[7];
-        for (int i = 0; i < 7; i++) {
-            daysActive[i] = jsonObject.getBoolean("day_" + i);
-        }
-        int hours = jsonObject.getInt("start_time_hour");
-        int minutes = jsonObject.getInt("start_time_minute");
-        int[] startTime = new int[]{hours, minutes};
-        hours = jsonObject.getInt("end_time_hour");
-        minutes = jsonObject.getInt("end_time_minute");
-        int[] endTime = new int[]{hours, minutes};
-        TimeCondition timeCondition = new TimeCondition(daysActive, startTime, endTime);
-        timeCondition.setTrue(isTrue);
-        return timeCondition;
-    }
-
-    /*public int[] getActiveDays() {
-        int size = 0;
-        for (int i = 0; i < activeDays.size(); i++)
-            if (activeDays.valueAt(i))
-                size++;
-        int[] result = new int[size];
-        int j = 0;
-        for (int i = 0; i < activeDays.size(); i++)
-            if (activeDays.valueAt(i)) {
-                result[j] = activeDays.keyAt(i);
-                j++;
-            }
-        return result;
-    }
-
-    public boolean[] getWeek() {
-        boolean[] week = new boolean[7];
-        for (int i = 0; i < 7; i++) {
-            @Day int day = MONDAY;
-            switch ()
-        }
-    }
-
-    public int[] getStartTime() {
-        return startTime;
-    }
-
-    public int[] getEndTime() {
-        return endTime;
-    }
-
-    public void setStartTime(int[] startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(int[] endTime) {
-        this.endTime = endTime;
-    }
-
-    public void setActiveDays(int[] activeDays) {
-        for (int day : activeDays)
-            this.activeDays.put(day, true);
-    }
-
-    public boolean isDayActive(@Day int day) {
-        return activeDays.get(day);
-    }
-
-    public void setDayActive(@Day int day, boolean isActive) {
-        activeDays.put(day, isActive);
-    }
-
-    private int getIndex(int day) {
+    private int getArrayIndexOfCalendarDay(int day) {
         switch (day) {
             case Calendar.MONDAY:
                 return 0;
@@ -340,174 +175,88 @@ public class TimeCondition extends Condition {
         }
     }
 
-    public void checkNow() {
+    public int dayOfWeekIndex() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        calendar.get(Calendar.DAY_OF_WEEK);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // dayOfWeekIndex = (dayOfWeekIndex + 5) % 6;
         switch (dayOfWeek) {
             case Calendar.MONDAY:
-                dayOfWeek = MONDAY;
+                dayOfWeek = 0;
                 break;
             case Calendar.TUESDAY:
-                dayOfWeek = TUESDAY;
+                dayOfWeek = 1;
                 break;
             case Calendar.WEDNESDAY:
-                dayOfWeek = WEDNESDAY;
+                dayOfWeek = 2;
                 break;
             case Calendar.THURSDAY:
-                dayOfWeek = THURSDAY;
+                dayOfWeek = 3;
                 break;
             case Calendar.FRIDAY:
-                dayOfWeek = FRIDAY;
+                dayOfWeek = 4;
                 break;
             case Calendar.SATURDAY:
-                dayOfWeek = SATURDAY;
+                dayOfWeek = 5;
                 break;
             case Calendar.SUNDAY:
-                dayOfWeek = SUNDAY;
-                break;
-        }
-        setTrue(activeDays.get(dayOfWeek));
-    }
-
-    public long getNextAlarm() {
-        boolean allTrue = true;
-        boolean allFalse = true;
-        for (int i = 0; i < activeDays.size(); i++) {
-            if (!activeDays.valueAt(i))
-                allTrue = false;
-            if (activeDays.valueAt(i))
-                allFalse = false;
-        }
-        if (allTrue || allFalse) {
-            return -1;
-        }
-
-        @Day int today = dayOfWeek();
-        @Day int nextDay = nextDay(today);
-        while (today == nextDay) {
-            today = nextDay;
-            nextDay = nextDay(today);
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, calendarDay(nextDay));
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Log.d(TAG, "getNextAlarm: " + cal);
-        return cal.getTimeInMillis();
-    }
-
-    @Day
-    private int dayOfWeek() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        @Day int dayOfWeek = -1;
-        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
-            case Calendar.MONDAY:
-                dayOfWeek = MONDAY;
-                break;
-            case Calendar.TUESDAY:
-                dayOfWeek = TUESDAY;
-                break;
-            case Calendar.WEDNESDAY:
-                dayOfWeek = WEDNESDAY;
-                break;
-            case Calendar.THURSDAY:
-                dayOfWeek = THURSDAY;
-                break;
-            case Calendar.FRIDAY:
-                dayOfWeek = FRIDAY;
-                break;
-            case Calendar.SATURDAY:
-                dayOfWeek = SATURDAY;
-                break;
-            case Calendar.SUNDAY:
-                dayOfWeek = SUNDAY;
+                dayOfWeek = 6;
                 break;
         }
         return dayOfWeek;
     }
 
-    @Day
-    private int nextDay(@Day int day) {
-        switch (day) {
-            case MONDAY:
-                return TUESDAY;
-            case Day.TUESDAY:
-                return WEDNESDAY;
-            case Day.WEDNESDAY:
-                return THURSDAY;
-            case Day.THURSDAY:
-                return FRIDAY;
-            case Day.FRIDAY:
-                return SATURDAY;
-            case Day.SATURDAY:
-                return SUNDAY;
-            case Day.SUNDAY:
-                return MONDAY;
-        }
-        throw new RuntimeException("Invalid day number " + day + ".");
+    public boolean isCalendarDayActive(int calendarDay) {
+        return daysActive[getArrayIndexOfCalendarDay(calendarDay)];
     }
 
-    @Day
-    private int previousDay(@Day int day) {
-        switch (day) {
-            case MONDAY:
-                return SUNDAY;
-            case Day.TUESDAY:
-                return MONDAY;
-            case Day.WEDNESDAY:
-                return TUESDAY;
-            case Day.THURSDAY:
-                return TUESDAY;
-            case Day.FRIDAY:
-                return THURSDAY;
-            case Day.SATURDAY:
-                return FRIDAY;
-            case Day.SUNDAY:
-                return SATURDAY;
-        }
-        throw new RuntimeException("Invalid day number " + day + ".");
-    }
-
-    private int calendarDay(@Day int day) {
-        switch (day) {
-            case MONDAY:
-                return Calendar.MONDAY;
-            case Day.FRIDAY:
-                return Calendar.FRIDAY;
-            case Day.SATURDAY:
-                return Calendar.SATURDAY;
-            case Day.SUNDAY:
-                return Calendar.SUNDAY;
-            case Day.THURSDAY:
-                return Calendar.THURSDAY;
-            case Day.TUESDAY:
-                return Calendar.TUESDAY;
-            case Day.WEDNESDAY:
-                return Calendar.WEDNESDAY;
-        }
-        throw new RuntimeException("Invalid day number " + day + ".");
+    @Override
+    public String toString() {
+        return "TimeCondition[" + daysActive[0] + daysActive[1] +daysActive[2]+daysActive[3]+daysActive[4]+daysActive[5]+daysActive[6] + ", startTime=" + startTime + ", endTime=" + endTime + "]";
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof TimeCondition)) {
+        if (!(obj instanceof TimeCondition))
             return false;
-        }
         TimeCondition condition = (TimeCondition) obj;
         for (int i = 0; i < 7; i++) {
-            if (condition.activeDays.get(i) != activeDays.get(i))
+            if (condition.getDaysActive()[i] != daysActive[i])
                 return false;
         }
-        int[] startTime = condition.getStartTime();
-        int[] endTime = condition.getEndTime();
-        return this.startTime[0] == startTime[0] &&
-                this.startTime[1] == startTime[1] &&
-                this.endTime[0] == endTime[0] &&
-                this.endTime[1] == endTime[1];
-    }*/
+        return condition.startTime.equals(startTime) && condition.endTime.equals(endTime);
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("type", getType());
+            jsonObject.put("true", isTrue());
+            for (int i = 0; i < 7; i++) {
+                jsonObject.put("day_" + i, daysActive[i]);
+            }
+            jsonObject.put("start_time_hour", startTime.hour);
+            jsonObject.put("start_time_minute", startTime.minute);
+            jsonObject.put("end_time_hour", endTime.hour);
+            jsonObject.put("end_time_minute", endTime.minute);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return jsonObject.toString();
+    }
+
+    public static TimeCondition parseJson(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        boolean[] daysActive = new boolean[7];
+        for (int i = 0; i < 7; i++) {
+            daysActive[i] = jsonObject.getBoolean("day_" + i);
+        }
+        Time startTime = new Time(jsonObject.getInt("start_time_hour"), jsonObject.getInt("start_time_minute"));
+        Time endTime = new Time(jsonObject.getInt("end_time_hour"), jsonObject.getInt("end_time_minute"));
+        TimeCondition timeCondition = new TimeCondition(daysActive, startTime, endTime);
+        timeCondition.setTrue(jsonObject.getBoolean("true"));
+        return timeCondition;
+    }
 }

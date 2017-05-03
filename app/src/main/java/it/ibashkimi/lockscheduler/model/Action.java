@@ -32,8 +32,6 @@ public abstract class Action {
         this.type = type;
     }
 
-    public abstract void doJob();
-
     public abstract String toJson();
 }
 

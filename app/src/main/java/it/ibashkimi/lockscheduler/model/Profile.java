@@ -1,7 +1,7 @@
 package it.ibashkimi.lockscheduler.model;
 
-import android.content.Intent;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,61 +10,55 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.service.TransitionsIntentService;
-
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
  */
 
 public class Profile {
 
-    private static final String TAG = "Profile";
-
-    public interface ProfileStateListener {
-        void onProfileStateChanged(Profile profile);
-    }
-
+    @NonNull
     private String id;
+    @NonNull
     private String name;
+    @NonNull
     private List<Condition> conditions;
-    private List<Action> trueActions;
-    private List<Action> falseActions;
-
-    private ProfileStateListener listener;
+    @NonNull
+    private List<Action> enterActions;
+    @NonNull
+    private List<Action> exitActions;
 
     private boolean active;
 
-    public Profile(String id) {
+    public Profile(@NonNull String id) {
         this(id, "");
     }
 
-    public Profile(String id, String name) {
+    public Profile(@NonNull String id, @NonNull String name) {
         this(id, name, new ArrayList<Condition>(), new ArrayList<Action>(), new ArrayList<Action>());
     }
 
-    public Profile(String id, String name, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+    public Profile(@NonNull String id, @NonNull String name, @NonNull List<Condition> conditions, @NonNull List<Action> enterActions, @NonNull List<Action> exitActions) {
         this.id = id;
         this.name = name;
         this.conditions = conditions;
-        this.trueActions = trueActions;
-        this.falseActions = falseActions;
+        this.enterActions = enterActions;
+        this.exitActions = exitActions;
     }
 
-    public ProfileStateListener getListener() {
-        return listener;
-    }
-
-    public void setListener(ProfileStateListener listener) {
-        this.listener = listener;
-    }
-
+    @NonNull
     public List<Condition> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<Condition> conditions) {
+    public void setConditions(@NonNull List<Condition> conditions) {
         this.conditions = conditions;
+    }
+
+    public boolean containsCondition(@Condition.Type int type) {
+        for (Condition condition : conditions)
+            if (condition.getType() == type)
+                return true;
+        return false;
     }
 
     public boolean isActive() {
@@ -72,74 +66,67 @@ public class Profile {
     }
 
     public void setActive(boolean active) {
-        if (this.active != active) {
-            this.active = active;
-            Intent intent = new Intent(App.getInstance(), TransitionsIntentService.class);
-            intent.setAction("condition_state_changed");
-            intent.putExtra("profile_id", getId());
-            App.getInstance().startService(intent);
-        }
+        this.active = active;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NonNull String name) {
         setName(name, false);
     }
 
-    public void setName(String name, boolean auto) {
+    public void setName(@NonNull String name, boolean auto) {
         this.name = name;
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
-    public List<Action> getTrueActions() {
-        return trueActions;
+    @NonNull
+    public List<Action> getEnterActions() {
+        return enterActions;
     }
 
-    public void setTrueActions(List<Action> trueActions) {
-        this.trueActions = trueActions;
+    public void setEnterActions(@NonNull List<Action> enterActions) {
+        this.enterActions = enterActions;
     }
 
-    public List<Action> getFalseActions() {
-        return falseActions;
+    @NonNull
+    public List<Action> getExitActions() {
+        return exitActions;
     }
 
-    public void setFalseActions(List<Action> falseActions) {
-        this.falseActions = falseActions;
+    public void setExitActions(@NonNull List<Action> exitActions) {
+        this.exitActions = exitActions;
     }
 
     public void update(Profile profile) {
         name = profile.getName();
         active = profile.isActive();
         conditions = profile.getConditions();
-        trueActions = profile.getTrueActions();
-        falseActions = profile.getFalseActions();
+        enterActions = profile.getEnterActions();
+        exitActions = profile.getExitActions();
     }
 
+    @Nullable
     public Action getAction(@Action.Type int type, boolean fromTrueActions) {
-        List<Action> actions = fromTrueActions ? trueActions : falseActions;
+        List<Action> actions = fromTrueActions ? enterActions : exitActions;
         for (Action action : actions)
             if (action.getType() == Action.Type.LOCK)
                 return action;
         return null;
     }
 
-    public LockAction getLockAction(boolean fromTrueActions) {
-        Action action = getAction(Action.Type.LOCK, fromTrueActions);
-        if (action != null)
-            return (LockAction) action;
-        return null;
-    }
-
+    @Nullable
     public Condition getCondition(@Condition.Type int type) {
         for (Condition condition : conditions) {
             if (condition.getType() == type)
@@ -148,127 +135,23 @@ public class Profile {
         return null;
     }
 
-    public PlaceCondition getPlaceCondition() {
-        Condition condition = getCondition(Condition.Type.PLACE);
-        if (condition != null)
-            return (PlaceCondition) condition;
-        return null;
-    }
-
-    public TimeCondition getTimeCondition() {
-        Condition condition = getCondition(Condition.Type.TIME);
-        if (condition != null)
-            return (TimeCondition) condition;
-        return null;
-    }
-
-    public WifiCondition getWifiCondition() {
-        Condition condition = getCondition(Condition.Type.WIFI);
-        if (condition != null)
-            return (WifiCondition) condition;
-        return null;
-    }
-
-    public synchronized void setConditionState(@Condition.Type int conditionType, boolean state) {
-        Log.d(TAG, "setConditionState() called with: conditionType = [" + conditionType + "], state = [" + state + "]");
-        getCondition(conditionType).setTrue(state);
-        if (state) {
-            if (!isActive() && areConditionsTrue()) {
-                for (Action action : trueActions)
-                    action.doJob();
-                setActive(true);
-            }
-        } else {
-            if (isActive()) {
-                for (Action action : falseActions)
-                    action.doJob();
-                setActive(false);
-            }
-        }
-
-    }
-
-    public synchronized void setConditionState(Condition condition, boolean state) {
-        Log.d(TAG, "setConditionState() called with: condition = [" + condition + "], state = [" + state + "]");
-        condition.setTrue(state);
-        if (state) {
-            if (!active && areConditionsTrue()) {
-                for (Action action : trueActions)
-                    action.doJob();
-                setActive(true);
-            }
-        } else {
-            if (active) {
-                for (Action action : falseActions)
-                    action.doJob();
-                setActive(false);
-            }
-        }
-
-    }
-
-    public void notifyUpdated() {
-        boolean conditionsTrue = areConditionsTrue();
-        if (active) {
-            if (!conditionsTrue) {
-                for (Action action : falseActions)
-                    action.doJob();
-                setActive(false);
-            }
-        } else {
-            if (conditionsTrue) {
-                for (Action action : trueActions)
-                    action.doJob();
-                setActive(true);
-            }
-        }
-    }
-
-    public void notifyConditionChanged(Condition condition) {
-        Log.d(TAG, "notifyConditionChanged() called with: condition = [" + condition + "]");
-        if (condition.isTrue()) {
-            Log.d(TAG, "notifyConditionChanged: condition.isTrue");
-            if (!active && areConditionsTrue()) {
-                for (Action action : trueActions)
-                    action.doJob();
-                setActive(true);
-            }
-        } else {
-            Log.d(TAG, "notifyConditionChanged: condition not true");
-            if (active) {
-                for (Action action : falseActions)
-                    action.doJob();
-                setActive(false);
-            }
-        }
-    }
-
-    public boolean areConditionsTrue() {
-        for (Condition condition : conditions) {
-            if (!condition.isTrue())
-                return false;
-        }
-        return true;
-    }
-
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Profile))
             return false;
         Profile profile = (Profile) obj;
-        if (conditions.size() != profile.getConditions().size() || id != profile.getId() || !name.equals(profile.getName()) || trueActions.size() != profile.getTrueActions().size() || falseActions.size() != profile.getFalseActions().size())
+        if (conditions.size() != profile.getConditions().size() || !id.equals(profile.getId()) || !name.equals(profile.getName()) || enterActions.size() != profile.getEnterActions().size() || exitActions.size() != profile.getExitActions().size())
             return false;
         for (int i = 0; i < conditions.size(); i++) {
             if (!conditions.get(i).equals(profile.getConditions().get(i)))
                 return false;
         }
-        for (int i = 0; i < trueActions.size(); i++) {
-            if (!trueActions.get(i).equals(profile.getTrueActions().get(i)))
+        for (int i = 0; i < enterActions.size(); i++) {
+            if (!enterActions.get(i).equals(profile.getEnterActions().get(i)))
                 return false;
         }
-        for (int i = 0; i < falseActions.size(); i++) {
-            if (!falseActions.get(i).equals(profile.getFalseActions().get(i)))
+        for (int i = 0; i < exitActions.size(); i++) {
+            if (!exitActions.get(i).equals(profile.getExitActions().get(i)))
                 return false;
         }
         return true;
@@ -276,7 +159,7 @@ public class Profile {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, trueActions=%d, falseActions=%d}", id, name, conditions.size(), trueActions.size(), falseActions.size());
+        return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, enterActions=%d, exitActions=%d}", id, name, conditions.size(), enterActions.size(), exitActions.size());
     }
 
     public boolean isEmpty() {
@@ -297,13 +180,13 @@ public class Profile {
                 jsonObject.put("condition_" + i, conditions.get(i).toJson());
             }
             jsonObject.put("active", active);
-            jsonObject.put("true_actions_size", trueActions.size());
-            for (int i = 0; i < trueActions.size(); i++) {
-                jsonObject.put("true_action_" + i, trueActions.get(i).toJson());
+            jsonObject.put("true_actions_size", enterActions.size());
+            for (int i = 0; i < enterActions.size(); i++) {
+                jsonObject.put("true_action_" + i, enterActions.get(i).toJson());
             }
-            jsonObject.put("false_actions_size", falseActions.size());
-            for (int i = 0; i < trueActions.size(); i++) {
-                jsonObject.put("false_action_" + i, falseActions.get(i).toJson());
+            jsonObject.put("false_actions_size", exitActions.size());
+            for (int i = 0; i < enterActions.size(); i++) {
+                jsonObject.put("false_action_" + i, exitActions.get(i).toJson());
             }
 
         } catch (JSONException e) {
@@ -358,7 +241,7 @@ public class Profile {
             }
             trueActions.add(action);
         }
-        profile.setTrueActions(trueActions);
+        profile.setEnterActions(trueActions);
 
         int falseActionsSize = jsonObject.getInt("false_actions_size");
         ArrayList<Action> falseActions = new ArrayList<>(falseActionsSize);
@@ -376,7 +259,7 @@ public class Profile {
             if (action != null)
                 falseActions.add(action);
         }
-        profile.setFalseActions(falseActions);
+        profile.setExitActions(falseActions);
 
         profile.active = jsonObject.getBoolean("active");
         return profile;

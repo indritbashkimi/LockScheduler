@@ -105,7 +105,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (newProfile.isEmpty()) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.saveProfile(newProfile);
+            mProfilesRepository.substituteProfile(newProfile, null);
             mAddProfileView.showProfileList(true, false);
         }
     }

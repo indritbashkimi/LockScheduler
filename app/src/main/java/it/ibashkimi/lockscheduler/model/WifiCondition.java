@@ -1,19 +1,10 @@
 package it.ibashkimi.lockscheduler.model;
 
-import android.content.Context;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 
 public class WifiCondition extends Condition {
@@ -31,11 +22,11 @@ public class WifiCondition extends Condition {
         this.wifiItemList = items;
     }
 
-    public void addWifi(WifiItem wifi) {
+    public void add(WifiItem wifi) {
         this.wifiItemList.add(wifi);
     }
 
-    public void removeWifi(WifiItem wifi) {
+    public void remove(WifiItem wifi) {
         this.wifiItemList.remove(wifi);
     }
 
@@ -46,57 +37,12 @@ public class WifiCondition extends Condition {
     public void setNetworks(List<WifiItem> networks) {
         this.wifiItemList = networks;
     }
-    public void update(Context context) {
-
-    }
 
     public boolean isPresent(WifiItem wifiItem) {
         for (WifiItem item : wifiItemList)
             if (item.equals(wifiItem))
                 return true;
         return false;
-    }
-
-    public void onWifiStateChanged(WifiItem wifiItem) {
-        Log.d(TAG, "onWifiStateChanged() called with: wifiItem = " + wifiItem);
-        setTrue(wifiItem != null && isPresent(wifiItem));
-    }
-
-    public static void onNetworkStateChanged(Context context, NetworkInfo info) {
-        boolean interesting = true;
-        WifiInfo wifiInfo = null;
-        if (info == null || !info.isConnected()) {
-            interesting = false;
-        } else {
-            WifiManager wifiManager = (WifiManager) App.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if (wifiManager == null) {
-                interesting = false;
-            } else {
-                wifiInfo = wifiManager.getConnectionInfo();
-                if (wifiInfo == null) {
-                    interesting = false;
-                }
-            }
-        }
-        List<Profile> profiles = ProfilesRepository.getInstance().getProfiles();
-        if (interesting) {
-            String ssid = wifiInfo.getSSID();
-            WifiItem wifiItem = new WifiItem(ssid);
-            for (Profile profile : profiles) {
-                WifiCondition wifiCondition = profile.getWifiCondition();
-                if (wifiCondition != null && wifiCondition.isPresent(wifiItem)) {
-                    //boolean previouslyActive = profile.isActive();
-                    profile.setConditionState(Condition.Type.WIFI, true);
-                }
-            }
-        } else {
-            for (Profile profile : profiles) {
-                WifiCondition wifiCondition = profile.getWifiCondition();
-                if (wifiCondition != null) {
-                    profile.setConditionState(Condition.Type.WIFI, false);
-                }
-            }
-        }
     }
 
     @Override

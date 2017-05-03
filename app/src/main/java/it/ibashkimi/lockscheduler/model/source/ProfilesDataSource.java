@@ -1,6 +1,7 @@
 package it.ibashkimi.lockscheduler.model.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.json.JSONException;
 
@@ -20,15 +21,18 @@ public interface ProfilesDataSource {
 
     List<Profile> getProfiles();
 
-    Profile getProfile(String profileId);
+    @Nullable
+    Profile getProfile(@NonNull String profileId);
 
     void saveProfile(@NonNull Profile profile);
 
     void deleteAllProfiles();
 
-    void deleteProfile(String profileId);
+    void deleteProfile(@NonNull String profileId);
 
-    void updateProfile(Profile profile);
+    void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile);
+
+    void updateProfile(@NonNull Profile profile);
 
     void swapProfiles(int pos1, int pos2);
 }
