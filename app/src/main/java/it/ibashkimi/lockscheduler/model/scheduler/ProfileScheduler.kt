@@ -194,7 +194,7 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
     }
 
     fun Profile.save() {
-        profilesRepository.updateProfile(this)
+        profilesRepository.update(this)
     }
 
     companion object {

@@ -39,7 +39,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         mAddProfileView.showTitle(isNewProfile() ? R.string.new_profile : R.string.edit_profile);
         if (!mDataLoaded) {
             if (!isNewProfile()) {
-                Profile profile = mProfilesRepository.getProfile(mProfileId);
+                Profile profile = mProfilesRepository.get(mProfileId);
                 Log.d(TAG, "start: profile = " + profile);
                 if (mAddProfileView.isActive()) {
                     mAddProfileView.showProfile(profile);
@@ -63,7 +63,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     @Override
     public void deleteProfile() {
-        mProfilesRepository.deleteProfile(mProfileId);
+        mProfilesRepository.delete(mProfileId);
         mAddProfileView.showProfileList(true, true);
     }
 
@@ -86,7 +86,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.saveProfile(newProfile);
+            mProfilesRepository.save(newProfile);
             mAddProfileView.showProfileList(true, false);
         }
     }
@@ -104,7 +104,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.substituteProfile(newProfile, null);
+            mProfilesRepository.substitute(newProfile, null);
             mAddProfileView.showProfileList(true, false);
         }
     }

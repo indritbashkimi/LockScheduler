@@ -44,7 +44,7 @@ abstract class ConditionHandler(val repository: ProfilesRepository, val listener
         if (profileIds.isNotEmpty()) {
             for (id in profileIds) {
                 Log.d("ConditionHandler", "id = $id")
-                profiles.add(repository.getProfile(id)!!)
+                profiles.add(repository.get(id)!!)
             }
         }
         return profiles

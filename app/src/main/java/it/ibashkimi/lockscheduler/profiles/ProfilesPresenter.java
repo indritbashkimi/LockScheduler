@@ -4,7 +4,6 @@ package it.ibashkimi.lockscheduler.profiles;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.List;
 
@@ -77,7 +76,7 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
 
     @Override
     public void swapProfiles(int pos1, int pos2) {
-        profilesRepository.swapProfiles(pos1, pos2);
+        profilesRepository.swap(pos1, pos2);
     }
 
 }

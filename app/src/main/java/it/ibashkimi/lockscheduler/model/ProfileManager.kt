@@ -10,16 +10,16 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesRepository
 class ProfileManager(val repository: ProfilesRepository, val scheduler: ProfileScheduler) {
 
     fun add(profile: Profile) {
-        repository.saveProfile(profile)
+        repository.save(profile)
         scheduler.register(profile)
     }
 
-    fun get(profileId: String): Profile? = repository.getProfile(profileId)
+    fun get(profileId: String): Profile? = repository.get(profileId)
 
     fun getAll(): List<Profile> = repository.profiles
 
     fun remove(profileId: String) {
-        repository.deleteProfile(profileId)
+        repository.delete(profileId)
         //scheduler.unregister(profileId)
     }
 
@@ -27,7 +27,7 @@ class ProfileManager(val repository: ProfilesRepository, val scheduler: ProfileS
 
     }
 
-    fun save(profile: Profile) = repository.saveProfile(profile)
+    fun save(profile: Profile) = repository.save(profile)
 
     fun update(profile: Profile) {
 

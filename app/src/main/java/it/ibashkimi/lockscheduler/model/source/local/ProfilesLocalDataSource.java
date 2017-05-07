@@ -61,7 +61,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
 
     @Nullable
     @Override
-    public Profile getProfile(@NonNull String profileId) {
+    public Profile get(@NonNull String profileId) {
         Profile profile = null;
         String json = sharedPreferences.getString(profileId, null);
         if (json != null) {
@@ -75,7 +75,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
-    public void saveProfile(@NonNull Profile profile) {
+    public void save(@NonNull Profile profile) {
         List<String> ids = restoreProfileIds();
         if (!ids.contains(profile.getId())) {
             ids.add(profile.getId());
@@ -110,12 +110,12 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
-    public void deleteAllProfiles() {
+    public void deleteAll() {
         sharedPreferences.edit().clear().apply();
     }
 
     @Override
-    public void deleteProfile(@NonNull String profileId) {
+    public void delete(@NonNull String profileId) {
         List<String> ids = restoreProfileIds();
         if (ids != null) {
             ids.remove(profileId);
@@ -127,17 +127,17 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
-    public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
-        saveProfile(newProfile);
+    public void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
+        save(newProfile);
     }
 
     @Override
-    public void updateProfile(@NonNull Profile profile) {
-        saveProfile(profile);
+    public void update(@NonNull Profile profile) {
+        save(profile);
     }
 
     @Override
-    public void swapProfiles(int pos1, int pos2) {
+    public void swap(int pos1, int pos2) {
         List<String> ids = restoreProfileIds();
         String id = ids.get(pos1);
         ids.set(pos1, ids.get(pos2));

@@ -50,37 +50,37 @@ public class PresenterTest {
         }
 
         @Override
-        public Profile getProfile(String profileId) {
+        public Profile get(String profileId) {
             return null;
         }
 
         @Override
-        public void saveProfile(@NonNull Profile profile) {
+        public void save(@NonNull Profile profile) {
 
         }
 
         @Override
-        public void deleteAllProfiles() {
+        public void deleteAll() {
 
         }
 
         @Override
-        public void deleteProfile(String profileId) {
+        public void delete(String profileId) {
 
         }
 
         @Override
-        public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
+        public void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
 
         }
 
         @Override
-        public void updateProfile(Profile profile) {
+        public void update(Profile profile) {
 
         }
 
         @Override
-        public void swapProfiles(int pos1, int pos2) {
+        public void swap(int pos1, int pos2) {
 
         }
     }

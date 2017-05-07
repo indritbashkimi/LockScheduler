@@ -41,7 +41,7 @@ class PlaceConditionHandler(val geofenceApiHelper: GeofenceApiHelper, repository
         val geofenceTransition = geofencingEvent.geofenceTransition
         val geofenceList = geofencingEvent.triggeringGeofences
         for (geofence in geofenceList) {
-            val profile = repository.getProfile(geofence.requestId)!!
+            val profile = repository.get(geofence.requestId)!!
             val condition = profile.getCondition(Condition.Type.PLACE) as PlaceCondition
             condition.isTrue = geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
             listener.notifyConditionChanged(profile, condition)

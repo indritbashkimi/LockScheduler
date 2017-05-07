@@ -58,49 +58,49 @@ public class ProfilesRepository implements ProfilesDataSource {
 
     @Override
     @Nullable
-    public Profile getProfile(@NonNull String profileId) {
-        return mProfilesLocalDataSource.getProfile(profileId);
+    public Profile get(@NonNull String profileId) {
+        return mProfilesLocalDataSource.get(profileId);
     }
 
     @Override
-    public void saveProfile(@NonNull Profile profile) {
-        mProfilesLocalDataSource.saveProfile(profile);
+    public void save(@NonNull Profile profile) {
+        mProfilesLocalDataSource.save(profile);
         mScheduler.register(profile);
     }
 
     @Override
-    public void deleteAllProfiles() {
+    public void deleteAll() {
         for (Profile profile : getProfiles())
             mScheduler.unregister(profile);
-        mProfilesLocalDataSource.deleteAllProfiles();
+        mProfilesLocalDataSource.deleteAll();
     }
 
     @Override
-    public void deleteProfile(@NonNull String profileId) {
-        Profile profile = getProfile(profileId);
+    public void delete(@NonNull String profileId) {
+        Profile profile = get(profileId);
         if (profile != null) {
             mScheduler.unregister(profile);
-            mProfilesLocalDataSource.deleteProfile(profileId);
+            mProfilesLocalDataSource.delete(profileId);
         }
     }
 
     @Override
-    public void substituteProfile(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
+    public void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
         if (oldProfile == null)
-            oldProfile = getProfile(newProfile.getId());
-        mProfilesLocalDataSource.substituteProfile(newProfile, oldProfile);
+            oldProfile = get(newProfile.getId());
+        mProfilesLocalDataSource.substitute(newProfile, oldProfile);
         mScheduler.unregister(oldProfile);
         mScheduler.register(newProfile);
         //mScheduler.substitute(newProfile, oldProfile);
     }
 
     @Override
-    public void updateProfile(@NonNull Profile profile) {
-       mProfilesLocalDataSource.updateProfile(profile);
+    public void update(@NonNull Profile profile) {
+       mProfilesLocalDataSource.update(profile);
     }
 
     @Override
-    public void swapProfiles(int pos1, int pos2) {
-        mProfilesLocalDataSource.swapProfiles(pos1, pos2);
+    public void swap(int pos1, int pos2) {
+        mProfilesLocalDataSource.swap(pos1, pos2);
     }
 }

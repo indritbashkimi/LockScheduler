@@ -49,7 +49,7 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
 
     fun onAlarm(profileId: String) {
         Log.d(TAG, "onAlarm called with profileId=$profileId")
-        val profile = repository.getProfile(profileId) as Profile
+        val profile = repository.get(profileId) as Profile
         val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
         doAlarmJob(profile, condition)
     }
