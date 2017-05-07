@@ -32,7 +32,7 @@ public interface ProfilesContract {
 
         void showSuccessfullySavedMessage();
 
-        void showSuccessfullyRemovedMessage(int profilesRemoved);
+        void showSuccessfullyRemovedMessage();
 
         void showSuccessfullyUpdatedMessage();
 
@@ -41,7 +41,7 @@ public interface ProfilesContract {
 
     interface Presenter extends BasePresenter {
 
-        void result(int requestCode, int resultCode, Bundle extras);
+        void result(int requestCode, int resultCode, String extras);
 
         void loadProfiles();
 

@@ -2,7 +2,6 @@ package it.ibashkimi.lockscheduler.profiles;
 
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -32,17 +31,27 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
     }
 
     @Override
-    public void result(int requestCode, int resultCode, Bundle extras) {
+    public void result(int requestCode, int resultCode, String extras) {
         // If a profile was successfully added, show snackbar
         if (resultCode == Activity.RESULT_CANCELED)
             return;
         if (AddEditProfileActivity.REQUEST_ADD_PROFILE == requestCode) {
             profilesView.showSuccessfullySavedMessage();
         } else if (AddEditProfileActivity.REQUEST_EDIT_PROFILE == requestCode){
-            if (extras != null && extras.containsKey("deleted"))
-                profilesView.showSuccessfullyUpdatedMessage();
-            else
-                profilesView.showSuccessfullyRemovedMessage(1);
+            if (extras != null) {
+                switch (extras) {
+                    case "deleted":
+                        profilesView.showSuccessfullyRemovedMessage();
+                        break;
+                    case "updated":
+                        profilesView.showSuccessfullyUpdatedMessage();
+                        break;
+                    default:
+                        throw new RuntimeException("Unhandled case.");
+                }
+            } else {
+                throw new RuntimeException("This should not be possible.");
+            }
         }
     }
 

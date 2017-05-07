@@ -87,7 +87,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.result(requestCode, resultCode, data != null ? data.getExtras() : null);
+        mPresenter.result(requestCode, resultCode, data != null ? data.getStringExtra("extra") : null);
     }
 
     @Override
@@ -227,12 +227,11 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public void showSuccessfullySavedMessage() {
-        Log.d(TAG, "showSuccessfullySavedMessage() called");
         showMessage(getString(R.string.successfully_saved_profile_message));
     }
 
     @Override
-    public void showSuccessfullyRemovedMessage(int profilesRemoved) {
+    public void showSuccessfullyRemovedMessage() {
         showMessage(getString(R.string.successfully_removed_profile_message));
     }
 

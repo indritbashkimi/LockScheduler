@@ -109,7 +109,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> onCancel()
+            android.R.id.home -> {
+                onCancel()
+                return true
+            }
             R.id.action_place_search -> {
                 try {
                     val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)

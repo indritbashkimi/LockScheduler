@@ -17,7 +17,7 @@ public interface AddEditProfileContract {
 
         void showLoadProfileError();
 
-        void showProfileList(boolean success, boolean deleted);
+        void showProfileList(boolean success, String extra);
 
         void showProfile(Profile profile);
 

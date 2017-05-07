@@ -183,7 +183,6 @@ public class ProfilesActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
         switch (requestCode) {
             case RESULT_ADMIN_ENABLE:
                 if (resultCode == Activity.RESULT_OK) {

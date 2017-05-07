@@ -111,15 +111,6 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         return true;
     }
 
-    @Deprecated
-    public void delete(Profile profile) {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("profile", profile.toJson());
-        resultIntent.setAction("delete");
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }
-
     @Override
     public void setPresenter(AddEditProfileContract.Presenter presenter) {
         mPresenter = presenter;
@@ -131,13 +122,13 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
     }
 
     @Override
-    public void showProfileList(boolean success, boolean deleted) {
-        Log.d(TAG, "showProfileList() called");
-        setResult(success ? Activity.RESULT_OK : Activity.RESULT_CANCELED);
-        if (deleted) {
+    public void showProfileList(boolean success, String extra) {
+        if (extra != null) {
             Intent intent = new Intent();
-            intent.putExtra("deleted", true);
+            intent.putExtra("extra", extra);
             setResult(success ? Activity.RESULT_OK : Activity.RESULT_CANCELED, intent);
+        } else {
+            setResult(success ? Activity.RESULT_OK : Activity.RESULT_CANCELED);
         }
         finish();
     }
@@ -174,15 +165,14 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     @OnClick(R.id.fab)
     public void onSave() {
-        Log.d(TAG, "onSave: ");
         List<List<Action>> actionData = getActionsFragment(getSupportFragmentManager()).assembleData();
-        List<Action> enterActions = actionData.get(0);
+        /*List<Action> enterActions = actionData.get(0);
         for (Action action : enterActions)
-            Log.d(TAG, action.toJson());
+            Log.d(TAG, action.toJson());*/
 
         List<Condition> conditions = getConditionsFragment(getSupportFragmentManager()).assembleConditions();
-        for (Condition condition : conditions)
-            Log.d(TAG, condition.toJson());
+        /*for (Condition condition : conditions)
+            Log.d(TAG, condition.toJson());*/
         mPresenter.saveProfile(mProfileName.getText().toString(), conditions, actionData.get(0), actionData.get(1));
     }
 

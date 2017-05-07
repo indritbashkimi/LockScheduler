@@ -9,14 +9,14 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
+import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 public class AddEditProfilePresenter implements AddEditProfileContract.Presenter {
 
     private static final String TAG = "AddEditProfilePresenter";
 
     @NonNull
-    private final ProfilesDataSource mProfilesRepository;
+    private final ProfilesRepository mProfilesRepository;
 
     @NonNull
     private final AddEditProfileContract.View mAddProfileView;
@@ -25,7 +25,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     private boolean mDataLoaded = false;
 
-    public AddEditProfilePresenter(String profileId, @NonNull ProfilesDataSource mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
+    public AddEditProfilePresenter(String profileId, @NonNull ProfilesRepository mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
         this.mProfileId = profileId;
         this.mProfilesRepository = mProfilesRepository;
         this.mAddProfileView = mAddProfileView;
@@ -40,12 +40,10 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!mDataLoaded) {
             if (!isNewProfile()) {
                 Profile profile = mProfilesRepository.get(mProfileId);
-                Log.d(TAG, "start: profile = " + profile);
                 if (mAddProfileView.isActive()) {
                     mAddProfileView.showProfile(profile);
                 }
             } else {
-                Log.d(TAG, "start: here");
                 mAddProfileView.showEmptyProfile();
             }
         }
@@ -64,12 +62,12 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     @Override
     public void deleteProfile() {
         mProfilesRepository.delete(mProfileId);
-        mAddProfileView.showProfileList(true, true);
+        mAddProfileView.showProfileList(true, "deleted");
     }
 
     @Override
     public void discard() {
-        mAddProfileView.showProfileList(false, false);
+        mAddProfileView.showProfileList(false, null);
     }
 
     private boolean isNewProfile() {
@@ -87,7 +85,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
             mAddProfileView.showLoadProfileError();
         } else {
             mProfilesRepository.save(newProfile);
-            mAddProfileView.showProfileList(true, false);
+            mAddProfileView.showProfileList(true, null);
         }
     }
 
@@ -96,7 +94,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
             throw new RuntimeException("updateProfile() was called but task is new.");
         }
         Profile newProfile = new Profile(
-                mProfileId,
+                Long.toString(System.currentTimeMillis()),
                 title,
                 conditions,
                 trueActions,
@@ -104,8 +102,8 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.substitute(newProfile, null);
-            mAddProfileView.showProfileList(true, false);
+            mProfilesRepository.override(mProfileId, newProfile);
+            mAddProfileView.showProfileList(true, "updated");
         }
     }
 
