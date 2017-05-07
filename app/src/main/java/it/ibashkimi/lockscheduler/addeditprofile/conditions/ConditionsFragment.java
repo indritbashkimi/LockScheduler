@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.model.WifiItem;
+import it.ibashkimi.lockscheduler.util.ConditionUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static it.ibashkimi.lockscheduler.addeditprofile.conditions.PlaceConditionFragment.PLACE_PICKER_REQUEST;
@@ -191,12 +191,9 @@ public class ConditionsFragment extends Fragment {
     }
 
     private void showWifiCondition(List<WifiItem> networks) {
-        StringBuilder text = new StringBuilder();
-        for (int i = 0; i < networks.size() -1; i++)
-            text.append(networks.get(i).getSsid()).append(", ");
-        if (networks.size() > 0)
-            text.append(networks.get(networks.size()-1).getSsid());
-        wifiSummary.setText(text.toString());
+        CharSequence[] wifiList = new CharSequence[networks.size()];
+        for (int i = 0; i < wifiList.length; i++) wifiList[i] = networks.get(i).getSsid();
+        wifiSummary.setText(ConditionUtils.concatenate(wifiList, ", "));
         wifiBody.setVisibility(View.VISIBLE);
         wifiDelete.setVisibility(View.VISIBLE);
     }

@@ -18,7 +18,7 @@ public class Profile {
 
     @NonNull
     private String id;
-    @NonNull
+
     private String name;
     @NonNull
     private List<Condition> conditions;
@@ -33,13 +33,15 @@ public class Profile {
         this(id, "");
     }
 
-    public Profile(@NonNull String id, @NonNull String name) {
+    public Profile(@NonNull String id, String name) {
         this(id, name, new ArrayList<Condition>(), new ArrayList<Action>(), new ArrayList<Action>());
     }
 
-    public Profile(@NonNull String id, @NonNull String name, @NonNull List<Condition> conditions, @NonNull List<Action> enterActions, @NonNull List<Action> exitActions) {
+    public Profile(@NonNull String id, String name, @NonNull List<Condition> conditions, @NonNull List<Action> enterActions, @NonNull List<Action> exitActions) {
         this.id = id;
         this.name = name;
+        if (this.name == null)
+            this.name = "";
         this.conditions = conditions;
         this.enterActions = enterActions;
         this.exitActions = exitActions;
@@ -69,7 +71,6 @@ public class Profile {
         this.active = active;
     }
 
-    @NonNull
     public String getName() {
         return name;
     }
@@ -161,14 +162,6 @@ public class Profile {
     public String toString() {
         return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, enterActions=%d, exitActions=%d}", id, name, conditions.size(), enterActions.size(), exitActions.size());
     }
-
-    public boolean isEmpty() {
-        return (name == null) ||
-                (name.equals("")) ||
-                (conditions == null) ||
-                (conditions.size() == 0);
-    }
-
 
     public String toJson() {
         JSONObject jsonObject = new JSONObject();

@@ -77,14 +77,13 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     }
 
     private void createProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
-        Log.d(TAG, "createProfile: ");
         Profile newProfile = new Profile(
                 Long.toString(System.currentTimeMillis()),
                 title,
                 conditions,
                 trueActions,
                 falseActions);
-        if (newProfile.isEmpty()) {
+        if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
             mProfilesRepository.saveProfile(newProfile);
@@ -102,11 +101,15 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
                 conditions,
                 trueActions,
                 falseActions);
-        if (newProfile.isEmpty()) {
+        if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
             mProfilesRepository.substituteProfile(newProfile, null);
             mAddProfileView.showProfileList(true, false);
         }
+    }
+
+    public boolean isValid(Profile profile) {
+        return profile.getConditions().size() > 0;
     }
 }

@@ -4,7 +4,6 @@ package it.ibashkimi.lockscheduler.profiles;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +23,10 @@ import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileUtils;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
+import it.ibashkimi.lockscheduler.util.ConditionUtils;
 import it.ibashkimi.support.utils.SelectableAdapter;
 
 public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
-    private static final String TAG = "ProfileAdapter";
 
     public interface Callback {
 
@@ -56,7 +55,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
 
     @Override
     public void onBindViewHolder(final ProfileViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
         final Profile profile = getProfiles().get(position);
         holder.init(profile);
         holder.setSelected(isSelected(position));
@@ -151,7 +149,11 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         }
 
         public void init(@NonNull Profile profile) {
-            name.setText(profile.getName());
+            if (profile.getName() != null && !profile.getName().equals("")) {
+                name.setText(profile.getName());
+            } else {
+                name.setVisibility(View.GONE);
+            }
             enterLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockMode().getLockType()));
             exitLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockMode().getLockType()));
             PlaceCondition placeCondition = getPlaceCondition(profile);
@@ -161,13 +163,16 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             }
             TimeCondition timeCondition = getTimeCondition(profile);
             if (timeCondition != null) {
-                days.setText("Mon, Tue, Wed, Thu, Fri, Sat, Sun TODO");
-                interval.setText("00:00 - 00:00 TODO");
+                days.setText(ConditionUtils.daysToString(itemView.getContext(), timeCondition));
+                interval.setText(ConditionUtils.internvalToString(timeCondition.getStartTime(), timeCondition.getEndTime()));
                 timeLayout.setVisibility(View.VISIBLE);
             }
             WifiCondition wifiCondition = getWifiCondition(profile);
             if (wifiCondition != null) {
-                wifi.setText("TODO");
+                CharSequence[] wifiList = new CharSequence[wifiCondition.getNetworks().size()];
+                for (int i = 0; i < wifiList.length; i++)
+                    wifiList[i] = wifiCondition.getNetworks().get(i).getSsid();
+                wifi.setText(ConditionUtils.concatenate(wifiList, ", "));
                 wifiLayout.setVisibility(View.VISIBLE);
             }
         }

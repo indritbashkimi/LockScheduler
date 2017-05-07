@@ -19,6 +19,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
+import it.ibashkimi.lockscheduler.util.ConditionUtils;
+import it.ibashkimi.lockscheduler.util.Utils;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@gmail.com)
@@ -68,9 +70,9 @@ public class TimeConditionFragment extends Fragment {
 
         if (savedInstanceState == null) {
             if (startTime != null)
-                startTimeSummary.setText(formatTime(startTime.hour, startTime.minute));
+                startTimeSummary.setText(Utils.formatTime(startTime.hour, startTime.minute));
             if (endTime != null)
-                endTimeSummary.setText(formatTime(endTime.hour, endTime.minute));
+                endTimeSummary.setText(Utils.formatTime(endTime.hour, endTime.minute));
         }
 
         return root;
@@ -97,10 +99,7 @@ public class TimeConditionFragment extends Fragment {
                 .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        StringBuilder t = new StringBuilder();
-                        for (CharSequence c : text)
-                            t.append(c).append(" ");
-                        daysSummary.setText(t.toString());
+                        daysSummary.setText(ConditionUtils.concatenate(text, ", "));
                         days = new boolean[]{false, false, false, false, false, false, false};
                         for (Integer i : which)
                             days[i] = true;
@@ -122,7 +121,7 @@ public class TimeConditionFragment extends Fragment {
                         showIntervalError();
                         return;
                 }
-                startTimeSummary.setText(formatTime(i, i1));
+                startTimeSummary.setText(Utils.formatTime(i, i1));
                 startTime = new TimeCondition.Time(i, i1);
             }
         });
@@ -142,7 +141,7 @@ public class TimeConditionFragment extends Fragment {
                     showIntervalError();
                     return;
                 }
-                endTimeSummary.setText(formatTime(i, i1));
+                endTimeSummary.setText(Utils.formatTime(i, i1));
                 endTime = time;
             }
         });
@@ -160,9 +159,5 @@ public class TimeConditionFragment extends Fragment {
             condition = new TimeCondition();
         }
         return condition;
-    }
-
-    private String formatTime(int hours, int minutes) {
-        return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
     }
 }

@@ -160,7 +160,6 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     @Override
     public void showEmptyProfile() {
-        Log.d(TAG, "showEmptyProfile() called");
         FragmentManager fragmentManager = getSupportFragmentManager();
         showFragments(fragmentManager,
                 getActionsFragment(fragmentManager),
