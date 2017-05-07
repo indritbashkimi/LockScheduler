@@ -127,6 +127,18 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             int targetPosition = target.getAdapterPosition();
             mPresenter.swapProfiles(viewHolder.getAdapterPosition(), targetPosition);
+
+            if (mAdapter.isSelected(viewHolder.getAdapterPosition()) != mAdapter.isSelected(targetPosition)) {
+                mAdapter.toggleSelection(viewHolder.getAdapterPosition());
+                mAdapter.toggleSelection(targetPosition);
+            }
+            // TODO: Move adapter data swap to presenter
+            List<Profile> profiles = mAdapter.getProfiles();
+            Profile profile = profiles.get(viewHolder.getAdapterPosition());
+            profiles.set(viewHolder.getAdapterPosition(), profiles.get(targetPosition));
+            profiles.set(targetPosition, profile);
+
+            mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), targetPosition);
             return true;
         }
 

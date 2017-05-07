@@ -4,13 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
@@ -20,7 +19,7 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
  */
 public class ProfilesLocalDataSource implements ProfilesDataSource {
 
-    private static final String TAG = "ProfilesLocalDataSource";
+    //private static final String TAG = "ProfilesLocalDataSource";
 
     private static ProfilesLocalDataSource INSTANCE;
 
@@ -39,13 +38,15 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
 
     @Override
     public List<Profile> getProfiles() {
-        Set<String> ids = sharedPreferences.getStringSet("ids", null);
+        List<String> ids = restoreProfileIds();
         ArrayList<Profile> profiles;
         if (ids != null) {
             profiles = new ArrayList<>(ids.size());
             for (String profileId : ids) {
                 try {
                     Profile profile = Profile.parseJson(sharedPreferences.getString(profileId, null));
+                    if (profile == null)
+                        throw new RuntimeException("Profile cannot be null. Data may be corrupted.");
                     profiles.add(profile);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -58,8 +59,9 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         return profiles;
     }
 
+    @Nullable
     @Override
-    public Profile getProfile(String profileId) {
+    public Profile getProfile(@NonNull String profileId) {
         Profile profile = null;
         String json = sharedPreferences.getString(profileId, null);
         if (json != null) {
@@ -74,14 +76,37 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
 
     @Override
     public void saveProfile(@NonNull Profile profile) {
-        Set<String> ids = sharedPreferences.getStringSet("ids", null);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (ids == null)
-            ids = new android.support.v4.util.ArraySet<>();
-        if (ids.add(profile.getId())) {
-            editor.putStringSet("ids", ids);
+        List<String> ids = restoreProfileIds();
+        if (!ids.contains(profile.getId())) {
+            ids.add(profile.getId());
+            sharedPreferences.edit()
+                    .putString("ids", idsToJsonArray(ids))
+                    .putString(profile.getId(), profile.toJson())
+                    .apply();
         }
-        editor.putString(profile.getId(), profile.toJson()).apply();
+    }
+
+    private List<String> restoreProfileIds() {
+        String jsonArrayRep = sharedPreferences.getString("ids", "[]");
+        try {
+            JSONArray jsonArray = new JSONArray(jsonArrayRep);
+            List<String> ids = new ArrayList<>(jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                ids.add(jsonArray.get(i).toString());
+            }
+            return ids;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>(0);
+        }
+    }
+
+    private String idsToJsonArray(List<String> ids) {
+        JSONArray jsonArray = new JSONArray();
+        for (String id : ids) {
+            jsonArray.put(id);
+        }
+        return jsonArray.toString();
     }
 
     @Override
@@ -90,13 +115,12 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     }
 
     @Override
-    public void deleteProfile(String profileId) {
-        Log.d(TAG, "deleteProfile() called with: profileId = [" + profileId + "]");
-        Set<String> ids = sharedPreferences.getStringSet("ids", null);
+    public void deleteProfile(@NonNull String profileId) {
+        List<String> ids = restoreProfileIds();
         if (ids != null) {
             ids.remove(profileId);
             sharedPreferences.edit()
-                    .putStringSet("ids", ids)
+                    .putString("ids", idsToJsonArray(ids))
                     .remove(profileId)
                     .apply();
         }
@@ -114,15 +138,10 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
 
     @Override
     public void swapProfiles(int pos1, int pos2) {
-        // TODO: 27/04/17
-        /*Set<String> ids = sharedPreferences.getStringSet("ids", null);
-        if (ids != null) {
-            android.support.v4.util.ArraySet<String> idsSet = new android.support.v4.util.ArraySet();
-            idsSet.addAll(ids);
-            idsSet.
-            Collections.swap(idsSet, pos1, pos2);
-        }
-
-        saveProfiles();*/
+        List<String> ids = restoreProfileIds();
+        String id = ids.get(pos1);
+        ids.set(pos1, ids.get(pos2));
+        ids.set(pos2, id);
+        sharedPreferences.edit().putString("ids", idsToJsonArray(ids)).apply();
     }
 }
