@@ -22,10 +22,11 @@ public class ConditionUtils {
             if (timeCondition.getDaysActive()[i])
                 activeDays.add(i);
         }
+
         if (activeDays.size() == 0)
-            return "None";
+            return context.getString(R.string.time_condition_days_selection_none);
         if (activeDays.size() == 7)
-            return "Everyday";
+            return context.getString(R.string.time_condition_days_selection_all);
         StringBuilder res = new StringBuilder();
         res.append(getDayName(context, activeDays.get(0)));
         if (activeDays.size() > 1) {

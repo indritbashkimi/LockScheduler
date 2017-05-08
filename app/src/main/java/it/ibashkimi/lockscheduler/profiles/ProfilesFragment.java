@@ -302,7 +302,8 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                         //mAdapter.notifyItemRemoved(position);
                     }
                     mAdapter.clearSelection();
-                    mAdapter.notifyDataSetChanged();
+                    //mAdapter.notifyDataSetChanged();
+                    mPresenter.loadProfiles();
                     mode.finish();
                     return true;
 

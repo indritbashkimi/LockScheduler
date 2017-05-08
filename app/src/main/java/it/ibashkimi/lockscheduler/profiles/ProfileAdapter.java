@@ -160,12 +160,16 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());
                 placeLayout.setVisibility(View.VISIBLE);
+            } else {
+                placeLayout.setVisibility(View.GONE);
             }
             TimeCondition timeCondition = getTimeCondition(profile);
             if (timeCondition != null) {
                 days.setText(ConditionUtils.daysToString(itemView.getContext(), timeCondition));
                 interval.setText(ConditionUtils.internvalToString(timeCondition.getStartTime(), timeCondition.getEndTime()));
                 timeLayout.setVisibility(View.VISIBLE);
+            } else {
+                timeLayout.setVisibility(View.GONE);
             }
             WifiCondition wifiCondition = getWifiCondition(profile);
             if (wifiCondition != null) {
@@ -174,6 +178,8 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
                     wifiList[i] = wifiCondition.getNetworks().get(i).getSsid();
                 wifi.setText(ConditionUtils.concatenate(wifiList, ", "));
                 wifiLayout.setVisibility(View.VISIBLE);
+            } else {
+                wifiLayout.setVisibility(View.GONE);
             }
         }
 

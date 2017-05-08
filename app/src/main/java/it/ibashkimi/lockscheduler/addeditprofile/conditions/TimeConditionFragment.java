@@ -12,8 +12,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import java.util.Locale;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -68,14 +66,45 @@ public class TimeConditionFragment extends Fragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_condition_time, container, false);
         ButterKnife.bind(this, root);
 
-        if (savedInstanceState == null) {
-            if (startTime != null)
-                startTimeSummary.setText(Utils.formatTime(startTime.hour, startTime.minute));
-            if (endTime != null)
-                endTimeSummary.setText(Utils.formatTime(endTime.hour, endTime.minute));
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("start_time_hour"))
+                startTime = new TimeCondition.Time(savedInstanceState.getInt("start_time_hour"), savedInstanceState.getInt("start_time_minute"));
+            if (savedInstanceState.containsKey("end_time_hour"))
+                endTime = new TimeCondition.Time(savedInstanceState.getInt("end_time_hour"), savedInstanceState.getInt("end_time_minute"));
+            if (savedInstanceState.containsKey("days_0")) {
+                days = new boolean[7];
+                for (int i = 0; i < 7; i++)
+                    days[i] = savedInstanceState.getBoolean("days_" + i);
+            }
         }
+        if (days != null) {
+            TimeCondition timeCondition = new TimeCondition(days);
+            daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
+        }
+        if (startTime != null)
+            startTimeSummary.setText(Utils.formatTime(startTime.hour, startTime.minute));
+        if (endTime != null)
+            endTimeSummary.setText(Utils.formatTime(endTime.hour, endTime.minute));
+
 
         return root;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (startTime != null) {
+            outState.putInt("start_time_hour", startTime.hour);
+            outState.putInt("start_time_minute", startTime.minute);
+        }
+        if (endTime != null) {
+            outState.putInt("end_time_hour", endTime.hour);
+            outState.putInt("end_time_minute", endTime.minute);
+        }
+        if (days != null) {
+            for (int i = 0; i < 7; i++)
+                outState.putBoolean("days_" + i, days[i]);
+        }
     }
 
     @OnClick(R.id.days)
@@ -84,7 +113,7 @@ public class TimeConditionFragment extends Fragment {
             days = new boolean[]{true, true, true, true, true, true, true};
         int size = 0;
         for (boolean day : days)
-            if (day) size ++;
+            if (day) size++;
         Integer[] selectedIndices = new Integer[size];
         int j = 0;
         for (int i = 0; i < days.length; i++) {
@@ -99,10 +128,11 @@ public class TimeConditionFragment extends Fragment {
                 .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        daysSummary.setText(ConditionUtils.concatenate(text, ", "));
                         days = new boolean[]{false, false, false, false, false, false, false};
                         for (Integer i : which)
                             days[i] = true;
+                        TimeCondition timeCondition = new TimeCondition(days);
+                        daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
                         return true;
                     }
                 })
@@ -118,8 +148,8 @@ public class TimeConditionFragment extends Fragment {
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
                 TimeCondition.Time time = new TimeCondition.Time(i, i1);
                 if (endTime != null && !endTime.isMidnight() && endTime.compareTo(time).isNotHigher()) {
-                        showIntervalError();
-                        return;
+                    showIntervalError();
+                    return;
                 }
                 startTimeSummary.setText(Utils.formatTime(i, i1));
                 startTime = new TimeCondition.Time(i, i1);
@@ -128,7 +158,7 @@ public class TimeConditionFragment extends Fragment {
     }
 
     private void showIntervalError() {
-        Toast.makeText(getContext(), "Interval error.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.time_condition_interval_error, Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.end_time)

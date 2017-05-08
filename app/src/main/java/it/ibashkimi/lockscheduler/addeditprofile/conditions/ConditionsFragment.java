@@ -128,9 +128,34 @@ public class ConditionsFragment extends Fragment {
                 }
             }
             fragmentTransaction.commit();
+        } else {
+            placeConditionAdded = savedInstanceState.getBoolean("place_added");
+            timeConditionAdded = savedInstanceState.getBoolean("time_added");
+            wifiConditionAdded = savedInstanceState.getBoolean("wifi_added");
+            if (savedInstanceState.containsKey("wifi_items_size")) {
+                int size = savedInstanceState.getInt("wifi_items_size");
+                wifiItems = new ArrayList<>(size);
+                for (int i = 0; i < size; i++)
+                    wifiItems.add(WifiItem.parseJson(savedInstanceState.getString("wifi_item_" + i)));
+                showWifiCondition(wifiItems);
+            }
         }
 
         return root;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("place_added", placeConditionAdded);
+        outState.putBoolean("time_added", timeConditionAdded);
+        outState.putBoolean("wifi_added", wifiConditionAdded);
+        if (wifiItems != null) {
+            for (int i = 0; i < wifiItems.size(); i++) {
+                outState.putString("wifi_item_" + i, wifiItems.get(i).toJson());
+            }
+            outState.putInt("wifi_items_size", wifiItems.size());
+        }
     }
 
     public void showPlacePicker() {
@@ -183,8 +208,7 @@ public class ConditionsFragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 String[] ssids = data.getStringArrayExtra("ssids");
                 wifiItems = new ArrayList<>(ssids.length);
-                for (int i = 0; i < ssids.length; i++)
-                    wifiItems.add(new WifiItem(ssids[i]));
+                for (String ssid : ssids) wifiItems.add(new WifiItem(ssid));
                 showWifiCondition(wifiItems);
             }
         }
