@@ -11,7 +11,6 @@
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:transitionName="body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -40,7 +39,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
                 android:gravity="start"
                 android:hint="@string/profile_name"
                 android:inputType="textCapSentences|textMultiLine"

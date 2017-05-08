@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -96,7 +97,14 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
         ButterKnife.bind(this, rootView);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerView.LayoutManager layoutManager;
+        int columnCount = getResources().getInteger(R.integer.profiles_column_count);
+        if (columnCount == 1)
+            layoutManager = new LinearLayoutManager(getContext());
+        else
+            layoutManager = new GridLayoutManager(getContext(), columnCount);
+
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
