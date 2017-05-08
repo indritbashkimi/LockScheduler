@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.App;
+import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
 import it.ibashkimi.lockscheduler.model.source.local.ProfilesLocalDataSource;
@@ -58,12 +59,12 @@ public class ProfilesRepository implements ProfilesDataSource {
 
     @Override
     @Nullable
-    public Profile get(@NonNull String profileId) {
+    public synchronized Profile get(@NonNull String profileId) {
         return mProfilesLocalDataSource.get(profileId);
     }
 
     @Override
-    public void save(@NonNull Profile profile) {
+    public synchronized void save(@NonNull Profile profile) {
         mProfilesLocalDataSource.save(profile);
         mScheduler.register(profile);
     }
@@ -76,7 +77,7 @@ public class ProfilesRepository implements ProfilesDataSource {
     }
 
     @Override
-    public void delete(@NonNull String profileId) {
+    public synchronized void delete(@NonNull String profileId) {
         Profile profile = get(profileId);
         if (profile != null) {
             mScheduler.unregister(profile);
@@ -84,14 +85,19 @@ public class ProfilesRepository implements ProfilesDataSource {
         }
     }
 
-    @Override
-    public void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
-        if (oldProfile == null)
-            oldProfile = get(newProfile.getId());
-        mProfilesLocalDataSource.substitute(newProfile, oldProfile);
-        mScheduler.unregister(oldProfile);
-        mScheduler.register(newProfile);
-        //mScheduler.substitute(newProfile, oldProfile);
+    public void override(@NonNull String oldId, @NonNull Profile newProfile) {
+        Profile oldProfile = get(oldId);
+        if (oldProfile == null) {
+            throw new RuntimeException("Profile with id " + newProfile.getId() + " doesn't exist.");
+        }
+        newProfile.setActive(oldProfile.isActive());
+        if (oldProfile.isActive()) {
+            for (Condition condition : newProfile.getConditions()) {
+                condition.setTrue(true);
+            }
+        }
+        delete(oldId);
+        save(newProfile);
     }
 
     @Override
@@ -100,7 +106,7 @@ public class ProfilesRepository implements ProfilesDataSource {
     }
 
     @Override
-    public void swap(int pos1, int pos2) {
+    public synchronized void swap(int pos1, int pos2) {
         mProfilesLocalDataSource.swap(pos1, pos2);
     }
 }

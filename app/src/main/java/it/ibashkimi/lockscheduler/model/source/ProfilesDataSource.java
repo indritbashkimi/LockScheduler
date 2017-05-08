@@ -30,8 +30,6 @@ public interface ProfilesDataSource {
 
     void delete(@NonNull String profileId);
 
-    void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile);
-
     void update(@NonNull Profile profile);
 
     void swap(int pos1, int pos2);

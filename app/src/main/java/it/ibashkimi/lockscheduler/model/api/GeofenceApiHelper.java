@@ -86,6 +86,7 @@ public class GeofenceApiHelper {
     }
 
     public void removeGeofence(final String id) {
+        Log.d(TAG, "removeGeofence() called with: id = [" + id + "]");
         mGoogleApiHandler.doJob(new Runnable() {
             @Override
             public void run() {

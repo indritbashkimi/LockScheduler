@@ -11,6 +11,8 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesRepository
 
 abstract class ConditionHandler(val repository: ProfilesRepository, val listener: ConditionChangeListener) {
 
+    private val TAG = "ConditionHandler"
+
     abstract val sharedPreferences: SharedPreferences
 
     abstract fun init()
@@ -22,29 +24,44 @@ abstract class ConditionHandler(val repository: ProfilesRepository, val listener
     protected fun addProfileId(profileId: String) {
         val profileIds = sharedPreferences.getStringSet("registered_profiles", mutableSetOf())
         if (profileIds.add(profileId))
-            sharedPreferences.edit().putStringSet("registered_profiles", profileIds).apply()
+            sharedPreferences.edit().putStringSet("registered_profiles", profileIds).commit()
     }
 
     protected fun removeProfileId(profileId: String) {
         val profileIds = sharedPreferences.getStringSet("registered_profiles", mutableSetOf())
         profileIds.remove(profileId)
-        sharedPreferences.edit().putStringSet("registered_profiles", profileIds).apply()
+        sharedPreferences.edit().putStringSet("registered_profiles", profileIds).commit()
     }
 
     protected fun getRegisteredProfiles(): MutableSet<String> {
-        return sharedPreferences.getStringSet("registered_profiles", mutableSetOf())
+        Log.d(TAG, "getRegisteredProfiles called()")
+        val res = sharedPreferences.getStringSet("registered_profiles", mutableSetOf())
+        Log.d(TAG, "result: size = ${res.size}")
+        for (item in res)
+            Log.d(TAG, "result: item $item")
+        return res
     }
 
     protected fun setRegisteredProfiles(profileIds: Set<String>) {
-        sharedPreferences.edit().putStringSet("registered_profiles", profileIds).apply()
+        Log.d(TAG, "setRegisteredProfiles() called.")
+        Log.d(TAG, "size = ${profileIds.size}")
+        for (item in profileIds)
+            Log.d(TAG, "item $item")
+        sharedPreferences.edit().putStringSet("registered_profiles", profileIds).commit()
     }
 
     protected fun getProfiles(profileIds: Set<String>): List<Profile> {
+        Log.d(TAG, "getProfiles() called.")
+        Log.d(TAG, "size = ${profileIds.size}")
+        for (item in profileIds)
+            Log.d(TAG, "item $item")
         val profiles = mutableListOf<Profile>()
         if (profileIds.isNotEmpty()) {
             for (id in profileIds) {
-                Log.d("ConditionHandler", "id = $id")
-                profiles.add(repository.get(id)!!)
+                Log.d(TAG, "get profile with id = $id")
+                val profile = repository.get(id)
+                Log.d(TAG, "profile = $profile")
+                profiles.add(profile!!)
             }
         }
         return profiles

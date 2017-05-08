@@ -94,7 +94,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
             throw new RuntimeException("updateProfile() was called but task is new.");
         }
         Profile newProfile = new Profile(
-                Long.toString(System.currentTimeMillis()),
+                mProfileId,
                 title,
                 conditions,
                 trueActions,

@@ -244,18 +244,21 @@ public class ConditionsFragment extends Fragment {
     }
 
     private void showPlaceCondition(FragmentTransaction transaction, PlaceCondition condition) {
+        placeConditionAdded = true;
         PlaceConditionFragment fragment = getPlaceConditionFragment();
         fragment.setData(condition);
         transaction.replace(R.id.place_condition_container, fragment, "place_condition");
     }
 
     private void showTimeCondition(FragmentTransaction transaction, TimeCondition condition) {
+        timeConditionAdded = true;
         TimeConditionFragment fragment = getTimeConditionFragment();
         fragment.setData(condition);
         transaction.replace(R.id.time_condition_container, fragment, "time_condition");
     }
 
     private void showWifiCondition(WifiCondition condition) {
+        wifiConditionAdded = true;
         wifiItems = condition.getNetworks();
         showWifiCondition(wifiItems);
     }

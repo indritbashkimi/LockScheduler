@@ -7,6 +7,7 @@ import it.ibashkimi.lockscheduler.model.*
 import it.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository
 import it.ibashkimi.lockscheduler.service.TransitionsIntentService
+import java.util.*
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@gmail.it)
@@ -32,8 +33,13 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
     }
 
     fun register(profile: Profile) {
-        val condition = getHighestPriorityCondition(profile.conditions)
-        register(profile, condition)
+        if (profile.isActive) {
+            for (condition in getConditionInversePriorityOrdered(profile.conditions))
+                register(profile, condition)
+        } else {
+            val condition = getHighestPriorityCondition(profile.conditions)
+            register(profile, condition)
+        }
     }
 
     private fun register(profile: Profile, condition: Condition) {
@@ -77,27 +83,6 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
         }
     }
 
-    fun substitute(newProfile: Profile, oldProfile: Profile) {
-        if (newProfile.id != oldProfile.id)
-            throw RuntimeException("ProfileScheduler.substitute: newProfile.id != oldProfile.id.")
-        //Unregister removed conditions
-        for (condition in oldProfile.conditions) {
-            if (newProfile.getCondition(condition.type) == null) {
-                unregister(oldProfile, condition)
-            }
-        }
-        // Register newly added conditions and update existing ones.
-        for (condition in newProfile.conditions) {
-            val oldCondition = oldProfile.getCondition(condition.type)
-            if (oldCondition == null) {
-                register(newProfile, condition)
-            } else {
-                condition.isTrue = oldCondition.isTrue
-                register(newProfile, condition)
-            }
-        }
-    }
-
     private fun getHighestPriorityCondition(conditions: List<Condition>): Condition {
         if (priorities.isEmpty()) {
             throw RuntimeException("Condition list cannot be empty.")
@@ -118,10 +103,11 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
         return null
     }
 
-    override fun notifyConditionChanged(profile: Profile, condition: Condition) {
-        Log.d(TAG, "notifyConditionChanged called with condition=$condition, profile=${profile.name}.")
+    fun notifyConditionRegistered(profile: Profile, condition: Condition) {
+        Log.d(TAG, "notifyConditionRegistered() called with condition: $condition")
         profile.save()
         if (condition.isTrue) {
+            Log.d(TAG, "condition is true")
             val nextCondition = getNextCondition(profile.conditions, condition)
             nextCondition?.let {
                 register(profile, nextCondition)
@@ -132,6 +118,26 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
                 notifyProfileStateChanged(profile)
             }
         } else {
+
+        }
+    }
+
+    override fun notifyConditionChanged(profile: Profile, condition: Condition) {
+        Log.d(TAG, "notifyConditionChanged called with condition=$condition, profile=${profile.name}.")
+        profile.save()
+        if (condition.isTrue) {
+            Log.d(TAG, "condition is true")
+            val nextCondition = getNextCondition(profile.conditions, condition)
+            nextCondition?.let {
+                register(profile, nextCondition)
+            }
+            if (!profile.isActive && profile.areConditionsTrue()) {
+                profile.isActive = true
+                profile.save()
+                notifyProfileStateChanged(profile)
+            }
+        } else {
+            Log.d(TAG, "condition is false")
             val nextConditions = getNextConditions(profile.conditions, condition)
             if (nextConditions.isNotEmpty()) {
                 for (nextCondition in nextConditions)
@@ -195,6 +201,19 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
 
     fun Profile.save() {
         profilesRepository.update(this)
+    }
+
+    private fun getConditionPriorityOrdered(conditions: List<Condition>): List<Condition> {
+        val result: ArrayList<Condition> = ArrayList(conditions.size)
+        result.add(getHighestPriorityCondition(conditions))
+        for (condition in getNextConditions(conditions, result[0])) {
+            result.add(condition)
+        }
+        return result
+    }
+
+    private fun getConditionInversePriorityOrdered(conditions: List<Condition>): List<Condition> {
+        return getConditionPriorityOrdered(conditions).asReversed()
     }
 
     companion object {

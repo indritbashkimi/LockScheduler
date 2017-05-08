@@ -44,6 +44,7 @@ class WifiConditionHandler(repository: ProfilesRepository, listener: ConditionCh
     }
 
     override fun unregister(profileId: String) {
+        Log.d(TAG, "unregister() called with profileId $profileId")
         removeProfileId(profileId)
     }
 
