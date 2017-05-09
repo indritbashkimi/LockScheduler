@@ -1,15 +1,20 @@
 package it.ibashkimi.lockscheduler.addeditprofile.conditions;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import butterknife.BindView;
@@ -111,34 +116,15 @@ public class TimeConditionFragment extends Fragment {
     public void showWeekDays() {
         if (days == null)
             days = new boolean[]{true, true, true, true, true, true, true};
-        int size = 0;
-        for (boolean day : days)
-            if (day) size++;
-        Integer[] selectedIndices = new Integer[size];
-        int j = 0;
-        for (int i = 0; i < days.length; i++) {
-            if (days[i]) {
-                selectedIndices[j] = i;
-                j++;
-            }
-        }
-        new MaterialDialog.Builder(getContext())
-                .title(R.string.time_condition_title)
-                .items(R.array.days_of_week)
-                .itemsCallbackMultiChoice(selectedIndices, new MaterialDialog.ListCallbackMultiChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                        days = new boolean[]{false, false, false, false, false, false, false};
-                        for (Integer i : which)
-                            days[i] = true;
-                        TimeCondition timeCondition = new TimeCondition(days);
-                        daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
-                        return true;
-                    }
-                })
-                .positiveText(R.string.ok)
-                .negativeText(R.string.cancel)
-                .show();
+        DaysPickerDialogFragment dialogFragment = new DaysPickerDialogFragment();
+        dialogFragment.setDays(days);
+        dialogFragment.show(getChildFragmentManager(), "days_picker");
+    }
+
+    public void onDaysSelected(boolean[] days) {
+        this.days = days.clone();
+        TimeCondition timeCondition = new TimeCondition(days);
+        daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
     }
 
     @OnClick(R.id.start_time)
@@ -189,5 +175,59 @@ public class TimeConditionFragment extends Fragment {
             condition = new TimeCondition();
         }
         return condition;
+    }
+
+
+    public static class DaysPickerDialogFragment extends DialogFragment {
+
+        private TimeConditionFragment listener;
+        private boolean[] days;
+
+        public void setDays(boolean[] days) {
+            this.days = days;
+        }
+
+        @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            Fragment parent = getParentFragment();
+            if (parent == null || !(parent instanceof TimeConditionFragment)) {
+                throw new ClassCastException("Parent fragment must be TimeConditionFragment.");
+            }
+            listener = (TimeConditionFragment) parent;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            if (savedInstanceState != null) {
+                days = new boolean[7];
+                for (int i = 0; i < 7; i++)
+                    days[i] = savedInstanceState.getBoolean("day_" + i);
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.time_condition_title);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    listener.onDaysSelected(days);
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.setMultiChoiceItems(R.array.days_of_week, days, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                    days[which] = isChecked;
+                }
+            });
+            return builder.create();
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            for (int i = 0; i < 7; i++)
+                outState.putBoolean("day_" + i, days[i]);
+        }
     }
 }

@@ -30,8 +30,8 @@
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="auto">Auto</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="ok">@android:string/ok</string>
     <string name="website">Website</string>
     <string name="profile_name">Profile name</string>
     <string name="profile_title">Profile</string>
