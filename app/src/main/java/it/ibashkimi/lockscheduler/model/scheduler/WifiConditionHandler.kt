@@ -18,14 +18,12 @@ class WifiConditionHandler(repository: ProfilesRepository, listener: ConditionCh
     override val sharedPreferences = App.getInstance().getSharedPreferences("wifi_condition_handler", Context.MODE_PRIVATE)!!
 
     override fun init() {
-        for (profile in getProfiles(getRegisteredProfiles()))
+        for (profile in getRegisteredProfiles())
             register(profile)
     }
 
     override fun register(profile: Profile) {
-        val registeredProfileIds = getRegisteredProfiles()
-        if (registeredProfileIds.add(profile.id)) {
-            setRegisteredProfiles(registeredProfileIds)
+        if (add(profile.id)) {
             var wifiItem: WifiItem? = null
             val wifiManager = App.getInstance().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
             if (wifiManager != null) {
@@ -45,12 +43,12 @@ class WifiConditionHandler(repository: ProfilesRepository, listener: ConditionCh
 
     override fun unregister(profileId: String) {
         Log.d(TAG, "unregister() called with profileId $profileId")
-        removeProfileId(profileId)
+        remove(profileId)
     }
 
     fun onWifiChanged(wifiItem: WifiItem?) {
         Log.d(TAG, "onWifiChanged() called with: wifiItem = [$wifiItem]")
-        for (profile in getProfiles(getRegisteredProfiles())) {
+        for (profile in getRegisteredProfiles()) {
             val condition = profile.getCondition(Condition.Type.WIFI) as WifiCondition
             val isTrue = condition.isTrue
             if (wifiItem == null) {

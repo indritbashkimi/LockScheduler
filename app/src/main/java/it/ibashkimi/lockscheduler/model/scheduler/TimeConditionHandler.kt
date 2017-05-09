@@ -27,15 +27,13 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
 
     override fun init() {
         Log.d(TAG, "init() called.")
-        for (profile in getProfiles(getRegisteredProfiles()))
+        for (profile in getRegisteredProfiles())
             register(profile)
     }
 
     override fun register(profile: Profile) {
         Log.d(TAG, "register() called with profile: $profile.")
-        val registeredProfileIds = getRegisteredProfiles()
-        if (registeredProfileIds.add(profile.id)) {
-            setRegisteredProfiles(registeredProfileIds)
+        if (add(profile.id)) {
             val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
             doAlarmJob(profile, condition)
         }
@@ -43,7 +41,7 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
 
     override fun unregister(profileId: String) {
         Log.d(TAG, "unregister() called with profileId = $profileId.")
-        removeProfileId(profileId)
+        remove(profileId)
         cancelAlarm(profileId)
     }
 

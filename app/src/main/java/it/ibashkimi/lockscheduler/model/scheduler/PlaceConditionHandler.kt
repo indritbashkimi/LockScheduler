@@ -20,32 +20,19 @@ class PlaceConditionHandler(val geofenceApiHelper: GeofenceApiHelper, repository
     override val sharedPreferences = App.getInstance().getSharedPreferences("place_condition_handler", Context.MODE_PRIVATE)!!
 
     override fun init() {
-        geofenceApiHelper.initGeofences(getProfiles(getRegisteredProfiles()))
+        geofenceApiHelper.initGeofences(getRegisteredProfiles())
     }
 
     override fun register(profile: Profile) {
         Log.d(TAG, "register() called with profile $profile")
-        val registeredProfileIds = getRegisteredProfiles()
-        printIds(registeredProfileIds)
-        if (registeredProfileIds.add(profile.id)) {
-            Log.d(TAG, "adding new profile with id = ${profile.id}")
-            setRegisteredProfiles(registeredProfileIds)
-            Log.d(TAG, "now registered profiles are:")
-            printIds(registeredProfileIds)
-            Log.d(TAG, "lets try reading again:")
-            printIds(getRegisteredProfiles())
-            geofenceApiHelper.initGeofences(getProfiles(getRegisteredProfiles()))
+        if (add(profile.id)) {
+            geofenceApiHelper.initGeofences(getRegisteredProfiles())
         }
     }
 
-    private fun printIds(ids: Set<String>) {
-        Log.d(TAG, "ids.size = ${ids.size}")
-        for (id in ids)
-            Log.d(TAG, "id: $id")
-    }
     override fun unregister(profileId: String) {
         Log.d(TAG, "unregister() called with profile $profileId")
-        removeProfileId(profileId)
+        remove(profileId)
         geofenceApiHelper.removeGeofence(profileId)
     }
 
