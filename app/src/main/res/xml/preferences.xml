@@ -12,27 +12,17 @@
             android:summary="%s"
             android:title="@string/pref_title_night_mode" />
 
-        <it.ibashkimi.support.design.preference.ThemePreference
+        <android.support.v7.preference.Preference
             android:key="theme"
-            android:title="@string/pref_title_theme"
-            android:positiveButtonText="@null"
-            android:negativeButtonText="Cancel"/>
+            android:title="@string/pref_title_theme" />
 
         <android.support.v7.preference.ListPreference
-            android:defaultValue="hybrid"
+            android:defaultValue="normal"
             android:entries="@array/pref_map_style_human"
             android:entryValues="@array/pref_map_style_value"
             android:key="map_style"
             android:summary="%s"
             android:title="@string/pref_title_map_style" />
-
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_profile_item_layout_human"
-            android:entryValues="@array/pref_profile_item_layout_value"
-            android:key="item_layout"
-            android:summary="%s"
-            android:title="@string/pref_appearance_profile_item_layout" />
 
         <android.support.v7.preference.CheckBoxPreference
             android:defaultValue="false"
@@ -55,6 +45,7 @@
 
         <android.support.v7.preference.EditTextPreference
             android:defaultValue="4"
+            android:dialogLayout="@layout/pref_dialog_edit_text_fix"
             android:dialogTitle="@string/pref_min_password_length_dialog_title"
             android:key="min_password_length"
             android:numeric="integer"
@@ -63,11 +54,12 @@
 
         <android.support.v7.preference.EditTextPreference
             android:defaultValue="4"
-            android:dialogTitle="@string/pref_min_password_length_dialog_title"
+            android:dialogLayout="@layout/pref_dialog_edit_text_fix"
+            android:dialogTitle="@string/pref_min_pin_length_dialog_title"
             android:key="min_pin_length"
             android:numeric="integer"
             android:summary="%s"
-            android:title="@string/pref_title_min_password_length" />
+            android:title="@string/pref_title_min_pin_length" />
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="0"
@@ -104,17 +96,13 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_backup">
 
-        <android.support.v7.preference.Preference android:title="@string/pref_title_backup">
-            <intent android:action="android.settings.SYNC_SETTINGS" />
-        </android.support.v7.preference.Preference>
+        <android.support.v7.preference.Preference
+            android:key="backup"
+            android:title="@string/pref_title_backup" />
 
-        <android.support.v7.preference.Preference android:title="@string/pref_title_restore">
-            <intent android:action="android.settings.SYNC_SETTINGS" />
-        </android.support.v7.preference.Preference>
-
-        <android.support.v7.preference.Preference android:title="@string/pref_title_reset">
-            <intent android:action="android.settings.SYNC_SETTINGS" />
-        </android.support.v7.preference.Preference>
+        <android.support.v7.preference.Preference
+            android:key="restore"
+            android:title="@string/pref_title_restore" />
 
     </android.support.v7.preference.PreferenceCategory>
 

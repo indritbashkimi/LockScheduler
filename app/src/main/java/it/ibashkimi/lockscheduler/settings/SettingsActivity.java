@@ -35,7 +35,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new MaterialDialogsSettingsFragment())
+                    .replace(R.id.container, new SettingsFragment())
                     .commit();
         }
     }
