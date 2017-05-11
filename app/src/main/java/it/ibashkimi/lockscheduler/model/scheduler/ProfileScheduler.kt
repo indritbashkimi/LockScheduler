@@ -107,7 +107,6 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
         Log.d(TAG, "notifyConditionRegistered() called with condition: $condition")
         profile.save()
         if (condition.isTrue) {
-            Log.d(TAG, "condition is true")
             val nextCondition = getNextCondition(profile.conditions, condition)
             nextCondition?.let {
                 register(profile, nextCondition)
@@ -126,7 +125,6 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
         Log.d(TAG, "notifyConditionChanged called with condition=$condition, profile=${profile.name}.")
         profile.save()
         if (condition.isTrue) {
-            Log.d(TAG, "condition is true")
             val nextCondition = getNextCondition(profile.conditions, condition)
             nextCondition?.let {
                 register(profile, nextCondition)
@@ -137,7 +135,6 @@ class ProfileScheduler private constructor(val geofenceApiHelper: GeofenceApiHel
                 notifyProfileStateChanged(profile)
             }
         } else {
-            Log.d(TAG, "condition is false")
             val nextConditions = getNextConditions(profile.conditions, condition)
             if (nextConditions.isNotEmpty()) {
                 for (nextCondition in nextConditions)

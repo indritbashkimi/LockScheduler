@@ -158,7 +158,6 @@ public class LicensesFragment extends Fragment {
     }
 
     private static class LibraryHolder extends RecyclerView.ViewHolder {
-
         TextView name;
         TextView link;
         TextView licence;

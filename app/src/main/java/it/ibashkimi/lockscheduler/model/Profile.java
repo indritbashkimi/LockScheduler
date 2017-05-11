@@ -17,10 +17,13 @@ public class Profile {
     private String id;
 
     private String name;
+
     @NonNull
     private List<Condition> conditions;
+
     @NonNull
     private List<Action> enterActions;
+
     @NonNull
     private List<Action> exitActions;
 
@@ -73,10 +76,6 @@ public class Profile {
     }
 
     public void setName(@NonNull String name) {
-        setName(name, false);
-    }
-
-    public void setName(@NonNull String name, boolean auto) {
         this.name = name;
     }
 
@@ -105,14 +104,6 @@ public class Profile {
 
     public void setExitActions(@NonNull List<Action> exitActions) {
         this.exitActions = exitActions;
-    }
-
-    public void update(Profile profile) {
-        name = profile.getName();
-        active = profile.isActive();
-        conditions = profile.getConditions();
-        enterActions = profile.getEnterActions();
-        exitActions = profile.getExitActions();
     }
 
     @Nullable
@@ -157,6 +148,6 @@ public class Profile {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, enterActions=%d, exitActions=%d}", id, name, conditions.size(), enterActions.size(), exitActions.size());
+        return String.format(Locale.ENGLISH, "Profile[id=%s, name=%s, conditions=%d, enterActions=%d, exitActions=%d]", id, name, conditions.size(), enterActions.size(), exitActions.size());
     }
 }

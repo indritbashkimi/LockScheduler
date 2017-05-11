@@ -46,17 +46,11 @@ abstract class ConditionHandler(val repository: ProfilesRepository, val listener
     protected fun getRegisteredIds(): Set<String> {
         Log.d(TAG, "getRegisteredIds called()")
         val res: Set<String> = sharedPreferences.getStringSet("registered_profiles", mutableSetOf())
-        Log.d(TAG, "result: size = ${res.size}")
-        for (item in res)
-            Log.d(TAG, "result: item $item")
         return res
     }
 
     protected fun setRegisteredIds(profileIds: Set<String>) {
         Log.d(TAG, "setRegisteredIds() called.")
-        Log.d(TAG, "size = ${profileIds.size}")
-        for (item in profileIds)
-            Log.d(TAG, "item $item")
         sharedPreferences.edit().putStringSet("registered_profiles", profileIds).commit()
     }
 

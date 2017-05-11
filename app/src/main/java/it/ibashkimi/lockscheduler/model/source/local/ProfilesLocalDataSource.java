@@ -42,21 +42,17 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     public List<Profile> getProfiles() {
         List<String> ids = restoreProfileIds();
         ArrayList<Profile> profiles;
-        if (ids != null) {
-            profiles = new ArrayList<>(ids.size());
-            for (String profileId : ids) {
-                try {
-                    Profile profile = ProfileSerializer.parseJson(sharedPreferences.getString(profileId, null));
-                    if (profile == null)
-                        throw new RuntimeException("Profile cannot be null. Data may be corrupted.");
-                    profiles.add(profile);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("Cannot parse profile.");
-                }
+        profiles = new ArrayList<>(ids.size());
+        for (String profileId : ids) {
+            try {
+                Profile profile = ProfileSerializer.parseJson(sharedPreferences.getString(profileId, null));
+                if (profile == null)
+                    throw new RuntimeException("Profile cannot be null. Data may be corrupted.");
+                profiles.add(profile);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Cannot parse profile.");
             }
-        } else {
-            profiles = new ArrayList<>(0);
         }
         return profiles;
     }
@@ -69,13 +65,10 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         if (json != null) {
             try {
                 profile = ProfileSerializer.parseJson(json);
-                Log.d(TAG, "Profile parsed correctly.");
             } catch (JSONException e) {
-                Log.e(TAG, "cannot parse json.");
                 e.printStackTrace();
             }
         }
-        Log.d(TAG, "get() returned: " + profile);
         return profile;
     }
 
@@ -85,7 +78,6 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         List<String> ids = restoreProfileIds();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (!ids.contains(profile.getId())) {
-            Log.d(TAG, "ids don't contain profileId. OK");
             ids.add(profile.getId());
             editor.putString("ids", idsToJsonArray(ids));
             Log.d(TAG, "Profile saved.");
@@ -128,17 +120,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
     public void delete(@NonNull String profileId) {
         Log.d(TAG, "delete() called with: profileId = [" + profileId + "]");
         List<String> ids = restoreProfileIds();
-
-        Log.d(TAG, "ids.size = " + ids.size());
-        for (String id : ids) {
-            Log.d(TAG, "ids id = " + id);
-        }
         ids.remove(profileId);
-        Log.d(TAG, "After remove");
-        Log.d(TAG, "ids.size = " + ids.size());
-        for (String id : ids) {
-            Log.d(TAG, "ids id = " + id);
-        }
         sharedPreferences.edit()
                 .putString("ids", idsToJsonArray(ids))
                 .remove(profileId)

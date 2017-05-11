@@ -57,7 +57,6 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
         val isTrue = condition.isTrue
         val now = Calendar.getInstance().timeInMillis
         val shouldBeActive = shouldBeActive(now, condition)
-        Log.d(TAG, "shouldBeActive = $shouldBeActive")
         condition.isTrue = shouldBeActive
         if (condition.isTrue != isTrue)
             listener.notifyConditionChanged(profile, condition)
@@ -67,7 +66,6 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
     }
 
     fun shouldBeActive(currTime: Long, condition: TimeCondition): Boolean {
-        Log.d(TAG, "shouldBeActive() called with currTime=$currTime condition=$condition")
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = currTime
         var dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)

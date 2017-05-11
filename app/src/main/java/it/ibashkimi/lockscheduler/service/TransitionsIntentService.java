@@ -24,7 +24,7 @@ import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
  * <p>
  */
 public class TransitionsIntentService extends IntentService {
-    private static final String TAG = "GeofenceTransitionsInte";
+    private static final String TAG = "TransitionsIntent";
 
     private SharedPreferences mSharedPreferences;
 
