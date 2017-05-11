@@ -42,6 +42,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
     private var radiusView: TextView? = null
 
     private var googleMap: GoogleMap? = null
+    private var mapType = GoogleMap.MAP_TYPE_NORMAL
 
     private var center: LatLng? = null
     private var address: CharSequence? = null
@@ -71,6 +72,16 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                     center = LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"))
                 if (extras.containsKey("radius"))
                     radius = extras.getInt("radius").toFloat()
+                if (extras.containsKey("map_type")) {
+                    mapType = when(extras.getString("map_type")) {
+                        "none" -> GoogleMap.MAP_TYPE_NONE
+                        "normal" -> GoogleMap.MAP_TYPE_NORMAL
+                        "satellite" -> GoogleMap.MAP_TYPE_SATELLITE
+                        "hybrid" -> GoogleMap.MAP_TYPE_HYBRID
+                        "terrain" -> GoogleMap.MAP_TYPE_TERRAIN
+                        else -> throw IllegalArgumentException("Unknown map type ${extras.getString("map_type")}")
+                    }
+                }
             }
         } else {
             center = savedInstanceState.getParcelable<LatLng>("center")
@@ -134,7 +145,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
-        googleMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+        googleMap.mapType = this.mapType
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -249,7 +260,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 AlertDialog.Builder(this)
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK") { _, _ ->
+                        .setPositiveButton(R.string.ok) { _, _ ->
                             //Prompt the user once explanation has been shown
                             ActivityCompat.requestPermissions(this@PlacePickerActivity,
                                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

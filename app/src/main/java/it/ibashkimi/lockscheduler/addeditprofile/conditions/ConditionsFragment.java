@@ -1,9 +1,11 @@
 package it.ibashkimi.lockscheduler.addeditprofile.conditions;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -42,11 +44,20 @@ public class ConditionsFragment extends Fragment {
 
     private static final String TAG = "ConditionsFragment";
 
+    @BindView(R.id.place_layout)
+    ViewGroup placeLayout;
+
     @BindView(R.id.place_delete)
     View placeDelete;
 
+    @BindView(R.id.time_layout)
+    ViewGroup timeLayout;
+
     @BindView(R.id.time_delete)
     View timeDelete;
+
+    @BindView(R.id.wifi_layout)
+    ViewGroup wifiLayout;
 
     @BindView(R.id.wifi_body)
     View wifiBody;
@@ -169,6 +180,8 @@ public class ConditionsFragment extends Fragment {
         intent.putExtra("latitude", placeCondition.getPlace().latitude);
         intent.putExtra("longitude", placeCondition.getPlace().longitude);
         intent.putExtra("radius", placeCondition.getRadius());
+        intent.putExtra("map_type", getContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+                .getString("map_style", "normal"));
         startActivityForResult(intent, PLACE_PICKER_REQUEST);
     }
 
@@ -225,11 +238,13 @@ public class ConditionsFragment extends Fragment {
     @OnClick(R.id.place_layout)
     public void onPlaceLayoutClick() {
         placeConditionAdded = true;
+        TransitionManager.beginDelayedTransition(placeLayout);
         showPlacePicker();
     }
 
     @OnClick(R.id.place_delete)
     public void onPlaceDeleteClick() {
+        TransitionManager.beginDelayedTransition(placeLayout);
         placeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getPlaceConditionFragment()).commit();
         placeDelete.setVisibility(View.GONE);
@@ -238,6 +253,7 @@ public class ConditionsFragment extends Fragment {
     @OnClick(R.id.time_layout)
     public void onTimeLayoutClick() {
         timeConditionAdded = true;
+        TransitionManager.beginDelayedTransition(placeLayout);
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.time_condition_container, getTimeConditionFragment(), "time_condition")
@@ -247,6 +263,7 @@ public class ConditionsFragment extends Fragment {
 
     @OnClick(R.id.time_delete)
     public void onTimeDeleteClick() {
+        TransitionManager.beginDelayedTransition(placeLayout);
         timeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getTimeConditionFragment()).commit();
         timeDelete.setVisibility(View.GONE);
@@ -255,11 +272,13 @@ public class ConditionsFragment extends Fragment {
     @OnClick({R.id.wifi_layout, R.id.wifi_body})
     public void onWifiLayoutClicked() {
         wifiConditionAdded = true;
+        TransitionManager.beginDelayedTransition(placeLayout);
         showWifiPicker(wifiItems);
     }
 
     @OnClick(R.id.wifi_delete)
     public void onWifiDeleteClicked() {
+        TransitionManager.beginDelayedTransition(placeLayout);
         wifiConditionAdded = false;
         //fragmentManager.beginTransaction().remove(getWifiConditionFragment()).commit();
         wifiDelete.setVisibility(View.GONE);

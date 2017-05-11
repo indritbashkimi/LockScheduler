@@ -15,10 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:fontFamily="sans-serif-medium"
         android:maxLines="2"
-        android:textSize="14sp"
-        android:visibility="visible"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         tools:text="Via Gramsci 14, Villa Verucchio" />
 
     <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -64,10 +62,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:gravity="center_horizontal"
-        android:fontFamily="sans-serif-medium"
         android:maxLines="2"
-        android:textSize="14sp"
-        android:visibility="visible"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="300 m" />
 
 </LinearLayout>

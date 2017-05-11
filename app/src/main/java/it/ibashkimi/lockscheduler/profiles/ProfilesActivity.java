@@ -48,7 +48,7 @@ public class ProfilesActivity extends BaseActivity {
             prefs.edit().putBoolean("first_run", false).apply();
         }
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_profiles);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -34,15 +34,6 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_general">
 
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_loitering_delay_titles"
-            android:entryValues="@array/pref_loitering_delay_values"
-            android:key="loitering_delay"
-            android:positiveButtonText="@null"
-            android:summary="%s"
-            android:title="@string/pref_title_loitering_delay" />
-
         <android.support.v7.preference.EditTextPreference
             android:defaultValue="4"
             android:dialogLayout="@layout/pref_dialog_edit_text_fix"
@@ -60,15 +51,6 @@
             android:numeric="integer"
             android:summary="%s"
             android:title="@string/pref_title_min_pin_length" />
-
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_password_expiration_timeout_titles"
-            android:entryValues="@array/pref_password_expiration_timeout_values"
-            android:key="password_expiration"
-            android:positiveButtonText="@null"
-            android:summary="%s"
-            android:title="@string/pref_title_password_expiration" />
 
     </android.support.v7.preference.PreferenceCategory>
 
@@ -103,6 +85,28 @@
         <android.support.v7.preference.Preference
             android:key="restore"
             android:title="@string/pref_title_restore" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_advanced">
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_loitering_delay_titles"
+            android:entryValues="@array/pref_loitering_delay_values"
+            android:key="loitering_delay"
+            android:positiveButtonText="@null"
+            android:summary="%s"
+            android:title="@string/pref_title_loitering_delay" />
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_password_expiration_timeout_titles"
+            android:entryValues="@array/pref_password_expiration_timeout_values"
+            android:key="password_expiration"
+            android:positiveButtonText="@null"
+            android:summary="%s"
+            android:title="@string/pref_title_password_expiration" />
 
     </android.support.v7.preference.PreferenceCategory>
 

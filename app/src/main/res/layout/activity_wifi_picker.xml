@@ -19,7 +19,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,12 +42,21 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <!--<Button
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="8dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_gravity="bottom"
+        android:text="Save"/>-->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:tint="?attr/fabTint"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_done" />
 

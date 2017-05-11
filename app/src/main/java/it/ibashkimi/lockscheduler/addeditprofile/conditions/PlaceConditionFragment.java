@@ -88,7 +88,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
         circleColor = ThemeUtils.getColorFromAttribute(getContext(), R.attr.colorPrimary);
         fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
         mapStyle = MapUtils.resolveMapStyle(getContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-                .getInt("map_style", 0));
+                .getString("map_style", "normal"));
     }
 
     @Nullable

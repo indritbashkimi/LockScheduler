@@ -81,15 +81,21 @@ public class TimeConditionFragment extends Fragment {
                 for (int i = 0; i < 7; i++)
                     days[i] = savedInstanceState.getBoolean("days_" + i);
             }
+        } else {
+            if (days == null)
+                days = new boolean[]{true, true, true, true, true, true, true};
+            if (startTime == null) {
+                startTime = new TimeCondition.Time(0, 0);
+            }
+            if (endTime == null) {
+                endTime = new TimeCondition.Time(0, 0);
+            }
+
         }
-        if (days != null) {
-            TimeCondition timeCondition = new TimeCondition(days);
-            daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
-        }
-        if (startTime != null)
-            startTimeSummary.setText(Utils.formatTime(startTime.hour, startTime.minute));
-        if (endTime != null)
-            endTimeSummary.setText(Utils.formatTime(endTime.hour, endTime.minute));
+        TimeCondition timeCondition = new TimeCondition(days);
+        daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
+        startTimeSummary.setText(Utils.formatTime(startTime.hour, startTime.minute));
+        endTimeSummary.setText(Utils.formatTime(endTime.hour, endTime.minute));
 
 
         return root;
@@ -114,8 +120,6 @@ public class TimeConditionFragment extends Fragment {
 
     @OnClick(R.id.days)
     public void showWeekDays() {
-        if (days == null)
-            days = new boolean[]{true, true, true, true, true, true, true};
         DaysPickerDialogFragment dialogFragment = new DaysPickerDialogFragment();
         dialogFragment.setDays(days);
         dialogFragment.show(getChildFragmentManager(), "days_picker");
@@ -167,6 +171,7 @@ public class TimeConditionFragment extends Fragment {
         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
                 callback,
                 true);
+        timePickerDialog.setThemeDark(isNight());
         timePickerDialog.show(getActivity().getFragmentManager(), "time_picker_dialog");
     }
 
@@ -175,6 +180,10 @@ public class TimeConditionFragment extends Fragment {
             condition = new TimeCondition();
         }
         return condition;
+    }
+
+    public boolean isNight() {
+        return getResources().getBoolean(R.bool.night_mode);
     }
 
 

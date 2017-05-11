@@ -64,7 +64,10 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
         if (profiles == null) {
             profilesView.showLoadingProfilesError();
         } else {
-            profilesView.showProfiles(profiles);
+            if (profiles.size() == 0)
+                profilesView.showNoProfiles();
+            else
+                profilesView.showProfiles(profiles);
         }
     }
 

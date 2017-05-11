@@ -65,28 +65,28 @@ abstract class ConditionHandler(val repository: ProfilesRepository, val listener
         val profileIds = getRegisteredIds()
         printIdsForDebug(profileIds)
         val profiles = mutableListOf<Profile>()
-        //val idsToRemove = mutableListOf<String>()
+        val idsToRemove = mutableListOf<String>()
         if (profileIds.isNotEmpty()) {
             for (id in profileIds) {
                 Log.d(TAG, "get profile with id = $id")
                 val profile = repository.get(id)
                 Log.d(TAG, "profile = $profile")
-                profiles.add(profile!!)
-                /*if (profile == null) {
-                    //idsToRemove.add(id)
+                // profiles.add(profile!!)
+                if (profile == null) {
+                    idsToRemove.add(id)
                     Log.e(TAG, "Profile $id is null. Data corruption. Doing cleanup.")
                 } else {
                     profiles.add(profile)
-                }*/
+                }
             }
         }
-        /*if (idsToRemove.isNotEmpty()) {
+        if (idsToRemove.isNotEmpty()) {
             val finalProfileIds = mutableListOf<String>()
             finalProfileIds.addAll(profileIds)
             for (id in idsToRemove)
                 finalProfileIds.remove(id)
             setRegisteredIds(finalProfileIds.toSet())
-        }*/
+        }
 
         return profiles
     }

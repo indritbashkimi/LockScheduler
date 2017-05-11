@@ -16,15 +16,15 @@ public class MapUtils {
                 include(SphericalUtil.computeOffset(center, radius, 270)).build();
     }
 
-    public static int resolveMapStyle(int mapStyle) {
+    public static int resolveMapStyle(String mapStyle) {
         switch (mapStyle) {
-            case 0:
+            case "normal":
                 return GoogleMap.MAP_TYPE_NORMAL;
-            case 1:
+            case "satellite":
                 return GoogleMap.MAP_TYPE_SATELLITE;
-            case 2:
+            case "hybrid":
                 return GoogleMap.MAP_TYPE_HYBRID;
-            case 3:
+            case "terrain":
                 return GoogleMap.MAP_TYPE_TERRAIN;
             default:
                 return GoogleMap.MAP_TYPE_HYBRID;
