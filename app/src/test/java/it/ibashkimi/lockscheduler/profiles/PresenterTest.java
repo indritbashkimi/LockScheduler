@@ -70,11 +70,6 @@ public class PresenterTest {
         }
 
         @Override
-        public void substitute(@NonNull Profile newProfile, @Nullable Profile oldProfile) {
-
-        }
-
-        @Override
         public void update(Profile profile) {
 
         }
@@ -135,7 +130,7 @@ public class PresenterTest {
         }
 
         @Override
-        public void showSuccessfullyRemovedMessage(int profilesRemoved) {
+        public void showSuccessfullyRemovedMessage() {
 
         }
 

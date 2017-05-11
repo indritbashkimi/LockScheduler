@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.LockAction;
-import it.ibashkimi.lockscheduler.model.LockMode;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
@@ -35,7 +34,8 @@ public class ActionSerializer {
         JSONObject json = new JSONObject();
         try {
             json.put("type", action.getType());
-            json.put("lock_mode", action.getLockMode().toJson());
+            json.put("lockType", "" + action.getLockType());
+            json.put("input", action.getInput());
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -48,8 +48,8 @@ public class ActionSerializer {
     }
 
     public static LockAction parseLockAction(JSONObject jsonObject) throws JSONException {
-        //@Type int type = json.getInt("type");
-        LockMode lockMode = LockMode.parseJson(jsonObject.getString("lock_mode"));
-        return new LockAction(lockMode);
+        @LockAction.LockType int lockType = Integer.parseInt(jsonObject.getString("lockType"));
+        String input = jsonObject.getString("input");
+        return new LockAction(lockType, input);
     }
 }

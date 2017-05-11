@@ -17,7 +17,7 @@ import butterknife.OnClick;
 import butterknife.OnLongClick;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Condition;
-import it.ibashkimi.lockscheduler.model.LockMode;
+import it.ibashkimi.lockscheduler.model.LockAction;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileUtils;
@@ -154,8 +154,8 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             } else {
                 name.setVisibility(View.GONE);
             }
-            enterLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockMode().getLockType()));
-            exitLock.setText(LockMode.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockMode().getLockType()));
+            enterLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockType()));
+            exitLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockType()));
             PlaceCondition placeCondition = getPlaceCondition(profile);
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());

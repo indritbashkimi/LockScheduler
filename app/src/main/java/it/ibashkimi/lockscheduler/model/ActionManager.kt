@@ -21,11 +21,11 @@ class ActionManager private constructor() {
     @Synchronized fun performAction(action: Action) {
         if (action !is LockAction)
             throw RuntimeException("Unknown actions: $action. Only LockAction is supported atm.")
-        when (action.lockMode.lockType) {
-            LockMode.LockType.PASSWORD -> lockManager.setPassword(action.lockMode.input)
-            LockMode.LockType.PIN -> lockManager.setPin(action.lockMode.input)
-            LockMode.LockType.SWIPE -> lockManager.resetPassword()
-            LockMode.LockType.UNCHANGED -> { /* Do nothing */
+        when (action.lockType) {
+            LockAction.LockType.PASSWORD -> lockManager.setPassword(action.input)
+            LockAction.LockType.PIN -> lockManager.setPin(action.input)
+            LockAction.LockType.SWIPE -> lockManager.resetPassword()
+            LockAction.LockType.UNCHANGED -> { /* Do nothing */
             }
         }
     }

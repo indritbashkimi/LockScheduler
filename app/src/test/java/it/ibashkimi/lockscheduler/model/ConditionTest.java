@@ -43,11 +43,6 @@ public class ConditionTest {
         ConditionImpl(int type) {
             super(type);
         }
-
-        @Override
-        public String toJson() {
-            return null;
-        }
     }
 
 }
