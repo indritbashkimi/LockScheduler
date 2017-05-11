@@ -1,8 +1,5 @@
 package it.ibashkimi.lockscheduler.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -102,6 +99,7 @@ public class TimeCondition extends Condition {
         public static Time now() {
             return fromTimeStamp(System.currentTimeMillis());
         }
+
         public static Time fromTimeStamp(long timeStamp) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(timeStamp);
@@ -212,7 +210,7 @@ public class TimeCondition extends Condition {
 
     @Override
     public String toString() {
-        return "TimeCondition[" + daysActive[0] + daysActive[1] +daysActive[2]+daysActive[3]+daysActive[4]+daysActive[5]+daysActive[6] + ", startTime=" + startTime + ", endTime=" + endTime + "]";
+        return "TimeCondition[" + daysActive[0] + daysActive[1] + daysActive[2] + daysActive[3] + daysActive[4] + daysActive[5] + daysActive[6] + ", startTime=" + startTime + ", endTime=" + endTime + "]";
     }
 
     @Override
@@ -225,38 +223,5 @@ public class TimeCondition extends Condition {
                 return false;
         }
         return condition.startTime.equals(startTime) && condition.endTime.equals(endTime);
-    }
-
-    @Override
-    public String toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("type", getType());
-            jsonObject.put("true", isTrue());
-            for (int i = 0; i < 7; i++) {
-                jsonObject.put("day_" + i, daysActive[i]);
-            }
-            jsonObject.put("start_time_hour", startTime.hour);
-            jsonObject.put("start_time_minute", startTime.minute);
-            jsonObject.put("end_time_hour", endTime.hour);
-            jsonObject.put("end_time_minute", endTime.minute);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return "";
-        }
-        return jsonObject.toString();
-    }
-
-    public static TimeCondition parseJson(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        boolean[] daysActive = new boolean[7];
-        for (int i = 0; i < 7; i++) {
-            daysActive[i] = jsonObject.getBoolean("day_" + i);
-        }
-        Time startTime = new Time(jsonObject.getInt("start_time_hour"), jsonObject.getInt("start_time_minute"));
-        Time endTime = new Time(jsonObject.getInt("end_time_hour"), jsonObject.getInt("end_time_minute"));
-        TimeCondition timeCondition = new TimeCondition(daysActive, startTime, endTime);
-        timeCondition.setTrue(jsonObject.getBoolean("true"));
-        return timeCondition;
     }
 }

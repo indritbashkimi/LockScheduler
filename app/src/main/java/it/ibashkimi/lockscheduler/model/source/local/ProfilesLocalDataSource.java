@@ -14,6 +14,7 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
+import it.ibashkimi.lockscheduler.model.source.serializer.ProfileSerializer;
 
 /**
  * Concrete implementation of a data source as a db.
@@ -45,7 +46,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
             profiles = new ArrayList<>(ids.size());
             for (String profileId : ids) {
                 try {
-                    Profile profile = Profile.parseJson(sharedPreferences.getString(profileId, null));
+                    Profile profile = ProfileSerializer.parseJson(sharedPreferences.getString(profileId, null));
                     if (profile == null)
                         throw new RuntimeException("Profile cannot be null. Data may be corrupted.");
                     profiles.add(profile);
@@ -67,7 +68,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         String json = sharedPreferences.getString(profileId, null);
         if (json != null) {
             try {
-                profile = Profile.parseJson(json);
+                profile = ProfileSerializer.parseJson(json);
                 Log.d(TAG, "Profile parsed correctly.");
             } catch (JSONException e) {
                 Log.e(TAG, "cannot parse json.");
@@ -91,7 +92,7 @@ public class ProfilesLocalDataSource implements ProfilesDataSource {
         } else {
             Log.e(TAG, "Profile not saved.");
         }
-        editor.putString(profile.getId(), profile.toJson()).commit();
+        editor.putString(profile.getId(), ProfileSerializer.toJson(profile)).commit();
     }
 
     @NonNull

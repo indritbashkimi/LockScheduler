@@ -42,6 +42,4 @@ public abstract class Condition {
     public void setTrue(boolean isTrue) {
         this.isTrue = isTrue;
     }
-
-    public abstract String toJson();
 }

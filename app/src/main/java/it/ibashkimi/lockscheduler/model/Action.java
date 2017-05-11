@@ -31,8 +31,6 @@ public abstract class Action {
     public void setType(@Type int type) {
         this.type = type;
     }
-
-    public abstract String toJson();
 }
 
 

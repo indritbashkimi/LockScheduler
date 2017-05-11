@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
+import it.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.lockscheduler.util.Utils;
 import it.ibashkimi.support.utils.ThemeUtils;
@@ -99,7 +100,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
 
         if (savedInstanceState != null) {
             try {
-                condition = PlaceCondition.parseJson(savedInstanceState.getString("place_condition"));
+                condition = ConditionSerializer.parsePlaceConditionJson(savedInstanceState.getString("place_condition"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -115,7 +116,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
-        outState.putString("place_condition", condition.toJson());
+        outState.putString("place_condition", ConditionSerializer.toJson(condition));
     }
 
     @Override
@@ -152,7 +153,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         addressView.setText(condition.getAddress());
-        radiusView.setText(condition.getRadius() + " m");
+        radiusView.setText(condition.getRadius() + " m"); // TODO: 11/05/17  
         googleMap.setMapType(mapStyle);
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         googleMap.getUiSettings().setZoomGesturesEnabled(false);

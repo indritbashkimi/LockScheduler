@@ -3,9 +3,6 @@ package it.ibashkimi.lockscheduler.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -161,100 +158,5 @@ public class Profile {
     @Override
     public String toString() {
         return String.format(Locale.ENGLISH, "Profile{id=%s, name=%s, conditions=%d, enterActions=%d, exitActions=%d}", id, name, conditions.size(), enterActions.size(), exitActions.size());
-    }
-
-    public String toJson() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("id", "" + id);
-            jsonObject.put("name", name);
-            jsonObject.put("conditions_len", conditions.size());
-            for (int i = 0; i < conditions.size(); i++) {
-                jsonObject.put("condition_" + i, conditions.get(i).toJson());
-            }
-            jsonObject.put("active", active);
-            jsonObject.put("true_actions_size", enterActions.size());
-            for (int i = 0; i < enterActions.size(); i++) {
-                jsonObject.put("true_action_" + i, enterActions.get(i).toJson());
-            }
-            jsonObject.put("false_actions_size", exitActions.size());
-            for (int i = 0; i < enterActions.size(); i++) {
-                jsonObject.put("false_action_" + i, exitActions.get(i).toJson());
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return jsonObject.toString();
-    }
-
-
-    public static Profile parseJson(String json) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
-        Profile profile = new Profile(jsonObject.getString("id"));
-        profile.setName(jsonObject.getString("name"));
-
-        int conditionsLen = jsonObject.getInt("conditions_len");
-        ArrayList<Condition> conditions = new ArrayList<>(conditionsLen);
-        for (int i = 0; i < conditionsLen; i++) {
-            String conditionJson = jsonObject.getString("condition_" + i);
-            JSONObject conditionJsonObject = new JSONObject(conditionJson);
-            @Condition.Type int type = conditionJsonObject.getInt("type");
-            Condition condition;
-            switch (type) {
-                case Condition.Type.PLACE:
-                    condition = PlaceCondition.parseJson(conditionJson);
-                    break;
-                case Condition.Type.TIME:
-                    condition = TimeCondition.parseJson(conditionJson);
-                    break;
-                case Condition.Type.WIFI:
-                    condition = WifiCondition.parseJson(conditionJson);
-                    break;
-                default:
-                    condition = null;
-            }
-            if (condition != null) conditions.add(condition);
-        }
-        profile.setConditions(conditions);
-
-        int trueActionsSize = jsonObject.getInt("true_actions_size");
-        ArrayList<Action> trueActions = new ArrayList<>(trueActionsSize);
-        for (int i = 0; i < trueActionsSize; i++) {
-            String actionRep = jsonObject.getString("true_action_" + i);
-            Action action;
-            @Action.Type int type = new JSONObject(actionRep).getInt("type");
-            switch (type) {
-                case Action.Type.LOCK:
-                    action = LockAction.parseJson(actionRep);
-                    break;
-                default:
-                    action = null;
-            }
-            trueActions.add(action);
-        }
-        profile.setEnterActions(trueActions);
-
-        int falseActionsSize = jsonObject.getInt("false_actions_size");
-        ArrayList<Action> falseActions = new ArrayList<>(falseActionsSize);
-        for (int i = 0; i < falseActionsSize; i++) {
-            String actionRep = jsonObject.getString("false_action_" + i);
-            Action action;
-            @Action.Type int type = new JSONObject(actionRep).getInt("type");
-            switch (type) {
-                case Action.Type.LOCK:
-                    action = LockAction.parseJson(actionRep);
-                    break;
-                default:
-                    action = null;
-            }
-            if (action != null)
-                falseActions.add(action);
-        }
-        profile.setExitActions(falseActions);
-
-        profile.active = jsonObject.getBoolean("active");
-        return profile;
     }
 }
