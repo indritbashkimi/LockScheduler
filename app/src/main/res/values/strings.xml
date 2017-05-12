@@ -124,6 +124,21 @@
     <string name="time_condition_interval_error">Interval error.</string>
     <string name="time_condition_days_selection_none">None</string>
     <string name="time_condition_days_selection_all">Everyday</string>
+    <string name="time_condition_days">Days</string>
+    <string name="time_condition_start_time">Start time</string>
+    <string name="time_condition_end_time">End time</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="pin_length_message">PIN must be 4 digits</string>
+    <string name="continue_text">Continue</string>
+    <string name="confirm_password">Confirm password</string>
+    <plurals name="pin_digits">
+        <item quantity="one">PIN must be at least %d digit</item>
+        <item quantity="other">PIN must be at least %d digits</item>
+    </plurals>
+    <plurals name="password_digits">
+        <item quantity="one">Password must be at least %d digit</item>
+        <item quantity="other">Password must be at least %d digits</item>
+    </plurals>
 
     <!-- About -->
     <string name="author_name">Indrit Bashkimi</string>
@@ -145,7 +160,4 @@
     <string name="about_header_contact">Contact</string>
     <string name="about_licenses">Licenses</string>
     <string name="about_privacy_policy">Privacy Policy</string>
-    <string name="time_condition_days">Days</string>
-    <string name="time_condition_start_time">Start time</string>
-    <string name="time_condition_end_time">End time</string>
 </resources>

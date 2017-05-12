@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <include layout="@layout/app_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/message_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="PIN must be at least 4 digits" />
+
+        <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:errorEnabled="true"
+            app:hintEnabled="false"
+            app:passwordToggleEnabled="true">
+
+            <android.support.v7.widget.AppCompatEditText
+                android:id="@+id/editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+                tools:text="1234" />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.ButtonBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_done" />
+
+        <Button
+            android:id="@+id/actionButton"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:enabled="false"
+            app:srcCompat="@drawable/ic_done"
+            tools:enabled="true"
+            tools:text="Next" />
+
+    </android.support.v7.widget.ButtonBarLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+
