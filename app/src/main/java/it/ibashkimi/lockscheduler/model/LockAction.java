@@ -82,7 +82,7 @@ public class LockAction extends Action {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "LockMode{%s}", lockTypeToString(lockType));
+        return String.format(Locale.ENGLISH, "LockMode[%s]", lockTypeToString(lockType));
     }
 
     public static String lockTypeToString(@LockAction.LockType int lockType) {

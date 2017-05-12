@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler.addeditprofile.actions;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import java.util.List;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.LockAction;
+import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 
 
 public class ActionsFragment extends Fragment {
@@ -35,6 +38,7 @@ public class ActionsFragment extends Fragment {
     private static final int REQUEST_EXIT_PIN = 2;
     private static final int REQUEST_ENTER_PASSWORD = 3;
     private static final int REQUEST_EXIT_PASSWORD = 4;
+    private static final int REQUEST_ADMIN_PERMISSION = 5;
 
     private SharedPreferences mSharedPrefs;
 
@@ -42,6 +46,9 @@ public class ActionsFragment extends Fragment {
     private int enterLockType = LockAction.LockType.UNCHANGED;
     @LockAction.LockType
     private int exitLockType = LockAction.LockType.UNCHANGED;
+
+    private int whichSpinner;
+    private int lockTypeIfGranted;
 
     private ViewGroup rootView;
     private TextView enterPinView;
@@ -55,6 +62,8 @@ public class ActionsFragment extends Fragment {
 
     private Spinner enterSpinner;
     private Spinner exitSpinner;
+
+    private AdminApiHelper adminApiHelper;
 
     @SuppressWarnings("unused")
     public static ActionsFragment newInstance() {
@@ -114,6 +123,9 @@ public class ActionsFragment extends Fragment {
             exitLockType = lockType2;
             enterInput = savedInstanceState.getString("enter_input");
             exitInput = savedInstanceState.getString("exit_input");
+
+            whichSpinner = savedInstanceState.getInt("which_spinner");
+            lockTypeIfGranted = savedInstanceState.getInt("lock_type_if_granted");
         }
 
         enterPinView = (TextView) rootView.findViewById(R.id.enter_pin_password_view);
@@ -164,11 +176,22 @@ public class ActionsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 StringWithTag item = (StringWithTag) parent.getItemAtPosition(position);
                 @LockAction.LockType int selectedLockType = getLockTypeFromSpinnerTag(item.tag);
+
+                if (selectedLockType != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
+                    whichSpinner = 0;
+                    lockTypeIfGranted = selectedLockType;
+                    if (shouldShowAdminPermissionRationale())
+                        showAdminPermissionRationale();
+                    else
+                        askAdminPermission();
+                    return;
+                }
+
                 if (enterFirstTime) {
                     enterFirstTime = false;
                     return;
                 }
-                Toast.makeText(getContext(), item.tag, Toast.LENGTH_SHORT).show();
+
                 if (selectedLockType != enterLockType) {
                     switch (selectedLockType) {
                         case LockAction.LockType.PIN:
@@ -201,11 +224,22 @@ public class ActionsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 StringWithTag item = (StringWithTag) parent.getItemAtPosition(position);
                 @LockAction.LockType int selectedLockType = getLockTypeFromSpinnerTag(item.tag);
+
+                if (selectedLockType != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
+                    whichSpinner = 1;
+                    lockTypeIfGranted = selectedLockType;
+                    if (shouldShowAdminPermissionRationale())
+                        showAdminPermissionRationale();
+                    else
+                        askAdminPermission();
+                    return;
+                }
+
                 if (exitFirstTime) {
                     exitFirstTime = false;
                     return;
                 }
-                Toast.makeText(getContext(), item.tag, Toast.LENGTH_SHORT).show();
+
                 if (selectedLockType != exitLockType) {
                     exitLockType = selectedLockType;
                     switch (selectedLockType) {
@@ -231,6 +265,64 @@ public class ActionsFragment extends Fragment {
         return rootView;
     }
 
+    private AdminApiHelper getAdminApiHelper() {
+        if (adminApiHelper == null)
+            adminApiHelper = new AdminApiHelper(getContext());
+        return adminApiHelper;
+    }
+
+    private boolean adminPermissionGranted() {
+        return getAdminApiHelper().isAdminActive();
+    }
+
+    private boolean shouldShowAdminPermissionRationale() {
+        return getSharedPreferences().getBoolean("show_admin_permission_rationale", false);
+    }
+
+    private void showAdminPermissionRationale() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.admin_permission_rationale_title)
+                .setMessage(R.string.admin_permission_rationale)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        askAdminPermission();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onAdminPermissionDenied();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void askAdminPermission() {
+        startActivityForResult(adminApiHelper.buildAddAdminIntent(), REQUEST_ADMIN_PERMISSION);
+    }
+
+    private void onAdminPermissionDenied() {
+        Toast.makeText(getContext(), "Admin permission denied", Toast.LENGTH_SHORT).show();
+        enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockType));
+        exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
+    }
+
+    private void onAdminPermissionGranted() {
+        Toast.makeText(getContext(), "Admin permission granted", Toast.LENGTH_SHORT).show();
+        Spinner spinner = whichSpinner == 0 ? enterSpinner : exitSpinner;
+        spinner.setSelection(whichSpinner == 0 ? enterLockType : exitLockType);
+        spinner.setSelection(getSpinnerPositionFromLockType(lockTypeIfGranted));
+        switch (lockTypeIfGranted) {
+            case LockAction.LockType.PIN:
+                showPinChooser(whichSpinner == 0 ? REQUEST_ENTER_PIN : REQUEST_EXIT_PIN);
+                break;
+            case LockAction.LockType.PASSWORD:
+                showPasswordChooser(whichSpinner == 0 ? REQUEST_ENTER_PIN : REQUEST_EXIT_PIN);
+                break;
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -240,6 +332,8 @@ public class ActionsFragment extends Fragment {
         outState.putInt("exit_first_time", exitLockType);
         outState.putString("enter_input", enterInput);
         outState.putString("exit_input", exitInput);
+        outState.putInt("which_spinner", whichSpinner);
+        outState.putInt("lock_type_if_granted", lockTypeIfGranted);
     }
 
     private void showPasswordChooser(int request) {
@@ -308,6 +402,14 @@ public class ActionsFragment extends Fragment {
                     exitPinView.setVisibility(View.VISIBLE);
                 } else {
                     exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
+                }
+                break;
+            case REQUEST_ADMIN_PERMISSION:
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    getSharedPreferences().edit().putBoolean("show_admin_permission_rationale", true).apply();
+                    onAdminPermissionDenied();
+                } else if (resultCode == Activity.RESULT_OK) {
+                    onAdminPermissionGranted();
                 }
                 break;
         }
