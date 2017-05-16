@@ -20,6 +20,10 @@ import it.ibashkimi.lockscheduler.R
 import it.ibashkimi.lockscheduler.model.WifiItem
 import it.ibashkimi.lockscheduler.ui.BaseActivity
 import it.ibashkimi.lockscheduler.ui.recyclerview.SelectableAdapter
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 
 class WifiPickerActivity : BaseActivity() {
@@ -97,6 +101,8 @@ class WifiPickerActivity : BaseActivity() {
     override fun onStop() {
         super.onStop()
         unregisterReceiver(wifiBroadcastReceiver)
+        if (lastJob != null)
+            lastJob!!.cancel()
     }
 
     private fun showTurnOnWifi() {
@@ -124,19 +130,26 @@ class WifiPickerActivity : BaseActivity() {
         })
     }
 
+    private var lastJob: Job? = null
+
     fun getWifiList(callback: Callback) {
-        val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (wifiManager.isWifiEnabled) {
-            val wifiList = ArrayList<SelectableWifiItem>()
-            for (wifiConfiguration in wifiManager.configuredNetworks) {
-                var ssid = wifiConfiguration.SSID
-                ssid = ssid.substring(1, ssid.length - 1) // Remove " at the start and end.
-                wifiList.add(SelectableWifiItem(ssid))
+        if (lastJob != null)
+            lastJob!!.cancel()
+        lastJob = launch(CommonPool) {
+            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            if (wifiManager.isWifiEnabled) {
+                val wifiList = ArrayList<SelectableWifiItem>()
+                for (wifiConfiguration in wifiManager.configuredNetworks) {
+                    var ssid = wifiConfiguration.SSID
+                    ssid = ssid.substring(1, ssid.length - 1) // Remove " at the start and end.
+                    wifiList.add(SelectableWifiItem(ssid))
+                }
+                launch(UI) { callback.onDataLoaded(wifiList) }
+            } else {
+                launch(UI) { callback.onDataNotAvailable() }
             }
-            callback.onDataLoaded(wifiList)
-        } else {
-            callback.onDataNotAvailable()
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

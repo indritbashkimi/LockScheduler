@@ -31,6 +31,11 @@ import com.google.android.gms.maps.model.LatLng
 import it.ibashkimi.lockscheduler.R
 import it.ibashkimi.lockscheduler.ui.BaseActivity
 import it.ibashkimi.lockscheduler.util.MapUtils
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+import java.io.IOException
 import java.util.*
 
 class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
@@ -73,7 +78,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 if (extras.containsKey("radius"))
                     radius = extras.getInt("radius").toFloat()
                 if (extras.containsKey("map_type")) {
-                    mapType = when(extras.getString("map_type")) {
+                    mapType = when (extras.getString("map_type")) {
                         "none" -> GoogleMap.MAP_TYPE_NONE
                         "normal" -> GoogleMap.MAP_TYPE_NORMAL
                         "satellite" -> GoogleMap.MAP_TYPE_SATELLITE
@@ -143,6 +148,12 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (lastJob != null)
+            lastJob!!.cancel()
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
         this.googleMap = googleMap
         googleMap.mapType = this.mapType
@@ -197,6 +208,8 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         })
     }
 
+    private var lastJob: Job? = null
+
     private fun updateMap() {
         val projection = googleMap!!.projection
         val cover = mapCoverView!!
@@ -211,21 +224,42 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 endPoint.latitude, endPoint.longitude, results)
         radius = results[0]
 
-        val geocoder = Geocoder(this, Locale.getDefault())
         center = projection.visibleRegion.latLngBounds.center
         address = center!!.latitude.toString() + " : " + center!!.longitude.toString()
 
         addressView?.text = address
         radiusView?.text = "Radius: ${radius.toInt()} m" // TODO
 
-        // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        val addresses = geocoder.getFromLocation(center!!.latitude, center!!.longitude, 1)
-        if (addresses != null && addresses.isNotEmpty()) {
-            if (addresses[0].maxAddressLineIndex > 0) {
-                address = addresses[0].getAddressLine(0)
-                addressView?.text = address
+        updateAddress()
+    }
+
+    private fun updateAddress() {
+        if (lastJob != null)
+            lastJob!!.cancel()
+        lastJob = launch(CommonPool) {
+            val geocoder = Geocoder(this@PlacePickerActivity, Locale.getDefault())
+            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            try {
+                val addresses = geocoder.getFromLocation(center!!.latitude, center!!.longitude, 1)
+                if (addresses != null && addresses.isNotEmpty()) {
+                    if (addresses[0].maxAddressLineIndex > 0) {
+                        val lastAddress = addresses[0].getAddressLine(0)!!
+                        launch(UI) { setAddress(lastAddress) }
+                    }
+                }
+            } catch (e: IllegalArgumentException) {
+                // no op
+            } catch (e: IllegalArgumentException) {
+                // no op
+            } catch (e: IOException) {
+                // no op
             }
         }
+    }
+
+    private fun setAddress(address: CharSequence) {
+        this.address = address
+        addressView?.text = address
     }
 
     fun onCancel() {

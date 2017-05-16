@@ -67,6 +67,7 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:3.2.0'
     compile 'com.jakewharton:butterknife:8.5.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.15"
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.16'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
