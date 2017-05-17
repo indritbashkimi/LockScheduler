@@ -76,20 +76,8 @@
         <item>2592000000</item>
     </string-array>
 
-    <string-array name="pref_profile_item_layout_human">
-        <item>Layout 1</item>
-        <item>Layout 2</item>
-    </string-array>
-
-    <integer-array name="pref_profile_item_layout_value">
-        <item>1</item>
-        <item>2</item>
-    </integer-array>
-
     <string name="lock_mode_nothing">Do nothing</string>
-    <string name="lock_mode_fingerprint">Fingerprint</string>
     <string name="lock_mode_password">Password</string>
-    <string name="lock_mode_pattern">Pattern</string>
     <string name="lock_mode_pin">PIN</string>
     <string name="lock_mode_swipe">Swipe</string>
 
