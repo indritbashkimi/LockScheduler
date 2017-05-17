@@ -245,20 +245,20 @@ public class ActionsFragment extends Fragment {
     private void showPasswordChooser(int request) {
         Intent intent = new Intent(getContext(), PinChooserActivity.class);
         intent.putExtra("type", "password");
-        intent.putExtra("min_length", 4);
+        intent.putExtra("min_length", getSharedPreferences().getInt("min_password_length", 4));
         startActivityForResult(intent, request);
     }
 
     private void showPinChooser(int request) {
         Intent intent = new Intent(getContext(), PinChooserActivity.class);
         intent.putExtra("type", "pin");
-        intent.putExtra("min_length", 4);
+        intent.putExtra("min_length", getSharedPreferences().getInt("min_pin_length", 4));
         startActivityForResult(intent, request);
     }
 
     protected SharedPreferences getSharedPreferences() {
         if (mSharedPrefs == null) {
-            mSharedPrefs = getContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            mSharedPrefs = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
         }
         return mSharedPrefs;
     }
@@ -292,7 +292,7 @@ public class ActionsFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     exitLockType = LockAction.LockType.PIN;
                     exitInput = data.getStringExtra("input");
-                    exitPinView.setText(enterInput);
+                    exitPinView.setText(exitInput);
                     TransitionManager.beginDelayedTransition(rootView);
                     exitPinView.setVisibility(View.VISIBLE);
                 } else {
@@ -303,7 +303,7 @@ public class ActionsFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     exitLockType = LockAction.LockType.PASSWORD;
                     exitInput = data.getStringExtra("input");
-                    exitPinView.setText(enterInput);
+                    exitPinView.setText(exitInput);
                     TransitionManager.beginDelayedTransition(rootView);
                     exitPinView.setVisibility(View.VISIBLE);
                 } else {
