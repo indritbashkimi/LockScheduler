@@ -133,4 +133,7 @@
     <string name="about_header_contact">Contact</string>
     <string name="about_licenses">Licenses</string>
     <string name="about_privacy_policy">Privacy Policy</string>
+    <string name="action_uninstall">Uninstall</string>
+    <string name="faq">Frequently asked questions</string>
+    <string name="uninstall_message">You are about to uninstall this app.\n\nAll your profiles will be deleted.\nYour lock settings will remain unchanged.</string>
 </resources>

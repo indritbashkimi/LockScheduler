@@ -1,7 +1,5 @@
 package it.ibashkimi.lockscheduler.about;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
+import it.ibashkimi.lockscheduler.util.PlatformUtils;
 
 
 public class AboutActivity extends BaseActivity {
@@ -96,19 +95,6 @@ public class AboutActivity extends BaseActivity {
         return fragment;
     }
 
-    public static void sendFeedback(Context context) {
-        // http://stackoverflow.com/a/16217921
-        // https://developer.android.com/guide/components/intents-common.html#Email
-        String address = context.getString(R.string.developer_email);
-        String subject = context.getString(R.string.feedback_subject);
-
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + address));
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-
-        String chooserTitle = context.getString(R.string.feedback_chooser_title);
-        context.startActivity(Intent.createChooser(emailIntent, chooserTitle));
-    }
-
     public static class AboutFragment extends Fragment implements View.OnClickListener {
 
         @Nullable
@@ -142,7 +128,12 @@ public class AboutActivity extends BaseActivity {
 
         @OnClick(R.id.feedback)
         public void onSendFeedbackClicked() {
-            AboutActivity.sendFeedback(getContext());
+            PlatformUtils.sendFeedback(getContext());
+        }
+
+        @OnClick(R.id.uninstall)
+        public void onUninstallClicked() {
+            PlatformUtils.uninstall(AboutFragment.this.getContext());
         }
 
         @OnClick(R.id.privacy_policy)
@@ -159,7 +150,7 @@ public class AboutActivity extends BaseActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.email:
-                    sendFeedback(getContext());
+                    PlatformUtils.sendFeedback(getContext());
                     break;
                 case R.id.facebook:
                     openUrl(R.string.social_facebook);

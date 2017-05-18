@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.util.PlatformUtils;
 
 
 public class HelpFragment extends Fragment {
@@ -45,7 +46,6 @@ public class HelpFragment extends Fragment {
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,16 +54,22 @@ public class HelpFragment extends Fragment {
         rootView.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AboutActivity.sendFeedback(getContext());
+                PlatformUtils.sendFeedback(getContext());
             }
         });
+        rootView.findViewById(R.id.uninstall).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlatformUtils.uninstall(HelpFragment.this.getContext());
+            }
+        });
+
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
         return rootView;
     }
-
 
     private static class HelpItem {
         @StringRes

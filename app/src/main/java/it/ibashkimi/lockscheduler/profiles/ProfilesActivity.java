@@ -26,6 +26,7 @@ import it.ibashkimi.lockscheduler.intro.IntroActivity;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
+import it.ibashkimi.lockscheduler.util.PlatformUtils;
 
 
 public class ProfilesActivity extends BaseActivity {
@@ -175,6 +176,9 @@ public class ProfilesActivity extends BaseActivity {
             case R.id.action_about:
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
+                return true;
+            case R.id.action_uninstall:
+                PlatformUtils.uninstall(this);
                 return true;
         }
 

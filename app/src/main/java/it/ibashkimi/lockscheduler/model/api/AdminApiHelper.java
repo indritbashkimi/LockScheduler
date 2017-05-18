@@ -28,7 +28,7 @@ public class AdminApiHelper {
         return deviceManger.isAdminActive(compName);
     }
 
-    private void removeAdmin() {
+    public void removeAdmin() {
         deviceManger.removeActiveAdmin(compName);
     }
 }

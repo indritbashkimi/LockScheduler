@@ -142,6 +142,37 @@
 
             </FrameLayout>
 
+            <FrameLayout
+                android:id="@+id/uninstall"
+                android:layout_width="match_parent"
+                android:layout_height="?listPreferredItemHeightSmall"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
+
+                <ImageView
+                    android:id="@+id/uninstall_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:contentDescription="@null"
+                    android:tint="?attr/colorAccent"
+                    app:srcCompat="@drawable/ic_delete" />
+
+                <TextView
+                    style="@style/MyPreferenceTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="56dp"
+                    android:text="@string/action_uninstall" />
+
+            </FrameLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
