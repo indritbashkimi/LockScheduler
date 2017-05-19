@@ -1,29 +1,35 @@
 package it.ibashkimi.lockscheduler.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Locale;
 
 
 public class PlaceCondition extends Condition {
-
-    private static final String TAG = "PlaceCondition";
-
+    @NonNull
     private LatLng place;
     private int radius;
     private String address;
 
-    public PlaceCondition(LatLng place, int radius) {
+    public PlaceCondition(@NonNull LatLng place, int radius) {
+        this(place, radius, "");
+    }
+
+    public PlaceCondition(@NonNull LatLng place, int radius, String address) {
         super(Type.PLACE);
         this.place = place;
         this.radius = radius;
+        this.address = address;
     }
 
+    @NonNull
     public LatLng getPlace() {
         return place;
     }
 
-    public void setPlace(LatLng place) {
+    public void setPlace(@NonNull LatLng place) {
         this.place = place;
     }
 
@@ -45,7 +51,9 @@ public class PlaceCondition extends Condition {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof PlaceCondition)) {
+        if (obj == this)
+            return true;
+        if (obj == null || (getClass() != obj.getClass())) {
             return false;
         }
         PlaceCondition placeCondition = (PlaceCondition) obj;

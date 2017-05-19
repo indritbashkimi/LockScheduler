@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ibashkimi.support.utils.SelectableAdapter;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -16,7 +18,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.LockAction;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
@@ -24,7 +25,6 @@ import it.ibashkimi.lockscheduler.model.ProfileUtils;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.util.ConditionUtils;
-import com.ibashkimi.support.utils.SelectableAdapter;
 
 public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 
@@ -78,33 +78,6 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         return mItemListener;
     }
 
-    public void setItemListener(Callback itemListener) {
-        this.mItemListener = itemListener;
-    }
-
-
-    static PlaceCondition getPlaceCondition(Profile profile) {
-        Condition condition = profile.getCondition(Condition.Type.PLACE);
-        if (condition != null)
-            return (PlaceCondition) condition;
-        return null;
-    }
-
-    static TimeCondition getTimeCondition(Profile profile) {
-        Condition condition = profile.getCondition(Condition.Type.TIME);
-        if (condition != null)
-            return (TimeCondition) condition;
-        return null;
-    }
-
-    static WifiCondition getWifiCondition(Profile profile) {
-        Condition condition = profile.getCondition(Condition.Type.WIFI);
-        if (condition != null)
-            return (WifiCondition) condition;
-        return null;
-    }
-
-
     static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         Callback listener;
 
@@ -156,14 +129,14 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             }
             enterLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockType()));
             exitLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockType()));
-            PlaceCondition placeCondition = getPlaceCondition(profile);
+            PlaceCondition placeCondition = ProfileUtils.getPlaceCondition(profile);
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());
                 placeLayout.setVisibility(View.VISIBLE);
             } else {
                 placeLayout.setVisibility(View.GONE);
             }
-            TimeCondition timeCondition = getTimeCondition(profile);
+            TimeCondition timeCondition = ProfileUtils.getTimeCondition(profile);
             if (timeCondition != null) {
                 days.setText(ConditionUtils.daysToString(itemView.getContext(), timeCondition));
                 interval.setText(ConditionUtils.internvalToString(timeCondition.getStartTime(), timeCondition.getEndTime()));
@@ -171,11 +144,11 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             } else {
                 timeLayout.setVisibility(View.GONE);
             }
-            WifiCondition wifiCondition = getWifiCondition(profile);
+            WifiCondition wifiCondition = ProfileUtils.getWifiCondition(profile);
             if (wifiCondition != null) {
-                CharSequence[] wifiList = new CharSequence[wifiCondition.getNetworks().size()];
+                CharSequence[] wifiList = new CharSequence[wifiCondition.getWifiList().size()];
                 for (int i = 0; i < wifiList.length; i++)
-                    wifiList[i] = wifiCondition.getNetworks().get(i).getSsid();
+                    wifiList[i] = wifiCondition.getWifiList().get(i).getSsid();
                 wifi.setText(ConditionUtils.concatenate(wifiList, ", "));
                 wifiLayout.setVisibility(View.VISIBLE);
             } else {
@@ -187,14 +160,14 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             cover.setVisibility(selected ? View.VISIBLE : View.GONE);
         }
 
-        @Override
         @OnClick(R.id.root)
+        @Override
         public void onClick(View v) {
             listener.onProfileClick(getAdapterPosition());
         }
 
-        @Override
         @OnLongClick(R.id.root)
+        @Override
         public boolean onLongClick(View v) {
             listener.onProfileLongClick(getAdapterPosition());
             return true;

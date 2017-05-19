@@ -99,7 +99,7 @@ public class ConditionsFragment extends Fragment {
         if (wifiConditionAdded) {
             if (wifiItems != null && wifiItems.size() > 0) {
                 WifiCondition wifiCondition = new WifiCondition();
-                wifiCondition.setNetworks(wifiItems);
+                wifiCondition.setWifiList(wifiItems);
                 conditions.add(wifiCondition);
             }
         }
@@ -147,7 +147,7 @@ public class ConditionsFragment extends Fragment {
                 int size = savedInstanceState.getInt("wifi_items_size");
                 wifiItems = new ArrayList<>(size);
                 for (int i = 0; i < size; i++)
-                    wifiItems.add(WifiItem.parseJson(savedInstanceState.getString("wifi_item_" + i)));
+                    wifiItems.add(new WifiItem(savedInstanceState.getString("wifi_item_" + i)));
                 showWifiCondition(wifiItems);
             }
         }
@@ -163,7 +163,7 @@ public class ConditionsFragment extends Fragment {
         outState.putBoolean("wifi_added", wifiConditionAdded);
         if (wifiItems != null) {
             for (int i = 0; i < wifiItems.size(); i++) {
-                outState.putString("wifi_item_" + i, wifiItems.get(i).toJson());
+                outState.putString("wifi_item_" + i, wifiItems.get(i).getSsid());
             }
             outState.putInt("wifi_items_size", wifiItems.size());
         }
@@ -302,7 +302,7 @@ public class ConditionsFragment extends Fragment {
 
     private void showWifiCondition(WifiCondition condition) {
         wifiConditionAdded = true;
-        wifiItems = condition.getNetworks();
+        wifiItems = condition.getWifiList();
         showWifiCondition(wifiItems);
     }
 

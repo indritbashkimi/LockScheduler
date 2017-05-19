@@ -35,7 +35,7 @@ class WifiConditionHandler(repository: ProfilesRepository, listener: ConditionCh
             }
             val condition = profile.getCondition(Condition.Type.WIFI) as WifiCondition
             val isTrue = condition.isTrue
-            condition.isTrue = wifiItem != null && condition.networks.contains(wifiItem)
+            condition.isTrue = wifiItem != null && condition.wifiList.contains(wifiItem)
             if (condition.isTrue != isTrue)
                 listener.notifyConditionChanged(profile, condition)
         }
@@ -54,7 +54,7 @@ class WifiConditionHandler(repository: ProfilesRepository, listener: ConditionCh
             if (wifiItem == null) {
                 condition.isTrue = false
             } else {
-                condition.isTrue = condition.networks.contains(wifiItem)
+                condition.isTrue = condition.wifiList.contains(wifiItem)
             }
             if (condition.isTrue != isTrue)
                 listener.notifyConditionChanged(profile, condition)

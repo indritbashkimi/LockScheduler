@@ -58,9 +58,9 @@ public class ConditionSerializer {
         try {
             jsonObject.put("type", condition.getType());
             jsonObject.put("true", condition.isTrue());
-            jsonObject.put("wifi_items_len", condition.getNetworks().size());
-            for (int i = 0; i < condition.getNetworks().size(); i++) {
-                jsonObject.put("wifi_item_" + i, condition.getNetworks().get(i).toJson());
+            jsonObject.put("wifi_items_len", condition.getWifiList().size());
+            for (int i = 0; i < condition.getWifiList().size(); i++) {
+                jsonObject.put("wifi_item_" + i, condition.getWifiList().get(i).getSsid());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -130,8 +130,8 @@ public class ConditionSerializer {
         int wifiItemSize = jsonObject.getInt("wifi_items_len");
         ArrayList<WifiItem> items = new ArrayList<>(wifiItemSize);
         for (int i = 0; i < wifiItemSize; i++) {
-            String wifiItemJson = jsonObject.getString("wifi_item_" + i);
-            WifiItem item = WifiItem.parseJson(wifiItemJson);
+            String ssid = jsonObject.getString("wifi_item_" + i);
+            WifiItem item = new WifiItem(ssid);
             items.add(item);
         }
         WifiCondition wifiCondition = new WifiCondition(items);

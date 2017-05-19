@@ -3,57 +3,51 @@ package it.ibashkimi.lockscheduler.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class WifiCondition extends Condition {
 
-    private static final String TAG = "WifiCondition";
-
-    private List<WifiItem> wifiItemList;
+    private List<WifiItem> wifiList;
 
     public WifiCondition() {
         this(new ArrayList<WifiItem>());
     }
 
-    public WifiCondition(ArrayList<WifiItem> items) {
+    public WifiCondition(ArrayList<WifiItem> wifiList) {
         super(Type.WIFI);
-        this.wifiItemList = items;
+        this.wifiList = wifiList;
     }
 
     public void add(WifiItem wifi) {
-        this.wifiItemList.add(wifi);
+        if (!wifiList.contains(wifi))
+            wifiList.add(wifi);
     }
 
     public void remove(WifiItem wifi) {
-        this.wifiItemList.remove(wifi);
+        wifiList.remove(wifi);
     }
 
-    public List<WifiItem> getNetworks() {
-        return wifiItemList;
+    public List<WifiItem> getWifiList() {
+        return wifiList;
     }
 
-    public void setNetworks(List<WifiItem> networks) {
-        this.wifiItemList = networks;
-    }
-
-    public boolean isPresent(WifiItem wifiItem) {
-        for (WifiItem item : wifiItemList)
-            if (item.equals(wifiItem))
-                return true;
-        return false;
+    public void setWifiList(List<WifiItem> wifiList) {
+        this.wifiList = wifiList;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof WifiCondition))
+        if (this == obj)
+            return true;
+        else if (!(obj instanceof WifiCondition))
             return false;
-        WifiCondition condition = (WifiCondition) obj;
-        if (wifiItemList.size() != condition.getNetworks().size())
-            return false;
-        // TODO: 09/01/17 this has to be and ordered list!
-        for (int i = 0; i < wifiItemList.size(); i++) {
-            if (!wifiItemList.get(i).equals(condition.getNetworks().get(i)))
+        else {
+            WifiCondition condition = (WifiCondition) obj;
+            if (wifiList.size() != condition.getWifiList().size())
                 return false;
+            for (int i = 0; i < wifiList.size(); i++) {
+                if (!wifiList.get(i).equals(condition.getWifiList().get(i)))
+                    return false;
+            }
+            return true;
         }
-        return super.equals(obj);
     }
 }

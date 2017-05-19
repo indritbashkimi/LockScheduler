@@ -54,7 +54,7 @@ public class WifiConditionFragment extends Fragment {
 
         if (savedInstanceState == null)
             if (condition != null)
-                showWifiItems(condition.getNetworks());
+                showWifiItems(condition.getWifiList());
         return root;
     }
 
@@ -73,7 +73,7 @@ public class WifiConditionFragment extends Fragment {
         Intent intent = new Intent(getContext(), WifiPickerActivity.class);
 
         if (condition != null) {
-            List<WifiItem> items = condition.getNetworks();
+            List<WifiItem> items = condition.getWifiList();
             String[] ssids = new String[items.size()];
             for (int i = 0; i < items.size(); i++) {
                 ssids[i] = items.get(i).getSsid();
@@ -93,7 +93,7 @@ public class WifiConditionFragment extends Fragment {
             }
             List<WifiItem> items = new ArrayList<>(ssids.length);
             for (String ssid : ssids) items.add(new WifiItem(ssid));
-            condition.setNetworks(items);
+            condition.setWifiList(items);
         }
     }
 }

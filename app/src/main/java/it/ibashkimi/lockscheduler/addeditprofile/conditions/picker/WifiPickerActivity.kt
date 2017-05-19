@@ -16,10 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import com.ibashkimi.support.utils.SelectableAdapter
 import it.ibashkimi.lockscheduler.R
 import it.ibashkimi.lockscheduler.model.WifiItem
 import it.ibashkimi.lockscheduler.ui.BaseActivity
-import it.ibashkimi.lockscheduler.ui.recyclerview.SelectableAdapter
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
