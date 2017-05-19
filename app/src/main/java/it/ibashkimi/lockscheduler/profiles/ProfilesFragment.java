@@ -31,7 +31,7 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.support.utils.ThemeUtils;
 
 /**
  * Fragment used to display profile list.

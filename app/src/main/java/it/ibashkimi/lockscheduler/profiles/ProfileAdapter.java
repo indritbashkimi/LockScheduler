@@ -24,7 +24,7 @@ import it.ibashkimi.lockscheduler.model.ProfileUtils;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.util.ConditionUtils;
-import it.ibashkimi.support.utils.SelectableAdapter;
+import com.ibashkimi.support.utils.SelectableAdapter;
 
 public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 

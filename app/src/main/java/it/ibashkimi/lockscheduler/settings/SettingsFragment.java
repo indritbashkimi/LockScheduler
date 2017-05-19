@@ -23,11 +23,11 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.util.Utils;
-import it.ibashkimi.support.preference.ThemeAdapter;
-import it.ibashkimi.support.preference.ThemeItem;
-import it.ibashkimi.support.preference.ThemePreference;
-import it.ibashkimi.support.preference.ThemePreferenceDialogFragmentCompat;
-import it.ibashkimi.support.preference.Themes;
+import com.ibashkimi.support.preference.ThemeAdapter;
+import com.ibashkimi.support.preference.ThemeItem;
+import com.ibashkimi.support.preference.ThemePreference;
+import com.ibashkimi.support.preference.ThemePreferenceDialogFragmentCompat;
+import com.ibashkimi.support.preference.Themes;
 
 
 public class SettingsFragment extends PreferenceFragmentCompat {

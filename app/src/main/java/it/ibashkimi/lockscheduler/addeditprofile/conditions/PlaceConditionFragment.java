@@ -32,7 +32,7 @@ import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.lockscheduler.util.Utils;
-import it.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.support.utils.ThemeUtils;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)

@@ -9,7 +9,7 @@ import android.support.v4.graphics.ColorUtils
 import android.util.AttributeSet
 import android.view.View
 import it.ibashkimi.lockscheduler.R
-import it.ibashkimi.support.utils.ThemeUtils
+import com.ibashkimi.support.utils.ThemeUtils
 
 
 /**
