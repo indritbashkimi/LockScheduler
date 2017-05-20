@@ -222,7 +222,10 @@ public class ConditionsFragment extends Fragment {
                 String[] ssids = data.getStringArrayExtra("ssids");
                 wifiItems = new ArrayList<>(ssids.length);
                 for (String ssid : ssids) wifiItems.add(new WifiItem(ssid));
-                showWifiCondition(wifiItems);
+                if (wifiItems.size() > 0)
+                    showWifiCondition(wifiItems);
+                else
+                    removeWifiCondition();
             }
         }
     }
@@ -277,7 +280,7 @@ public class ConditionsFragment extends Fragment {
     }
 
     @OnClick(R.id.wifi_delete)
-    public void onWifiDeleteClicked() {
+    public void removeWifiCondition() {
         TransitionManager.beginDelayedTransition(placeLayout);
         wifiConditionAdded = false;
         //fragmentManager.beginTransaction().remove(getWifiConditionFragment()).commit();

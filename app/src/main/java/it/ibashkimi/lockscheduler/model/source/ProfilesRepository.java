@@ -88,7 +88,7 @@ public class ProfilesRepository implements ProfilesDataSource {
     public void override(@NonNull String oldId, @NonNull Profile newProfile) {
         Profile oldProfile = get(oldId);
         if (oldProfile == null) {
-            throw new RuntimeException("Profile with id " + newProfile.getId() + " doesn't exist.");
+            throw new IllegalArgumentException("Profile with id " + newProfile.getId() + " doesn't exist.");
         }
         newProfile.setActive(oldProfile.isActive());
         if (oldProfile.isActive()) {

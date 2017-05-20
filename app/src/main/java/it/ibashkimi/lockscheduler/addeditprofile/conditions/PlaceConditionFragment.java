@@ -19,9 +19,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.ibashkimi.support.utils.ThemeUtils;
 
 import org.json.JSONException;
 
@@ -32,11 +34,8 @@ import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.lockscheduler.util.Utils;
-import com.ibashkimi.support.utils.ThemeUtils;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
+
 public class PlaceConditionFragment extends Fragment implements OnMapReadyCallback {
 
     public static final int PLACE_PICKER_REQUEST = 1;
@@ -62,9 +61,13 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     private int fillColor;
     private int circlePadding;
     private int mapStyle;
+    @Nullable
+    private Circle circle;
 
     public void setData(@NonNull PlaceCondition condition) {
         this.condition = condition;
+        if (googleMap != null)
+            updateMap();
     }
 
     public PlaceCondition assembleCondition() {
@@ -152,8 +155,6 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        addressView.setText(condition.getAddress());
-        radiusView.setText(condition.getRadius() + " m"); // TODO: 11/05/17  
         googleMap.setMapType(mapStyle);
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         googleMap.getUiSettings().setZoomGesturesEnabled(false);
@@ -167,18 +168,10 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
                 showPlacePicker();
             }
         });
-        googleMap.addCircle(new CircleOptions()
-                .center(condition.getPlace())
-                .radius(condition.getRadius())
-                .fillColor(fillColor)
-                .strokeWidth(Utils.dpToPx(getContext(), 2))
-                .strokeColor(circleColor));
+        updateMap();
         googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                LatLngBounds bounds = MapUtils.calculateBounds(condition.getPlace(), condition.getRadius());
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, circlePadding);
-                PlaceConditionFragment.this.googleMap.moveCamera(cameraUpdate);
                 if (mapCover.getVisibility() == View.VISIBLE) {
                     Animation fadeAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
                     fadeAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -205,26 +198,19 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
         ((ConditionsFragment) getParentFragment()).showPlacePicker(condition);
     }
 
-    /*public void updateMap(LatLng center, int radius, String address) {
-        if (circle == null) {
-            if (googleMap != null && center != null) {
-                circle = googleMap.addCircle(new CircleOptions()
-                        .center(center)
-                        .radius(radius)
-                        .strokeColor(circleColor)
-                        .strokeWidth(Utils.dpToPx(parent.getContext(), 2))
-                        .fillColor(fillColor));
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(MapUtils.calculateBounds(center, radius), circlePadding);
-                googleMap.moveCamera(cameraUpdate);
-            }
-        } else {
-            if (radius > 0) {
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(MapUtils.calculateBounds(center, radius), circlePadding);
-                googleMap.animateCamera(cameraUpdate);
-            }
-            circle.setCenter(center);
-            circle.setRadius(radius);
-        }
-        this.address.setText(address);
-    }*/
+    public void updateMap() {
+        addressView.setText(condition.getAddress());
+        radiusView.setText(condition.getRadius() + " m"); // TODO: 11/05/17
+        if (circle != null)
+            circle.remove();
+        circle = googleMap.addCircle(new CircleOptions()
+                .center(condition.getPlace())
+                .radius(condition.getRadius())
+                .fillColor(fillColor)
+                .strokeWidth(Utils.dpToPx(getContext(), 2))
+                .strokeColor(circleColor));
+        LatLngBounds bounds = MapUtils.calculateBounds(condition.getPlace(), condition.getRadius());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, circlePadding);
+        PlaceConditionFragment.this.googleMap.moveCamera(cameraUpdate);
+    }
 }
