@@ -12,7 +12,6 @@ import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,34 +33,22 @@ import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 public class ActionsFragment extends Fragment {
     private static final String TAG = "ActionsFragment";
 
-    private static final int REQUEST_ENTER_PIN = 1;
-    private static final int REQUEST_EXIT_PIN = 2;
-    private static final int REQUEST_ENTER_PASSWORD = 3;
-    private static final int REQUEST_EXIT_PASSWORD = 4;
-    private static final int REQUEST_ADMIN_PERMISSION = 5;
+    private static final int REQUEST_PIN = 1;
+    private static final int REQUEST_PASSWORD = 2;
+    private static final int REQUEST_ADMIN_PERMISSION = 3;
 
     private SharedPreferences mSharedPrefs;
 
     @LockAction.LockType
-    private int enterLockType = LockAction.LockType.UNCHANGED;
-    @LockAction.LockType
-    private int exitLockType = LockAction.LockType.UNCHANGED;
-
-    private int whichSpinner;
-    private int lockTypeIfGranted;
+    private int lockType = LockAction.LockType.UNCHANGED;
+    private String input;
 
     private ViewGroup rootView;
-    private TextView enterPinView;
-    private TextView exitPinView;
+    private TextView inputView;
+    private Spinner spinner;
 
-    private boolean enterFirstTime = true;
-    private boolean exitFirstTime = true;
-
-    private String enterInput;
-    private String exitInput;
-
-    private Spinner enterSpinner;
-    private Spinner exitSpinner;
+    private boolean firstTime = true;
+    private int lockTypeIfGranted;
 
     private AdminApiHelper adminApiHelper;
 
@@ -73,40 +60,25 @@ public class ActionsFragment extends Fragment {
         return fragment;
     }
 
-    public void setData(List<Action> trueActions, List<Action> falseActions) {
-        Log.d(TAG, "setData");
-        LockAction enterAction = (LockAction) trueActions.get(0);
-        enterLockType = enterAction.getLockType();
-
-        LockAction exitAction = (LockAction) falseActions.get(0);
-        exitLockType = exitAction.getLockType();
+    public void setData(List<Action> actions) {
+        LockAction action = (LockAction) actions.get(0);
+        lockType = action.getLockType();
+        if (lockType == LockAction.LockType.PIN || lockType == LockAction.LockType.PASSWORD)
+            input = action.getInput();
     }
 
-    public List<List<Action>> assembleData() {
-        List<Action> enterActions = new ArrayList<>(1);
-        LockAction enterAction = new LockAction(enterLockType);
-        if (enterLockType == LockAction.LockType.PIN || enterLockType == LockAction.LockType.PASSWORD)
-            enterAction.setInput(enterPinView.getText().toString());
-        enterActions.add(enterAction);
-
-        List<Action> exitActions = new ArrayList<>(1);
-        LockAction exitAction = new LockAction(exitLockType);
-        if (exitLockType == LockAction.LockType.PIN || exitLockType == LockAction.LockType.PASSWORD)
-            exitAction.setInput(exitPinView.getText().toString());
-        exitActions.add(exitAction);
-
-        ArrayList<List<Action>> data = new ArrayList<>(2);
-        data.add(enterActions);
-        data.add(exitActions);
-        return data;
+    public List<Action> assembleData() {
+        List<Action> actions = new ArrayList<>(1);
+        LockAction action = new LockAction(lockType);
+        if (lockType == LockAction.LockType.PIN || lockType == LockAction.LockType.PASSWORD)
+            action.setInput(inputView.getText().toString());
+        actions.add(action);
+        return actions;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
-        enterLockType = LockAction.LockType.UNCHANGED;
-        exitLockType = LockAction.LockType.UNCHANGED;
     }
 
     @Nullable
@@ -115,49 +87,27 @@ public class ActionsFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_actions, container, false);
 
         if (savedInstanceState != null) {
-            enterFirstTime = savedInstanceState.getBoolean("enter_first_time");
+            firstTime = savedInstanceState.getBoolean("enter_first_time");
             @LockAction.LockType int lockType1 = savedInstanceState.getInt("enter_lock_type", LockAction.LockType.UNCHANGED);
-            enterLockType = lockType1;
-            exitFirstTime = savedInstanceState.getBoolean("exit_first_time");
-            @LockAction.LockType int lockType2 = savedInstanceState.getInt("exit_lock_type", LockAction.LockType.UNCHANGED);
-            exitLockType = lockType2;
-            enterInput = savedInstanceState.getString("enter_input");
-            exitInput = savedInstanceState.getString("exit_input");
-
-            whichSpinner = savedInstanceState.getInt("which_spinner");
+            lockType = lockType1;
+            input = savedInstanceState.getString("enter_input");
             lockTypeIfGranted = savedInstanceState.getInt("lock_type_if_granted");
         }
 
-        enterPinView = (TextView) rootView.findViewById(R.id.enter_pin_password_view);
-        enterPinView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        enterPinView.setOnClickListener(new View.OnClickListener() {
+        inputView = (TextView) rootView.findViewById(R.id.input_view);
+        inputView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        inputView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (enterLockType == LockAction.LockType.PIN)
-                    showPinChooser(REQUEST_ENTER_PIN);
-                else if (enterLockType == LockAction.LockType.PASSWORD)
-                    showPasswordChooser(REQUEST_ENTER_PIN);
+                if (lockType == LockAction.LockType.PIN)
+                    showPinChooser(REQUEST_PIN);
+                else if (lockType == LockAction.LockType.PASSWORD)
+                    showPasswordChooser(REQUEST_PIN);
             }
         });
-        if (enterLockType == LockAction.LockType.PIN || enterLockType == LockAction.LockType.PASSWORD) {
-            enterPinView.setText(enterInput);
-            enterPinView.setVisibility(View.VISIBLE);
-        }
-
-        exitPinView = (TextView) rootView.findViewById(R.id.exit_pin_password_view);
-        exitPinView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        exitPinView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (exitLockType == LockAction.LockType.PIN)
-                    showPinChooser(REQUEST_EXIT_PIN);
-                else if (exitLockType == LockAction.LockType.PASSWORD)
-                    showPasswordChooser(REQUEST_EXIT_PIN);
-            }
-        });
-        if (exitLockType == LockAction.LockType.PIN || exitLockType == LockAction.LockType.PASSWORD) {
-            exitPinView.setText(exitInput);
-            exitPinView.setVisibility(View.VISIBLE);
+        if (lockType == LockAction.LockType.PIN || lockType == LockAction.LockType.PASSWORD) {
+            inputView.setText(input);
+            inputView.setVisibility(View.VISIBLE);
         }
 
         ArrayList<StringWithTag> array = new ArrayList<>();
@@ -166,19 +116,18 @@ public class ActionsFragment extends Fragment {
         array.add(new StringWithTag(getString(R.string.lock_mode_pin), "pin"));
         array.add(new StringWithTag(getString(R.string.lock_mode_swipe), "swipe"));
 
-        enterSpinner = (Spinner) rootView.findViewById(R.id.lock_spinner);
+        spinner = (Spinner) rootView.findViewById(R.id.lock_spinner);
         ArrayAdapter<StringWithTag> enterSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, array);
         enterSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        enterSpinner.setAdapter(enterSpinnerAdapter);
-        enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockType));
-        enterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setAdapter(enterSpinnerAdapter);
+        spinner.setSelection(getSpinnerPositionFromLockType(lockType));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 StringWithTag item = (StringWithTag) parent.getItemAtPosition(position);
                 @LockAction.LockType int selectedLockType = getLockTypeFromSpinnerTag(item.tag);
 
                 if (selectedLockType != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
-                    whichSpinner = 0;
                     lockTypeIfGranted = selectedLockType;
                     if (shouldShowAdminPermissionRationale())
                         showAdminPermissionRationale();
@@ -187,22 +136,22 @@ public class ActionsFragment extends Fragment {
                     return;
                 }
 
-                if (enterFirstTime) {
-                    enterFirstTime = false;
+                if (firstTime) {
+                    firstTime = false;
                     return;
                 }
 
-                if (selectedLockType != enterLockType) {
+                if (selectedLockType != lockType) {
                     switch (selectedLockType) {
                         case LockAction.LockType.PIN:
-                            showPinChooser(REQUEST_ENTER_PIN);
+                            showPinChooser(REQUEST_PIN);
                             break;
                         case LockAction.LockType.PASSWORD:
-                            showPasswordChooser(REQUEST_ENTER_PASSWORD);
+                            showPasswordChooser(REQUEST_PASSWORD);
                             break;
                         default:
-                            enterLockType = selectedLockType;
-                            enterPinView.setVisibility(View.GONE);
+                            lockType = selectedLockType;
+                            inputView.setVisibility(View.GONE);
                             break;
                     }
                 }
@@ -211,55 +160,6 @@ public class ActionsFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // No op
-            }
-        });
-
-        exitSpinner = (Spinner) rootView.findViewById(R.id.otherwise_spinner);
-        ArrayAdapter<StringWithTag> exitSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, array);
-        exitSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        exitSpinner.setAdapter(exitSpinnerAdapter);
-        exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
-        exitSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                StringWithTag item = (StringWithTag) parent.getItemAtPosition(position);
-                @LockAction.LockType int selectedLockType = getLockTypeFromSpinnerTag(item.tag);
-
-                if (selectedLockType != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
-                    whichSpinner = 1;
-                    lockTypeIfGranted = selectedLockType;
-                    if (shouldShowAdminPermissionRationale())
-                        showAdminPermissionRationale();
-                    else
-                        askAdminPermission();
-                    return;
-                }
-
-                if (exitFirstTime) {
-                    exitFirstTime = false;
-                    return;
-                }
-
-                if (selectedLockType != exitLockType) {
-                    exitLockType = selectedLockType;
-                    switch (selectedLockType) {
-                        case LockAction.LockType.PIN:
-                            showPinChooser(REQUEST_EXIT_PIN);
-                            break;
-                        case LockAction.LockType.PASSWORD:
-                            showPasswordChooser(REQUEST_EXIT_PASSWORD);
-                            break;
-                        default:
-                            exitLockType = selectedLockType;
-                            exitPinView.setVisibility(View.GONE);
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
         return rootView;
@@ -304,21 +204,18 @@ public class ActionsFragment extends Fragment {
 
     private void onAdminPermissionDenied() {
         Toast.makeText(getContext(), "Admin permission denied", Toast.LENGTH_SHORT).show();
-        enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockType));
-        exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
+        spinner.setSelection(getSpinnerPositionFromLockType(lockType));
     }
 
     private void onAdminPermissionGranted() {
         Toast.makeText(getContext(), "Admin permission granted", Toast.LENGTH_SHORT).show();
-        Spinner spinner = whichSpinner == 0 ? enterSpinner : exitSpinner;
-        spinner.setSelection(whichSpinner == 0 ? enterLockType : exitLockType);
         spinner.setSelection(getSpinnerPositionFromLockType(lockTypeIfGranted));
         switch (lockTypeIfGranted) {
             case LockAction.LockType.PIN:
-                showPinChooser(whichSpinner == 0 ? REQUEST_ENTER_PIN : REQUEST_EXIT_PIN);
+                showPinChooser(REQUEST_PIN);
                 break;
             case LockAction.LockType.PASSWORD:
-                showPasswordChooser(whichSpinner == 0 ? REQUEST_ENTER_PIN : REQUEST_EXIT_PIN);
+                showPasswordChooser(REQUEST_PASSWORD);
                 break;
         }
     }
@@ -326,13 +223,9 @@ public class ActionsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("enter_first_time", enterFirstTime);
-        outState.putInt("enter_lock_type", enterLockType);
-        outState.putBoolean("exit_first_time", exitFirstTime);
-        outState.putInt("exit_first_time", exitLockType);
-        outState.putString("enter_input", enterInput);
-        outState.putString("exit_input", exitInput);
-        outState.putInt("which_spinner", whichSpinner);
+        outState.putBoolean("enter_first_time", firstTime);
+        outState.putInt("enter_lock_type", lockType);
+        outState.putString("enter_input", input);
         outState.putInt("lock_type_if_granted", lockTypeIfGranted);
     }
 
@@ -360,48 +253,26 @@ public class ActionsFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_ENTER_PIN:
+            case REQUEST_PIN:
                 if (resultCode == Activity.RESULT_OK) {
-                    enterLockType = LockAction.LockType.PIN;
-                    enterInput = data.getStringExtra("input");
-                    enterPinView.setText(enterInput);
+                    lockType = LockAction.LockType.PIN;
+                    input = data.getStringExtra("input");
+                    inputView.setText(input);
                     TransitionManager.beginDelayedTransition(rootView);
-                    enterPinView.setVisibility(View.VISIBLE);
+                    inputView.setVisibility(View.VISIBLE);
                 } else {
-                    enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockType));
+                    spinner.setSelection(getSpinnerPositionFromLockType(lockType));
                 }
                 break;
-            case REQUEST_ENTER_PASSWORD:
+            case REQUEST_PASSWORD:
                 if (resultCode == Activity.RESULT_OK) {
-                    enterLockType = LockAction.LockType.PASSWORD;
-                    enterInput = data.getStringExtra("input");
-                    enterPinView.setText(enterInput);
+                    lockType = LockAction.LockType.PASSWORD;
+                    input = data.getStringExtra("input");
+                    inputView.setText(input);
                     TransitionManager.beginDelayedTransition(rootView);
-                    enterPinView.setVisibility(View.VISIBLE);
+                    inputView.setVisibility(View.VISIBLE);
                 } else {
-                    enterSpinner.setSelection(getSpinnerPositionFromLockType(enterLockType));
-                }
-                break;
-            case REQUEST_EXIT_PIN:
-                if (resultCode == Activity.RESULT_OK) {
-                    exitLockType = LockAction.LockType.PIN;
-                    exitInput = data.getStringExtra("input");
-                    exitPinView.setText(exitInput);
-                    TransitionManager.beginDelayedTransition(rootView);
-                    exitPinView.setVisibility(View.VISIBLE);
-                } else {
-                    exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
-                }
-                break;
-            case REQUEST_EXIT_PASSWORD:
-                if (resultCode == Activity.RESULT_OK) {
-                    exitLockType = LockAction.LockType.PASSWORD;
-                    exitInput = data.getStringExtra("input");
-                    exitPinView.setText(exitInput);
-                    TransitionManager.beginDelayedTransition(rootView);
-                    exitPinView.setVisibility(View.VISIBLE);
-                } else {
-                    exitSpinner.setSelection(getSpinnerPositionFromLockType(exitLockType));
+                    spinner.setSelection(getSpinnerPositionFromLockType(lockType));
                 }
                 break;
             case REQUEST_ADMIN_PERMISSION:

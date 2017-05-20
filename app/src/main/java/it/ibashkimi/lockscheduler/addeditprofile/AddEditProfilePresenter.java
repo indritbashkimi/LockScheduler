@@ -1,7 +1,6 @@
 package it.ibashkimi.lockscheduler.addeditprofile;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.List;
 
@@ -13,8 +12,6 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 
 public class AddEditProfilePresenter implements AddEditProfileContract.Presenter {
 
-    private static final String TAG = "AddEditProfilePresenter";
-
     @NonNull
     private final ProfilesRepository mProfilesRepository;
 
@@ -23,31 +20,31 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     private String mProfileId;
 
-    private boolean mDataLoaded = false;
+    public boolean mDataLoaded = false;
 
-    public AddEditProfilePresenter(String profileId, @NonNull ProfilesRepository mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView) {
+    public AddEditProfilePresenter(String profileId, @NonNull ProfilesRepository mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView, boolean dataLoaded) {
         this.mProfileId = profileId;
         this.mProfilesRepository = mProfilesRepository;
         this.mAddProfileView = mAddProfileView;
+        this.mDataLoaded = dataLoaded;
     }
 
     @Override
     public void start() {
-        if (mAddProfileView.isActive()) {
-
-        }
-        mAddProfileView.showTitle(isNewProfile() ? R.string.new_profile : R.string.edit_profile);
-        if (!mDataLoaded) {
-            if (!isNewProfile()) {
-                Profile profile = mProfilesRepository.get(mProfileId);
-                if (mAddProfileView.isActive()) {
-                    mAddProfileView.showProfile(profile);
+        if (!mDataLoaded && mAddProfileView.isActive()) {
+            mAddProfileView.showTitle(isNewProfile() ? R.string.new_profile : R.string.edit_profile);
+            if (!mDataLoaded) {
+                if (!isNewProfile()) {
+                    Profile profile = mProfilesRepository.get(mProfileId);
+                    if (mAddProfileView.isActive()) {
+                        mAddProfileView.showProfile(profile);
+                    }
+                } else {
+                    mAddProfileView.showEmptyProfile();
                 }
-            } else {
-                mAddProfileView.showEmptyProfile();
             }
+            mDataLoaded = true;
         }
-        mDataLoaded = true;
     }
 
     @Override

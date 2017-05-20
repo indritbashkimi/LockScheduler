@@ -34,10 +34,12 @@ import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View {
 
-    private static final String TAG = "AddEditProfileActivity";
-
     public static final int REQUEST_ADD_PROFILE = 1;
     public static final int REQUEST_EDIT_PROFILE = 2;
+
+    public static final String ENTER_ACTIONS_FRAGMENT = "enter_actions_fragment";
+    public static final String EXIT_ACTIONS_FRAGMENT = "exit_actions_fragment";
+    public static final String CONDITIONS_FRAGMENT = "conditions_fragment";
 
     public static final String ARGUMENT_EDIT_PROFILE_ID = "ARGUMENT_EDIT_PROFILE_ID";
 
@@ -79,7 +81,8 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         mPresenter = new AddEditProfilePresenter(
                 profileId,
                 ProfilesRepository.getInstance(),
-                this);
+                this,
+                savedInstanceState != null);
     }
 
     @Override
@@ -149,47 +152,47 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        ActionsFragment actionsFragment = getActionsFragment(fragmentManager);
-        actionsFragment.setData(profile.getEnterActions(), profile.getExitActions());
+        ActionsFragment enterActionsFragment = getEnterActionsFragment(fragmentManager);
+        enterActionsFragment.setData(profile.getEnterActions());
+
+        ActionsFragment exitActionsFragment = getEnterActionsFragment(fragmentManager);
+        exitActionsFragment.setData(profile.getExitActions());
 
         ConditionsFragment conditionsFragment = getConditionsFragment(fragmentManager);
         conditionsFragment.setData(profile.getConditions());
 
-        showFragments(fragmentManager, actionsFragment, conditionsFragment);
+        showFragments(fragmentManager, enterActionsFragment, exitActionsFragment, conditionsFragment);
     }
 
     @Override
     public void showEmptyProfile() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         showFragments(fragmentManager,
-                getActionsFragment(fragmentManager),
+                getEnterActionsFragment(fragmentManager),
+                getExitActionsFragment(fragmentManager),
                 getConditionsFragment(fragmentManager));
     }
 
     @Override
     public void showTitle(int title) {
-        getSupportActionBar().setTitle(title);
-        //toolbar.setTitle(title);
+        toolbar.setTitle(title);
     }
 
     @OnClick(R.id.fab)
     public void onSave() {
-        List<List<Action>> actionData = getActionsFragment(getSupportFragmentManager()).assembleData();
-        /*List<Action> enterActions = actionData.get(0);
-        for (Action action : enterActions)
-            Log.d(TAG, action.toJson());*/
-
-        List<Condition> conditions = getConditionsFragment(getSupportFragmentManager()).assembleConditions();
-        /*for (Condition condition : conditions)
-            Log.d(TAG, condition.toJson());*/
-        mPresenter.saveProfile(mProfileName.getText().toString(), conditions, actionData.get(0), actionData.get(1));
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Action> enterActions = getEnterActionsFragment(fragmentManager).assembleData();
+        List<Action> exitActions = getExitActionsFragment(fragmentManager).assembleData();
+        List<Condition> conditions = getConditionsFragment(fragmentManager).assembleConditions();
+        mPresenter.saveProfile(mProfileName.getText().toString(), conditions, enterActions, exitActions);
     }
 
-    public void showFragments(FragmentManager fragmentManager, Fragment actions, Fragment conditions) {
+    public void showFragments(FragmentManager fragmentManager, Fragment enterActions, Fragment exitActions, Fragment conditions) {
         fragmentManager
                 .beginTransaction()
-                .replace(R.id.actions_container, actions, ActionsFragment.class.getName())
-                .replace(R.id.conditions_container, conditions, ConditionsFragment.class.getName())
+                .replace(R.id.enter_actions_container, enterActions, ENTER_ACTIONS_FRAGMENT)
+                .replace(R.id.exit_actions_container, exitActions, EXIT_ACTIONS_FRAGMENT)
+                .replace(R.id.conditions_container, conditions, CONDITIONS_FRAGMENT)
                 .commit();
     }
 
@@ -198,8 +201,16 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         return true;
     }
 
-    private ActionsFragment getActionsFragment(FragmentManager fragmentManager) {
-        ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(ActionsFragment.class.getName());
+    private ActionsFragment getEnterActionsFragment(FragmentManager fragmentManager) {
+        ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(ENTER_ACTIONS_FRAGMENT);
+        if (actionsFragment == null) {
+            actionsFragment = ActionsFragment.newInstance();
+        }
+        return actionsFragment;
+    }
+
+    private ActionsFragment getExitActionsFragment(FragmentManager fragmentManager) {
+        ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(EXIT_ACTIONS_FRAGMENT);
         if (actionsFragment == null) {
             actionsFragment = ActionsFragment.newInstance();
         }
@@ -208,7 +219,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     private ConditionsFragment getConditionsFragment(FragmentManager fragmentManager) {
         ConditionsFragment conditionsFragment = (ConditionsFragment) fragmentManager
-                .findFragmentByTag(ConditionsFragment.class.getName());
+                .findFragmentByTag(CONDITIONS_FRAGMENT);
         if (conditionsFragment == null) {
             conditionsFragment = ConditionsFragment.newInstance();
         }
