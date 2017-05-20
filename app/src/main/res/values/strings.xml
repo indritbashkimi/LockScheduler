@@ -33,6 +33,8 @@
     <string name="profile_name">Profile name</string>
     <string name="new_profile">New profile</string>
     <string name="no_profiles">No profiles</string>
+    <string name="notif_profile_activated">Activated</string>
+    <string name="notif_profile_deactivated">Deactivated</string>
 
     <!-- Settings -->
     <string name="dialog_action_cancel">@string/cancel</string>

@@ -31,7 +31,6 @@ import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 
 
 public class ActionsFragment extends Fragment {
-    private static final String TAG = "ActionsFragment";
 
     private static final int REQUEST_PIN = 1;
     private static final int REQUEST_PASSWORD = 2;
@@ -142,17 +141,13 @@ public class ActionsFragment extends Fragment {
                 }
 
                 if (selectedLockType != lockType) {
-                    switch (selectedLockType) {
-                        case LockAction.LockType.PIN:
-                            showPinChooser(REQUEST_PIN);
-                            break;
-                        case LockAction.LockType.PASSWORD:
-                            showPasswordChooser(REQUEST_PASSWORD);
-                            break;
-                        default:
-                            lockType = selectedLockType;
-                            inputView.setVisibility(View.GONE);
-                            break;
+                    if (selectedLockType == LockAction.LockType.PIN) {
+                        showPinChooser(REQUEST_PIN);
+                    } else if (selectedLockType == LockAction.LockType.PASSWORD) {
+                        showPasswordChooser(REQUEST_PASSWORD);
+                    } else {
+                        lockType = selectedLockType;
+                        inputView.setVisibility(View.GONE);
                     }
                 }
             }

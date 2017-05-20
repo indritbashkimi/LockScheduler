@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.profiles;
 
-
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
@@ -14,13 +13,11 @@ import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
  * Listens to user actions from the UI ({@link ProfilesFragment}), retrieves the data and updates the
  * UI as required.
  */
-public class ProfilesPresenter implements ProfilesContract.Presenter {
-    private static final String TAG = "ProfilesPresenter";
+class ProfilesPresenter implements ProfilesContract.Presenter {
     private final ProfilesDataSource profilesRepository;
-
     private final ProfilesContract.View profilesView;
 
-    public ProfilesPresenter(@NonNull ProfilesDataSource profilesRepository, @NonNull ProfilesContract.View profilesView) {
+    ProfilesPresenter(@NonNull ProfilesDataSource profilesRepository, @NonNull ProfilesContract.View profilesView) {
         this.profilesRepository = profilesRepository;
         this.profilesView = profilesView;
     }
@@ -37,7 +34,7 @@ public class ProfilesPresenter implements ProfilesContract.Presenter {
             return;
         if (AddEditProfileActivity.REQUEST_ADD_PROFILE == requestCode) {
             profilesView.showSuccessfullySavedMessage();
-        } else if (AddEditProfileActivity.REQUEST_EDIT_PROFILE == requestCode){
+        } else if (AddEditProfileActivity.REQUEST_EDIT_PROFILE == requestCode) {
             if (extras != null) {
                 switch (extras) {
                     case "deleted":

@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.profiles;
 
-
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +25,9 @@ import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.util.ConditionUtils;
 
-public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
+class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 
-    public interface Callback {
+    interface Callback {
 
         void onProfileClick(int position);
 
@@ -40,7 +39,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
     @LayoutRes
     private int mItemLayout;
 
-    public ProfileAdapter(List<Profile> profiles, @LayoutRes int itemLayout, @NonNull Callback listener) {
+    ProfileAdapter(List<Profile> profiles, @LayoutRes int itemLayout, @NonNull Callback listener) {
         this.mProfiles = profiles;
         this.mItemLayout = itemLayout;
         this.mItemListener = listener;
@@ -74,7 +73,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
         return mProfiles;
     }
 
-    public Callback getItemListener() {
+    private Callback getItemListener() {
         return mItemListener;
     }
 
@@ -121,14 +120,20 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             this.listener = listener;
         }
 
-        public void init(@NonNull Profile profile) {
+        void init(@NonNull Profile profile) {
             if (profile.getName() != null && !profile.getName().equals("")) {
                 name.setText(profile.getName());
             } else {
                 name.setVisibility(View.GONE);
             }
-            enterLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, true).getLockType()));
-            exitLock.setText(LockAction.lockTypeToString(ProfileUtils.getLockAction(profile, false).getLockType()));
+            LockAction enterLockAction = ProfileUtils.getLockAction(profile, true);
+            if (enterLockAction == null)
+                throw new IllegalArgumentException("Profile " + profile.getName() + " doesn't contain an enter lock action.");
+            enterLock.setText(LockAction.lockTypeToString(enterLockAction.getLockType()));
+            LockAction exitLockAction = ProfileUtils.getLockAction(profile, false);
+            if (exitLockAction == null)
+                throw new IllegalArgumentException("Profile " + profile.getName() + " doesn't contain an exit lock action.");
+            exitLock.setText(LockAction.lockTypeToString(exitLockAction.getLockType()));
             PlaceCondition placeCondition = ProfileUtils.getPlaceCondition(profile);
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());
@@ -156,7 +161,7 @@ public class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileView
             }
         }
 
-        public void setSelected(boolean selected) {
+        void setSelected(boolean selected) {
             cover.setVisibility(selected ? View.VISIBLE : View.GONE);
         }
 

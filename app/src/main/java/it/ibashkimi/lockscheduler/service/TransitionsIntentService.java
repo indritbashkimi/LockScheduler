@@ -35,7 +35,7 @@ public class TransitionsIntentService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mSharedPreferences = getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -48,11 +48,10 @@ public class TransitionsIntentService extends IntentService {
                 String profileId = intent.getStringExtra("profile_id");
                 String profileName = intent.getStringExtra("profile_name");
                 boolean isActive = intent.getBooleanExtra("profile_active", false);
-                String notificationTitle = isActive ? "Activated" : "Deactivated";
+                String notificationTitle = getString(isActive ? R.string.notif_profile_activated : R.string.notif_profile_deactivated);
                 sendNotification(notificationTitle, profileName, (int) Long.parseLong(profileId));
             }
         } else {
-            Log.d(TAG, "onHandleIntent: wow geofence");
             ProfileScheduler.Companion.getInstance().getPlaceHandler()
                     .onGeofenceEvent(GeofencingEvent.fromIntent(intent));
         }

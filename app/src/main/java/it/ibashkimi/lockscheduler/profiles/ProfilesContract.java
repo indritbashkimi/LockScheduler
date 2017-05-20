@@ -1,6 +1,5 @@
 package it.ibashkimi.lockscheduler.profiles;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import java.util.List;

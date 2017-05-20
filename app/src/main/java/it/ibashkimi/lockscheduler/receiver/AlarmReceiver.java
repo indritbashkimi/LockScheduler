@@ -21,8 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         wl.acquire();
 
         // Put here YOUR code.
-        Toast.makeText(context, "AlarmReceiver !!!!!!!!!!", Toast.LENGTH_LONG).show(); // For example
-        Log.d(TAG, "onReceive: ALARM RECEIVED PORCA PUTTANA!!!");
+        Toast.makeText(context, "AlarmReceiver!", Toast.LENGTH_LONG).show();
 
         String profileId = intent.getStringExtra("profileId");
         ProfileScheduler.Companion.getInstance().getTimeHandler().onAlarm(profileId);
