@@ -15,7 +15,7 @@ import android.util.Log;
 import com.google.android.gms.location.GeofencingEvent;
 
 import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 import it.ibashkimi.lockscheduler.profiles.ProfilesActivity;
 
 /**
@@ -52,7 +52,7 @@ public class TransitionsIntentService extends IntentService {
                 sendNotification(notificationTitle, profileName, (int) Long.parseLong(profileId));
             }
         } else {
-            ProfileScheduler.Companion.getInstance().getPlaceHandler()
+            ProfileManager.Companion.getInstance().getPlaceHandler()
                     .onGeofenceEvent(GeofencingEvent.fromIntent(intent));
         }
     }

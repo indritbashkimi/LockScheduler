@@ -32,7 +32,7 @@ public class App extends Application {
         sInstance = this;
         googleApiHelper = new GoogleApiHelper(this);
         geofenceApiHelper = new GeofenceApiHelper(this, googleApiHelper);
-        //geofenceApiHelper.initGeofences(ProfilesRepository.getInstance().getProfiles());
+        //geofenceApiHelper.initGeofences(ProfilesRepository.getInstance().getAll());
     }
 
     public static synchronized App getInstance() {

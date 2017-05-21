@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
-
 public class Profile {
 
     @NonNull
@@ -26,8 +22,6 @@ public class Profile {
 
     @NonNull
     private List<Action> exitActions;
-
-    private boolean active;
 
     public Profile(@NonNull String id) {
         this(id, "");
@@ -64,11 +58,9 @@ public class Profile {
     }
 
     public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+        for (Condition condition : conditions)
+            if (!condition.isTrue()) return false;
+        return true;
     }
 
     public String getName() {

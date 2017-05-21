@@ -9,10 +9,6 @@ import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
-
 public class ProfileSerializer {
 
     public static String toJson(Profile profile) {
@@ -24,7 +20,6 @@ public class ProfileSerializer {
             for (int i = 0; i < profile.getConditions().size(); i++) {
                 jsonObject.put("condition_" + i, ConditionSerializer.conditionToJson(profile.getConditions().get(i)));
             }
-            jsonObject.put("active", profile.isActive());
             jsonObject.put("true_actions_size", profile.getEnterActions().size());
             for (int i = 0; i < profile.getEnterActions().size(); i++) {
                 jsonObject.put("true_action_" + i, ActionSerializer.actionToJson(profile.getEnterActions().get(i)));
@@ -72,8 +67,6 @@ public class ProfileSerializer {
             falseActions.add(action);
         }
         profile.setExitActions(falseActions);
-
-        profile.setActive(jsonObject.getBoolean("active"));
         return profile;
     }
 }

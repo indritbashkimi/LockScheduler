@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.widget.Toast;
 
-import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -19,9 +19,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Toast.makeText(context, "AlarmReceiver!", Toast.LENGTH_LONG).show();
         if (intent.getExtras().containsKey("profileId")) {
             String profileId = intent.getStringExtra("profileId");
-            ProfileScheduler.Companion.getInstance().getTimeHandler().onAlarm(profileId);
+            ProfileManager.Companion.getInstance().getTimeHandler().onAlarm(profileId);
         } else if (intent.getExtras().containsKey("boot")) {
-            ProfileScheduler.Companion.getInstance().init();
+            ProfileManager.Companion.getInstance().init();
         } else {
             throw new IllegalArgumentException("Don't know what to do with this intent: " + intent + ".");
         }

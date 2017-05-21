@@ -3,10 +3,9 @@ package it.ibashkimi.lockscheduler.model.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.json.JSONException;
-
 import java.util.List;
 
+import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
 
 /**
@@ -19,18 +18,30 @@ import it.ibashkimi.lockscheduler.model.Profile;
  */
 public interface ProfilesDataSource {
 
+    void beginTransaction();
+
+    void endTransaction();
+
     List<Profile> getProfiles();
 
     @Nullable
-    Profile get(@NonNull String profileId);
+    Profile getProfile(@NonNull String profileId);
 
-    void save(@NonNull Profile profile);
+    List<Profile> getConditionProfiles(@Condition.Type int conditionType);
 
-    void deleteAll();
+    void saveProfile(@NonNull Profile profile);
 
-    void delete(@NonNull String profileId);
+    void saveCondition(@NonNull String profileId, @Condition.Type int conditionType);
 
-    void update(@NonNull Profile profile);
+    void deleteProfiles();
 
-    void swap(int pos1, int pos2);
+    void deleteConditions();
+
+    void deleteProfile(@NonNull String profileId);
+
+    void deleteCondition(@NonNull String profileId, @Condition.Type int conditionType);
+
+    void updateProfile(@NonNull Profile profile);
+
+    void swapProfiles(@NonNull String id1, @NonNull String id2);
 }

@@ -50,7 +50,7 @@ public interface ProfilesContract {
 
         void deleteProfile(long profileId);
 
-        void swapProfiles(int pos1, int pos2);
+        void swapProfiles(Profile profile1, Profile profile2);
 /*
         void clearCompletedTasks();*/
     }

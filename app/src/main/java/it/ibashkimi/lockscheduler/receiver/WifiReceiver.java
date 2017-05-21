@@ -10,7 +10,7 @@ import android.util.Log;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.WifiItem;
-import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 
 
 public class WifiReceiver extends BroadcastReceiver {
@@ -33,6 +33,6 @@ public class WifiReceiver extends BroadcastReceiver {
 
             }
         }
-        ProfileScheduler.Companion.getInstance().getWifiHandler().onWifiChanged(wifiItem);
+        ProfileManager.Companion.getInstance().getWifiHandler().onWifiChanged(wifiItem);
     }
 }

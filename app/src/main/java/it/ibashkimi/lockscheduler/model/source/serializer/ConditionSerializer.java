@@ -13,13 +13,9 @@ import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.model.WifiItem;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
-
 public class ConditionSerializer {
 
-    public static String toJson(TimeCondition condition) {
+    private static String toJson(TimeCondition condition) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("type", condition.getType());
@@ -53,7 +49,7 @@ public class ConditionSerializer {
         return jsonObject.toString();
     }
 
-    public static String toJson(WifiCondition condition) {
+    private static String toJson(WifiCondition condition) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("type", condition.getType());
@@ -69,7 +65,7 @@ public class ConditionSerializer {
         return jsonObject.toString();
     }
 
-    public static String conditionToJson(Condition condition) {
+    static String conditionToJson(Condition condition) {
         switch (condition.getType()) {
             case Condition.Type.PLACE:
                 return toJson((PlaceCondition) condition);
@@ -81,7 +77,7 @@ public class ConditionSerializer {
         throw new RuntimeException("Unsupported condition type " + condition.getType());
     }
 
-    public static Condition parseCondition(String conditionJson) throws JSONException {
+    static Condition parseCondition(String conditionJson) throws JSONException {
         JSONObject conditionJsonObject = new JSONObject(conditionJson);
         @Condition.Type int type = conditionJsonObject.getInt("type");
         switch (type) {
@@ -99,7 +95,7 @@ public class ConditionSerializer {
         return parsePlaceConditionJson(new JSONObject(json));
     }
 
-    public static PlaceCondition parsePlaceConditionJson(JSONObject jsonObject) throws JSONException {
+    private static PlaceCondition parsePlaceConditionJson(JSONObject jsonObject) throws JSONException {
         double latitude = jsonObject.getDouble("latitude");
         double longitude = jsonObject.getDouble("longitude");
         int radius = jsonObject.getInt("radius");
@@ -110,7 +106,7 @@ public class ConditionSerializer {
         return placeCondition;
     }
 
-    public static TimeCondition parseTimeConditionJson(String json) throws JSONException {
+    private static TimeCondition parseTimeConditionJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         boolean[] daysActive = new boolean[7];
         for (int i = 0; i < 7; i++) {
@@ -123,7 +119,7 @@ public class ConditionSerializer {
         return timeCondition;
     }
 
-    public static WifiCondition parseWifiCondition(String json) throws JSONException {
+    private static WifiCondition parseWifiCondition(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
         int type = jsonObject.getInt("type");
         boolean isTrue = jsonObject.getBoolean("true");

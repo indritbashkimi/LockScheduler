@@ -9,14 +9,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
-import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.R;
-import it.ibashkimi.lockscheduler.about.AboutActivity;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import it.ibashkimi.lockscheduler.ui.BaseActivity;
 import com.ibashkimi.support.preference.Themes;
 import com.ibashkimi.support.utils.ThemeUtils;
+
+import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.about.AboutActivity;
+import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 
 public class SettingsActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -96,7 +96,8 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
                 recreate();
                 break;
             case "loitering_delay":
-                App.getGeofenceApiHelper().initGeofences(ProfilesRepository.getInstance().getProfiles());
+                Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
+                //App.getGeofenceApiHelper().initGeofences();
                 break;
             case "colored_navigation_bar":
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

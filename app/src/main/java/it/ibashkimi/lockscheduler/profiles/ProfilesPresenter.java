@@ -7,18 +7,18 @@ import java.util.List;
 
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
+import it.ibashkimi.lockscheduler.model.ProfileRepository;
 
 /**
  * Listens to user actions from the UI ({@link ProfilesFragment}), retrieves the data and updates the
  * UI as required.
  */
 class ProfilesPresenter implements ProfilesContract.Presenter {
-    private final ProfilesDataSource profilesRepository;
+    private final ProfileRepository repository;
     private final ProfilesContract.View profilesView;
 
-    ProfilesPresenter(@NonNull ProfilesDataSource profilesRepository, @NonNull ProfilesContract.View profilesView) {
-        this.profilesRepository = profilesRepository;
+    ProfilesPresenter(@NonNull ProfileRepository repository, @NonNull ProfilesContract.View profilesView) {
+        this.repository = repository;
         this.profilesView = profilesView;
     }
 
@@ -57,7 +57,7 @@ class ProfilesPresenter implements ProfilesContract.Presenter {
         if (!profilesView.isActive()) {
             return;
         }
-        List<Profile> profiles = profilesRepository.getProfiles();
+        List<Profile> profiles = repository.getAll();
         if (profiles == null) {
             profilesView.showLoadingProfilesError();
         } else {
@@ -84,8 +84,8 @@ class ProfilesPresenter implements ProfilesContract.Presenter {
     }
 
     @Override
-    public void swapProfiles(int pos1, int pos2) {
-        profilesRepository.swap(pos1, pos2);
+    public void swapProfiles(Profile profile1, Profile profile2) {
+        repository.swap(profile1, profile2);
     }
 
 }

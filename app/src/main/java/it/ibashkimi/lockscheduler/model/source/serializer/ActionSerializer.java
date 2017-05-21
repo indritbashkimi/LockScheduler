@@ -6,13 +6,9 @@ import org.json.JSONObject;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.LockAction;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
+class ActionSerializer {
 
-public class ActionSerializer {
-
-    public static String actionToJson(Action action) {
+    static String actionToJson(Action action) {
         switch (action.getType()) {
             case Action.Type.LOCK:
                 return toJson((LockAction) action);
@@ -20,7 +16,7 @@ public class ActionSerializer {
         throw new RuntimeException("Unsupported action: " + action.getType());
     }
 
-    public static Action parsejson(String jsonRep) throws JSONException {
+    static Action parseJson(String jsonRep) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonRep);
         @Action.Type int type = jsonObject.getInt("type");
         switch (type) {
@@ -30,7 +26,7 @@ public class ActionSerializer {
         throw new RuntimeException("Unsupported action: " + type);
     }
 
-    public static String toJson(LockAction action) {
+    private static String toJson(LockAction action) {
         JSONObject json = new JSONObject();
         try {
             json.put("type", action.getType());
@@ -43,11 +39,11 @@ public class ActionSerializer {
         return json.toString();
     }
 
-    public static LockAction parseLockAction(String json) throws JSONException {
+    static LockAction parseLockAction(String json) throws JSONException {
         return parseLockAction(new JSONObject(json));
     }
 
-    public static LockAction parseLockAction(JSONObject jsonObject) throws JSONException {
+    private static LockAction parseLockAction(JSONObject jsonObject) throws JSONException {
         @LockAction.LockType int lockType = Integer.parseInt(jsonObject.getString("lockType"));
         String input = jsonObject.getString("input");
         return new LockAction(lockType, input);

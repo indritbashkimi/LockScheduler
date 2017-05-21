@@ -6,5 +6,5 @@ import it.ibashkimi.lockscheduler.model.Profile
 
 interface ConditionChangeListener {
 
-    fun notifyConditionChanged(profile: Profile, condition: Condition)
+    fun notifyConditionChanged(profile: Profile, condition: Condition, wasActive: Boolean)
 }

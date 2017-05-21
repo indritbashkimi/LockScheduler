@@ -25,7 +25,7 @@ import it.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View {
@@ -76,7 +76,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         mPresenter = new AddEditProfilePresenter(
                 profileId,
-                ProfilesRepository.getInstance(),
+                ProfileManager.Companion.getInstance(),
                 this,
                 savedInstanceState != null);
     }

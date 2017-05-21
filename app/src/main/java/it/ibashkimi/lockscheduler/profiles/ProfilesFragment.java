@@ -22,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ibashkimi.support.utils.ThemeUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +32,7 @@ import butterknife.ButterKnife;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
-import com.ibashkimi.support.utils.ThemeUtils;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 
 /**
  * Fragment used to display profile list.
@@ -133,7 +134,8 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             int targetPosition = target.getAdapterPosition();
-            mPresenter.swapProfiles(viewHolder.getAdapterPosition(), targetPosition);
+            int pos1 = viewHolder.getAdapterPosition();
+            mPresenter.swapProfiles(mAdapter.getProfiles().get(pos1), mAdapter.getProfiles().get(targetPosition));
 
             if (mAdapter.isSelected(viewHolder.getAdapterPosition()) != mAdapter.isSelected(targetPosition)) {
                 mAdapter.toggleSelection(viewHolder.getAdapterPosition());
@@ -304,7 +306,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                     List<Integer> items = mAdapter.getSelectedItems();
                     for (int i = items.size() - 1; i > -1; i--) {
                         int position = items.get(i);
-                        ProfilesRepository.getInstance().delete(mAdapter.getProfiles().get(position).getId());
+                        ProfileManager.Companion.getInstance().remove(mAdapter.getProfiles().get(position).getId());
                         mAdapter.getProfiles().remove(i);
                         //mAdapter.notifyItemRemoved(position);
                     }

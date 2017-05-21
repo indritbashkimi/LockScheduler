@@ -9,57 +9,54 @@ import it.ibashkimi.lockscheduler.App
 import it.ibashkimi.lockscheduler.model.Condition
 import it.ibashkimi.lockscheduler.model.Profile
 import it.ibashkimi.lockscheduler.model.TimeCondition
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository
+import it.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import it.ibashkimi.lockscheduler.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MINUTE
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
-class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionChangeListener) : ConditionHandler(repository, listener) {
+class TimeConditionScheduler(repository: ProfilesDataSource, val listener: ConditionChangeListener)
+    : ConditionScheduler(Condition.Type.TIME, repository) {
 
-    private val TAG = "TimeConditionHandler"
-
-    override val sharedPreferences = App.getInstance().getSharedPreferences("time_condition_handler", Context.MODE_PRIVATE)!!
+    private val TAG = "TimeCondition"
 
     override fun init() {
-        Log.d(TAG, "init() called.")
-        for (profile in getRegisteredProfiles())
+        for (profile in registeredProfiles)
             register(profile)
     }
 
-    override fun register(profile: Profile) {
-        Log.d(TAG, "register() called with profile: $profile.")
-        if (add(profile.id)) {
-            val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
-            doAlarmJob(profile, condition)
-        }
+    override fun register(profile: Profile): Boolean {
+        Log.d(TAG, "register() called with profile=$profile")
+        super.register(profile)
+        val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
+        val now = Calendar.getInstance().timeInMillis
+        condition.isTrue = shouldBeActive(now, condition)
+        setAlarm(profile.id, condition.getNextAlarm(now))
+        return condition.isTrue
     }
 
     override fun unregister(profileId: String) {
-        Log.d(TAG, "unregister() called with profileId = $profileId.")
-        remove(profileId)
+        Log.d(TAG, "unregister() called with profile=$profileId")
+        super.unregister(profileId)
         cancelAlarm(profileId)
     }
 
     fun onAlarm(profileId: String) {
-        Log.d(TAG, "onAlarm called with profileId=$profileId")
-        val profile = repository.get(profileId) as Profile
+        Log.d(TAG, "onAlarm called with profile=$profileId")
+        val profile = getProfile(profileId)
         val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
         doAlarmJob(profile, condition)
     }
 
     fun doAlarmJob(profile: Profile, condition: TimeCondition) {
-        Log.d(TAG, "doAlarmJob() called with profile=$profile")
+        val wasActive = profile.isActive
         val isTrue = condition.isTrue
         val now = Calendar.getInstance().timeInMillis
         val shouldBeActive = shouldBeActive(now, condition)
         condition.isTrue = shouldBeActive
         if (condition.isTrue != isTrue)
-            listener.notifyConditionChanged(profile, condition)
+            listener.notifyConditionChanged(profile, condition, wasActive)
 
         val nextAlarm = condition.getNextAlarm(now)
         setAlarm(profile.id, nextAlarm)
@@ -128,32 +125,6 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
             throw RuntimeException("All days are false.")
     }
 
-    private fun nextDay(day: Int): Int {
-        return when (day) {
-            Calendar.MONDAY -> Calendar.TUESDAY
-            Calendar.TUESDAY -> Calendar.WEDNESDAY
-            Calendar.WEDNESDAY -> Calendar.THURSDAY
-            Calendar.THURSDAY -> Calendar.FRIDAY
-            Calendar.FRIDAY -> Calendar.SATURDAY
-            Calendar.SATURDAY -> Calendar.SUNDAY
-            Calendar.SUNDAY -> Calendar.MONDAY
-            else -> throw RuntimeException("Invalid day number $day.")
-        }
-    }
-
-    private fun previousDay(day: Int): Int {
-        return when (day) {
-            Calendar.MONDAY -> Calendar.SUNDAY
-            Calendar.TUESDAY -> Calendar.MONDAY
-            Calendar.WEDNESDAY -> Calendar.TUESDAY
-            Calendar.THURSDAY -> Calendar.WEDNESDAY
-            Calendar.FRIDAY -> Calendar.THURSDAY
-            Calendar.SATURDAY -> Calendar.FRIDAY
-            Calendar.SUNDAY -> Calendar.SATURDAY
-            else -> throw RuntimeException("Invalid day number $day.")
-        }
-    }
-
     fun setAlarm(profileId: String, nextAlarm: Long) {
         Log.d(TAG, "set alarm called with profileId=$profileId, next alarm = $nextAlarm")
         printTimestamp("nextAlarm", nextAlarm)
@@ -186,17 +157,5 @@ class TimeConditionHandler(repository: ProfilesRepository, listener: ConditionCh
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
         printCalendar(tag, calendar)
-    }
-
-    fun timestampToString(timestamp: Long): String {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = timestamp
-        return calendarToString(calendar)
-    }
-
-    fun calendarToString(calendar: Calendar): String {
-        val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH)
-        val date: Date = Date(calendar.timeInMillis)
-        return dateFormat.format(date)
     }
 }

@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.about.AboutActivity;
 import it.ibashkimi.lockscheduler.intro.IntroActivity;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 import it.ibashkimi.lockscheduler.settings.SettingsActivity;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 import it.ibashkimi.lockscheduler.util.PlatformUtils;
@@ -65,7 +65,7 @@ public class ProfilesActivity extends BaseActivity {
         }
 
         profilesPresenter = new ProfilesPresenter(
-                ProfilesRepository.getInstance(), profilesFragment);
+                ProfileManager.Companion.getInstance(), profilesFragment);
         profilesFragment.setPresenter(profilesPresenter);
     }
 

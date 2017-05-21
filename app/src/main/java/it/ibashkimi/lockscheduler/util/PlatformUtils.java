@@ -9,7 +9,7 @@ import android.support.v7.app.AlertDialog;
 import it.ibashkimi.lockscheduler.BuildConfig;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.api.AdminApiHelper;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 
 public class PlatformUtils {
 
@@ -33,7 +33,7 @@ public class PlatformUtils {
                 .setPositiveButton(R.string.action_uninstall, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ProfilesRepository.getInstance().deleteAll();
+                        ProfileManager.Companion.getInstance().removeAll();
 
                         AdminApiHelper adminApiHelper = new AdminApiHelper(context);
                         if (adminApiHelper.isAdminActive())

@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import it.ibashkimi.lockscheduler.App;
-import it.ibashkimi.lockscheduler.model.scheduler.ProfileScheduler;
+import it.ibashkimi.lockscheduler.model.ProfileManager;
 
 
 public class BootCompletedReceiver extends BroadcastReceiver {
@@ -25,7 +25,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (delay < 0)
             throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");
         if (delay == 0)
-            ProfileScheduler.Companion.getInstance().init();
+            ProfileManager.Companion.getInstance().init();
         else {
             Toast.makeText(context, "Setting alarm. Delay = " + delay, Toast.LENGTH_SHORT).show();
             App.getLockManager().resetPassword();

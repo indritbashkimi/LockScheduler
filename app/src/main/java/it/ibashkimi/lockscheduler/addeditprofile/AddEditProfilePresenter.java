@@ -8,12 +8,12 @@ import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.Action;
 import it.ibashkimi.lockscheduler.model.Condition;
 import it.ibashkimi.lockscheduler.model.Profile;
-import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
+import it.ibashkimi.lockscheduler.model.ProfileRepository;
 
 public class AddEditProfilePresenter implements AddEditProfileContract.Presenter {
 
     @NonNull
-    private final ProfilesRepository mProfilesRepository;
+    private final ProfileRepository mRepository;
 
     @NonNull
     private final AddEditProfileContract.View mAddProfileView;
@@ -22,9 +22,9 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     public boolean mDataLoaded = false;
 
-    public AddEditProfilePresenter(String profileId, @NonNull ProfilesRepository mProfilesRepository, @NonNull AddEditProfileContract.View mAddProfileView, boolean dataLoaded) {
+    public AddEditProfilePresenter(String profileId, @NonNull ProfileRepository repository, @NonNull AddEditProfileContract.View mAddProfileView, boolean dataLoaded) {
         this.mProfileId = profileId;
-        this.mProfilesRepository = mProfilesRepository;
+        this.mRepository = repository;
         this.mAddProfileView = mAddProfileView;
         this.mDataLoaded = dataLoaded;
     }
@@ -35,7 +35,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
             mAddProfileView.showTitle(isNewProfile() ? R.string.new_profile : R.string.edit_profile);
             if (!mDataLoaded) {
                 if (!isNewProfile()) {
-                    Profile profile = mProfilesRepository.get(mProfileId);
+                    Profile profile = mRepository.get(mProfileId);
                     if (mAddProfileView.isActive()) {
                         mAddProfileView.showProfile(profile);
                     }
@@ -58,7 +58,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
 
     @Override
     public void deleteProfile() {
-        mProfilesRepository.delete(mProfileId);
+        mRepository.remove(mProfileId);
         mAddProfileView.showProfileList(true, "deleted");
     }
 
@@ -81,7 +81,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.save(newProfile);
+            mRepository.add(newProfile);
             mAddProfileView.showProfileList(true, null);
         }
     }
@@ -99,7 +99,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
-            mProfilesRepository.override(mProfileId, newProfile);
+            mRepository.update(newProfile);
             mAddProfileView.showProfileList(true, "updated");
         }
     }
