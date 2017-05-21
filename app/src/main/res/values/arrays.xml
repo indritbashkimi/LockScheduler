@@ -76,6 +76,22 @@
         <item>2592000000</item>
     </string-array>
 
+    <string-array name="pref_boot_delay_titles">
+        <item>No delay</item>
+        <item>10 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+    </string-array>
+
+    <string-array name="pref_boot_delay_values">
+        <item>0</item>
+        <item>10000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>300000</item>
+    </string-array>
+
     <string name="lock_mode_nothing">Do nothing</string>
     <string name="lock_mode_password">Password</string>
     <string name="lock_mode_pin">PIN</string>

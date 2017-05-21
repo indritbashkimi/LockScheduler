@@ -89,6 +89,15 @@
 
         <android.support.v7.preference.ListPreference
             android:defaultValue="0"
+            android:entries="@array/pref_boot_delay_titles"
+            android:entryValues="@array/pref_boot_delay_values"
+            android:key="boot_delay"
+            android:positiveButtonText="@null"
+            android:summary="%s"
+            android:title="@string/pref_boot_delay" />
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="0"
             android:entries="@array/pref_loitering_delay_titles"
             android:entryValues="@array/pref_loitering_delay_values"
             android:key="loitering_delay"
