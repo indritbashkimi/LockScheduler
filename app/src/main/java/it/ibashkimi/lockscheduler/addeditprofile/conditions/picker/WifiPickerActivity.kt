@@ -32,9 +32,9 @@ class WifiPickerActivity : BaseActivity() {
 
     private val wifiAdapter: WifiAdapter = WifiAdapter(wifiItems)
 
-    private var recyclerView: RecyclerView? = null
+    lateinit private var recyclerView: RecyclerView
 
-    private var turnOnWifi: TextView? = null
+    lateinit private var turnOnWifi: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,9 +62,9 @@ class WifiPickerActivity : BaseActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView) as RecyclerView
-        recyclerView?.layoutManager = LinearLayoutManager(this)
-        recyclerView?.isNestedScrollingEnabled = false
-        recyclerView?.adapter = wifiAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.isNestedScrollingEnabled = false
+        recyclerView.adapter = wifiAdapter
         turnOnWifi = findViewById(R.id.turnOnWifi) as TextView
         findViewById(R.id.fab).setOnClickListener({ onSave() })
     }
@@ -106,13 +106,13 @@ class WifiPickerActivity : BaseActivity() {
     }
 
     private fun showTurnOnWifi() {
-        recyclerView!!.visibility = View.GONE
-        turnOnWifi!!.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        turnOnWifi.visibility = View.VISIBLE
     }
 
     private fun showWifiList() {
-        turnOnWifi!!.visibility = View.GONE
-        recyclerView!!.visibility = View.VISIBLE
+        turnOnWifi.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
 
         wifiAdapter.notifyDataSetChanged()
     }

@@ -11,10 +11,6 @@ import android.view.View
 import it.ibashkimi.lockscheduler.R
 import com.ibashkimi.support.utils.ThemeUtils
 
-
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
 class MapCoverView : View {
     private val circlePaint: Paint = Paint()
     private val circumferencePaint: Paint = Paint()

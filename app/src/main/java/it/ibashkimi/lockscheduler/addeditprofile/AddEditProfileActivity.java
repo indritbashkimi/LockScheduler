@@ -28,10 +28,6 @@ import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.source.ProfilesRepository;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
-
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View {
 
     public static final int REQUEST_ADD_PROFILE = 1;

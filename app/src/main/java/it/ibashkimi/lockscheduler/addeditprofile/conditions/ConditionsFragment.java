@@ -39,10 +39,7 @@ import static it.ibashkimi.lockscheduler.model.Condition.Type.PLACE;
 import static it.ibashkimi.lockscheduler.model.Condition.Type.TIME;
 import static it.ibashkimi.lockscheduler.model.Condition.Type.WIFI;
 
-
 public class ConditionsFragment extends Fragment {
-
-    private static final String TAG = "ConditionsFragment";
 
     @BindView(R.id.place_layout)
     ViewGroup placeLayout;
@@ -146,12 +143,15 @@ public class ConditionsFragment extends Fragment {
             if (savedInstanceState.containsKey("wifi_items_size")) {
                 int size = savedInstanceState.getInt("wifi_items_size");
                 wifiItems = new ArrayList<>(size);
-                for (int i = 0; i < size; i++)
-                    wifiItems.add(new WifiItem(savedInstanceState.getString("wifi_item_" + i)));
+                for (int i = 0; i < size; i++) {
+                    String ssid = savedInstanceState.getString("wifi_item_" + i, null);
+                    if (ssid == null)
+                        throw new IllegalStateException("Cannot restore wifi item at position " + i + ".");
+                    wifiItems.add(new WifiItem(ssid));
+                }
                 showWifiCondition(wifiItems);
             }
         }
-
         return root;
     }
 
@@ -219,9 +219,9 @@ public class ConditionsFragment extends Fragment {
             }
         } else if (requestCode == REQUEST_WIFI_PICKER) {
             if (resultCode == RESULT_OK) {
-                String[] ssids = data.getStringArrayExtra("ssids");
-                wifiItems = new ArrayList<>(ssids.length);
-                for (String ssid : ssids) wifiItems.add(new WifiItem(ssid));
+                String[] ssidArray = data.getStringArrayExtra("ssids");
+                wifiItems = new ArrayList<>(ssidArray.length);
+                for (String ssid : ssidArray) wifiItems.add(new WifiItem(ssid));
                 if (wifiItems.size() > 0)
                     showWifiCondition(wifiItems);
                 else
@@ -309,12 +309,6 @@ public class ConditionsFragment extends Fragment {
         showWifiCondition(wifiItems);
     }
 
-    private void showWifiCondition(FragmentTransaction transaction, WifiCondition condition) {
-        WifiConditionFragment fragment = getWifiConditionFragment();
-        fragment.setData(condition);
-        //transaction.replace(R.id.wifi_condition_container, fragment, "wifi_condition");
-    }
-
     private PlaceConditionFragment getPlaceConditionFragment() {
         PlaceConditionFragment fragment = (PlaceConditionFragment) fragmentManager.findFragmentByTag("place_condition");
         if (fragment == null) {
@@ -327,14 +321,6 @@ public class ConditionsFragment extends Fragment {
         TimeConditionFragment fragment = (TimeConditionFragment) fragmentManager.findFragmentByTag("time_condition");
         if (fragment == null) {
             fragment = new TimeConditionFragment();
-        }
-        return fragment;
-    }
-
-    private WifiConditionFragment getWifiConditionFragment() {
-        WifiConditionFragment fragment = (WifiConditionFragment) fragmentManager.findFragmentByTag("wifi_condition");
-        if (fragment == null) {
-            fragment = new WifiConditionFragment();
         }
         return fragment;
     }

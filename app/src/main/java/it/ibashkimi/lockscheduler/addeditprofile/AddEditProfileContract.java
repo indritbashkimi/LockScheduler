@@ -11,7 +11,7 @@ import it.ibashkimi.lockscheduler.ui.BaseView;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface AddEditProfileContract {
+interface AddEditProfileContract {
 
     interface View extends BaseView<Presenter> {
 

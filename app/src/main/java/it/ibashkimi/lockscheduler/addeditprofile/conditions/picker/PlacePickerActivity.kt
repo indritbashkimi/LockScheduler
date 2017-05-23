@@ -42,9 +42,9 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     internal var PLACE_AUTOCOMPLETE_REQUEST_CODE = 1
 
-    private var mapCoverView: MapCoverView? = null
-    private var addressView: TextView? = null
-    private var radiusView: TextView? = null
+    lateinit private var mapCoverView: MapCoverView
+    lateinit private var addressView: TextView
+    lateinit private var radiusView: TextView
 
     private var googleMap: GoogleMap? = null
     private var mapType = GoogleMap.MAP_TYPE_NORMAL
@@ -212,7 +212,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun updateMap() {
         val projection = googleMap!!.projection
-        val cover = mapCoverView!!
+        val cover = mapCoverView
         val startPoint = projection.fromScreenLocation(Point((cover.centerX - cover.radius).toInt(), cover.centerY.toInt()))
         val endPoint = projection.fromScreenLocation(Point(cover.centerX.toInt(), cover.centerY.toInt()))
 
@@ -227,8 +227,8 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         center = projection.visibleRegion.latLngBounds.center
         address = center!!.latitude.toString() + " : " + center!!.longitude.toString()
 
-        addressView?.text = address
-        radiusView?.text = "Radius: ${radius.toInt()} m" // TODO
+        addressView.text = address
+        radiusView.text = "Radius: ${radius.toInt()} m" // TODO
 
         updateAddress()
     }
@@ -259,7 +259,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun setAddress(address: CharSequence) {
         this.address = address
-        addressView?.text = address
+        addressView.text = address
     }
 
     fun onCancel() {
