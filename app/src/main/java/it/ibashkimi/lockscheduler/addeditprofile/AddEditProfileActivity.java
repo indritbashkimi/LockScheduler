@@ -200,7 +200,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
     private ActionsFragment getEnterActionsFragment(FragmentManager fragmentManager) {
         ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(ENTER_ACTIONS_FRAGMENT);
         if (actionsFragment == null) {
-            actionsFragment = ActionsFragment.newInstance();
+            actionsFragment = ActionsFragment.Companion.newInstance(true);
         }
         return actionsFragment;
     }
@@ -208,7 +208,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
     private ActionsFragment getExitActionsFragment(FragmentManager fragmentManager) {
         ActionsFragment actionsFragment = (ActionsFragment) fragmentManager.findFragmentByTag(EXIT_ACTIONS_FRAGMENT);
         if (actionsFragment == null) {
-            actionsFragment = ActionsFragment.newInstance();
+            actionsFragment = ActionsFragment.Companion.newInstance(false);
         }
         return actionsFragment;
     }

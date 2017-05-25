@@ -66,6 +66,10 @@
     <string name="pref_boot_delay">Boot delay</string>
 
     <!-- Add Edit Profile -->
+    <string name="lock_mode_nothing">Don\'t change lock settings</string>
+    <string name="lock_mode_password">Password</string>
+    <string name="lock_mode_pin">PIN</string>
+    <string name="lock_mode_swipe">Swipe</string>
     <string name="loading_profiles_error">Error while loading profiles</string>
     <string name="successfully_saved_profile_message">Profile saved</string>
     <string name="successfully_removed_profile_message">Profile deleted</string>
@@ -139,4 +143,6 @@
     <string name="action_uninstall">Uninstall</string>
     <string name="faq">Frequently asked questions</string>
     <string name="uninstall_message">You are about to uninstall this app.\n\nAll your profiles will be deleted.\nYour lock settings will remain unchanged.</string>
+    <string name="title_condition_enter">When conditions are true</string>
+    <string name="title_condition_exit">When conditions are false</string>
 </resources>
