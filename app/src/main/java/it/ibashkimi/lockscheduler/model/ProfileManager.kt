@@ -1,6 +1,7 @@
 package it.ibashkimi.lockscheduler.model
 
 import android.content.Intent
+import android.support.v4.util.ArrayMap
 import android.util.Log
 import it.ibashkimi.lockscheduler.App
 import it.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
@@ -14,6 +15,10 @@ import it.ibashkimi.lockscheduler.service.TransitionsIntentService
 import java.util.*
 
 class ProfileManager private constructor(val repository: ProfilesDataSource, val geofenceApiHelper: GeofenceApiHelper) : ConditionChangeListener, ProfileRepository {
+
+    val cachedProfiles: ArrayMap<String, Profile> = ArrayMap()
+
+    var isCacheDirty = true
 
     val priorities: IntArray = intArrayOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.PLACE)
 
@@ -33,6 +38,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             for (condition in profile.conditions.orderByPriority()) {
                 if (!register(profile, condition)) break
             }
+            cachedProfiles[profile.id] = profile
             repository.updateProfile(profile)
             if (profile.isActive != wasActive) {
                 notifyProfileStateChanged(profile)
@@ -45,10 +51,12 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
         Log.d(TAG, "add called with profile=$profile")
         repository.beginTransaction()
         repository.saveProfile(profile)
+        cachedProfiles[profile.id] = profile
         for (condition in profile.conditions.orderByPriority()) {
             if (!register(profile, condition)) break
         }
         repository.updateProfile(profile)
+        cachedProfiles[profile.id] = profile
         repository.endTransaction()
         if (profile.isActive) {
             notifyProfileStateChanged(profile)
@@ -73,11 +81,22 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     }
 
     override fun get(id: String): Profile? {
-        return repository.getProfile(id)
+        if (isCacheDirty)
+            refreshCache()
+        return cachedProfiles[id]
     }
 
     override fun getAll(): List<Profile> {
-        return repository.profiles
+        if (isCacheDirty)
+            refreshCache()
+        return cachedProfiles.values.toList()
+    }
+
+    private fun refreshCache() {
+        cachedProfiles.clear()
+        for (profile in repository.profiles)
+            cachedProfiles.put(profile.id, profile)
+        isCacheDirty = false
     }
 
     @Synchronized
@@ -110,6 +129,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             }
         }
         repository.updateProfile(profile)
+        cachedProfiles[profile.id] = profile
         if (profile.isActive != wasActive)
             notifyProfileStateChanged(profile)
     }
@@ -126,6 +146,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             throw IllegalArgumentException("Cannot find profile with id=$id.")
         }
         repository.deleteProfile(id)
+        cachedProfiles.remove(id)
         repository.endTransaction()
     }
 
@@ -139,12 +160,14 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
         }
         repository.deleteProfiles()
         repository.deleteConditions()
+        cachedProfiles.clear()
         repository.endTransaction()
     }
 
     @Synchronized
     override fun swap(profile1: Profile, profile2: Profile) {
         repository.swapProfiles(profile1.id, profile2.id)
+        isCacheDirty = true
     }
 
     private fun unregister(profile: Profile, condition: Condition) {
@@ -173,6 +196,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     override fun notifyConditionChanged(profile: Profile, condition: Condition, wasActive: Boolean) {
         Log.d(TAG, "notifyConditionChanged called with condition=$condition, profile=${profile.name}.")
         repository.updateProfile(profile)
+        cachedProfiles[profile.id] = profile
         if (condition.isTrue) {
             for (nextCondition in getNextConditions(profile.conditions, condition))
                 if (!register(profile, nextCondition)) break
