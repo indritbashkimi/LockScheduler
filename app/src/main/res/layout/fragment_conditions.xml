@@ -134,7 +134,7 @@
             android:layout_height="1dp"
             android:background="@color/divider_color" />
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:id="@+id/wifi_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -145,42 +145,43 @@
             android:minHeight="?listPreferredItemHeightSmall"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/wifi_icon"
-                style="@style/ConditionIcon"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                app:srcCompat="@drawable/ic_wifi" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/wifi_title"
-                style="@style/ConditionTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:text="@string/wifi_condition_title"
-                app:layout_constraintBottom_toBottomOf="@+id/wifi_icon"
-                app:layout_constraintEnd_toStartOf="@+id/wifi_delete"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/wifi_icon"
-                app:layout_constraintTop_toTopOf="@+id/wifi_icon" />
+                <ImageView
+                    style="@style/ConditionIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    app:srcCompat="@drawable/ic_wifi" />
 
-            <ImageView
-                android:id="@+id/wifi_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:padding="16dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/wifi_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/wifi_icon"
-                app:srcCompat="@drawable/ic_delete_condition"
-                tools:visibility="visible" />
+                <TextView
+                    android:id="@+id/wifi_title"
+                    style="@style/ConditionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/wifi_condition_title"
+                    app:layout_anchorGravity="center"
+                    app:layout_gravity="center_vertical" />
+
+                <ImageView
+                    android:id="@+id/wifi_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="16dp"
+                    android:paddingStart="16dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_delete_condition" />
+
+            </LinearLayout>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -188,23 +189,18 @@
                 style="@style/MyPreference"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="56dp"
-                android:layout_marginTop="0dp"
                 android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/wifi_icon"
-                app:layout_constraintVertical_bias="1.0">
+                android:paddingEnd="0dp"
+                android:paddingStart="72dp"
+                android:paddingTop="0dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/networks_title"
                     style="@style/MyPreferenceTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selected networks" />
+                    android:text="@string/wifi_selected_networks" />
 
                 <TextView
                     android:id="@+id/networks_summary"
@@ -215,7 +211,7 @@
 
             </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

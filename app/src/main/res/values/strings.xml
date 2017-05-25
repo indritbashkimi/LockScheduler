@@ -80,6 +80,7 @@
     <string name="place_condition_title">Place</string>
     <string name="time_condition_title">Time</string>
     <string name="wifi_condition_title">Wifi</string>
+    <string name="wifi_selected_networks">Selected networks</string>
     <string name="turn_on_wifi">Turn on Wi-Fi</string>
     <string name="place_picker_search">Search</string>
     <string name="place_picker_activity">Pick Place</string>
