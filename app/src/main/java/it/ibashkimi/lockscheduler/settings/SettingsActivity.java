@@ -16,6 +16,7 @@ import com.ibashkimi.support.utils.ThemeUtils;
 
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.about.AboutActivity;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import it.ibashkimi.lockscheduler.ui.BaseActivity;
 
 
@@ -48,12 +49,12 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     @Override
     protected void onStart() {
         super.onStart();
-        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        AppPreferencesHelper.INSTANCE.getPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onStop() {
-        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        AppPreferencesHelper.INSTANCE.getPreferences().unregisterOnSharedPreferenceChangeListener(this);
         super.onStop();
     }
 
@@ -62,7 +63,6 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         getMenuInflater().inflate(R.menu.settings, menu);
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,12 +87,12 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         switch (s) {
             case "theme":
-                @Themes.Theme int themeId = sharedPreferences.getInt("theme_id", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO);
+                @Themes.Theme int themeId = AppPreferencesHelper.INSTANCE.getTheme();
                 ThemeUtils.applyTheme(this, themeId);
                 recreate();
                 break;
             case "night_mode":
-                ThemeUtils.applyDayNightMode(this, sharedPreferences.getString("night_mode", "auto"));
+                ThemeUtils.applyDayNightMode(this, AppPreferencesHelper.INSTANCE.getNightMode());
                 recreate();
                 break;
             case "loitering_delay":
@@ -101,7 +101,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
                 break;
             case "colored_navigation_bar":
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    boolean coloredNavBar = sharedPreferences.getBoolean("colored_navigation_bar", false);
+                    boolean coloredNavBar = AppPreferencesHelper.INSTANCE.isColoredNavigationBarActive();
                     int navBarColor = ThemeUtils.getColorFromAttribute(this, coloredNavBar ? R.attr.colorPrimaryDark : android.R.attr.navigationBarColor);
                     getWindow().setNavigationBarColor(navBarColor);
                 }

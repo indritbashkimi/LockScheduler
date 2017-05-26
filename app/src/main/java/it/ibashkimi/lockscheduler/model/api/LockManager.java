@@ -6,6 +6,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
+
 /**
  * @author Indrit Bashkimi <indrit.bashkimi@gmail.com>
  */
@@ -22,8 +24,7 @@ public class LockManager {
         //mDevicePolicyManager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         mCompName = new ComponentName(context, LockSchedulerAdmin.class);
         mContext = context;
-        mPasswordExpirationTimeout = Integer.parseInt(context.getSharedPreferences("prefs", Context.MODE_PRIVATE)
-                .getString("password_expiration", "0"));
+        mPasswordExpirationTimeout = Integer.parseInt(AppPreferencesHelper.INSTANCE.getPasswordExpiration());
     }
 
     public DevicePolicyManager getDevicePolicyManager() {

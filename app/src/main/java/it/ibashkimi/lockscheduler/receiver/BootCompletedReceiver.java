@@ -5,12 +5,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.ProfileManager;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 
 
 public class BootCompletedReceiver extends BroadcastReceiver {
@@ -20,8 +20,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
-        SharedPreferences sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
-        long delay = Long.parseLong(sharedPreferences.getString("boot_delay", "0"));
+        long delay = Long.parseLong(AppPreferencesHelper.INSTANCE.getBootDelay());
         if (delay < 0)
             throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");
         if (delay == 0)

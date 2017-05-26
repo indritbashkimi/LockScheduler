@@ -2,7 +2,6 @@ package it.ibashkimi.lockscheduler.profiles;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -81,9 +80,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        SharedPreferences settings = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
-        int itemLayout = resolveLayout(settings.getInt("item_layout", 1));
-        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), itemLayout, this);
+        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), R.layout.item_profile_1, this);
     }
 
     @Override
@@ -156,15 +153,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
         }
     });
-
-    private static int resolveLayout(int itemLayout) {
-        switch (itemLayout) {
-            case 0:
-                return R.layout.item_profile_1;
-            default:
-                return R.layout.item_profile_1;
-        }
-    }
 
     /**
      * Toggle the selection state of an item.

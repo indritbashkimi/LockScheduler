@@ -30,6 +30,8 @@ import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.TimeCondition;
 import it.ibashkimi.lockscheduler.model.WifiCondition;
 import it.ibashkimi.lockscheduler.model.WifiItem;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
+import it.ibashkimi.lockscheduler.model.prefs.PreferencesHelper;
 import it.ibashkimi.lockscheduler.util.ConditionUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -180,8 +182,7 @@ public class ConditionsFragment extends Fragment {
         intent.putExtra("latitude", placeCondition.getPlace().latitude);
         intent.putExtra("longitude", placeCondition.getPlace().longitude);
         intent.putExtra("radius", placeCondition.getRadius());
-        intent.putExtra("map_type", getContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-                .getString("map_style", "normal"));
+        intent.putExtra("map_type", AppPreferencesHelper.INSTANCE.getMapStyle());
         startActivityForResult(intent, PLACE_PICKER_REQUEST);
     }
 

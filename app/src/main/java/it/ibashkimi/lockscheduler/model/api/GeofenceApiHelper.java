@@ -18,10 +18,10 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.ibashkimi.lockscheduler.Config;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileUtils;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import it.ibashkimi.lockscheduler.service.TransitionsIntentService;
 
 
@@ -117,8 +117,7 @@ public class GeofenceApiHelper {
     }
 
     private List<Geofence> getGeofenceList(List<Profile> profiles) {
-        String delayStr = mContext.getSharedPreferences(Config.MAIN_PREFS, Context.MODE_PRIVATE)
-                .getString("loitering_delay", "0");
+        String delayStr = AppPreferencesHelper.INSTANCE.getLoiteringDelay();
         int loiteringDelay = Integer.parseInt(delayStr);
         Log.d(TAG, "getGeofenceList: loitering " + loiteringDelay);
         ArrayList<Geofence> geofences = new ArrayList<>();

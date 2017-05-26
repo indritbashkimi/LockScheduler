@@ -16,6 +16,7 @@ import it.ibashkimi.lockscheduler.R
 import it.ibashkimi.lockscheduler.model.Action
 import it.ibashkimi.lockscheduler.model.LockAction
 import it.ibashkimi.lockscheduler.model.api.AdminApiHelper
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import java.util.*
 
 class ActionsFragment : Fragment() {
@@ -168,14 +169,14 @@ class ActionsFragment : Fragment() {
     private fun showPasswordChooser() {
         val intent = Intent(context, PinChooserActivity::class.java)
         intent.putExtra("type", "password")
-        intent.putExtra("min_length", sharedPreferences.getInt("min_password_length", 4))
+        intent.putExtra("min_length", AppPreferencesHelper.minPasswordLength)
         startActivityForResult(intent, REQUEST_PASSWORD)
     }
 
     private fun showPinChooser() {
         val intent = Intent(context, PinChooserActivity::class.java)
         intent.putExtra("type", "pin")
-        intent.putExtra("min_length", sharedPreferences.getInt("min_pin_length", 4))
+        intent.putExtra("min_length", AppPreferencesHelper.minPinLength)
         startActivityForResult(intent, REQUEST_PIN)
     }
 

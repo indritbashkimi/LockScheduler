@@ -22,6 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.util.List;
 
 import it.ibashkimi.lockscheduler.R;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import it.ibashkimi.lockscheduler.util.Utils;
 import com.ibashkimi.support.preference.ThemeAdapter;
 import com.ibashkimi.support.preference.ThemeItem;
@@ -37,7 +38,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
-        getPreferenceManager().setSharedPreferencesName("settings");
+        getPreferenceManager().setSharedPreferencesName(AppPreferencesHelper.PREFERENCES_NAME);
         addPreferencesFromResource(R.xml.preferences);
     }
 

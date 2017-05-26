@@ -19,6 +19,7 @@ import android.widget.TextView
 import com.ibashkimi.support.utils.SelectableAdapter
 import it.ibashkimi.lockscheduler.R
 import it.ibashkimi.lockscheduler.model.WifiItem
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import it.ibashkimi.lockscheduler.ui.BaseActivity
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job

@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import it.ibashkimi.lockscheduler.R;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
+import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import it.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import it.ibashkimi.lockscheduler.util.MapUtils;
 import it.ibashkimi.lockscheduler.util.Utils;
@@ -91,8 +92,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
         circlePadding = (int) ThemeUtils.dpToPx(getContext(), 8);
         circleColor = ThemeUtils.getColorFromAttribute(getContext(), R.attr.colorPrimary);
         fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
-        mapStyle = MapUtils.resolveMapStyle(getContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-                .getString("map_style", "normal"));
+        mapStyle = MapUtils.resolveMapStyle(AppPreferencesHelper.INSTANCE.getMapStyle());
     }
 
     @Nullable
