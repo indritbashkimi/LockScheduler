@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.ProfileManager;
+import it.ibashkimi.lockscheduler.model.api.LockManager;
 import it.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 
 
@@ -27,7 +27,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
             ProfileManager.Companion.getInstance().init();
         else {
             Toast.makeText(context, "Setting alarm. Delay = " + delay, Toast.LENGTH_SHORT).show();
-            App.getLockManager().resetPassword();
+            LockManager.resetPassword(context);
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent alarmIntent = new Intent(context, AlarmReceiver.class);
             alarmIntent.putExtra("boot", "boot");

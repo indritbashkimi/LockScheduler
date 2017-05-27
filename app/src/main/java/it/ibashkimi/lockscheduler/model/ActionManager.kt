@@ -3,12 +3,7 @@ package it.ibashkimi.lockscheduler.model
 import it.ibashkimi.lockscheduler.App
 import it.ibashkimi.lockscheduler.model.api.LockManager
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
 class ActionManager private constructor() {
-
-    val lockManager: LockManager by lazy { App.getLockManager() }
 
     private object Holder {
         val INSTANCE = ActionManager()
@@ -21,10 +16,11 @@ class ActionManager private constructor() {
     @Synchronized fun performAction(action: Action) {
         if (action !is LockAction)
             throw RuntimeException("Unknown actions: $action. Only LockAction is supported atm.")
+        val context = App.getInstance()
         when (action.lockType) {
-            LockAction.LockType.PASSWORD -> lockManager.setPassword(action.input)
-            LockAction.LockType.PIN -> lockManager.setPin(action.input)
-            LockAction.LockType.SWIPE -> lockManager.resetPassword()
+            LockAction.LockType.PASSWORD -> LockManager.setPassword(context, action.input)
+            LockAction.LockType.PIN -> LockManager.setPin(context, action.input)
+            LockAction.LockType.SWIPE -> LockManager.resetPassword(context)
             LockAction.LockType.UNCHANGED -> { /* Do nothing */
             }
         }
