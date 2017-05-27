@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.ibashkimi.lockscheduler">
+    package="com.ibashkimi.lockscheduler">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".App"
+        android:name="com.ibashkimi.lockscheduler.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:installLocation="internalOnly"
@@ -38,7 +38,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".profiles.ProfilesActivity"
+            android:name="com.ibashkimi.lockscheduler.profiles.ProfilesActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,13 +47,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".addeditprofile.AddEditProfileActivity" />
+            android:name="com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity" />
         <activity
-            android:name=".about.AboutActivity"
+            android:name="com.ibashkimi.lockscheduler.about.AboutActivity"
             android:label="@string/title_about" />
 
         <receiver
-            android:name=".model.api.LockSchedulerAdmin"
+            android:name="com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin"
             android:description="@string/device_admin_description"
             android:label="@string/lock_scheduler_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
@@ -67,11 +67,11 @@
         </receiver>
 
         <service
-            android:name=".service.TransitionsIntentService"
+            android:name="com.ibashkimi.lockscheduler.service.TransitionsIntentService"
             android:exported="false" />
 
         <receiver
-            android:name=".receiver.BootCompletedReceiver"
+            android:name="com.ibashkimi.lockscheduler.receiver.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -80,12 +80,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.WifiReceiver">
+        <receiver android:name="com.ibashkimi.lockscheduler.receiver.WifiReceiver">
             <intent-filter android:priority="100">
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.AlarmReceiver">
+        <receiver android:name="com.ibashkimi.lockscheduler.receiver.AlarmReceiver">
 
             <!--
             <intent-filter>
@@ -95,23 +95,23 @@
         </receiver>
 
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name="com.ibashkimi.lockscheduler.settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".profiles.ProfilesActivity">
+            android:parentActivityName="com.ibashkimi.lockscheduler.profiles.ProfilesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".profiles.ProfilesActivity" />
+                android:value="com.ibashkimi.lockscheduler.profiles.ProfilesActivity" />
         </activity>
-        <activity android:name=".intro.IntroActivity" />
-        <activity android:name=".ui.GoPremiumActivity" />
+        <activity android:name="com.ibashkimi.lockscheduler.intro.IntroActivity" />
+        <activity android:name="com.ibashkimi.lockscheduler.ui.GoPremiumActivity" />
         <activity
-            android:name=".addeditprofile.conditions.picker.PlacePickerActivity"
+            android:name="com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.PlacePickerActivity"
             android:label="@string/place_picker_activity" />
         <activity
-            android:name=".addeditprofile.conditions.picker.WifiPickerActivity"
+            android:name="com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.WifiPickerActivity"
             android:label="@string/wifi_picker_activity" />
         <activity
-            android:name=".addeditprofile.actions.PinChooserActivity"
+            android:name="com.ibashkimi.lockscheduler.addeditprofile.actions.PinChooserActivity"
             android:windowSoftInputMode="adjustResize" />
     </application>
 
