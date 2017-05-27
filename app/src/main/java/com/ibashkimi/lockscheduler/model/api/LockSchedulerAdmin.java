@@ -3,6 +3,7 @@ package com.ibashkimi.lockscheduler.model.api;
 import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -50,5 +51,13 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
         super.onPasswordExpiring(context, intent);
         showToast(context, "password expired");
         LockManager.resetPassword(context);
+    }
+
+    public static boolean isAdminActive(@NonNull Context context) {
+        return AdminUtils.getDevicePolicyManager(context).isAdminActive(AdminUtils.getComponentName(context));
+    }
+
+    public static void removeAdmin(@NonNull Context context) {
+        AdminUtils.getDevicePolicyManager(context).removeActiveAdmin(AdminUtils.getComponentName(context));
     }
 }

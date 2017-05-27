@@ -8,8 +8,8 @@ import android.support.v7.app.AlertDialog;
 
 import com.ibashkimi.lockscheduler.BuildConfig;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.api.AdminApiHelper;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
+import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin;
 
 public class PlatformUtils {
 
@@ -35,9 +35,8 @@ public class PlatformUtils {
                     public void onClick(DialogInterface dialog, int which) {
                         ProfileManager.Companion.getInstance().removeAll();
 
-                        AdminApiHelper adminApiHelper = new AdminApiHelper(context);
-                        if (adminApiHelper.isAdminActive())
-                            adminApiHelper.removeAdmin();
+                        if (LockSchedulerAdmin.isAdminActive(context))
+                            LockSchedulerAdmin.removeAdmin(context);
 
                         Uri packageUri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
                         Intent uninstallIntent =

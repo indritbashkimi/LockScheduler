@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <device-admin>
     <uses-policies>
-        <limit-password />
         <watch-login />
         <reset-password />
-        <expire-password />
     </uses-policies>
 </device-admin>

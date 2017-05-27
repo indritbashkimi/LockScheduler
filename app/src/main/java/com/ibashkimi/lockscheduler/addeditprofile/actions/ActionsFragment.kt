@@ -15,7 +15,8 @@ import android.widget.Toast
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.Action
 import com.ibashkimi.lockscheduler.model.LockAction
-import com.ibashkimi.lockscheduler.model.api.AdminApiHelper
+import com.ibashkimi.lockscheduler.model.api.AdminUtils
+import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import java.util.*
 
@@ -31,8 +32,6 @@ class ActionsFragment : Fragment() {
     private var lockTypeIfGranted: Int
         get() = sharedPreferences.getInt("lock_if_granted", LockAction.LockType.UNCHANGED)
         set(value) = sharedPreferences.edit().putInt("lock_if_granted", value).apply()
-
-    private val adminApiHelper: AdminApiHelper by lazy { AdminApiHelper(context) }
 
     private var isEnter = false
 
@@ -74,7 +73,7 @@ class ActionsFragment : Fragment() {
         lockSettings!!.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             val items = resources.getStringArray(R.array.lock_types)
-            val selectedItem = when(lockType) {
+            val selectedItem = when (lockType) {
                 LockAction.LockType.UNCHANGED -> 0
                 LockAction.LockType.SWIPE -> 1
                 LockAction.LockType.PIN -> 2
@@ -132,7 +131,7 @@ class ActionsFragment : Fragment() {
     }
 
     private fun adminPermissionGranted(): Boolean {
-        return adminApiHelper.isAdminActive
+        return LockSchedulerAdmin.isAdminActive(context)
     }
 
     private fun shouldShowAdminPermissionRationale(): Boolean {
@@ -149,7 +148,7 @@ class ActionsFragment : Fragment() {
     }
 
     private fun askAdminPermission() {
-        startActivityForResult(adminApiHelper.buildAddAdminIntent(), REQUEST_ADMIN_PERMISSION)
+        startActivityForResult(AdminUtils.buildAddAdminIntent(context), REQUEST_ADMIN_PERMISSION)
     }
 
     private fun onAdminPermissionDenied() {

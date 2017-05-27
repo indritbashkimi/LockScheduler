@@ -1,7 +1,6 @@
 package com.ibashkimi.lockscheduler.model.api;
 
 import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -30,27 +29,12 @@ public class LockManager {
     }
 
     private static boolean setPassword(@NonNull final Context context, @NonNull final String password, final int passwordQuality) {
-        DevicePolicyManager devicePolicyManager = getDevicePolicyManager(context);
-        //ComponentName componentName = getComponentName(context);
+        DevicePolicyManager devicePolicyManager = AdminUtils.getDevicePolicyManager(context);
+        //ComponentName componentName = AdminUtils.getComponentName(context);
         //devicePolicyManager.setPasswordQuality(componentName, passwordQuality);
         //devicePolicyManager.setPasswordMinimumLength(componentName, 4);
         //devicePolicyManager.setPasswordExpirationTimeout(componentName, passwordExpirationTimeout);
         return devicePolicyManager.resetPassword(password, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
-    }
-
-    @NonNull
-    private static ComponentName getComponentName(@NonNull final Context context) {
-        return new ComponentName(context, LockSchedulerAdmin.class);
-    }
-
-    @NonNull
-    private static DevicePolicyManager getDevicePolicyManager(@NonNull final Context context) {
-        DevicePolicyManager devicePolicyManager = (DevicePolicyManager)
-                context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        if (devicePolicyManager == null) {
-            throw new IllegalStateException("Can't get DevicePolicyManagerService.");
-        }
-        return devicePolicyManager;
     }
 
     private static void showToast(@NonNull Context context, @NonNull CharSequence msg) {
