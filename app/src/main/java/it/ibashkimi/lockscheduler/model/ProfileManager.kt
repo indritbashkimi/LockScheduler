@@ -29,7 +29,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     val wifiHandler: WifiConditionScheduler by lazy { WifiConditionScheduler(repository, this) }
 
     private object Holder {
-        val INSTANCE = ProfileManager(DatabaseDataSource.getInstance(), App.getGeofenceApiHelper())
+        val INSTANCE = ProfileManager(DatabaseDataSource.getInstance(), GeofenceApiHelper.getInstance())
     }
 
     fun init() {

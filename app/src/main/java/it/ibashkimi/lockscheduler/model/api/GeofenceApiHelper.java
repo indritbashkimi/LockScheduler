@@ -18,6 +18,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.ibashkimi.lockscheduler.App;
 import it.ibashkimi.lockscheduler.model.PlaceCondition;
 import it.ibashkimi.lockscheduler.model.Profile;
 import it.ibashkimi.lockscheduler.model.ProfileUtils;
@@ -26,17 +27,28 @@ import it.ibashkimi.lockscheduler.service.TransitionsIntentService;
 
 
 public class GeofenceApiHelper {
-
+    private static GeofenceApiHelper sInstance;
     private static final String TAG = "GeofenceApiHelper";
-    private Context mContext;
+
     private PendingIntent mGeofencePendingIntent;
     private GoogleApiHelper mGoogleApiHandler;
 
-    public GeofenceApiHelper(Context context, GoogleApiHelper googleApiHelper) {
-        this.mContext = context;
+    private GeofenceApiHelper(GoogleApiHelper googleApiHelper) {
         this.mGoogleApiHandler = googleApiHelper;
     }
 
+    public static synchronized GeofenceApiHelper getInstance() {
+        if (sInstance == null) {
+            GoogleApiHelper googleApiHelper = new GoogleApiHelper(App.getInstance());
+            sInstance = new GeofenceApiHelper(googleApiHelper);
+        }
+        return sInstance;
+    }
+
+    @SuppressWarnings("unused")
+    public static synchronized void destroyInstance() {
+        sInstance = null;
+    }
     public void initGeofences(final List<Profile> profiles) {
         Log.d(TAG, "initGeofences: adding job");
         mGoogleApiHandler.doJob(new Runnable() {
@@ -45,12 +57,6 @@ public class GeofenceApiHelper {
                 initGeofences(mGoogleApiHandler.getGoogleApiClient(), profiles);
             }
         });
-    }
-
-    public void register(final Profile profile) {
-        List<Profile> profiles = new ArrayList<>(0);
-        profiles.add(profile);
-        initGeofences(profiles);
     }
 
     private void initGeofences(GoogleApiClient googleApiClient, List<Profile> profiles) {
@@ -69,7 +75,7 @@ public class GeofenceApiHelper {
         if (!hasPlaceConditions)
             return;
 
-        if (ActivityCompat.checkSelfPermission(this.mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(App.getInstance(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "initGeofences: location permission is needed");
             return;
         }
@@ -102,10 +108,10 @@ public class GeofenceApiHelper {
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(mContext, TransitionsIntentService.class);
+        Intent intent = new Intent(getContext(), TransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mGeofencePendingIntent = PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
 
@@ -144,5 +150,9 @@ public class GeofenceApiHelper {
             }
         }
         return geofences;
+    }
+
+    private Context getContext() {
+        return App.getInstance();
     }
 }
