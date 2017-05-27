@@ -30,9 +30,9 @@ public class LockManager {
     }
 
     private static boolean setPassword(@NonNull final Context context, @NonNull final String password, final int passwordQuality) {
-        ComponentName componentName = getComponentName(context);
         DevicePolicyManager devicePolicyManager = getDevicePolicyManager(context);
-        devicePolicyManager.setPasswordQuality(componentName, passwordQuality);
+        //ComponentName componentName = getComponentName(context);
+        //devicePolicyManager.setPasswordQuality(componentName, passwordQuality);
         //devicePolicyManager.setPasswordMinimumLength(componentName, 4);
         //devicePolicyManager.setPasswordExpirationTimeout(componentName, passwordExpirationTimeout);
         return devicePolicyManager.resetPassword(password, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
