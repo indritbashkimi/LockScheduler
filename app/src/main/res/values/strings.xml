@@ -123,6 +123,7 @@
     </plurals>
     <string name="admin_permission_rationale_title">Admin permission</string>
     <string name="admin_permission_rationale">Admin permission is necessary for the app to change security settings such as PIN, Password or remove lock protection as specified by the user in the actions.</string>
+    <string name="dialog_lock_settings_title">Lock settings</string>
 
     <!-- About -->
     <string name="social_facebook">https://www.facebook.com/indrit.bashkimi</string>

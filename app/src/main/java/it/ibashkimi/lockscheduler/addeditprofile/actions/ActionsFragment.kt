@@ -2,6 +2,7 @@ package it.ibashkimi.lockscheduler.addeditprofile.actions
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -74,8 +75,15 @@ class ActionsFragment : Fragment() {
         lockSettings!!.setOnClickListener {
             val builder = AlertDialog.Builder(context)
             val items = resources.getStringArray(R.array.lock_types)
-            builder.setTitle("Lock settings")
-                    .setItems(items) { _, which ->
+            val selectedItem = when(lockType) {
+                LockAction.LockType.UNCHANGED -> 0
+                LockAction.LockType.SWIPE -> 1
+                LockAction.LockType.PIN -> 2
+                LockAction.LockType.PASSWORD -> 3
+                else -> throw IllegalArgumentException("Cannot determine selected item.")
+            }
+            builder.setTitle(R.string.dialog_lock_settings_title)
+                    .setSingleChoiceItems(items, selectedItem, { dialog, which ->
                         val selected = when (which) {
                             0 -> LockAction.LockType.UNCHANGED
                             1 -> LockAction.LockType.SWIPE
@@ -83,31 +91,30 @@ class ActionsFragment : Fragment() {
                             3 -> LockAction.LockType.PASSWORD
                             else -> throw IllegalStateException("Cannot determine lock type. which=$which.")
                         }
-                        if (selected != lockType) {
-                            if (selected != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
-                                lockTypeIfGranted = selected
-                                if (shouldShowAdminPermissionRationale())
-                                    showAdminPermissionRationale()
-                                else
-                                    askAdminPermission()
-                            } else {
-                                when (selected) {
-                                    LockAction.LockType.UNCHANGED -> {
-                                        lockType = LockAction.LockType.UNCHANGED
-                                        updateSummary()
-                                    }
-                                    LockAction.LockType.PIN -> showPinChooser()
-                                    LockAction.LockType.PASSWORD -> showPasswordChooser()
-                                    LockAction.LockType.SWIPE -> {
-                                        lockType = LockAction.LockType.SWIPE
-                                        updateSummary()
-                                    }
-                                    else -> throw IllegalStateException("Unknown lock type $selected.")
+                        if (selected != LockAction.LockType.UNCHANGED && !adminPermissionGranted()) {
+                            lockTypeIfGranted = selected
+                            if (shouldShowAdminPermissionRationale())
+                                showAdminPermissionRationale()
+                            else
+                                askAdminPermission()
+                        } else {
+                            when (selected) {
+                                LockAction.LockType.UNCHANGED -> {
+                                    lockType = LockAction.LockType.UNCHANGED
+                                    updateSummary()
                                 }
+                                LockAction.LockType.PIN -> showPinChooser()
+                                LockAction.LockType.PASSWORD -> showPasswordChooser()
+                                LockAction.LockType.SWIPE -> {
+                                    lockType = LockAction.LockType.SWIPE
+                                    updateSummary()
+                                }
+                                else -> throw IllegalStateException("Unknown lock type $selected.")
                             }
-                            updateSummary()
                         }
-                    }
+                        updateSummary()
+                        dialog.dismiss()
+                    })
             builder.create().show()
         }
         updateSummary()
