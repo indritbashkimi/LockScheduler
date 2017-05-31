@@ -3,16 +3,12 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.picker
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Point
 import android.location.Criteria
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -29,6 +25,9 @@ import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.extention.checkPermission
+import com.ibashkimi.lockscheduler.extention.handlePermissionResult
+import com.ibashkimi.lockscheduler.extention.requestPermission
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.MapUtils
 import kotlinx.coroutines.experimental.CommonPool
@@ -40,7 +39,8 @@ import java.util.*
 
 class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
-    internal var PLACE_AUTOCOMPLETE_REQUEST_CODE = 1
+    internal val PLACE_AUTOCOMPLETE_REQUEST_CODE = 1
+    private val PERMISSION_REQUEST_LOCATION = 99
 
     lateinit private var mapCoverView: MapCoverView
     lateinit private var addressView: TextView
@@ -158,18 +158,22 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         this.googleMap = googleMap
         googleMap.mapType = this.mapType
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                //Location Permission already granted
-                setUpMap(googleMap)
-            } else {
-                //Request Location Permission
-                checkLocationPermission()
-            }
-        } else {
-            setUpMap(googleMap)
-        }
+        checkPermission(
+                permission = Manifest.permission.ACCESS_FINE_LOCATION,
+                whenGranted = { setUpMap(googleMap) },
+                whenExplanationNeed = {
+                    AlertDialog.Builder(this)
+                            .setTitle("Location Permission Needed")
+                            .setMessage("This app needs the Location permission, please accept to use location functionality")
+                            .setPositiveButton(R.string.ok) { _, _ ->
+                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
+                            }
+                            .create().show()
+                },
+                whenDenied = {
+                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
+                }
+        )
     }
 
     private fun setUpMap(googleMap: GoogleMap) {
@@ -281,53 +285,16 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         finish()
     }
 
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            //Prompt the user once explanation has been shown
-                            ActivityCompat.requestPermissions(this@PlacePickerActivity,
-                                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                                    MY_PERMISSIONS_REQUEST_LOCATION)
-                        }
-                        .create()
-                        .show()
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                        MY_PERMISSIONS_REQUEST_LOCATION)
-            }
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            MY_PERMISSIONS_REQUEST_LOCATION -> {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        setUpMap(googleMap!!)
-                    }
-                } else {
-                    Toast.makeText(this, R.string.place_picker_permission_denied, Toast.LENGTH_SHORT).show()
-                    setUpBasicMap(googleMap!!)
-                }
-                return
+            PERMISSION_REQUEST_LOCATION -> {
+                handlePermissionResult(Manifest.permission.ACCESS_FINE_LOCATION, permissions, grantResults,
+                        whenGranted = { setUpMap(googleMap!!) },
+                        whenDenied = {
+                            Toast.makeText(this, R.string.place_picker_permission_denied, Toast.LENGTH_SHORT).show()
+                            setUpBasicMap(googleMap!!)
+                        })
             }
         }
     }
@@ -349,7 +316,5 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
     companion object {
 
         private val TAG = PlacePickerActivity::class.java.simpleName
-
-        val MY_PERMISSIONS_REQUEST_LOCATION = 99
     }
 }
