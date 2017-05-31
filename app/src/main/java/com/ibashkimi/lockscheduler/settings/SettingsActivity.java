@@ -11,13 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.ibashkimi.support.preference.Themes;
-import com.ibashkimi.support.utils.ThemeUtils;
-
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.about.AboutActivity;
+import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
+import com.ibashkimi.support.preference.Themes;
+import com.ibashkimi.support.utils.ThemeUtils;
 
 
 public class SettingsActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -69,14 +69,10 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         int id = item.getItemId();
         switch (id) {
             case R.id.action_help:
-                Intent helpIntent = new Intent(this, AboutActivity.class);
-                helpIntent.setAction(AboutActivity.ACTION_HELP);
-                startActivity(helpIntent);
+                startActivity(new Intent(this, HelpActivity.class));
                 return true;
             case R.id.action_about:
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
-                aboutIntent.setAction(AboutActivity.ACTION_ABOUT);
-                startActivityForResult(aboutIntent, 0);
+                startActivityForResult(new Intent(this, AboutActivity.class), 0);
                 return true;
         }
 

@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.about;
+package com.ibashkimi.lockscheduler.help;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -39,17 +39,6 @@ public class HelpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_help, container, false);
-
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.fragment_help_title);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         rootView.findViewById(R.id.feedback).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,12 +1,12 @@
 package com.ibashkimi.lockscheduler.about;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,35 +19,27 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
 
 
 public class AboutActivity extends BaseActivity {
 
-    public static final String ACTION_HELP = "it.ibashkimi.lockscheduler.settings.help";
-    public static final String ACTION_ABOUT = "it.ibashkimi.lockscheduler.settings.about";
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState == null) {
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            if (getIntent().getAction() != null && getIntent().getAction().equals(ACTION_HELP)) {
-                fragmentTransaction
-                        .replace(android.R.id.content, getHelpFragment(), "help_fragment_tag");
-            } else {
-                fragmentTransaction
-                        .replace(android.R.id.content, getAboutFragment(), "about_fragment_tag");
-            }
-            fragmentTransaction.commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, getAboutFragment(), "about_fragment_tag")
+                    .commit();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -62,27 +54,10 @@ public class AboutActivity extends BaseActivity {
                 .commit();
     }
 
-    public void showHelpFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .replace(android.R.id.content, getHelpFragment(), "help_fragment_tag")
-                .addToBackStack("help")
-                .commit();
-    }
-
     public AboutFragment getAboutFragment() {
         AboutFragment fragment = (AboutFragment) getSupportFragmentManager().findFragmentByTag("about_fragment_tag");
         if (fragment == null) {
             fragment = new AboutFragment();
-        }
-        return fragment;
-    }
-
-    public HelpFragment getHelpFragment() {
-        HelpFragment fragment = (HelpFragment) getSupportFragmentManager().findFragmentByTag("help_fragment_tag");
-        if (fragment == null) {
-            fragment = new HelpFragment();
         }
         return fragment;
     }
@@ -123,7 +98,7 @@ public class AboutActivity extends BaseActivity {
 
         @OnClick(R.id.help)
         public void onHelpClicked() {
-            ((AboutActivity) getActivity()).showHelpFragment();
+            startActivity(new Intent(getContext(), HelpActivity.class));
         }
 
         @OnClick(R.id.feedback)

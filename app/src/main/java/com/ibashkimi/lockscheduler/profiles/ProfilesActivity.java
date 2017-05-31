@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.about.AboutActivity;
+import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.intro.IntroActivity;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.settings.SettingsActivity;
@@ -169,8 +170,7 @@ public class ProfilesActivity extends BaseActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_help:
-                Intent helpIntent = new Intent(this, AboutActivity.class);
-                helpIntent.setAction(AboutActivity.ACTION_HELP);
+                Intent helpIntent = new Intent(this, HelpActivity.class);
                 startActivity(helpIntent);
                 return true;
             case R.id.action_about:
