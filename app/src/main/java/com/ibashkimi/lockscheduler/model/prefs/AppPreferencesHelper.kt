@@ -1,8 +1,10 @@
 package com.ibashkimi.lockscheduler.model.prefs
 
 import android.content.Context
-import com.ibashkimi.support.preference.Themes
+import android.content.SharedPreferences
 import com.ibashkimi.lockscheduler.App
+import com.ibashkimi.lockscheduler.model.LockAction
+import com.ibashkimi.support.preference.Themes
 
 object AppPreferencesHelper : PreferencesHelper {
     const val PREFERENCES_NAME = "settings"
@@ -22,62 +24,80 @@ object AppPreferencesHelper : PreferencesHelper {
     val preferences = App.getInstance().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)!!
 
     override var mapStyle: String
-        get() = getString(MAP_STYLE_KEY, "normal")
-        set(value) = putString(MAP_STYLE_KEY, value)
+        get() = get(MAP_STYLE_KEY, "normal")
+        set(value) = put(MAP_STYLE_KEY, value)
 
     override var nightMode: String
-        get() = getString(NIGHT_MODE_KEY, "auto")
-        set(value) = putString(MAP_STYLE_KEY, value)
+        get() = get(NIGHT_MODE_KEY, "auto")
+        set(value) = put(MAP_STYLE_KEY, value)
 
     override var theme: Int
-        get() = getInt(THEME_KEY, Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-        set(value) = putInt(THEME_KEY, value)
+        get() = get(THEME_KEY, Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
+        set(value) = put(THEME_KEY, value)
 
     override var isColoredNavigationBarActive: Boolean
-        get() = getBoolean(COLORED_NAVIGATION_BAR_KEY, false)
-        set(value) = putBoolean(COLORED_NAVIGATION_BAR_KEY, value)
+        get() = get(COLORED_NAVIGATION_BAR_KEY, false)
+        set(value) = put(COLORED_NAVIGATION_BAR_KEY, value)
 
     override var minPasswordLength: Int
-        get() = getInt(MIN_PASSWORD_LENGTH_KEY, 4)
-        set(value) = putInt(MIN_PASSWORD_LENGTH_KEY, value)
+        get() = get(MIN_PASSWORD_LENGTH_KEY, 4)
+        set(value) = put(MIN_PASSWORD_LENGTH_KEY, value)
 
     override var minPinLength: Int
-        get() = getInt(MIN_PIN_LENGTH_KEY, 4)
-        set(value) = putInt(MIN_PIN_LENGTH_KEY, value)
+        get() = get(MIN_PIN_LENGTH_KEY, 4)
+        set(value) = put(MIN_PIN_LENGTH_KEY, value)
 
     override var showNotifications: Boolean
-        get() = getBoolean(NOTIFICATIONS_SHOW_KEY, true)
-        set(value) = putBoolean(NOTIFICATIONS_SHOW_KEY, value)
+        get() = get(NOTIFICATIONS_SHOW_KEY, true)
+        set(value) = put(NOTIFICATIONS_SHOW_KEY, value)
 
     override var notificationsRingtone: String
-        get() = getString(NOTIFICATIONS_RINGTONE_KEY, "DEFAULT_SOUND")
-        set(value) = putString(NOTIFICATIONS_RINGTONE_KEY, value)
+        get() = get(NOTIFICATIONS_RINGTONE_KEY, "DEFAULT_SOUND")
+        set(value) = put(NOTIFICATIONS_RINGTONE_KEY, value)
 
     override var isVibrateActive: Boolean
-        get() = getBoolean(NOTIFICATIONS_VIBRATE_KEY, true)
-        set(value) = putBoolean(NOTIFICATIONS_VIBRATE_KEY, value)
+        get() = get(NOTIFICATIONS_VIBRATE_KEY, true)
+        set(value) = put(NOTIFICATIONS_VIBRATE_KEY, value)
 
     override var bootDelay: String
-        get() = getString(BOOT_DELAY_KEY, "0")
-        set(value) = putString(BOOT_DELAY_KEY, value)
+        get() = get(BOOT_DELAY_KEY, "0")
+        set(value) = put(BOOT_DELAY_KEY, value)
 
     override var loiteringDelay: String
-        get() = getString(LOITERING_DELAY_KEY, "0")
-        set(value) = putString(LOITERING_DELAY_KEY, value)
+        get() = get(LOITERING_DELAY_KEY, "0")
+        set(value) = put(LOITERING_DELAY_KEY, value)
 
     override var passwordExpiration: String
-        get() = getString(PASSWORD_EXPIRATION_KEY, "0")
-        set(value) = putString(PASSWORD_EXPIRATION_KEY, value)
+        get() = get(PASSWORD_EXPIRATION_KEY, "0")
+        set(value) = put(PASSWORD_EXPIRATION_KEY, value)
 
-    private fun getString(key: String, defaultValue: String) = preferences.getString(key, defaultValue)
+    override var lockAtBoot: Int
+        get() = get("lock_at_boot", LockAction.LockType.UNCHANGED)
+        set(value) = put("lock_at_boot", value)
 
-    private fun putString(key: String, value: String) = preferences.edit().putString(key, value).apply()
+    override var lockAtBootInput: String
+        get() = get("lock_at_boot_input", "")
+        set(value) = put("lock_at_boot_input", value)
 
-    private fun getInt(key: String, defaultValue: Int) = preferences.getInt(key, defaultValue)
+    override var isAdminRationaleNeeded: Boolean
+        get() = get("show_admin_permission_rationale", false)
+        set(value) = put("show_admin_permission_rationale", value)
 
-    private fun putInt(key: String, value: Int) = preferences.edit().putInt(key, value).apply()
+    private fun get(key: String, defaultValue: String) = preferences.getString(key, defaultValue)
 
-    private fun getBoolean(key: String, defaultValue: Boolean) = preferences.getBoolean(key, defaultValue)
+    private fun get(key: String, defaultValue: Int) = preferences.getInt(key, defaultValue)
 
-    private fun putBoolean(key: String, value: Boolean) = preferences.edit().putBoolean(key, value).apply()
+    private fun get(key: String, defaultValue: Boolean) = preferences.getBoolean(key, defaultValue)
+
+    private fun put(key: String, value: String) = preferences.edit { putString(key, value) }
+
+    private fun put(key: String, value: Int) = preferences.edit { putInt(key, value) }
+
+    private fun put(key: String, value: Boolean) = preferences.edit { putBoolean(key, value) }
+
+    inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
+        val editor = edit()
+        editor.func()
+        editor.apply()
+    }
 }

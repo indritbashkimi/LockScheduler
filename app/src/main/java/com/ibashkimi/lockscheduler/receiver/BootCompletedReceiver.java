@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.ibashkimi.lockscheduler.model.LockAction;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.model.api.LockManager;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
@@ -20,6 +21,20 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
+
+        int lockAtBoot = AppPreferencesHelper.INSTANCE.getLockAtBoot();
+        switch (lockAtBoot) {
+            case LockAction.LockType.SWIPE:
+                LockManager.resetPassword(context);
+                break;
+            case LockAction.LockType.PASSWORD:
+                LockManager.setPassword(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
+                break;
+            case LockAction.LockType.PIN:
+                LockManager.setPin(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
+                break;
+        }
+
         long delay = Long.parseLong(AppPreferencesHelper.INSTANCE.getBootDelay());
         if (delay < 0)
             throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");

@@ -24,4 +24,10 @@ interface PreferencesHelper {
     var loiteringDelay: String
 
     var passwordExpiration: String
+
+    var lockAtBoot: Int
+
+    var lockAtBootInput: String
+
+    var isAdminRationaleNeeded: Boolean
 }

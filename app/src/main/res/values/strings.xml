@@ -64,6 +64,7 @@
     <string name="pref_colored_navigation_bar">Colored Navigation bar</string>
     <string name="pref_colored_navigation_bar_summary">Whether or not the system navigation bar is colored with the skin</string>
     <string name="pref_boot_delay">Boot delay</string>
+    <string name="pref_title_lock_at_boot">Lock settings at boot</string>
 
     <!-- Add Edit Profile -->
     <string name="lock_mode_nothing">Don\'t change lock settings</string>

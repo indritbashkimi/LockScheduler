@@ -75,6 +75,11 @@
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_advanced">
 
+        <android.support.v7.preference.Preference
+            android:key="lock_at_boot"
+            android:summary="%s"
+            android:title="@string/pref_title_lock_at_boot" />
+
         <android.support.v7.preference.ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_boot_delay_titles"
@@ -83,15 +88,6 @@
             android:positiveButtonText="@null"
             android:summary="%s"
             android:title="@string/pref_boot_delay" />
-
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="0"
-            android:entries="@array/pref_loitering_delay_titles"
-            android:entryValues="@array/pref_loitering_delay_values"
-            android:key="loitering_delay"
-            android:positiveButtonText="@null"
-            android:summary="%s"
-            android:title="@string/pref_title_loitering_delay" />
 
     </android.support.v7.preference.PreferenceCategory>
 
