@@ -38,8 +38,8 @@ public class ProfileSerializer {
 
     public static Profile parseJson(String json) throws JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        Profile profile = new Profile(jsonObject.getString("id"));
-        profile.setName(jsonObject.getString("name"));
+        String id = jsonObject.getString("id");
+        String name = jsonObject.getString("name");
 
         int conditionsLen = jsonObject.getInt("conditions_len");
         ArrayList<Condition> conditions = new ArrayList<>(conditionsLen);
@@ -48,7 +48,6 @@ public class ProfileSerializer {
             Condition condition = ConditionSerializer.parseCondition(conditionJson);
             conditions.add(condition);
         }
-        profile.setConditions(conditions);
 
         int trueActionsSize = jsonObject.getInt("true_actions_size");
         ArrayList<Action> trueActions = new ArrayList<>(trueActionsSize);
@@ -57,7 +56,6 @@ public class ProfileSerializer {
             Action action = ActionSerializer.parseLockAction(actionRep);
             trueActions.add(action);
         }
-        profile.setEnterActions(trueActions);
 
         int falseActionsSize = jsonObject.getInt("false_actions_size");
         ArrayList<Action> falseActions = new ArrayList<>(falseActionsSize);
@@ -66,7 +64,7 @@ public class ProfileSerializer {
             Action action = ActionSerializer.parseLockAction(actionRep);
             falseActions.add(action);
         }
-        profile.setExitActions(falseActions);
-        return profile;
+
+        return new Profile(id, name, conditions, trueActions, falseActions);
     }
 }

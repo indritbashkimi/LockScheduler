@@ -3,12 +3,13 @@ package com.ibashkimi.lockscheduler.util;
 import android.content.Context;
 import android.support.annotation.StringRes;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.model.Time;
+import com.ibashkimi.lockscheduler.model.TimeCondition;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
 
 /**
  * @author Indrit Bashkimi (mailto: indrit.bashkimi@gmail.com)
@@ -34,12 +35,12 @@ public class ConditionUtils {
             for (int i = 1; i < activeDays.size() - 1; i++) {
                 res.append(getDayName(context, activeDays.get(i))).append(", ");
             }
-            res.append(getDayName(context, activeDays.get(activeDays.size()-1)));
+            res.append(getDayName(context, activeDays.get(activeDays.size() - 1)));
         }
         return res.toString();
     }
 
-    public static String internvalToString(TimeCondition.Time startTime, TimeCondition.Time endTime) {
+    public static String internvalToString(Time startTime, Time endTime) {
         return String.format(Locale.ENGLISH, "%02d:%02d - %02d:%02d", startTime.hour, startTime.minute, endTime.hour, endTime.minute);
     }
 
@@ -84,9 +85,9 @@ public class ConditionUtils {
         res.append(stringArray[0]);
         if (stringArray.length > 1) {
             res.append(separator);
-            for (int i = 1; i < stringArray.length -1; i++)
+            for (int i = 1; i < stringArray.length - 1; i++)
                 res.append(stringArray[i]).append(separator);
-            res.append(stringArray[stringArray.length -1]);
+            res.append(stringArray[stringArray.length - 1]);
         }
         return res.toString();
     }

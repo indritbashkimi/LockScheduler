@@ -19,10 +19,6 @@ import java.util.*
 
 class ActionsFragment : Fragment() {
     private var lockType = LockAction.LockType.UNCHANGED
-        set(value) {
-            field = value
-            updateSummary()
-        }
 
     private var input: String? = null
 
@@ -63,14 +59,14 @@ class ActionsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater!!.inflate(R.layout.fragment_actions, container, false) as ViewGroup
+        lockSummary = rootView.findViewById(R.id.lockSummary) as TextView
+        lockSettings = rootView.findViewById(R.id.lockSettings) as View
         if (savedInstanceState != null) {
             lockType = savedInstanceState.getInt("enter_lock_type", LockAction.LockType.UNCHANGED)
             input = savedInstanceState.getString("enter_input")
         }
         val titleView = rootView.findViewById(R.id.title) as TextView
         titleView.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
-        lockSummary = rootView.findViewById(R.id.lockSummary) as TextView
-        lockSettings = rootView.findViewById(R.id.lockSettings) as View
         lockSettings!!.setOnClickListener {
             showPasswordDialog(lockType, { which -> onLockTypeSelected(positionToLockType(which)) })
         }
@@ -81,6 +77,7 @@ class ActionsFragment : Fragment() {
     private fun onLockTypeSelected(lockType: Int) {
         if (lockType == LockAction.LockType.UNCHANGED) {
             this.lockType = LockAction.LockType.UNCHANGED
+            updateSummary()
         } else {
             checkAdminPermission(
                     onGranted = {
@@ -89,6 +86,7 @@ class ActionsFragment : Fragment() {
                             LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_PASSWORD)
                             LockAction.LockType.SWIPE -> {
                                 this.lockType = LockAction.LockType.SWIPE
+                                updateSummary()
                             }
                             else -> throw IllegalStateException("Unknown lock type $lockType.")
                         }
@@ -129,10 +127,12 @@ class ActionsFragment : Fragment() {
             REQUEST_PIN -> if (resultCode == Activity.RESULT_OK) {
                 lockType = LockAction.LockType.PIN
                 input = data!!.getStringExtra("input")
+                updateSummary()
             }
             REQUEST_PASSWORD -> if (resultCode == Activity.RESULT_OK) {
                 lockType = LockAction.LockType.PASSWORD
                 input = data!!.getStringExtra("input")
+                updateSummary()
             }
             REQUEST_ADMIN_PERMISSION -> handleAdminPermissionResult(
                     resultCode = resultCode,

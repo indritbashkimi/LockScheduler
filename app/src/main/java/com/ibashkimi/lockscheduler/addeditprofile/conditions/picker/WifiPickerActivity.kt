@@ -16,10 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
-import com.ibashkimi.support.utils.SelectableAdapter
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.WifiItem
 import com.ibashkimi.lockscheduler.ui.BaseActivity
+import com.ibashkimi.support.utils.SelectableAdapter
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
@@ -187,7 +186,7 @@ class WifiPickerActivity : BaseActivity() {
         fun onDataNotAvailable()
     }
 
-    inner class SelectableWifiItem(ssid: String, var isSelected: Boolean = false) : WifiItem(ssid)
+    inner class SelectableWifiItem(val ssid: String, var isSelected: Boolean = false)
 
     internal inner class WifiAdapter(var wifiList: List<SelectableWifiItem>) : SelectableAdapter<WifiAdapter.ViewHolder>() {
 

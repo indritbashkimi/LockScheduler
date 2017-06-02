@@ -80,7 +80,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), R.layout.item_profile_1, this);
+        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), R.layout.item_profile, this);
     }
 
     @Override

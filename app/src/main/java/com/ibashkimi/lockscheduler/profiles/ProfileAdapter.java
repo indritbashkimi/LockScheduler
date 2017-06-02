@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ibashkimi.lockscheduler.model.PowerCondition;
 import com.ibashkimi.support.utils.SelectableAdapter;
 
 import java.util.List;
@@ -110,6 +111,12 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
         @BindView(R.id.wifi_layout)
         View wifiLayout;
 
+        @BindView(R.id.power_layout)
+        View powerLayout;
+
+        @BindView(R.id.power_summary)
+        TextView powerSummary;
+
         @BindView(R.id.cover)
         View cover;
 
@@ -121,7 +128,7 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
         }
 
         void init(@NonNull Profile profile) {
-            if (profile.getName() != null && !profile.getName().equals("")) {
+            if (!profile.getName().equals("")) {
                 name.setText(profile.getName());
             } else {
                 name.setVisibility(View.GONE);
@@ -158,6 +165,11 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
                 wifiLayout.setVisibility(View.VISIBLE);
             } else {
                 wifiLayout.setVisibility(View.GONE);
+            }
+            PowerCondition powerCondition = ProfileUtils.getPowerCondition(profile);
+            if (powerCondition != null) {
+                powerLayout.setVisibility(View.VISIBLE);
+                powerSummary.setText(powerCondition.getPowerConnected() ? R.string.power_connected: R.string.power_disconnected);
             }
         }
 

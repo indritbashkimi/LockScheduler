@@ -14,16 +14,15 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ibashkimi.lockscheduler.App;
 import com.ibashkimi.lockscheduler.model.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileUtils;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GeofenceApiHelper {
@@ -49,6 +48,7 @@ public class GeofenceApiHelper {
     public static synchronized void destroyInstance() {
         sInstance = null;
     }
+
     public void initGeofences(final List<Profile> profiles) {
         Log.d(TAG, "initGeofences: adding job");
         mGoogleApiHandler.doJob(new Runnable() {
@@ -134,8 +134,8 @@ public class GeofenceApiHelper {
                 Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(profile.getId())
                         .setCircularRegion(
-                                placeCondition.getPlace().latitude,
-                                placeCondition.getPlace().longitude,
+                                placeCondition.getLatitude(),
+                                placeCondition.getLongitude(),
                                 placeCondition.getRadius())
                         .setExpirationDuration(Geofence.NEVER_EXPIRE);
                 if (loiteringDelay == 0) {

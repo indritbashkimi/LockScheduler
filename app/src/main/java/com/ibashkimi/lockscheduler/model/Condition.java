@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import static com.ibashkimi.lockscheduler.model.Condition.Type.PLACE;
+import static com.ibashkimi.lockscheduler.model.Condition.Type.POWER;
 import static com.ibashkimi.lockscheduler.model.Condition.Type.TIME;
 import static com.ibashkimi.lockscheduler.model.Condition.Type.WIFI;
 
@@ -13,13 +14,15 @@ import static com.ibashkimi.lockscheduler.model.Condition.Type.WIFI;
 public abstract class Condition {
     @IntDef({PLACE,
             TIME,
-            WIFI
+            WIFI,
+            POWER
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface Type {
         int PLACE = 0;
         int TIME = 1;
         int WIFI = 2;
+        int POWER = 3;
     }
 
     @Condition.Type

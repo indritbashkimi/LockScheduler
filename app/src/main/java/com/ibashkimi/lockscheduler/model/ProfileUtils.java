@@ -1,8 +1,5 @@
 package com.ibashkimi.lockscheduler.model;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@studio.unibo.it)
- */
 
 public class ProfileUtils {
 
@@ -31,6 +28,13 @@ public class ProfileUtils {
         Action action = profile.getAction(Action.Type.LOCK, fromEnterActions);
         if (action != null)
             return (LockAction) action;
+        return null;
+    }
+
+    public static PowerCondition getPowerCondition(Profile profile) {
+        Condition condition = profile.getCondition(Condition.Type.POWER);
+        if (condition != null)
+            return (PowerCondition) condition;
         return null;
     }
 }

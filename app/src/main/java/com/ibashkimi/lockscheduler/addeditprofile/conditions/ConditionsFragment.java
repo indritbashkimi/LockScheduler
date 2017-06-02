@@ -1,5 +1,6 @@
 package com.ibashkimi.lockscheduler.addeditprofile.conditions;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,12 +9,23 @@ import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.PlacePickerActivity;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.WifiPickerActivity;
+import com.ibashkimi.lockscheduler.model.Condition;
+import com.ibashkimi.lockscheduler.model.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.PowerCondition;
+import com.ibashkimi.lockscheduler.model.TimeCondition;
+import com.ibashkimi.lockscheduler.model.WifiCondition;
+import com.ibashkimi.lockscheduler.model.WifiItem;
+import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
+import com.ibashkimi.lockscheduler.util.ConditionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,25 +33,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.PlacePickerActivity;
-import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.WifiPickerActivity;
-import com.ibashkimi.lockscheduler.model.Condition;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
-import com.ibashkimi.lockscheduler.model.WifiCondition;
-import com.ibashkimi.lockscheduler.model.WifiItem;
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
-import com.ibashkimi.lockscheduler.util.ConditionUtils;
 
 import static android.app.Activity.RESULT_OK;
 import static com.ibashkimi.lockscheduler.addeditprofile.conditions.PlaceConditionFragment.PLACE_PICKER_REQUEST;
-import static com.ibashkimi.lockscheduler.addeditprofile.conditions.WifiConditionFragment.REQUEST_WIFI_PICKER;
 import static com.ibashkimi.lockscheduler.model.Condition.Type.PLACE;
+import static com.ibashkimi.lockscheduler.model.Condition.Type.POWER;
 import static com.ibashkimi.lockscheduler.model.Condition.Type.TIME;
 import static com.ibashkimi.lockscheduler.model.Condition.Type.WIFI;
 
 public class ConditionsFragment extends Fragment {
+
+    public static final int REQUEST_WIFI_PICKER = 5;
 
     @BindView(R.id.place_layout)
     ViewGroup placeLayout;
@@ -65,13 +69,24 @@ public class ConditionsFragment extends Fragment {
     @BindView(R.id.networks_summary)
     TextView wifiSummary;
 
+    @BindView(R.id.power_layout)
+    View powerLayout;
+
+    @BindView(R.id.power_summary)
+    TextView powerSummary;
+
+    @BindView(R.id.power_delete)
+    View powerDelete;
+
     private FragmentManager fragmentManager;
     private List<Condition> conditions;
     private List<WifiItem> wifiItems;
+    private boolean powerWhenConnected;
 
     private boolean placeConditionAdded = false;
     private boolean timeConditionAdded = false;
     private boolean wifiConditionAdded = false;
+    private boolean powerConditionAdded = false;
 
     public static ConditionsFragment newInstance() {
         return new ConditionsFragment();
@@ -94,11 +109,11 @@ public class ConditionsFragment extends Fragment {
                 conditions.add(timeCondition);
         }
         if (wifiConditionAdded) {
-            if (wifiItems != null && wifiItems.size() > 0) {
-                WifiCondition wifiCondition = new WifiCondition();
-                wifiCondition.setWifiList(wifiItems);
-                conditions.add(wifiCondition);
-            }
+            if (wifiItems != null && wifiItems.size() > 0)
+                conditions.add(new WifiCondition(wifiItems));
+        }
+        if (powerConditionAdded) {
+            conditions.add(new PowerCondition(powerWhenConnected));
         }
         return conditions;
     }
@@ -132,6 +147,10 @@ public class ConditionsFragment extends Fragment {
                             showWifiCondition((WifiCondition) condition);
                             wifiDelete.setVisibility(View.VISIBLE);
                             break;
+                        case POWER:
+                            showPowerCondition((PowerCondition) condition);
+                            powerDelete.setVisibility(View.VISIBLE);
+                            break;
                     }
                 }
             }
@@ -140,6 +159,7 @@ public class ConditionsFragment extends Fragment {
             placeConditionAdded = savedInstanceState.getBoolean("place_added");
             timeConditionAdded = savedInstanceState.getBoolean("time_added");
             wifiConditionAdded = savedInstanceState.getBoolean("wifi_added");
+            powerConditionAdded = savedInstanceState.getBoolean("power_added");
             if (savedInstanceState.containsKey("wifi_items_size")) {
                 int size = savedInstanceState.getInt("wifi_items_size");
                 wifiItems = new ArrayList<>(size);
@@ -151,6 +171,8 @@ public class ConditionsFragment extends Fragment {
                 }
                 showWifiCondition(wifiItems);
             }
+            powerWhenConnected = savedInstanceState.getBoolean("when_power_connected");
+            showPowerCondition(new PowerCondition(powerWhenConnected));
         }
         return root;
     }
@@ -161,12 +183,14 @@ public class ConditionsFragment extends Fragment {
         outState.putBoolean("place_added", placeConditionAdded);
         outState.putBoolean("time_added", timeConditionAdded);
         outState.putBoolean("wifi_added", wifiConditionAdded);
+        outState.putBoolean("power_added", powerConditionAdded);
         if (wifiItems != null) {
             for (int i = 0; i < wifiItems.size(); i++) {
                 outState.putString("wifi_item_" + i, wifiItems.get(i).getSsid());
             }
             outState.putInt("wifi_items_size", wifiItems.size());
         }
+        outState.putBoolean("when_power_connected", powerWhenConnected);
     }
 
     public void showPlacePicker() {
@@ -177,8 +201,8 @@ public class ConditionsFragment extends Fragment {
 
     public void showPlacePicker(@NonNull PlaceCondition placeCondition) {
         Intent intent = new Intent(getContext(), PlacePickerActivity.class);
-        intent.putExtra("latitude", placeCondition.getPlace().latitude);
-        intent.putExtra("longitude", placeCondition.getPlace().longitude);
+        intent.putExtra("latitude", placeCondition.getLatitude());
+        intent.putExtra("longitude", placeCondition.getLongitude());
         intent.putExtra("radius", placeCondition.getRadius());
         intent.putExtra("map_type", AppPreferencesHelper.INSTANCE.getMapStyle());
         startActivityForResult(intent, PLACE_PICKER_REQUEST);
@@ -206,8 +230,7 @@ public class ConditionsFragment extends Fragment {
                 float radius = data.getFloatExtra("radius", 0);
                 String address = data.getStringExtra("address");
 
-                PlaceCondition placeCondition = new PlaceCondition(new LatLng(latitude, longitude), (int) radius);
-                placeCondition.setAddress(address);
+                PlaceCondition placeCondition = new PlaceCondition(latitude, longitude, (int) radius, address);
 
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 showPlaceCondition(transaction, placeCondition);
@@ -288,6 +311,18 @@ public class ConditionsFragment extends Fragment {
         wifiItems = null;
     }
 
+    @OnClick(R.id.power_layout)
+    public void onPowerLayoutClicked() {
+        showPowerConditionDialog();
+    }
+
+    @OnClick(R.id.power_delete)
+    public void removePowerCondition() {
+        powerConditionAdded = false;
+        powerDelete.setVisibility(View.GONE);
+        powerSummary.setVisibility(View.GONE);
+    }
+
     private void showPlaceCondition(FragmentTransaction transaction, PlaceCondition condition) {
         placeConditionAdded = true;
         PlaceConditionFragment fragment = getPlaceConditionFragment();
@@ -306,6 +341,28 @@ public class ConditionsFragment extends Fragment {
         wifiConditionAdded = true;
         wifiItems = condition.getWifiList();
         showWifiCondition(wifiItems);
+    }
+
+    private void showPowerCondition(PowerCondition condition) {
+        powerSummary.setText(condition.getPowerConnected() ? R.string.power_connected : R.string.power_disconnected);
+        powerSummary.setVisibility(View.VISIBLE);
+        powerDelete.setVisibility(View.VISIBLE);
+        powerConditionAdded = true;
+    }
+
+    private void showPowerConditionDialog() {
+        String[] items = getResources().getStringArray(R.array.power_state);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.power_condition_title)
+                .setSingleChoiceItems(items, powerWhenConnected ? 0 : 1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        powerWhenConnected = which == 0;
+                        showPowerCondition(new PowerCondition(powerWhenConnected));
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
     private PlaceConditionFragment getPlaceConditionFragment() {

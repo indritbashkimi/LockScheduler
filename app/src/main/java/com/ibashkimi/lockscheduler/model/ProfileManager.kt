@@ -5,10 +5,7 @@ import android.support.v4.util.ArrayMap
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
-import com.ibashkimi.lockscheduler.model.scheduler.ConditionChangeListener
-import com.ibashkimi.lockscheduler.model.scheduler.PlaceConditionScheduler
-import com.ibashkimi.lockscheduler.model.scheduler.TimeConditionScheduler
-import com.ibashkimi.lockscheduler.model.scheduler.WifiConditionScheduler
+import com.ibashkimi.lockscheduler.model.scheduler.*
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.source.local.DatabaseDataSource
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService
@@ -20,7 +17,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
 
     var isCacheDirty = true
 
-    val priorities: IntArray = intArrayOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.PLACE)
+    val priorities: IntArray = intArrayOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
 
@@ -28,19 +25,21 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
 
     val wifiHandler: WifiConditionScheduler by lazy { WifiConditionScheduler(repository, this) }
 
+    val powerHandler: PowerConditionScheduler by lazy { PowerConditionScheduler(repository, this) }
+
     private object Holder {
         val INSTANCE = ProfileManager(DatabaseDataSource.getInstance(), GeofenceApiHelper.getInstance())
     }
 
     fun init() {
         for (profile in getAll()) {
-            val wasActive = profile.isActive
+            val wasActive = profile.isActive()
             for (condition in profile.conditions.orderByPriority()) {
                 if (!register(profile, condition)) break
             }
             cachedProfiles[profile.id] = profile
             repository.updateProfile(profile)
-            if (profile.isActive != wasActive) {
+            if (profile.isActive() != wasActive) {
                 notifyProfileStateChanged(profile)
             }
         }
@@ -58,7 +57,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
         repository.updateProfile(profile)
         cachedProfiles[profile.id] = profile
         repository.endTransaction()
-        if (profile.isActive) {
+        if (profile.isActive()) {
             notifyProfileStateChanged(profile)
         }
     }
@@ -73,6 +72,9 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             }
             is WifiCondition -> {
                 return wifiHandler.register(profile)
+            }
+            is PowerCondition -> {
+                return powerHandler.register(profile)
             }
             else -> {
                 throw RuntimeException("Cannot add unknown condition: $condition.")
@@ -103,7 +105,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     override fun update(profile: Profile) {
         val oldProfile = get(profile.id) ?:
                 throw IllegalArgumentException("Cannot find profile with id=${profile.id}.")
-        val wasActive = oldProfile.isActive
+        val wasActive = oldProfile.isActive()
         oldProfile.conditions.orderByPriority().reversed()
                 .filter { it !in profile.conditions }
                 .forEach { unregister(oldProfile, it) }
@@ -115,7 +117,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
                 else
                     condition.isTrue = false
             }
-            if (!profile.isActive) {
+            if (!profile.isActive()) {
                 oldProfile.conditions.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
                 profile.conditions.forEach { it.isTrue = false }
                 for (condition in profile.conditions.orderByPriority()) {
@@ -130,7 +132,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
         }
         repository.updateProfile(profile)
         cachedProfiles[profile.id] = profile
-        if (profile.isActive != wasActive)
+        if (profile.isActive() != wasActive)
             notifyProfileStateChanged(profile)
     }
 
@@ -181,6 +183,9 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             is WifiCondition -> {
                 wifiHandler.unregister(profile.id)
             }
+            is PowerCondition -> {
+                powerHandler.unregister(profile.id)
+            }
             else -> throw RuntimeException("Cannot remove unknown condition $condition.")
         }
     }
@@ -204,18 +209,18 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
             for (nextCondition in getNextConditions(profile.conditions, condition))
                 unregister(profile, nextCondition)
         }
-        if (profile.isActive != wasActive) {
+        if (profile.isActive() != wasActive) {
             notifyProfileStateChanged(profile)
         }
     }
 
     private fun notifyProfileStateChanged(profile: Profile) {
-        ActionManager.instance.performActions(if (profile.isActive) profile.enterActions else profile.exitActions)
+        ActionManager.instance.performActions(if (profile.isActive()) profile.enterActions else profile.exitActions)
         val intent = Intent(App.getInstance(), TransitionsIntentService::class.java)
         intent.action = "profile_state_changed"
         intent.putExtra("profile_id", profile.id)
         intent.putExtra("profile_name", profile.name)
-        intent.putExtra("profile_active", profile.isActive)
+        intent.putExtra("profile_active", profile.isActive())
         App.getInstance().startService(intent)
     }
 

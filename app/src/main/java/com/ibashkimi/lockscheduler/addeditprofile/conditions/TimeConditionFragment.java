@@ -15,19 +15,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.model.Time;
+import com.ibashkimi.lockscheduler.model.TimeCondition;
+import com.ibashkimi.lockscheduler.util.ConditionUtils;
+import com.ibashkimi.lockscheduler.util.Utils;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
-import com.ibashkimi.lockscheduler.util.ConditionUtils;
-import com.ibashkimi.lockscheduler.util.Utils;
 
-/**
- * @author Indrit Bashkimi (mailto: indrit.bashkimi@gmail.com)
- */
+
 public class TimeConditionFragment extends Fragment {
 
     @BindView(R.id.days_summary)
@@ -43,9 +42,9 @@ public class TimeConditionFragment extends Fragment {
 
     private boolean[] days = null;
 
-    private TimeCondition.Time startTime = null;
+    private Time startTime = null;
 
-    private TimeCondition.Time endTime = null;
+    private Time endTime = null;
 
     public void setData(TimeCondition condition) {
         this.condition = condition;
@@ -73,9 +72,9 @@ public class TimeConditionFragment extends Fragment {
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("start_time_hour"))
-                startTime = new TimeCondition.Time(savedInstanceState.getInt("start_time_hour"), savedInstanceState.getInt("start_time_minute"));
+                startTime = new Time(savedInstanceState.getInt("start_time_hour"), savedInstanceState.getInt("start_time_minute"));
             if (savedInstanceState.containsKey("end_time_hour"))
-                endTime = new TimeCondition.Time(savedInstanceState.getInt("end_time_hour"), savedInstanceState.getInt("end_time_minute"));
+                endTime = new Time(savedInstanceState.getInt("end_time_hour"), savedInstanceState.getInt("end_time_minute"));
             if (savedInstanceState.containsKey("days_0")) {
                 days = new boolean[7];
                 for (int i = 0; i < 7; i++)
@@ -85,10 +84,10 @@ public class TimeConditionFragment extends Fragment {
             if (days == null)
                 days = new boolean[]{true, true, true, true, true, true, true};
             if (startTime == null) {
-                startTime = new TimeCondition.Time(0, 0);
+                startTime = new Time(0, 0);
             }
             if (endTime == null) {
-                endTime = new TimeCondition.Time(0, 0);
+                endTime = new Time(0, 0);
             }
 
         }
@@ -136,13 +135,13 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                TimeCondition.Time time = new TimeCondition.Time(i, i1);
+                Time time = new Time(i, i1);
                 if (endTime != null && !endTime.isMidnight() && endTime.compareTo(time).isNotHigher()) {
                     showIntervalError();
                     return;
                 }
                 startTimeSummary.setText(Utils.formatTime(i, i1));
-                startTime = new TimeCondition.Time(i, i1);
+                startTime = new Time(i, i1);
             }
         });
     }
@@ -156,7 +155,7 @@ public class TimeConditionFragment extends Fragment {
         showTimePicker(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                TimeCondition.Time time = new TimeCondition.Time(i, i1);
+                Time time = new Time(i, i1);
                 if (startTime != null && !startTime.isMidnight() && startTime.compareTo(time).isNotLower()) {
                     showIntervalError();
                     return;

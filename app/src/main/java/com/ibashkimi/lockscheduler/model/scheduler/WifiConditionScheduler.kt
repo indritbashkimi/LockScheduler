@@ -46,7 +46,7 @@ class WifiConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         Log.d(TAG, "onWifiChanged() called with: wifiItem = [$wifiItem]")
         for (profile in registeredProfiles) {
             Log.d(TAG, "checking profile = $profile")
-            val wasActive = profile.isActive
+            val wasActive = profile.isActive()
             val condition = profile.getCondition(Condition.Type.WIFI) as WifiCondition
             val isTrue = condition.isTrue
             if (wifiItem == null) {

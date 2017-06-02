@@ -1,17 +1,17 @@
 package com.ibashkimi.lockscheduler.model.source.serializer;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.ibashkimi.lockscheduler.model.Condition;
+import com.ibashkimi.lockscheduler.model.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.PowerCondition;
+import com.ibashkimi.lockscheduler.model.Time;
+import com.ibashkimi.lockscheduler.model.TimeCondition;
+import com.ibashkimi.lockscheduler.model.WifiCondition;
+import com.ibashkimi.lockscheduler.model.WifiItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import com.ibashkimi.lockscheduler.model.Condition;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
-import com.ibashkimi.lockscheduler.model.WifiCondition;
-import com.ibashkimi.lockscheduler.model.WifiItem;
 
 public class ConditionSerializer {
 
@@ -39,8 +39,8 @@ public class ConditionSerializer {
         try {
             jsonObject.put("type", condition.getType());
             jsonObject.put("true", condition.isTrue());
-            jsonObject.put("latitude", condition.getPlace().latitude);
-            jsonObject.put("longitude", condition.getPlace().longitude);
+            jsonObject.put("latitude", condition.getLatitude());
+            jsonObject.put("longitude", condition.getLongitude());
             jsonObject.put("radius", condition.getRadius());
             jsonObject.put("address", condition.getAddress());
         } catch (JSONException e) {
@@ -65,6 +65,19 @@ public class ConditionSerializer {
         return jsonObject.toString();
     }
 
+    private static String toJson(PowerCondition condition) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("type", condition.getType());
+            jsonObject.put("true", condition.isTrue());
+            jsonObject.put("power_connected", condition.getPowerConnected());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+        return jsonObject.toString();
+    }
+
     static String conditionToJson(Condition condition) {
         switch (condition.getType()) {
             case Condition.Type.PLACE:
@@ -73,6 +86,8 @@ public class ConditionSerializer {
                 return toJson((TimeCondition) condition);
             case Condition.Type.WIFI:
                 return toJson((WifiCondition) condition);
+            case Condition.Type.POWER:
+                return toJson((PowerCondition) condition);
         }
         throw new RuntimeException("Unsupported condition type " + condition.getType());
     }
@@ -87,6 +102,8 @@ public class ConditionSerializer {
                 return parseTimeConditionJson(conditionJson);
             case Condition.Type.WIFI:
                 return parseWifiCondition(conditionJson);
+            case Condition.Type.POWER:
+                return parsePowerCondition(conditionJson);
         }
         throw new RuntimeException("Unsupported condition type " + type);
     }
@@ -100,9 +117,9 @@ public class ConditionSerializer {
         double longitude = jsonObject.getDouble("longitude");
         int radius = jsonObject.getInt("radius");
         boolean isTrue = jsonObject.getBoolean("true");
-        PlaceCondition placeCondition = new PlaceCondition(new LatLng(latitude, longitude), radius);
+        String address = jsonObject.getString("address");
+        PlaceCondition placeCondition = new PlaceCondition(latitude, longitude, radius, address);
         placeCondition.setTrue(isTrue);
-        placeCondition.setAddress(jsonObject.getString("address"));
         return placeCondition;
     }
 
@@ -112,8 +129,8 @@ public class ConditionSerializer {
         for (int i = 0; i < 7; i++) {
             daysActive[i] = jsonObject.getBoolean("day_" + i);
         }
-        TimeCondition.Time startTime = new TimeCondition.Time(jsonObject.getInt("start_time_hour"), jsonObject.getInt("start_time_minute"));
-        TimeCondition.Time endTime = new TimeCondition.Time(jsonObject.getInt("end_time_hour"), jsonObject.getInt("end_time_minute"));
+        Time startTime = new Time(jsonObject.getInt("start_time_hour"), jsonObject.getInt("start_time_minute"));
+        Time endTime = new Time(jsonObject.getInt("end_time_hour"), jsonObject.getInt("end_time_minute"));
         TimeCondition timeCondition = new TimeCondition(daysActive, startTime, endTime);
         timeCondition.setTrue(jsonObject.getBoolean("true"));
         return timeCondition;
@@ -133,5 +150,14 @@ public class ConditionSerializer {
         WifiCondition wifiCondition = new WifiCondition(items);
         wifiCondition.setTrue(isTrue);
         return wifiCondition;
+    }
+
+    private static PowerCondition parsePowerCondition(String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        int type = jsonObject.getInt("type");
+        boolean isTrue = jsonObject.getBoolean("true");
+        PowerCondition condition = new PowerCondition(jsonObject.getBoolean("power_connected"));
+        condition.setTrue(isTrue);
+        return condition;
     }
 }

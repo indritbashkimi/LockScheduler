@@ -106,5 +106,9 @@
         <item>password</item>
     </string-array>
 
+    <string-array name="power_state">
+        <item>@string/power_connected</item>
+        <item>@string/power_disconnected</item>
+    </string-array>
 
 </resources>

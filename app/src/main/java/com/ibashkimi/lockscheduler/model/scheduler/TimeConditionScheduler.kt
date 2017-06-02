@@ -8,6 +8,7 @@ import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.Condition
 import com.ibashkimi.lockscheduler.model.Profile
+import com.ibashkimi.lockscheduler.model.Time
 import com.ibashkimi.lockscheduler.model.TimeCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
@@ -50,7 +51,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
     }
 
     fun doAlarmJob(profile: Profile, condition: TimeCondition) {
-        val wasActive = profile.isActive
+        val wasActive = profile.isActive()
         val isTrue = condition.isTrue
         val now = Calendar.getInstance().timeInMillis
         val shouldBeActive = shouldBeActive(now, condition)
@@ -78,7 +79,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         if (!condition.daysActive[dayOfWeek]) {
             return false
         }
-        val now = TimeCondition.Time(calendar.get(HOUR_OF_DAY), calendar.get(MINUTE))
+        val now = Time(calendar.get(HOUR_OF_DAY), calendar.get(MINUTE))
         val start = condition.startTime
         val end = condition.endTime
         Log.d(TAG, "now=$now, start=$start, end=$end")
@@ -103,14 +104,14 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         cal.timeInMillis = currTimeMillis
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
-        val alarmTime: TimeCondition.Time
+        val alarmTime: Time
         if (isTrue) {
             alarmTime = endTime
             if (alarmTime.isMidnight)
                 cal.add(Calendar.DAY_OF_MONTH, 1)
         } else {
             alarmTime = startTime
-            val now = TimeCondition.Time.fromTimeStamp(currTimeMillis)
+            val now = Time.fromTimeStamp(currTimeMillis)
             if (startTime.compareTo(now).isLower) {
                 cal.add(Calendar.DAY_OF_MONTH, 1)
             }

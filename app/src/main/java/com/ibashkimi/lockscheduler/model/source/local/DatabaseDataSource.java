@@ -7,16 +7,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ibashkimi.lockscheduler.App;
 import com.ibashkimi.lockscheduler.model.Condition;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource;
 import com.ibashkimi.lockscheduler.model.source.serializer.ProfileSerializer;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseDataSource implements ProfilesDataSource {
 
@@ -184,6 +184,8 @@ public class DatabaseDataSource implements ProfilesDataSource {
                 return "time";
             case Condition.Type.WIFI:
                 return "wifi";
+            case Condition.Type.POWER:
+                return "power";
         }
         throw new IllegalArgumentException("Unhandled condition: " + conditionType);
     }
@@ -246,15 +248,16 @@ public class DatabaseDataSource implements ProfilesDataSource {
 
     @Override
     public void swapProfiles(@NonNull String id1, @NonNull String id2) {
-        Profile profile1 = getProfile(id1);
-        Profile profile2 = getProfile(id2);
-        if (profile1 == null || profile2 == null) {
+        Profile p1 = getProfile(id1);
+        Profile p2 = getProfile(id2);
+        if (p1 == null || p2 == null) {
             throw new IllegalArgumentException("Invalid profile ids.");
         }
-        String profileId1 = profile1.getId();
-        profile1.setId(profile2.getId());
+
+        Profile profile1 = new Profile(id2, p1.getName(), p1.getConditions(), p1.getEnterActions(), p1.getExitActions());
+        Profile profile2 = new Profile(id1, p2.getName(), p2.getConditions(), p2.getEnterActions(), p2.getExitActions());
+
         updateProfile(profile1);
-        profile2.setId(profileId1);
         updateProfile(profile2);
     }
 }

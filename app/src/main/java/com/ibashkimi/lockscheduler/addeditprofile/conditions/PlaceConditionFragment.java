@@ -202,13 +202,14 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
         radiusView.setText(condition.getRadius() + " m"); // TODO: 11/05/17
         if (circle != null)
             circle.remove();
+        LatLng place = new LatLng(condition.getLatitude(), condition.getLongitude());
         circle = googleMap.addCircle(new CircleOptions()
-                .center(condition.getPlace())
+                .center(place)
                 .radius(condition.getRadius())
                 .fillColor(fillColor)
                 .strokeWidth(Utils.dpToPx(getContext(), 2))
                 .strokeColor(circleColor));
-        LatLngBounds bounds = MapUtils.calculateBounds(condition.getPlace(), condition.getRadius());
+        LatLngBounds bounds = MapUtils.calculateBounds(place, condition.getRadius());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, circlePadding);
         PlaceConditionFragment.this.googleMap.moveCamera(cameraUpdate);
     }
