@@ -5,15 +5,7 @@ import com.ibashkimi.lockscheduler.model.action.Action
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.api.LockManager
 
-class ActionManager private constructor() {
-
-    private object Holder {
-        val INSTANCE = ActionManager()
-    }
-
-    companion object {
-        val instance: ActionManager by lazy { Holder.INSTANCE }
-    }
+object ActionManager {
 
     @Synchronized fun performAction(action: Action) {
         if (action !is LockAction)

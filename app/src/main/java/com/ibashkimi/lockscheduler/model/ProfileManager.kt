@@ -216,7 +216,7 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     }
 
     private fun notifyProfileStateChanged(profile: Profile) {
-        ActionManager.instance.performActions(if (profile.isActive()) profile.enterActions else profile.exitActions)
+        ActionManager.performActions(if (profile.isActive()) profile.enterActions else profile.exitActions)
         val intent = Intent(App.getInstance(), TransitionsIntentService::class.java)
         intent.action = "profile_state_changed"
         intent.putExtra("profile_id", profile.id)
