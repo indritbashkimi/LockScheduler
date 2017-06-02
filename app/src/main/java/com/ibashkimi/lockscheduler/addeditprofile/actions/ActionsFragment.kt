@@ -12,8 +12,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.Action
-import com.ibashkimi.lockscheduler.model.LockAction
+import com.ibashkimi.lockscheduler.model.action.Action
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
 import java.util.*
 

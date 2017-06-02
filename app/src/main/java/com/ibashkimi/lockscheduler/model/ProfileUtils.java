@@ -1,6 +1,14 @@
 package com.ibashkimi.lockscheduler.model;
 
 
+import com.ibashkimi.lockscheduler.model.action.Action;
+import com.ibashkimi.lockscheduler.model.action.LockAction;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
+
 public class ProfileUtils {
 
     public static PlaceCondition getPlaceCondition(Profile profile) {

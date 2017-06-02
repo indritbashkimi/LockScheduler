@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.Time;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.Time;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
 import com.ibashkimi.lockscheduler.util.ConditionUtils;
 import com.ibashkimi.lockscheduler.util.Utils;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;

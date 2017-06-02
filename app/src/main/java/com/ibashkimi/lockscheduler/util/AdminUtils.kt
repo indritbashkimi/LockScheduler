@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.actions.PinChooserActivity
-import com.ibashkimi.lockscheduler.model.LockAction
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.api.AdminUtils
 import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper

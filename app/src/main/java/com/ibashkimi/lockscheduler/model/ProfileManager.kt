@@ -5,6 +5,7 @@ import android.support.v4.util.ArrayMap
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
+import com.ibashkimi.lockscheduler.model.condition.*
 import com.ibashkimi.lockscheduler.model.scheduler.*
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.source.local.DatabaseDataSource

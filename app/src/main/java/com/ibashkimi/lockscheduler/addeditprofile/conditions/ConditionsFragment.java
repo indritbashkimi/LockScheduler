@@ -18,12 +18,12 @@ import android.widget.TextView;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.PlacePickerActivity;
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.WifiPickerActivity;
-import com.ibashkimi.lockscheduler.model.Condition;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.PowerCondition;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
-import com.ibashkimi.lockscheduler.model.WifiCondition;
-import com.ibashkimi.lockscheduler.model.WifiItem;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiItem;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.util.ConditionUtils;
 
@@ -36,10 +36,10 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_OK;
 import static com.ibashkimi.lockscheduler.addeditprofile.conditions.PlaceConditionFragment.PLACE_PICKER_REQUEST;
-import static com.ibashkimi.lockscheduler.model.Condition.Type.PLACE;
-import static com.ibashkimi.lockscheduler.model.Condition.Type.POWER;
-import static com.ibashkimi.lockscheduler.model.Condition.Type.TIME;
-import static com.ibashkimi.lockscheduler.model.Condition.Type.WIFI;
+import static com.ibashkimi.lockscheduler.model.condition.Condition.Type.PLACE;
+import static com.ibashkimi.lockscheduler.model.condition.Condition.Type.POWER;
+import static com.ibashkimi.lockscheduler.model.condition.Condition.Type.TIME;
+import static com.ibashkimi.lockscheduler.model.condition.Condition.Type.WIFI;
 
 public class ConditionsFragment extends Fragment {
 

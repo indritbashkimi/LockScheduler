@@ -1,6 +1,6 @@
 package com.ibashkimi.lockscheduler.model.scheduler
 
-import com.ibashkimi.lockscheduler.model.Condition
+import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.Profile
 
 

@@ -1,11 +1,11 @@
-package com.ibashkimi.lockscheduler.model;
+package com.ibashkimi.lockscheduler.model.action;
 
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static com.ibashkimi.lockscheduler.model.Action.Type.LOCK;
+import static com.ibashkimi.lockscheduler.model.action.Action.Type.LOCK;
 
 public abstract class Action {
 

@@ -29,7 +29,7 @@ import org.json.JSONException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import com.ibashkimi.lockscheduler.util.MapUtils;

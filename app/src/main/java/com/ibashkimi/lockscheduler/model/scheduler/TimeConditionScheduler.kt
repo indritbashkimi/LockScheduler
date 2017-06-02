@@ -6,10 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
-import com.ibashkimi.lockscheduler.model.Condition
+import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.Profile
-import com.ibashkimi.lockscheduler.model.Time
-import com.ibashkimi.lockscheduler.model.TimeCondition
+import com.ibashkimi.lockscheduler.model.condition.Time
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
@@ -111,7 +111,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
                 cal.add(Calendar.DAY_OF_MONTH, 1)
         } else {
             alarmTime = startTime
-            val now = Time.fromTimeStamp(currTimeMillis)
+            val now = com.ibashkimi.lockscheduler.model.condition.Time.fromTimeStamp(currTimeMillis)
             if (startTime.compareTo(now).isLower) {
                 cal.add(Calendar.DAY_OF_MONTH, 1)
             }

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.annotation.StringRes;
 
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.Time;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.Time;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
 
 import java.util.ArrayList;
 import java.util.List;

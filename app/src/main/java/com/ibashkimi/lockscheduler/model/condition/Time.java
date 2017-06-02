@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model;
+package com.ibashkimi.lockscheduler.model.condition;
 
 import com.ibashkimi.support.utils.CompareResult;
 

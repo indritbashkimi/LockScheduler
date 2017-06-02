@@ -1,5 +1,7 @@
 package com.ibashkimi.lockscheduler.model;
 
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;

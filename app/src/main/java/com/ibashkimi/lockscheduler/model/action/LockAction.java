@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model;
+package com.ibashkimi.lockscheduler.model.action;
 
 
 import android.support.annotation.IntDef;
@@ -7,10 +7,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
 
-import static com.ibashkimi.lockscheduler.model.LockAction.LockType.PASSWORD;
-import static com.ibashkimi.lockscheduler.model.LockAction.LockType.PIN;
-import static com.ibashkimi.lockscheduler.model.LockAction.LockType.SWIPE;
-import static com.ibashkimi.lockscheduler.model.LockAction.LockType.UNCHANGED;
+import static com.ibashkimi.lockscheduler.model.action.LockAction.LockType.PASSWORD;
+import static com.ibashkimi.lockscheduler.model.action.LockAction.LockType.PIN;
+import static com.ibashkimi.lockscheduler.model.action.LockAction.LockType.SWIPE;
+import static com.ibashkimi.lockscheduler.model.action.LockAction.LockType.UNCHANGED;
 
 public class LockAction extends Action {
 

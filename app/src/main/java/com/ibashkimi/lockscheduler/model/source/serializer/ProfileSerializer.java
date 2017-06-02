@@ -5,8 +5,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import com.ibashkimi.lockscheduler.model.Action;
-import com.ibashkimi.lockscheduler.model.Condition;
+import com.ibashkimi.lockscheduler.model.action.Action;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
 import com.ibashkimi.lockscheduler.model.Profile;
 
 public class ProfileSerializer {

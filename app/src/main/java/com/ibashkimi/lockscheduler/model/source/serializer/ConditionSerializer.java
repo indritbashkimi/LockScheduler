@@ -1,12 +1,12 @@
 package com.ibashkimi.lockscheduler.model.source.serializer;
 
-import com.ibashkimi.lockscheduler.model.Condition;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.PowerCondition;
-import com.ibashkimi.lockscheduler.model.Time;
-import com.ibashkimi.lockscheduler.model.TimeCondition;
-import com.ibashkimi.lockscheduler.model.WifiCondition;
-import com.ibashkimi.lockscheduler.model.WifiItem;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
+import com.ibashkimi.lockscheduler.model.condition.Time;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;

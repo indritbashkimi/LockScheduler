@@ -19,7 +19,7 @@ import android.text.InputType
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.LockAction
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.*
 import com.ibashkimi.support.preference.ThemeAdapter

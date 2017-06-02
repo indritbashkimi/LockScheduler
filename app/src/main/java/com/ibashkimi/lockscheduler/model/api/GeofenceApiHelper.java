@@ -15,7 +15,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.ibashkimi.lockscheduler.App;
-import com.ibashkimi.lockscheduler.model.PlaceCondition;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileUtils;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;

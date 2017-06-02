@@ -1,6 +1,8 @@
 package com.ibashkimi.lockscheduler.model
 
 import com.ibashkimi.lockscheduler.App
+import com.ibashkimi.lockscheduler.model.action.Action
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.api.LockManager
 
 class ActionManager private constructor() {

@@ -1,5 +1,8 @@
 package com.ibashkimi.lockscheduler.model
 
+import com.ibashkimi.lockscheduler.model.action.Action
+import com.ibashkimi.lockscheduler.model.condition.Condition
+
 data class Profile(val id: String,
                    val name: String,
                    val conditions: List<Condition>,

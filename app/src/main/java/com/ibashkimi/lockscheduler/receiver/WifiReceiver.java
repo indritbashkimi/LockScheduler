@@ -9,7 +9,7 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import com.ibashkimi.lockscheduler.App;
-import com.ibashkimi.lockscheduler.model.WifiItem;
+import com.ibashkimi.lockscheduler.model.condition.WifiItem;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 
 

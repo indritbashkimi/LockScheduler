@@ -3,7 +3,7 @@ package com.ibashkimi.lockscheduler.model.prefs
 import android.content.Context
 import android.content.SharedPreferences
 import com.ibashkimi.lockscheduler.App
-import com.ibashkimi.lockscheduler.model.LockAction
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.support.preference.Themes
 
 object AppPreferencesHelper : PreferencesHelper {
