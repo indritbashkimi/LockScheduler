@@ -3,7 +3,6 @@ package com.ibashkimi.lockscheduler.intro;
 import android.os.Bundle;
 
 import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
-
 import com.ibashkimi.lockscheduler.R;
 
 public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.IntroActivity {

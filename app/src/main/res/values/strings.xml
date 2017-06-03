@@ -2,20 +2,17 @@
     <!-- Profiles -->
     <string name="app_name">Lock Scheduler</string>
     <string name="app_description">Automatically change your lock settings to keep your phone safe.</string>
-    <string name="app_version">v0.1</string>
     <string name="app_version_full">Version v0.1</string>
     <string name="action_settings">Settings</string>
     <string name="action_help">Help</string>
     <string name="title_about">About</string>
     <string name="action_about">About</string>
-    <string name="developer_name">Indrit Bashkimi</string>
     <string name="developer_email">indrit.bashkimi@gmail.com</string>
     <string name="feedback_subject">Feedback</string>
     <string name="feedback_chooser_title">Send email…</string>
     <string name="lock_scheduler_admin">Lock Scheduler</string>
     <string name="device_admin_description">Bla bla description</string>
     <string name="location_permission_rationale">LockScheduler requires location permission to change lock settings when you go to certain places.</string>
-    <string name="device_admin_permission_rationale">LockScheduler requires device admin permission to change lock settings.</string>
     <string name="action_ask_again">Ask again</string>
     <string name="location_permission_granted">Location permission granted</string>
     <string name="location_permission_denied">Location permission denied</string>
@@ -40,8 +37,6 @@
     <string name="dialog_action_cancel">@string/cancel</string>
     <string name="pref_header_general">General</string>
     <string name="pref_header_advanced">Advanced</string>
-    <string name="pref_title_loitering_delay">Loitering delay</string>
-    <string name="pref_title_password_expiration">Reset password</string>
     <string name="appearance_preference">Appearance</string>
     <string name="pref_title_night_mode">Night mode</string>
     <string name="pref_notifications">Notifications</string>
@@ -51,9 +46,6 @@
     <string name="pref_map_style_satellite">Satellite</string>
     <string name="pref_map_style_hybrid">Hybrid</string>
     <string name="pref_map_style_terrain">Terrain</string>
-    <string name="pref_header_backup">Backup and Restore</string>
-    <string name="pref_title_backup">Backup</string>
-    <string name="pref_title_restore">Restore</string>
     <string name="pref_title_min_password_length">Minimum password length</string>
     <string name="pref_title_min_pin_length">Minimum PIN length</string>
     <string name="pref_min_password_length_dialog_title">Minimum password length</string>
@@ -77,7 +69,6 @@
     <string name="edit_profile">Edit profile</string>
     <string name="conditions_title">Conditions</string>
     <string name="actions_title">Screen lock</string>
-    <string name="set_place">Set place</string>
     <string name="place_condition_title">Place</string>
     <string name="time_condition_title">Time</string>
     <string name="wifi_condition_title">Wifi</string>

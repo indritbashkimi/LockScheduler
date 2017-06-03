@@ -17,11 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.ui.BaseActivity;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 public class PinChooserActivity extends BaseActivity implements TextWatcher {
 

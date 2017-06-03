@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.GeofencingEvent;
-
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;

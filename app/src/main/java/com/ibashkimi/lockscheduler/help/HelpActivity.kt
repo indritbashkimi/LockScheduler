@@ -3,8 +3,8 @@ package com.ibashkimi.lockscheduler.help
 import android.os.Bundle
 import android.view.MenuItem
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.extention.setUpToolbar
+import com.ibashkimi.lockscheduler.ui.BaseActivity
 
 class HelpActivity : BaseActivity() {
 

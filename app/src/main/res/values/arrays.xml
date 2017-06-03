@@ -36,46 +36,6 @@
         <item>terrain</item>
     </string-array>
 
-    <string-array name="pref_loitering_delay_titles">
-        <item>No delay</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-    </string-array>
-
-    <string-array name="pref_loitering_delay_values">
-        <item>0</item>
-        <item>60000</item>
-        <item>120000</item>
-        <item>300000</item>
-        <item>600000</item>
-    </string-array>
-
-    <string-array name="pref_password_expiration_timeout_titles">
-        <item>Never</item>
-        <item>after 5 minutes</item>
-        <item>after 30 minutes</item>
-        <item>after 1 hour</item>
-        <item>after 4 hours</item>
-        <item>after 12 hours</item>
-        <item>after 1 day</item>
-        <item>after 1 week</item>
-        <item>after 1 month</item>
-    </string-array>
-
-    <string-array name="pref_password_expiration_timeout_values">
-        <item>0</item>
-        <item>300000</item>
-        <item>1800000</item>
-        <item>3600000</item>
-        <item>14400000</item>
-        <item>43200000</item>
-        <item>86400000</item>
-        <item>604800000</item>
-        <item>2592000000</item>
-    </string-array>
-
     <string-array name="pref_boot_delay_titles">
         <item>No delay</item>
         <item>10 seconds</item>
@@ -97,13 +57,6 @@
         <item>@string/lock_mode_swipe</item>
         <item>@string/lock_mode_pin</item>
         <item>@string/lock_mode_password</item>
-    </string-array>
-
-    <string-array name="lock_types_values">
-        <item>unchanged</item>
-        <item>swipe</item>
-        <item>pin</item>
-        <item>password</item>
     </string-array>
 
     <string-array name="power_state">

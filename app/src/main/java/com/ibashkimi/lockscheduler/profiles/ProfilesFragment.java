@@ -21,6 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
+import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.support.utils.ThemeUtils;
 
 import java.util.ArrayList;
@@ -28,10 +32,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
-import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
 
 /**
  * Fragment used to display profile list.

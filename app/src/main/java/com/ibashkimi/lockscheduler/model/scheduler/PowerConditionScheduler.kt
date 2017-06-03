@@ -4,9 +4,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import com.ibashkimi.lockscheduler.App
+import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.PowerCondition
-import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
 

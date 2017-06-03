@@ -1,12 +1,12 @@
 package com.ibashkimi.lockscheduler.addeditprofile;
 
-import java.util.List;
-
+import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.action.Action;
 import com.ibashkimi.lockscheduler.model.condition.Condition;
-import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.ui.BasePresenter;
 import com.ibashkimi.lockscheduler.ui.BaseView;
+
+import java.util.List;
 
 /**
  * This specifies the contract between the view and the presenter.

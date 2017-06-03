@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="WifiConnectionText" parent="TextAppearance.AppCompat.Body1">
-        <!--<item name="android:background">@color/gray_500</item>-->
-    </style>
 
     <style name="ConditionTitle">
         <item name="android:textAppearance">@style/MyPreferenceTitle</item>
     </style>
 
-    <style name="ProfileCategory" parent="MyPreferenceCategory">
-    </style>
+    <style name="ProfileCategory" parent="MyPreferenceCategory"></style>
 
     <style name="ConditionIcon">
         <!--<item name="android:tint">?colorAccent</item>-->

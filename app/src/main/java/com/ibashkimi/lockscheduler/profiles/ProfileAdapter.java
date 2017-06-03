@@ -8,7 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.ProfileUtils;
+import com.ibashkimi.lockscheduler.model.action.LockAction;
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
+import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
+import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
+import com.ibashkimi.lockscheduler.util.ConditionUtils;
 import com.ibashkimi.support.utils.SelectableAdapter;
 
 import java.util.List;
@@ -17,14 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.action.LockAction;
-import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileUtils;
-import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
-import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
-import com.ibashkimi.lockscheduler.util.ConditionUtils;
 
 class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 
@@ -169,7 +169,7 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
             PowerCondition powerCondition = ProfileUtils.getPowerCondition(profile);
             if (powerCondition != null) {
                 powerLayout.setVisibility(View.VISIBLE);
-                powerSummary.setText(powerCondition.getPowerConnected() ? R.string.power_connected: R.string.power_disconnected);
+                powerSummary.setText(powerCondition.getPowerConnected() ? R.string.power_connected : R.string.power_disconnected);
             }
         }
 

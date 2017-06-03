@@ -25,6 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:text="Permission denied bla bla"/>
+        android:text="Permission denied bla bla" />
 
 </android.support.design.widget.CoordinatorLayout>

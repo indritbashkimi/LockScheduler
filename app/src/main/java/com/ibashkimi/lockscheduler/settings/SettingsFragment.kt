@@ -104,13 +104,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             "theme" -> {
                 val themes = Themes.getThemeItems()
                 val savedThemeId = preferenceManager.sharedPreferences.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-                var themeIndex = -1
-                for (i in themes.indices) {
-                    if (themes[i].id == savedThemeId) {
-                        themeIndex = i
-                        break
-                    }
-                }
+                val themeIndex = themes.indices.firstOrNull { themes[it].id == savedThemeId } ?: -1
                 val themeAdapter = ThemeAdapter(context, Themes.getThemeItems(), themeIndex, ThemeAdapter.ThemeSelectedListener { item ->
                     preferenceManager.sharedPreferences.edit().putInt("theme", item.id).apply()
                     if (themeDialog != null) themeDialog!!.dismiss()
@@ -121,7 +115,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         // second parameter is an optional layout manager. Must be a LinearLayoutManager or GridLayoutManager.
                         .adapter(themeAdapter, GridLayoutManager(context, 2))
                         .negativeText(R.string.dialog_action_cancel)
-                        .itemsCallbackSingleChoice(themeIndex) { dialog, view, which, text ->
+                        .itemsCallbackSingleChoice(themeIndex) { _, _, which, _ ->
                             setPreference("theme", themes[which].id)
                             true
                         }
@@ -132,14 +126,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 MaterialDialog.Builder(context)
                         .title(R.string.pref_min_password_length_dialog_title)
                         .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input("", "" + getIntPreference("min_password_length", 4)) { dialog, input -> setPreference("min_password_length", Integer.parseInt(input.toString())) }.show()
+                        .input("", "" + getIntPreference("min_password_length", 4)) { _, input -> setPreference("min_password_length", Integer.parseInt(input.toString())) }.show()
                 return true
             }
             "min_pin_length" -> {
                 MaterialDialog.Builder(context)
                         .title(R.string.pref_min_pin_length_dialog_title)
                         .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input("", "" + getIntPreference("min_pin_length", 4)) { dialog, input -> setPreference("min_pin_length", Integer.parseInt(input.toString())) }.show()
+                        .input("", "" + getIntPreference("min_pin_length", 4)) { _, input -> setPreference("min_pin_length", Integer.parseInt(input.toString())) }.show()
                 return true
             }
             "lock_at_boot" -> {
@@ -224,9 +218,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private var ringtonePreferenceValue: String?
         get() = getStringPreference("notifications_ringtone", "")
-        set(ringtone) {
-            setPreference("notifications_ringtone", ringtone!!, false)
-        }
+        set(ringtone) = setPreference("notifications_ringtone", ringtone!!, false)
+
 
     private fun setPreference(key: String, value: String, updateSummary: Boolean = false) {
         preferenceManager.sharedPreferences.edit().putString(key, value).apply()

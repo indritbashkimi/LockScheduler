@@ -1,10 +1,10 @@
 package com.ibashkimi.lockscheduler.model.source.serializer;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.ibashkimi.lockscheduler.model.action.Action;
 import com.ibashkimi.lockscheduler.model.action.LockAction;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 class ActionSerializer {
 

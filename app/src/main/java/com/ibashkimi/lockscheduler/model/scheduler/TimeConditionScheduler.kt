@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
-import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.Profile
+import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource

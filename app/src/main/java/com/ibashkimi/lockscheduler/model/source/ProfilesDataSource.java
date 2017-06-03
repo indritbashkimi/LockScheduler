@@ -3,10 +3,10 @@ package com.ibashkimi.lockscheduler.model.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.List;
-
-import com.ibashkimi.lockscheduler.model.condition.Condition;
 import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+
+import java.util.List;
 
 /**
  * Main entry point for accessing tasks data.

@@ -20,10 +20,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.security.InvalidParameterException;
-
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.support.utils.ThemeUtils;
+
+import java.security.InvalidParameterException;
 
 
 public class LicensesFragment extends Fragment {

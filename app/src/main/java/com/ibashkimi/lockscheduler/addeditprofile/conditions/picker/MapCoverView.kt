@@ -22,15 +22,15 @@ class MapCoverView : View {
     private var margin: Int = 100
 
     @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = R.style.AppTheme_DayNight) : super(context, attrs, defStyleAttr) {
-        init(context, attrs, defStyleAttr, 0)
+        init(context)
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
-        init(context, attrs, defStyleAttr, defStyleRes)
+        init(context)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
+    private fun init(context: Context) {
         margin = resources.getDimensionPixelOffset(R.dimen.place_picker_circle_margin)
         val circumferenceColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorPrimary)
         val circleColor = ColorUtils.setAlphaComponent(circumferenceColor, 50)

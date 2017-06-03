@@ -16,12 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class AboutActivity extends BaseActivity {

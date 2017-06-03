@@ -1,13 +1,13 @@
 package com.ibashkimi.lockscheduler.model.source.serializer;
 
+import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.action.Action;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import com.ibashkimi.lockscheduler.model.action.Action;
-import com.ibashkimi.lockscheduler.model.condition.Condition;
-import com.ibashkimi.lockscheduler.model.Profile;
 
 public class ProfileSerializer {
 

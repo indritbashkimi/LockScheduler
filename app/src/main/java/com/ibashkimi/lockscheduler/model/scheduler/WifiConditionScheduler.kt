@@ -4,8 +4,8 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
-import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.Profile
+import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.WifiCondition
 import com.ibashkimi.lockscheduler.model.condition.WifiItem
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource

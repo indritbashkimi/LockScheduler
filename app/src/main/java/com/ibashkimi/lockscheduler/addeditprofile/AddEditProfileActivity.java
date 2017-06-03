@@ -14,19 +14,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
+import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.ProfileManager;
+import com.ibashkimi.lockscheduler.model.action.Action;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+import com.ibashkimi.lockscheduler.ui.BaseActivity;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
-import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
-import com.ibashkimi.lockscheduler.model.action.Action;
-import com.ibashkimi.lockscheduler.model.condition.Condition;
-import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View {
 

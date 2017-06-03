@@ -253,8 +253,6 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 }
             } catch (e: IllegalArgumentException) {
                 // no op
-            } catch (e: IllegalArgumentException) {
-                // no op
             } catch (e: IOException) {
                 // no op
             }
