@@ -59,13 +59,13 @@ class ActionsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater!!.inflate(R.layout.fragment_actions, container, false) as ViewGroup
-        lockSummary = rootView.findViewById(R.id.lockSummary) as TextView
-        lockSettings = rootView.findViewById(R.id.lockSettings) as View
+        lockSummary = rootView.findViewById(R.id.lockSummary)
+        lockSettings = rootView.findViewById(R.id.lockSettings)
         if (savedInstanceState != null) {
             lockType = savedInstanceState.getInt("enter_lock_type", LockAction.LockType.UNCHANGED)
             input = savedInstanceState.getString("enter_input")
         }
-        val titleView = rootView.findViewById(R.id.title) as TextView
+        val titleView: TextView = rootView.findViewById(R.id.title)
         titleView.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
         lockSettings!!.setOnClickListener {
             showPasswordDialog(lockType, { which -> onLockTypeSelected(positionToLockType(which)) })

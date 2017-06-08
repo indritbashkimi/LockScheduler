@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
@@ -58,13 +59,12 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_picker)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true)
             actionBar.setHomeButtonEnabled(true)
-            actionBar.setDefaultDisplayHomeAsUpEnabled(true)
             actionBar.setDisplayHomeAsUpEnabled(true)
         }
 
@@ -93,10 +93,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
             radius = savedInstanceState.getFloat("radius")
         }
 
-        addressView = findViewById(R.id.address) as TextView
-        radiusView = findViewById(R.id.radius) as TextView
-        mapCoverView = findViewById(R.id.mapCover) as MapCoverView
-        findViewById(R.id.selectLocationCard).setOnClickListener({ onSave() })
+        addressView = findViewById(R.id.address)
+        radiusView = findViewById(R.id.radius)
+        mapCoverView = findViewById(R.id.mapCover)
+        findViewById<View>(R.id.selectLocationCard).setOnClickListener({ onSave() })
 
         val mapFragment = fragmentManager.findFragmentById(R.id.map) as MapFragment
         mapFragment.getMapAsync(this)

@@ -40,7 +40,7 @@ class WifiPickerActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wifi_picker)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
@@ -60,12 +60,12 @@ class WifiPickerActivity : BaseActivity() {
             ssids.indices.mapTo(wifiItems) { SelectableWifiItem(ssids[it], selected[it]) }
         }
 
-        recyclerView = findViewById(R.id.recyclerView) as RecyclerView
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = wifiAdapter
-        turnOnWifi = findViewById(R.id.turnOnWifi) as TextView
-        findViewById(R.id.fab).setOnClickListener({ onSave() })
+        turnOnWifi = findViewById(R.id.turnOnWifi)
+        findViewById<View>(R.id.fab).setOnClickListener({ onSave() })
     }
 
     private val wifiBroadcastReceiver = object : BroadcastReceiver() {
@@ -208,8 +208,8 @@ class WifiPickerActivity : BaseActivity() {
         }
 
         internal inner class ViewHolder(var rootView: View) : RecyclerView.ViewHolder(rootView) {
-            var title: TextView = rootView.findViewById(R.id.title) as TextView
-            var checkBox: CheckBox = rootView.findViewById(R.id.checkbox) as CheckBox
+            var title: TextView = rootView.findViewById(R.id.title)
+            var checkBox: CheckBox = rootView.findViewById(R.id.checkbox)
         }
     }
 }

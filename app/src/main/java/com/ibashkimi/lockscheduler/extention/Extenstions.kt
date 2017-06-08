@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar
 import com.ibashkimi.lockscheduler.R
 
 
-fun AppCompatActivity.setUpToolbar(toolbar: Toolbar = findViewById(R.id.toolbar) as Toolbar) {
+fun AppCompatActivity.setUpToolbar(toolbar: Toolbar = findViewById(R.id.toolbar)) {
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 }
