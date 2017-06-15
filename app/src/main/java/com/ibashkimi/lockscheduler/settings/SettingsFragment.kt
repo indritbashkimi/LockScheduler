@@ -14,7 +14,6 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceCategory
 import android.support.v7.preference.PreferenceFragmentCompat
-import android.support.v7.widget.GridLayoutManager
 import android.text.InputType
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
@@ -22,15 +21,10 @@ import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.*
-import com.ibashkimi.support.preference.ThemeAdapter
-import com.ibashkimi.support.preference.ThemePreference
-import com.ibashkimi.support.preference.ThemePreferenceDialogFragmentCompat
-import com.ibashkimi.support.preference.Themes
+import com.ibashkimi.support.preference.*
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
-    private var themeDialog: MaterialDialog? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -102,24 +96,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 return true
             }
             "theme" -> {
-                val themes = Themes.getThemeItems()
-                val savedThemeId = preferenceManager.sharedPreferences.getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-                val themeIndex = themes.indices.firstOrNull { themes[it].id == savedThemeId } ?: -1
-                val themeAdapter = ThemeAdapter(context, Themes.getThemeItems(), themeIndex, ThemeAdapter.ThemeSelectedListener { item ->
-                    preferenceManager.sharedPreferences.edit().putInt("theme", item.id).apply()
-                    if (themeDialog != null) themeDialog!!.dismiss()
-                    themeDialog = null
-                })
-                themeDialog = MaterialDialog.Builder(context)
-                        .title(R.string.pref_title_theme)
-                        // second parameter is an optional layout manager. Must be a LinearLayoutManager or GridLayoutManager.
-                        .adapter(themeAdapter, GridLayoutManager(context, 2))
-                        .negativeText(R.string.dialog_action_cancel)
-                        .itemsCallbackSingleChoice(themeIndex) { _, _, which, _ ->
-                            setPreference("theme", themes[which].id)
-                            true
-                        }
-                        .show()
+                val savedThemeId = preferenceManager.sharedPreferences
+                        .getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
+                val alertDialog = ThemeDialogFragment.newInstance(savedThemeId)
+                alertDialog.listener = ThemeAdapter.ThemeSelectedListener {
+                    setPreference("theme", it.id)
+                }
+                alertDialog.show(activity.supportFragmentManager, "theme_dialog")
                 return true
             }
             "min_password_length" -> {
