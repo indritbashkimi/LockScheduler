@@ -50,7 +50,7 @@ public class HelpFragment extends Fragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(adapter);
@@ -103,8 +103,8 @@ public class HelpFragment extends Fragment {
 
             HelpViewHolder(View itemView) {
                 super(itemView);
-                title = (TextView) itemView.findViewById(R.id.help_title);
-                content = (TextView) itemView.findViewById(R.id.help_content);
+                title = itemView.findViewById(R.id.help_title);
+                content = itemView.findViewById(R.id.help_content);
             }
         }
     }

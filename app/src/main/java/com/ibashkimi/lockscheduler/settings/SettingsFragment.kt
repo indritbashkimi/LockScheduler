@@ -39,10 +39,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.preferences)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun addPreferencesFromResource(@XmlRes preferencesResId: Int) {
         super.addPreferencesFromResource(preferencesResId)
         // Colored navigation bar

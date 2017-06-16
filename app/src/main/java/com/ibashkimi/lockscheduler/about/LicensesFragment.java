@@ -1,6 +1,7 @@
 package com.ibashkimi.lockscheduler.about;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,7 +37,7 @@ public class LicensesFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.fragment_licences_title);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
@@ -48,7 +49,7 @@ public class LicensesFragment extends Fragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new LibraryAdapter(getActivity()));
     }
@@ -134,7 +135,7 @@ public class LicensesFragment extends Fragment {
                     int position = holder.getAdapterPosition();
                     if (position == RecyclerView.NO_POSITION) return;
                     CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
+                    builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
                     CustomTabsIntent customTabsIntent = builder.build();
                     customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].link)));
                 }
@@ -149,7 +150,7 @@ public class LicensesFragment extends Fragment {
                     int position = holder.getAdapterPosition();
                     if (position == RecyclerView.NO_POSITION) return;
                     CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.getColorFromAttribute(host, R.attr.colorPrimary));
+                    builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
                     CustomTabsIntent customTabsIntent = builder.build();
                     customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].licenseLink)));
                 }
@@ -166,12 +167,12 @@ public class LicensesFragment extends Fragment {
 
         LibraryHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.library_name);
-            link = (TextView) itemView.findViewById(R.id.library_link);
+            name = itemView.findViewById(R.id.library_name);
+            link = itemView.findViewById(R.id.library_link);
             link.setMovementMethod(LinkMovementMethod.getInstance());
-            licence = (TextView) itemView.findViewById(R.id.library_license);
-            licenseLink = (Button) itemView.findViewById(R.id.library_full_license);
-            website = (Button) itemView.findViewById(R.id.library_website);
+            licence = itemView.findViewById(R.id.library_license);
+            licenseLink = itemView.findViewById(R.id.library_full_license);
+            website = itemView.findViewById(R.id.library_website);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ibashkimi.lockscheduler.addeditprofile.conditions;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -89,7 +90,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         circlePadding = (int) ThemeUtils.dpToPx(getContext(), 8);
-        circleColor = ThemeUtils.getColorFromAttribute(getContext(), R.attr.colorPrimary);
+        circleColor = ThemeUtils.obtainColor(getContext(), R.attr.colorPrimary, Color.RED);
         fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
         mapStyle = MapUtils.resolveMapStyle(AppPreferencesHelper.INSTANCE.getMapStyle());
     }

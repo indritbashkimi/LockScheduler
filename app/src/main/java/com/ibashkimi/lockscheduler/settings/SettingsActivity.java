@@ -2,6 +2,7 @@ package com.ibashkimi.lockscheduler.settings;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.ibashkimi.lockscheduler.about.AboutActivity;
 import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
+import com.ibashkimi.support.activities.DayNightActivity;
 import com.ibashkimi.support.preference.Themes;
 import com.ibashkimi.support.utils.ThemeUtils;
 
@@ -27,7 +29,7 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -84,11 +86,11 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
         switch (s) {
             case "theme":
                 @Themes.Theme int themeId = AppPreferencesHelper.INSTANCE.getTheme();
-                ThemeUtils.applyTheme(this, themeId);
+                DayNightActivity.applyTheme(this, themeId);
                 recreate();
                 break;
             case "night_mode":
-                ThemeUtils.applyDayNightMode(this, AppPreferencesHelper.INSTANCE.getNightMode());
+                DayNightActivity.applyDayNightMode(this, AppPreferencesHelper.INSTANCE.getNightMode());
                 recreate();
                 break;
             case "loitering_delay":
@@ -98,7 +100,9 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
             case "colored_navigation_bar":
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     boolean coloredNavBar = AppPreferencesHelper.INSTANCE.isColoredNavigationBarActive();
-                    int navBarColor = ThemeUtils.getColorFromAttribute(this, coloredNavBar ? R.attr.colorPrimaryDark : android.R.attr.navigationBarColor);
+                    int navBarColor = ThemeUtils.obtainColor(this,
+                            coloredNavBar ? R.attr.colorPrimaryDark : android.R.attr.navigationBarColor,
+                            Color.RED);
                     getWindow().setNavigationBarColor(navBarColor);
                 }
                 break;

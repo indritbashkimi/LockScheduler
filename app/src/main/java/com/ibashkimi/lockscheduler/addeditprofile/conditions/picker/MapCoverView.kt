@@ -2,6 +2,7 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.picker
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.support.annotation.RequiresApi
@@ -32,7 +33,7 @@ class MapCoverView : View {
 
     private fun init(context: Context) {
         margin = resources.getDimensionPixelOffset(R.dimen.place_picker_circle_margin)
-        val circumferenceColor = ThemeUtils.getColorFromAttribute(context, R.attr.colorPrimary)
+        val circumferenceColor = ThemeUtils.obtainColor(context, R.attr.colorPrimary, Color.RED)
         val circleColor = ColorUtils.setAlphaComponent(circumferenceColor, 50)
 
         circlePaint.isAntiAlias = true

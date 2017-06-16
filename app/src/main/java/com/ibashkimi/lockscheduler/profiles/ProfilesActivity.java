@@ -38,8 +38,6 @@ public class ProfilesActivity extends BaseActivity {
     private static final int RESULT_ADMIN_ENABLE = 1;
     private static final int RESULT_LOCATION_PERMISSION = 2;
 
-    private ProfilesPresenter profilesPresenter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +50,7 @@ public class ProfilesActivity extends BaseActivity {
 
         setContentView(R.layout.activity_profiles);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ProfilesFragment profilesFragment =
@@ -65,7 +63,7 @@ public class ProfilesActivity extends BaseActivity {
                     .commit();
         }
 
-        profilesPresenter = new ProfilesPresenter(
+        ProfilesPresenter profilesPresenter = new ProfilesPresenter(
                 ProfileManager.Companion.getInstance(), profilesFragment);
         profilesFragment.setPresenter(profilesPresenter);
     }

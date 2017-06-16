@@ -83,7 +83,7 @@ public class AboutActivity extends BaseActivity {
 
         @Override
         public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            Toolbar toolbar = view.findViewById(R.id.toolbar);
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             activity.setSupportActionBar(toolbar);
             ActionBar actionBar = activity.getSupportActionBar();

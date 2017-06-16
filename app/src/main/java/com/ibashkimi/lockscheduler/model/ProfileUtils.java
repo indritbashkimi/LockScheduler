@@ -11,6 +11,8 @@ import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
 
 public class ProfileUtils {
 
+    private ProfileUtils() {}
+
     public static PlaceCondition getPlaceCondition(Profile profile) {
         Condition condition = profile.getCondition(Condition.Type.PLACE);
         if (condition != null)

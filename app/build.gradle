@@ -41,7 +41,7 @@ android {
 
 ext {
     supportLibVersion = '26.0.0-beta2'
-    playServicesVersion = '11.0.0'
+    playServicesVersion = '11.0.1'
 }
 
 dependencies {

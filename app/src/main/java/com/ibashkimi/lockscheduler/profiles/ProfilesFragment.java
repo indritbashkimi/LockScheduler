@@ -2,6 +2,7 @@ package com.ibashkimi.lockscheduler.profiles;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,8 +38,6 @@ import butterknife.ButterKnife;
  * Fragment used to display profile list.
  */
 public class ProfilesFragment extends Fragment implements ProfilesContract.View, ProfileAdapter.Callback {
-
-    private static final String TAG = "ProfilesFragment";
 
     @BindView(R.id.root)
     ViewGroup mRootView;
@@ -105,7 +104,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        final FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        final FloatingActionButton fab = getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,7 +276,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
             drawable = DrawableCompat.wrap(drawable);
             // It works but it's a strange dependency
             Context context = getActivity().findViewById(R.id.toolbar).getContext();
-            DrawableCompat.setTint(drawable, ThemeUtils.getColorFromAttribute(context, android.R.attr.textColorPrimary));
+            DrawableCompat.setTint(drawable, ThemeUtils.obtainColor(context, android.R.attr.textColorPrimary, Color.RED));
             menu.findItem(R.id.action_delete).setIcon(drawable);
             return true;
         }
