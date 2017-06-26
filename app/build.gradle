@@ -71,7 +71,7 @@ dependencies {
     implementation 'com.google.android:flexbox:0.3.0-alpha3'
     implementation 'com.wdullaer:materialdatetimepicker:3.2.0'
     implementation 'com.jakewharton:butterknife:8.5.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.15'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.16'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.7.16'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
