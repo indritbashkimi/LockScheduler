@@ -22,8 +22,5 @@ abstract class ConditionScheduler(val conditionType: Int, private val repository
         repository.deleteCondition(profileId, conditionType)
     }
 
-    protected fun getProfile(id: String): Profile {
-        val profile = repository.getProfile(id) ?: throw IllegalStateException("Data is corrupted.")
-        return profile
-    }
+    protected fun getProfile(id: String): Profile? = repository.getProfile(id)
 }

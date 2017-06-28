@@ -46,8 +46,12 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
     fun onAlarm(profileId: String) {
         Log.d(TAG, "onAlarm called with profile=$profileId")
         val profile = getProfile(profileId)
-        val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
-        doAlarmJob(profile, condition)
+        if (profile == null) {
+            unregister(profileId)
+        } else {
+            val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
+            doAlarmJob(profile, condition)
+        }
     }
 
     fun doAlarmJob(profile: Profile, condition: TimeCondition) {
