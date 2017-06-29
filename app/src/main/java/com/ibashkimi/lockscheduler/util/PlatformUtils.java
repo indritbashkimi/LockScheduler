@@ -33,7 +33,7 @@ public class PlatformUtils {
                 .setPositiveButton(R.string.action_uninstall, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ProfileManager.Companion.getInstance().removeAll();
+                        ProfileManager.INSTANCE.removeAll();
 
                         if (LockSchedulerAdmin.isAdminActive(context))
                             LockSchedulerAdmin.removeAdmin(context);

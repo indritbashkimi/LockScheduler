@@ -352,9 +352,12 @@ public class ConditionsFragment extends Fragment {
 
     private void showPowerConditionDialog() {
         String[] items = getResources().getStringArray(R.array.power_state);
+        int selectedItem = -1;
+        if (powerConditionAdded)
+            selectedItem = powerWhenConnected ? 0 : 1;
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.power_condition_title)
-                .setSingleChoiceItems(items, powerWhenConnected ? 0 : 1, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(items, selectedItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         powerWhenConnected = which == 0;

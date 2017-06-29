@@ -5,6 +5,4 @@
     android:textSize="16sp"
     android:padding="16dp"
     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-    android:text="Lock Scheduler is built using these libraries">
-
-</TextView>
+    android:text="@string/about_lib_intro" />

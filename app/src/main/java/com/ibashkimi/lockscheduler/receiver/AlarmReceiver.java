@@ -19,9 +19,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         Toast.makeText(context, "AlarmReceiver!", Toast.LENGTH_LONG).show();
         if (intent.getExtras().containsKey("profileId")) {
             String profileId = intent.getStringExtra("profileId");
-            ProfileManager.Companion.getInstance().getTimeHandler().onAlarm(profileId);
+            ProfileManager.INSTANCE.getTimeHandler().onAlarm(profileId);
         } else if (intent.getExtras().containsKey("boot")) {
-            ProfileManager.Companion.getInstance().init();
+            ProfileManager.INSTANCE.init();
         } else {
             throw new IllegalArgumentException("Don't know what to do with this intent: " + intent + ".");
         }

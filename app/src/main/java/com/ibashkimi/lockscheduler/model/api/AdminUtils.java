@@ -6,13 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.ibashkimi.lockscheduler.R;
+
 public class AdminUtils {
 
     public static Intent buildAddAdminIntent(@NonNull Context context) {
         Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, getComponentName(context));
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Additional text explaining why this needs to be added.");
+        String permissionRationale = context.getString(R.string.admin_permission_rationale);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, permissionRationale);
         return intent;
     }
 

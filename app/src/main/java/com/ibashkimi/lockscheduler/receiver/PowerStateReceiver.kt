@@ -11,7 +11,7 @@ class PowerStateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val action: String? = intent?.action
         if (action != null) {
-            val handler = ProfileManager.instance.powerHandler
+            val handler = ProfileManager.powerHandler
             when (action) {
                 Intent.ACTION_POWER_CONNECTED -> {
                     handler.onPowerStateEvent(true)

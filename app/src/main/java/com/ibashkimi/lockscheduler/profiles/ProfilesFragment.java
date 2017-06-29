@@ -293,7 +293,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
                     List<Integer> items = mAdapter.getSelectedItems();
                     for (int i = items.size() - 1; i > -1; i--) {
                         int position = items.get(i);
-                        ProfileManager.Companion.getInstance().remove(mAdapter.getProfiles().get(position).getId());
+                        ProfileManager.INSTANCE.remove(mAdapter.getProfiles().get(position).getId());
                     }
                     mAdapter.clearSelection();
                     mPresenter.loadProfiles();

@@ -39,7 +39,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         if (delay < 0)
             throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");
         if (delay == 0)
-            ProfileManager.Companion.getInstance().init();
+            ProfileManager.INSTANCE.init();
         else {
             Toast.makeText(context, "Setting alarm. Delay = " + delay, Toast.LENGTH_SHORT).show();
             LockManager.resetPassword(context);

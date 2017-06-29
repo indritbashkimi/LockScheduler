@@ -33,6 +33,6 @@ public class WifiReceiver extends BroadcastReceiver {
 
             }
         }
-        ProfileManager.Companion.getInstance().getWifiHandler().onWifiChanged(wifiItem);
+        ProfileManager.INSTANCE.getWifiHandler().onWifiChanged(wifiItem);
     }
 }

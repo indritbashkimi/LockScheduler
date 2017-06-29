@@ -1,6 +1,5 @@
 package com.ibashkimi.lockscheduler.model.action;
 
-
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -27,10 +26,6 @@ public class LockAction extends Action {
     private int lockType;
     private String input;
 
-    public LockAction() {
-        this(LockType.UNCHANGED);
-    }
-
     public LockAction(@LockType int lockType) {
         this(lockType, "");
     }
@@ -54,12 +49,10 @@ public class LockAction extends Action {
         return lockType;
     }
 
-    public void setLockType(@LockType int lockType) {
-        this.lockType = lockType;
-    }
-
     @Override
     public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
         if (obj == null || !(obj instanceof LockAction))
             return false;
         LockAction lockAction = (LockAction) obj;

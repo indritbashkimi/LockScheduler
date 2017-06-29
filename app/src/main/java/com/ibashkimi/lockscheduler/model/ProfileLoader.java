@@ -26,7 +26,7 @@ public class ProfileLoader extends AsyncTaskLoader<List<Profile>> {
 
     @Override
     public List<Profile> loadInBackground() {
-        mData = ProfileManager.Companion.getInstance().getAll();
+        mData = ProfileManager.INSTANCE.getAll();
         return mData;
     }
 

@@ -46,7 +46,7 @@ public class TransitionsIntentService extends IntentService {
                 sendNotification(notificationTitle, profileName, (int) Long.parseLong(profileId));
             }
         } else {
-            ProfileManager.Companion.getInstance().getPlaceHandler()
+            ProfileManager.INSTANCE.getPlaceHandler()
                     .onGeofenceEvent(GeofencingEvent.fromIntent(intent));
         }
     }

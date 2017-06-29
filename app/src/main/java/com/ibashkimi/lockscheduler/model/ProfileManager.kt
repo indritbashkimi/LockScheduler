@@ -2,7 +2,6 @@ package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
 import android.support.v4.util.ArrayMap
-import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -12,7 +11,11 @@ import com.ibashkimi.lockscheduler.model.source.local.DatabaseDataSource
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService
 import java.util.*
 
-class ProfileManager private constructor(val repository: ProfilesDataSource, val geofenceApiHelper: GeofenceApiHelper) : ConditionChangeListener, ProfileRepository {
+object ProfileManager : ConditionChangeListener, ProfileRepository {
+
+    val repository: ProfilesDataSource = DatabaseDataSource.getInstance()
+
+    val geofenceApiHelper: GeofenceApiHelper = GeofenceApiHelper.getInstance()
 
     val cachedProfiles: ArrayMap<String, Profile> = ArrayMap()
 
@@ -27,10 +30,6 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
     val wifiHandler: WifiConditionScheduler by lazy { WifiConditionScheduler(repository, this) }
 
     val powerHandler: PowerConditionScheduler by lazy { PowerConditionScheduler(repository, this) }
-
-    private object Holder {
-        val INSTANCE = ProfileManager(DatabaseDataSource.getInstance(), GeofenceApiHelper.getInstance())
-    }
 
     fun init() {
         for (profile in getAll()) {
@@ -48,7 +47,6 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
 
     @Synchronized
     override fun add(profile: Profile) {
-        Log.d(TAG, "add called with profile=$profile")
         repository.beginTransaction()
         repository.saveProfile(profile)
         cachedProfiles[profile.id] = profile
@@ -200,7 +198,6 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
 
     @Synchronized
     override fun notifyConditionChanged(profile: Profile, condition: Condition, wasActive: Boolean) {
-        Log.d(TAG, "notifyConditionChanged called with condition=$condition, profile=${profile.name}.")
         repository.updateProfile(profile)
         cachedProfiles[profile.id] = profile
         if (condition.isTrue) {
@@ -260,12 +257,5 @@ class ProfileManager private constructor(val repository: ProfilesDataSource, val
                 return condition
         }
         throw RuntimeException("Cannot find the highest priority.")
-    }
-
-    companion object {
-
-        private val TAG = "ProfileManager"
-
-        val instance: ProfileManager by lazy { Holder.INSTANCE }
     }
 }

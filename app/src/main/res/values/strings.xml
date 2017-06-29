@@ -140,4 +140,5 @@
     <string name="title_condition_enter">When conditions are true</string>
     <string name="title_condition_exit">When conditions are false</string>
     <string name="power_condition_title">Power state</string>
+    <string name="about_lib_intro">Lock Scheduler is built using these libraries</string>
 </resources>

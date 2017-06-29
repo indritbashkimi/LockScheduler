@@ -77,7 +77,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         mPresenter = new AddEditProfilePresenter(
                 profileId,
-                ProfileManager.Companion.getInstance(),
+                ProfileManager.INSTANCE,
                 this,
                 savedInstanceState != null);
     }

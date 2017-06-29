@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         tools:text="Via Gramsci 14, Villa Verucchio" />
 
     <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

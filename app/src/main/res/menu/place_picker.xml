@@ -5,8 +5,8 @@
     tools:a=".profiles.MainActivity">
     <item
         android:id="@+id/action_place_search"
+        android:icon="@drawable/ic_search"
         android:orderInCategory="200"
         android:title="@string/place_picker_search"
-        android:icon="@drawable/ic_search"
         app:showAsAction="always" />
 </menu>

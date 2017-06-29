@@ -32,7 +32,7 @@ import com.ibashkimi.lockscheduler.util.PlatformUtils;
 
 public class ProfilesActivity extends BaseActivity {
 
-    private static final String TAG = ProfilesActivity.class.getCanonicalName();
+    private static final String TAG = ProfilesActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG_PROFILES = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
@@ -64,7 +64,7 @@ public class ProfilesActivity extends BaseActivity {
         }
 
         ProfilesPresenter profilesPresenter = new ProfilesPresenter(
-                ProfileManager.Companion.getInstance(), profilesFragment);
+                ProfileManager.INSTANCE, profilesFragment);
         profilesFragment.setPresenter(profilesPresenter);
     }
 
