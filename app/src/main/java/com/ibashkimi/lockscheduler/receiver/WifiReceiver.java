@@ -19,20 +19,23 @@ public class WifiReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive() called with: context = [" + context + "], intent = [" + intent + "]");
-        WifiItem wifiItem = null;
-        NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-        if (info != null && info.isConnected()) {
-            WifiManager wifiManager = (WifiManager) App.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            if (wifiManager != null) {
-                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                if (wifiInfo != null) {
-                    String ssid = wifiInfo.getSSID();
-                    wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
-                }
+        if ("android.net.wifi.STATE_CHANGE".equals(intent.getAction())) {
+            WifiItem wifiItem = null;
+            NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if (info != null && info.isConnected()) {
+                WifiManager wifiManager = (WifiManager) App.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                if (wifiManager != null) {
+                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    if (wifiInfo != null) {
+                        String ssid = wifiInfo.getSSID();
+                        wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
+                    }
 
+                }
             }
+            ProfileManager.INSTANCE.getWifiHandler().onWifiChanged(wifiItem);
+        } else {
+            Log.w(TAG, "Unhandled action: " + intent.getAction());
         }
-        ProfileManager.INSTANCE.getWifiHandler().onWifiChanged(wifiItem);
     }
 }

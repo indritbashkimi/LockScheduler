@@ -21,35 +21,40 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
+        // TODO: API 24 ACTION_LOCKED_BOOT_COMPLETED https://developer.android.com/reference/android/content/Intent.html#ACTION_BOOT_COMPLETED
+        Log.d(TAG, "action = " + intent.getAction());
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            int lockAtBoot = AppPreferencesHelper.INSTANCE.getLockAtBoot();
+            switch (lockAtBoot) {
+                case LockAction.LockType.SWIPE:
+                    LockManager.resetPassword(context);
+                    break;
+                case LockAction.LockType.PASSWORD:
+                    LockManager.setPassword(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
+                    break;
+                case LockAction.LockType.PIN:
+                    LockManager.setPin(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
+                    break;
+            }
 
-        int lockAtBoot = AppPreferencesHelper.INSTANCE.getLockAtBoot();
-        switch (lockAtBoot) {
-            case LockAction.LockType.SWIPE:
+            long delay = Long.parseLong(AppPreferencesHelper.INSTANCE.getBootDelay());
+            if (delay < 0)
+                throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");
+            if (delay == 0)
+                ProfileManager.INSTANCE.init();
+            else {
+                Toast.makeText(context, "Setting alarm. Delay = " + delay, Toast.LENGTH_SHORT).show();
                 LockManager.resetPassword(context);
-                break;
-            case LockAction.LockType.PASSWORD:
-                LockManager.setPassword(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
-                break;
-            case LockAction.LockType.PIN:
-                LockManager.setPin(context, AppPreferencesHelper.INSTANCE.getLockAtBootInput());
-                break;
-        }
-
-        long delay = Long.parseLong(AppPreferencesHelper.INSTANCE.getBootDelay());
-        if (delay < 0)
-            throw new IllegalArgumentException("Delay cannot be negative. Delay = " + delay + ".");
-        if (delay == 0)
-            ProfileManager.INSTANCE.init();
-        else {
-            Toast.makeText(context, "Setting alarm. Delay = " + delay, Toast.LENGTH_SHORT).show();
-            LockManager.resetPassword(context);
-            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-            alarmIntent.putExtra("boot", "boot");
-            PendingIntent pi = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-            long now = System.currentTimeMillis();
-            long nextAlarm = now + delay;
-            am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi);
+                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+                alarmIntent.putExtra("boot", "boot");
+                PendingIntent pi = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                long now = System.currentTimeMillis();
+                long nextAlarm = now + delay;
+                am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi);
+            }
+        } else {
+            Log.w(TAG, "Unhandled action: " + intent.getAction());
         }
     }
 }

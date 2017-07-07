@@ -30,10 +30,8 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
                 android:text="@string/app_name"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
             <TextView
                 android:id="@+id/version"
@@ -47,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:text="@string/app_description" />
 
             <!--<LinearLayout
@@ -111,6 +110,8 @@
 
             </FrameLayout>
 
+            <include layout="@layout/day_night_divider" />
+
             <FrameLayout
                 android:id="@+id/feedback"
                 android:layout_width="match_parent"
@@ -141,6 +142,8 @@
                     android:text="@string/about_send_feedback" />
 
             </FrameLayout>
+
+            <include layout="@layout/day_night_divider" />
 
             <FrameLayout
                 android:id="@+id/uninstall"
@@ -215,6 +218,8 @@
 
             </FrameLayout>
 
+            <include layout="@layout/day_night_divider" />
+
             <FrameLayout
                 android:id="@+id/licenses"
                 android:layout_width="match_parent"
@@ -287,6 +292,8 @@
 
             </FrameLayout>
 
+            <include layout="@layout/day_night_divider" />
+
             <FrameLayout
                 android:id="@+id/facebook"
                 android:layout_width="match_parent"
@@ -316,6 +323,8 @@
                     android:text="@string/about_facebook" />
 
             </FrameLayout>
+
+            <include layout="@layout/day_night_divider" />
 
             <FrameLayout
                 android:id="@+id/twitter"
@@ -348,6 +357,8 @@
 
             </FrameLayout>
 
+            <include layout="@layout/day_night_divider" />
+
             <FrameLayout
                 android:id="@+id/google_plus"
                 android:layout_width="match_parent"
@@ -377,6 +388,8 @@
                     android:text="@string/about_google_plus" />
 
             </FrameLayout>
+
+            <include layout="@layout/day_night_divider" />
 
             <FrameLayout
                 android:id="@+id/github"

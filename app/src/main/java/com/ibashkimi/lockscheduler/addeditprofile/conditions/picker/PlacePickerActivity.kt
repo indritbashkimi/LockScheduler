@@ -191,7 +191,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
             // Get Current Location
             val myLocation = locationManager.getLastKnownLocation(provider)
-            center = LatLng(myLocation.latitude, myLocation.longitude)
+            if (myLocation != null)
+                center = LatLng(myLocation.latitude, myLocation.longitude)
+            else
+                center = LatLng(0.0, 0.0)
             address = center!!.latitude.toString() + ": " + center!!.longitude.toString()
         }
 

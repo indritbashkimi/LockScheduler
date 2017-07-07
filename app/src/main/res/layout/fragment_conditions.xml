@@ -73,10 +73,7 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider_color" />
+        <include layout="@layout/day_night_divider" />
 
         <LinearLayout
             android:id="@+id/time_layout"
@@ -133,10 +130,7 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider_color" />
+        <include layout="@layout/day_night_divider" />
 
         <LinearLayout
             android:id="@+id/wifi_layout"
@@ -222,7 +216,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/divider_color" />
+            android:background="@color/day_night_divider"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/power_layout"
@@ -233,7 +228,8 @@
             android:focusable="true"
             android:gravity="center_vertical"
             android:minHeight="?listPreferredItemHeightSmall"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <ImageView
                 style="@style/ConditionIcon"
