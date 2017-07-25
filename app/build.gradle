@@ -40,8 +40,8 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.0.0-beta2'
-    playServicesVersion = '11.0.2'
+    supportLibVersion = '26.0.0'
+    playServicesVersion = '11.0.4'
 }
 
 dependencies {
