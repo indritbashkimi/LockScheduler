@@ -214,7 +214,7 @@ public class TimeConditionFragment extends Fragment {
                     days[i] = savedInstanceState.getBoolean("day_" + i);
             }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.time_condition_title);
+            builder.setTitle(R.string.time_condition_days);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

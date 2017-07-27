@@ -45,20 +45,29 @@ public class ConditionsFragment extends Fragment {
 
     public static final int REQUEST_WIFI_PICKER = 5;
 
-    @BindView(R.id.place_layout)
+    @BindView(R.id.location_layout)
     ViewGroup placeLayout;
 
-    @BindView(R.id.place_delete)
+    @BindView(R.id.location_delete)
     View placeDelete;
+
+    @BindView(R.id.location_title)
+    TextView locationTitle;
 
     @BindView(R.id.time_layout)
     ViewGroup timeLayout;
+
+    @BindView(R.id.time_title)
+    TextView timeTitle;
 
     @BindView(R.id.time_delete)
     View timeDelete;
 
     @BindView(R.id.wifi_layout)
     ViewGroup wifiLayout;
+
+    @BindView(R.id.wifi_title)
+    TextView wifiTitle;
 
     @BindView(R.id.wifi_body)
     View wifiBody;
@@ -258,56 +267,61 @@ public class ConditionsFragment extends Fragment {
         wifiSummary.setText(ConditionUtils.concatenate(wifiList, ", "));
         wifiBody.setVisibility(View.VISIBLE);
         wifiDelete.setVisibility(View.VISIBLE);
+        wifiTitle.setText(R.string.wifi_condition_title);
     }
 
-    @OnClick(R.id.place_layout)
-    public void onPlaceLayoutClick() {
+    @OnClick(R.id.location_layout)
+    public void onLocationLayoutClick() {
         placeConditionAdded = true;
         TransitionManager.beginDelayedTransition(placeLayout);
         showPlacePicker();
     }
 
-    @OnClick(R.id.place_delete)
-    public void onPlaceDeleteClick() {
+    @OnClick(R.id.location_delete)
+    public void onLocationDeleteClick() {
         TransitionManager.beginDelayedTransition(placeLayout);
         placeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getPlaceConditionFragment()).commit();
         placeDelete.setVisibility(View.GONE);
+        locationTitle.setText(R.string.location_condition_add_title);
     }
 
     @OnClick(R.id.time_layout)
     public void onTimeLayoutClick() {
         timeConditionAdded = true;
-        TransitionManager.beginDelayedTransition(placeLayout);
+        TransitionManager.beginDelayedTransition(timeLayout);
         fragmentManager
                 .beginTransaction()
                 .replace(R.id.time_condition_container, getTimeConditionFragment(), "time_condition")
                 .commit();
         timeDelete.setVisibility(View.VISIBLE);
+        timeTitle.setText(R.string.time_condition_title);
     }
 
     @OnClick(R.id.time_delete)
     public void onTimeDeleteClick() {
-        TransitionManager.beginDelayedTransition(placeLayout);
+        TransitionManager.beginDelayedTransition(timeLayout);
         timeConditionAdded = false;
         fragmentManager.beginTransaction().remove(getTimeConditionFragment()).commit();
         timeDelete.setVisibility(View.GONE);
+        timeTitle.setText(R.string.time_condition_add_title);
     }
 
     @OnClick({R.id.wifi_layout, R.id.wifi_body})
     public void onWifiLayoutClicked() {
         wifiConditionAdded = true;
-        TransitionManager.beginDelayedTransition(placeLayout);
+        //TransitionManager.beginDelayedTransition(wifiLayout);
         showWifiPicker(wifiItems);
     }
 
     @OnClick(R.id.wifi_delete)
     public void removeWifiCondition() {
-        TransitionManager.beginDelayedTransition(placeLayout);
+        TransitionManager.beginDelayedTransition(wifiLayout);
         wifiConditionAdded = false;
         //fragmentManager.beginTransaction().remove(getWifiConditionFragment()).commit();
         wifiDelete.setVisibility(View.GONE);
         wifiBody.setVisibility(View.GONE);
+        wifiTitle.setText(R.string.wifi_condition_add_title);
         wifiItems = null;
     }
 
@@ -324,6 +338,7 @@ public class ConditionsFragment extends Fragment {
     }
 
     private void showPlaceCondition(FragmentTransaction transaction, PlaceCondition condition) {
+        locationTitle.setText(R.string.location_condition_title);
         placeConditionAdded = true;
         PlaceConditionFragment fragment = getPlaceConditionFragment();
         fragment.setData(condition);

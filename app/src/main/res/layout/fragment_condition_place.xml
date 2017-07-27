@@ -10,14 +10,6 @@
     android:orientation="vertical"
     tools:visibility="visible">
 
-    <TextView
-        android:id="@+id/address_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        tools:text="Via Gramsci 14, Villa Verucchio" />
-
     <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map_container"
@@ -54,6 +46,15 @@
         </FrameLayout>
 
     </android.support.percent.PercentFrameLayout>
+
+    <TextView
+        android:id="@+id/address_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        tools:text="Via Gramsci 14, Villa Verucchio" />
 
     <TextView
         android:id="@+id/radius"

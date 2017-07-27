@@ -25,7 +25,7 @@
     <string name="off">Off</string>
     <string name="auto">Auto</string>
     <string name="website">Website</string>
-    <string name="profile_name">Profile name</string>
+    <string name="profile_name_hint">Profile</string>
     <string name="new_profile">New profile</string>
     <string name="no_profiles">No profiles</string>
     <string name="notif_profile_activated">Activated</string>
@@ -67,8 +67,11 @@
     <string name="edit_profile">Edit profile</string>
     <string name="conditions_title">Conditions</string>
     <string name="actions_title">Screen lock</string>
-    <string name="place_condition_title">Place</string>
+    <string name="location_condition_add_title">Add location</string>
+    <string name="location_condition_title">Location</string>
+    <string name="time_condition_add_title">Add time</string>
     <string name="time_condition_title">Time</string>
+    <string name="wifi_condition_add_title">Add wifi</string>
     <string name="wifi_condition_title">Wifi</string>
     <string name="wifi_selected_networks">Selected networks</string>
     <string name="turn_on_wifi">Turn on Wi-Fi</string>
@@ -141,4 +144,5 @@
     <string name="title_condition_exit">When conditions are false</string>
     <string name="power_condition_title">Power state</string>
     <string name="about_lib_intro">Lock Scheduler is built using these libraries</string>
+    <string name="action_remove_condition">Remove</string>
 </resources>

@@ -87,7 +87,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/place_layout"
+            android:id="@+id/location_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"

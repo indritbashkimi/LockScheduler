@@ -102,7 +102,7 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
         @BindView(R.id.wifi_summary)
         TextView wifi;
 
-        @BindView(R.id.place_layout)
+        @BindView(R.id.location_layout)
         View placeLayout;
 
         @BindView(R.id.time_layout)

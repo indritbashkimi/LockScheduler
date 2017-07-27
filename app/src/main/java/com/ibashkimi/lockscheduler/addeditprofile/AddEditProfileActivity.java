@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -181,7 +182,10 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         List<Action> enterActions = getEnterActionsFragment(fragmentManager).assembleData();
         List<Action> exitActions = getExitActionsFragment(fragmentManager).assembleData();
         List<Condition> conditions = getConditionsFragment(fragmentManager).assembleConditions();
-        mPresenter.saveProfile(mProfileName.getText().toString(), conditions, enterActions, exitActions);
+        String title = mProfileName.getText().toString();
+        if (title.equals(""))
+            title = getString(R.string.profile_name_hint);
+        mPresenter.saveProfile(title, conditions, enterActions, exitActions);
     }
 
     public void showFragments(FragmentManager fragmentManager, Fragment enterActions, Fragment exitActions, Fragment conditions) {
