@@ -56,14 +56,10 @@
                 android:visibility="visible"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -79,6 +75,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_marginEnd="16dp"
                         android:layout_marginStart="16dp"
                         android:background="@color/day_night_divider" />
@@ -90,7 +88,7 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/conditions_title"
@@ -105,22 +103,18 @@
                 android:visibility="visible"
                 tools:visibility="visible" />
 
-            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginTop="8dp">
+                android:layout_height="wrap_content">
 
                 <FrameLayout
                     android:id="@+id/conditions_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-            </android.support.v7.widget.CardView>
+            </FrameLayout>
 
             <android.support.v4.widget.Space
                 android:layout_width="match_parent"
