@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.support.preference.Themes
+//import com.ibashkimi.support.preference.Themes
 
 object AppPreferencesHelper : PreferencesHelper {
     const val PREFERENCES_NAME = "settings"
@@ -32,8 +32,14 @@ object AppPreferencesHelper : PreferencesHelper {
         set(value) = put(MAP_STYLE_KEY, value)
 
     override var theme: Int
+        get() = TODO("not implemented")
+        set(value) {
+            TODO("not implemented")
+        }
+
+    /*override var theme: Int
         get() = get(THEME_KEY, Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-        set(value) = put(THEME_KEY, value)
+        set(value) = put(THEME_KEY, value)*/
 
     override var isColoredNavigationBarActive: Boolean
         get() = get(COLORED_NAVIGATION_BAR_KEY, false)
@@ -95,7 +101,7 @@ object AppPreferencesHelper : PreferencesHelper {
 
     private fun put(key: String, value: Boolean) = preferences.edit { putBoolean(key, value) }
 
-    inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
+    private inline fun SharedPreferences.edit(func: SharedPreferences.Editor.() -> Unit) {
         val editor = edit()
         editor.func()
         editor.apply()

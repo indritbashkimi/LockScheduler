@@ -113,10 +113,10 @@
         <activity android:name=".intro.IntroActivity" />
         <activity android:name=".ui.GoPremiumActivity" />
         <activity
-            android:name=".addeditprofile.conditions.picker.PlacePickerActivity"
+            android:name=".addeditprofile.conditions.location.PlacePickerActivity"
             android:label="@string/place_picker_activity" />
         <activity
-            android:name=".addeditprofile.conditions.picker.WifiPickerActivity"
+            android:name=".addeditprofile.conditions.wifi.WifiPickerActivity"
             android:label="@string/wifi_picker_activity" />
         <activity
             android:name=".addeditprofile.actions.PinChooserActivity"

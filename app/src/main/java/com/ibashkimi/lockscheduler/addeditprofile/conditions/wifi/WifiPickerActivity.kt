@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.addeditprofile.conditions.picker
+package com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi
 
 import android.app.Activity
 import android.content.BroadcastReceiver

@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.addeditprofile.conditions;
+package com.ibashkimi.lockscheduler.addeditprofile.conditions.location;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
 import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
@@ -37,7 +38,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class PlaceConditionFragment extends Fragment implements OnMapReadyCallback {
+public class LocationConditionFragment extends Fragment implements OnMapReadyCallback {
 
     public static final int PLACE_PICKER_REQUEST = 1;
 
@@ -75,13 +76,13 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
         return condition;
     }
 
-    public PlaceConditionFragment() {
+    public LocationConditionFragment() {
     }
 
-    public static PlaceConditionFragment newInstance(int mapStyle) {
+    public static LocationConditionFragment newInstance(int mapStyle) {
         Bundle args = new Bundle();
         args.putInt("map_style", mapStyle);
-        PlaceConditionFragment fragment = new PlaceConditionFragment();
+        LocationConditionFragment fragment = new LocationConditionFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -97,7 +98,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_condition_place, container, false);
         ButterKnife.bind(this, root);
 
@@ -116,7 +117,7 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
         outState.putString("place_condition", ConditionSerializer.toJson(condition));
@@ -212,6 +213,6 @@ public class PlaceConditionFragment extends Fragment implements OnMapReadyCallba
                 .strokeColor(circleColor));
         LatLngBounds bounds = MapUtils.calculateBounds(place, condition.getRadius());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, circlePadding);
-        PlaceConditionFragment.this.googleMap.moveCamera(cameraUpdate);
+        LocationConditionFragment.this.googleMap.moveCamera(cameraUpdate);
     }
 }

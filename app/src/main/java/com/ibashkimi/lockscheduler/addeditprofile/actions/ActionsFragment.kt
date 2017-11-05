@@ -23,7 +23,7 @@ class ActionsFragment : Fragment() {
     private var input: String? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        context!!.getSharedPreferences("settings", Context.MODE_PRIVATE)
     }
 
     private var lockTypeIfGranted: Int
@@ -54,11 +54,11 @@ class ActionsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isEnter = arguments.getBoolean("is_enter")
+        isEnter = arguments!!.getBoolean("is_enter")
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater!!.inflate(R.layout.fragment_actions, container, false) as ViewGroup
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val rootView = inflater.inflate(R.layout.fragment_actions, container, false) as ViewGroup
         lockSummary = rootView.findViewById(R.id.lockSummary)
         lockSettings = rootView.findViewById(R.id.lockSettings)
         if (savedInstanceState != null) {
@@ -114,12 +114,10 @@ class ActionsFragment : Fragment() {
         Toast.makeText(context, "Admin permission denied", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.let {
-            outState.putInt("enter_lock_type", lockType)
-            outState.putString("enter_input", input)
-        }
+        outState.putInt("enter_lock_type", lockType)
+        outState.putString("enter_input", input)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

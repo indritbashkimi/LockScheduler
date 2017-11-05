@@ -9,8 +9,8 @@ import com.ibashkimi.lockscheduler.model.ProfileManager
 
 class PowerStateReceiver : BroadcastReceiver() {
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val action: String? = intent?.action
+    override fun onReceive(context: Context, intent: Intent) {
+        val action: String? = intent.action
         when (action) {
             Intent.ACTION_POWER_CONNECTED -> {
                 ProfileManager.powerHandler.onPowerStateEvent(true)

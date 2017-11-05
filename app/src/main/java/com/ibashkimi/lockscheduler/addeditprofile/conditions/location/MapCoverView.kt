@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.addeditprofile.conditions.picker
+package com.ibashkimi.lockscheduler.addeditprofile.conditions.location
 
 import android.content.Context
 import android.graphics.Canvas

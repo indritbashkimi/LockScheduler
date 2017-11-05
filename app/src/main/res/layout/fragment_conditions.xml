@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/location_layout"
+        android:id="@+id/locationLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -46,7 +46,7 @@
                 app:layout_gravity="center_vertical" />
 
             <Button
-                android:id="@+id/location_delete"
+                android:id="@+id/locationDelete"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
     <include layout="@layout/day_night_divider" />
 
     <LinearLayout
-        android:id="@+id/time_layout"
+        android:id="@+id/timeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -103,7 +103,7 @@
                 android:text="@string/time_condition_add_title" />
 
             <Button
-                android:id="@+id/time_delete"
+                android:id="@+id/timeDelete"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
     <include layout="@layout/day_night_divider" />
 
     <LinearLayout
-        android:id="@+id/wifi_layout"
+        android:id="@+id/wifiLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -163,7 +163,7 @@
                 app:layout_gravity="center_vertical" />
 
             <Button
-                android:id="@+id/wifi_delete"
+                android:id="@+id/wifiDelete"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/wifi_body"
+            android:id="@+id/wifiBody"
             style="@style/MyPreference"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/power_layout"
+        android:id="@+id/powerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -246,7 +246,7 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/power_title"
+                android:id="@+id/powerTitle"
                 style="@style/ConditionTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -254,7 +254,7 @@
                 android:text="@string/power_condition_title" />
 
             <TextView
-                android:id="@+id/power_summary"
+                android:id="@+id/powerSummary"
                 style="@style/MyPreferenceSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -264,7 +264,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/power_delete"
+            android:id="@+id/powerDelete"
             style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

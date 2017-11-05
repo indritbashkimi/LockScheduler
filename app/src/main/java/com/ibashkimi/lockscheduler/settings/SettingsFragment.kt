@@ -17,17 +17,19 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.InputType
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
+import com.ibashkimi.lockscheduler.Constants
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.*
+import com.ibashkimi.support.activity.ThemePreferences
 import com.ibashkimi.support.preference.*
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        context!!.getSharedPreferences(Constants.PREFERNCES_NAME, Context.MODE_PRIVATE)
     }
 
     private var lockTypeIfGranted: Int
@@ -92,24 +94,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 return true
             }
             "theme" -> {
-                val savedThemeId = preferenceManager.sharedPreferences
-                        .getInt("theme", Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-                val alertDialog = ThemeDialogFragment.newInstance(savedThemeId)
-                alertDialog.listener = ThemeAdapter.ThemeSelectedListener {
-                    setPreference("theme", it.id)
+                val themePrefs = ThemePreferences(preferenceManager.sharedPreferences)
+                val alertDialog = ThemeDialogFragment.newInstance(themePrefs.theme)
+                alertDialog.listener = ThemeAdapter.ThemeSelectedListener { theme ->
+                    preferenceManager.sharedPreferences
+                            .edit()
+                            .putString("theme", theme.name)
+                            .apply()
+
                 }
-                alertDialog.show(activity.supportFragmentManager, "theme_dialog")
+                alertDialog.show(activity!!.supportFragmentManager, "theme_dialog")
                 return true
             }
             "min_password_length" -> {
-                MaterialDialog.Builder(context)
+                MaterialDialog.Builder(context!!)
                         .title(R.string.pref_min_password_length_dialog_title)
                         .inputType(InputType.TYPE_CLASS_NUMBER)
                         .input("", "" + getIntPreference("min_password_length", 4)) { _, input -> setPreference("min_password_length", Integer.parseInt(input.toString())) }.show()
                 return true
             }
             "min_pin_length" -> {
-                MaterialDialog.Builder(context)
+                MaterialDialog.Builder(context!!)
                         .title(R.string.pref_min_pin_length_dialog_title)
                         .inputType(InputType.TYPE_CLASS_NUMBER)
                         .input("", "" + getIntPreference("min_pin_length", 4)) { _, input -> setPreference("min_pin_length", Integer.parseInt(input.toString())) }.show()

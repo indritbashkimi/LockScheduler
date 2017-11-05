@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <com.ibashkimi.lockscheduler.addeditprofile.conditions.picker.MapCoverView
+        <com.ibashkimi.lockscheduler.addeditprofile.conditions.location.MapCoverView
             android:id="@+id/mapCover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

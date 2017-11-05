@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.addeditprofile.conditions;
+package com.ibashkimi.lockscheduler.addeditprofile.conditions.time;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -66,7 +66,7 @@ public class TimeConditionFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_condition_time, container, false);
         ButterKnife.bind(this, root);
 
@@ -101,7 +101,7 @@ public class TimeConditionFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (startTime != null) {
             outState.putInt("start_time_hour", startTime.hour);

@@ -13,7 +13,7 @@ import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 
 
 fun Fragment.showPasswordDialog(lockType: Int, onSelected: (Int) -> Unit) {
-    val builder = AlertDialog.Builder(context)
+    val builder = AlertDialog.Builder(context!!)
     val items = resources.getStringArray(R.array.lock_types)
     val selectedItem = when (lockType) {
         LockAction.LockType.UNCHANGED -> 0
@@ -47,7 +47,7 @@ fun positionToLockType(position: Int) = when (position) {
 }
 
 fun Fragment.isAdminPermissionGranted(): Boolean {
-    return LockSchedulerAdmin.isAdminActive(context)
+    return LockSchedulerAdmin.isAdminActive(context!!)
 }
 
 fun isAdminRationaleNeeded(): Boolean {
@@ -56,7 +56,7 @@ fun isAdminRationaleNeeded(): Boolean {
 
 
 fun Fragment.showAdminPermissionRationale(onOk: () -> Unit, onCancel: () -> Unit) {
-    val builder = AlertDialog.Builder(context)
+    val builder = AlertDialog.Builder(context!!)
     builder.setTitle(R.string.admin_permission_rationale_title)
             .setMessage(R.string.admin_permission_rationale)
             .setPositiveButton(R.string.ok) { _, _ -> onOk() }
@@ -87,7 +87,7 @@ fun Fragment.showPinChooser(requestCode: Int) {
 }
 
 fun Fragment.askAdminPermission(requestCode: Int) {
-    startActivityForResult(AdminUtils.buildAddAdminIntent(context), requestCode)
+    startActivityForResult(AdminUtils.buildAddAdminIntent(context!!), requestCode)
 }
 
 fun handleAdminPermissionResult(resultCode: Int, onGranted: () -> Unit, onDenied: () -> Unit) {

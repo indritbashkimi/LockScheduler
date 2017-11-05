@@ -17,8 +17,7 @@ import com.ibashkimi.lockscheduler.about.AboutActivity;
 import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
-import com.ibashkimi.support.activities.DayNightActivity;
-import com.ibashkimi.support.preference.Themes;
+import com.ibashkimi.support.activity.ThemePreferences;
 import com.ibashkimi.support.utils.ThemeUtils;
 
 
@@ -56,8 +55,8 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
 
     @Override
     protected void onStop() {
-        AppPreferencesHelper.INSTANCE.getPreferences().unregisterOnSharedPreferenceChangeListener(this);
         super.onStop();
+        AppPreferencesHelper.INSTANCE.getPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -84,27 +83,20 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         switch (s) {
-            case "theme":
-                @Themes.Theme int themeId = AppPreferencesHelper.INSTANCE.getTheme();
-                DayNightActivity.applyTheme(this, themeId);
+            case ThemePreferences.KEY_THEME:
+                applyTheme(getThemePreferences().getTheme());
                 recreate();
                 break;
-            case "night_mode":
-                DayNightActivity.applyDayNightMode(this, AppPreferencesHelper.INSTANCE.getNightMode());
+            case ThemePreferences.KEY_NIGHT_MODE:
+                applyNightMode(getThemePreferences().getNightMode());
                 recreate();
                 break;
             case "loitering_delay":
                 Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
                 //App.getGeofenceApiHelper().initGeofences();
                 break;
-            case "colored_navigation_bar":
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    boolean coloredNavBar = AppPreferencesHelper.INSTANCE.isColoredNavigationBarActive();
-                    int navBarColor = ThemeUtils.obtainColor(this,
-                            coloredNavBar ? R.attr.colorPrimaryDark : android.R.attr.navigationBarColor,
-                            Color.RED);
-                    getWindow().setNavigationBarColor(navBarColor);
-                }
+            case ThemePreferences.KEY_COLORED_NAV_BAR:
+                applyNavBarColor(getThemePreferences().getColoredNavBar());
                 break;
         }
     }

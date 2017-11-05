@@ -1,6 +1,7 @@
-package com.ibashkimi.lockscheduler.addeditprofile.conditions.picker
+package com.ibashkimi.lockscheduler.addeditprofile.conditions.location
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Point
@@ -40,7 +41,7 @@ import java.util.*
 
 class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
-    internal val PLACE_AUTOCOMPLETE_REQUEST_CODE = 1
+    private val PLACE_AUTOCOMPLETE_REQUEST_CODE = 1
     private val PERMISSION_REQUEST_LOCATION = 99
 
     lateinit private var mapCoverView: MapCoverView
@@ -73,10 +74,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         if (savedInstanceState == null) {
             val extras = intent.extras
             if (extras != null) {
-                if (extras.containsKey("latitude"))
+                if (extras.containsKey("latitude") && extras.containsKey("longitude"))
                     center = LatLng(extras.getDouble("latitude"), extras.getDouble("longitude"))
                 if (extras.containsKey("radius"))
-                    radius = extras.getInt("radius").toFloat()
+                    radius = extras.getInt("radius").toFloat() // TODO
                 if (extras.containsKey("map_type")) {
                     mapType = when (extras.getString("map_type")) {
                         "none" -> GoogleMap.MAP_TYPE_NONE
@@ -89,7 +90,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 }
             }
         } else {
-            center = savedInstanceState.getParcelable<LatLng>("center")
+            center = savedInstanceState.getParcelable("center")
             radius = savedInstanceState.getFloat("radius")
         }
 
@@ -158,8 +159,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         this.googleMap = googleMap
         googleMap.mapType = this.mapType
 
-        checkPermission(
-                permission = Manifest.permission.ACCESS_FINE_LOCATION,
+        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
                 whenGranted = { setUpMap(googleMap) },
                 whenExplanationNeed = {
                     AlertDialog.Builder(this)
@@ -176,6 +176,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         )
     }
 
+    @SuppressLint("MissingPermission")
     private fun setUpMap(googleMap: GoogleMap) {
         googleMap.isMyLocationEnabled = true
 
@@ -191,10 +192,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
             // Get Current Location
             val myLocation = locationManager.getLastKnownLocation(provider)
-            if (myLocation != null)
-                center = LatLng(myLocation.latitude, myLocation.longitude)
+            center = if (myLocation != null)
+                LatLng(myLocation.latitude, myLocation.longitude)
             else
-                center = LatLng(0.0, 0.0)
+                LatLng(0.0, 0.0)
             address = center!!.latitude.toString() + ": " + center!!.longitude.toString()
         }
 
@@ -267,12 +268,12 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         addressView.text = address
     }
 
-    fun onCancel() {
+    private fun onCancel() {
         setResult(Activity.RESULT_CANCELED)
         finish()
     }
 
-    fun onSave() {
+    private fun onSave() {
         if (center != null) {
             val resultIntent = Intent()
             resultIntent.putExtra("latitude", center!!.latitude)

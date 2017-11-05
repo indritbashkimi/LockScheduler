@@ -42,7 +42,7 @@ public class ProfilesActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = getSharedPreferences();
+        SharedPreferences prefs = getPreferences();
         if (prefs.getBoolean("first_run", true)) {
             startActivity(new Intent(this, IntroActivity.class));
             prefs.edit().putBoolean("first_run", false).apply();
@@ -207,7 +207,7 @@ public class ProfilesActivity extends BaseActivity {
     public static class PermissionDeniedFragment extends Fragment {
         @Nullable
         @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             return inflater.inflate(R.layout.fragment_permission_denied, container, false);
         }
     }
