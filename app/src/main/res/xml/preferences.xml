@@ -1,10 +1,10 @@
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="appearance"
         android:title="@string/appearance_preference">
 
-        <android.support.v7.preference.ListPreference
+        <androidx.preference.ListPreference
             android:defaultValue="auto"
             android:entries="@array/pref_night_mode_human_value"
             android:entryValues="@array/pref_night_mode_phone_value"
@@ -12,11 +12,11 @@
             android:summary="%s"
             android:title="@string/pref_title_night_mode" />
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="theme"
             android:title="@string/pref_title_theme" />
 
-        <android.support.v7.preference.ListPreference
+        <androidx.preference.ListPreference
             android:defaultValue="normal"
             android:entries="@array/pref_map_style_human"
             android:entryValues="@array/pref_map_style_value"
@@ -24,24 +24,24 @@
             android:summary="%s"
             android:title="@string/pref_title_map_style" />
 
-        <android.support.v7.preference.CheckBoxPreference
+        <androidx.preference.CheckBoxPreference
             android:defaultValue="false"
             android:key="colored_navigation_bar"
             android:summary="@string/pref_colored_navigation_bar_summary"
             android:title="@string/pref_colored_navigation_bar" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_general">
+    <androidx.preference.PreferenceCategory android:title="@string/pref_header_general">
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:defaultValue="4"
             android:dialogTitle="@string/pref_min_password_length_dialog_title"
             android:key="min_password_length"
             android:summary="%s"
             android:title="@string/pref_title_min_password_length" />
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:defaultValue="4"
             android:dialogTitle="@string/pref_min_pin_length_dialog_title"
             android:inputType="number"
@@ -49,38 +49,38 @@
             android:summary="%s"
             android:title="@string/pref_title_min_pin_length" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_notifications">
+    <androidx.preference.PreferenceCategory android:title="@string/pref_notifications">
 
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="notifications_show"
             android:title="@string/pref_title_show_notifications" />
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:defaultValue="content://settings/system/notification_sound"
             android:dependency="notifications_show"
             android:key="notifications_ringtone"
             android:ringtoneType="notification"
             android:title="@string/pref_title_ringtone" />
 
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:dependency="notifications_show"
             android:key="notifications_vibrate"
             android:title="@string/pref_title_vibrate" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/pref_header_advanced">
+    <androidx.preference.PreferenceCategory android:title="@string/pref_header_advanced">
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="lock_at_boot"
             android:summary="%s"
             android:title="@string/pref_title_lock_at_boot" />
 
-        <android.support.v7.preference.ListPreference
+        <androidx.preference.ListPreference
             android:defaultValue="0"
             android:entries="@array/pref_boot_delay_titles"
             android:entryValues="@array/pref_boot_delay_values"
@@ -89,6 +89,6 @@
             android:summary="%s"
             android:title="@string/pref_boot_delay" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

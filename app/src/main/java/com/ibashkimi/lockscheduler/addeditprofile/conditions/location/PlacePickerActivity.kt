@@ -10,8 +10,9 @@ import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.Toolbar
+import android.os.PersistableBundle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -23,7 +24,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapFragment
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.ibashkimi.lockscheduler.R
@@ -99,15 +100,17 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         mapCoverView = findViewById(R.id.mapCover)
         findViewById<View>(R.id.selectLocationCard).setOnClickListener({ onSave() })
 
-        val mapFragment = fragmentManager.findFragmentById(R.id.map) as MapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
         outState?.putParcelable("center", center)
         outState?.putFloat("radius", radius)
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -165,7 +168,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                     AlertDialog.Builder(this)
                             .setTitle("Location Permission Needed")
                             .setMessage("This app needs the Location permission, please accept to use location functionality")
-                            .setPositiveButton(R.string.ok) { _, _ ->
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
                                 requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
                             }
                             .create().show()

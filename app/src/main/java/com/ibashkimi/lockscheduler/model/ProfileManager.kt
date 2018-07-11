@@ -1,7 +1,7 @@
 package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
-import android.support.v4.util.ArrayMap
+import androidx.collection.ArrayMap
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -17,7 +17,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
 
     val geofenceApiHelper: GeofenceApiHelper = GeofenceApiHelper.getInstance()
 
-    val cachedProfiles: ArrayMap<String, Profile> = ArrayMap()
+    val cachedProfiles: androidx.collection.ArrayMap<String, Profile> = androidx.collection.ArrayMap()
 
     var isCacheDirty = true
 

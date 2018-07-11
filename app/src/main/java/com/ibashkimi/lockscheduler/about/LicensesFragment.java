@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.theme.utils.ThemeUtils;
 
 import java.security.InvalidParameterException;
 
@@ -89,8 +89,9 @@ public class LicensesFragment extends Fragment {
             };
         }
 
+        @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             switch (viewType) {
                 case VIEW_TYPE_INTRO:
                     return new LibraryIntroHolder(LayoutInflater.from(parent.getContext())
@@ -108,7 +109,7 @@ public class LicensesFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
             if (getItemViewType(position) == VIEW_TYPE_LIBRARY) {
                 bindLibrary((LibraryHolder) holder, libs[position - 1]); // adjust for intro
             }
@@ -144,16 +145,13 @@ public class LicensesFragment extends Fragment {
             holder.website.setOnClickListener(clickListener);
             holder.link.setOnClickListener(clickListener);
             holder.licenseLink.setText(lib.licenseName);
-            holder.licenseLink.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    if (position == RecyclerView.NO_POSITION) return;
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].licenseLink)));
-                }
+            holder.licenseLink.setOnClickListener(v -> {
+                int position = holder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].licenseLink)));
             });
         }
     }

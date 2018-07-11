@@ -2,12 +2,11 @@ package com.ibashkimi.lockscheduler.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
 import com.ibashkimi.lockscheduler.Constants
-
-import com.ibashkimi.support.activity.DayNightActivity
-import com.ibashkimi.support.activity.ThemePreferences
-import com.ibashkimi.support.activity.ThemeSupportPreferences
+import com.ibashkimi.theme.activity.DayNightActivity
+import com.ibashkimi.theme.activity.ThemePreferences
+import com.ibashkimi.theme.activity.ThemeSupportPreferences
 
 
 abstract class BaseActivity : DayNightActivity() {
@@ -20,11 +19,4 @@ abstract class BaseActivity : DayNightActivity() {
 
     override val themePreferences: ThemeSupportPreferences
         get() = ThemePreferences(preferences)
-
-    companion object {
-
-        init {
-            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-        }
-    }
 }

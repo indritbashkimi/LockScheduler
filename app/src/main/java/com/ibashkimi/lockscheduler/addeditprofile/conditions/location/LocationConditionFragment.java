@@ -2,11 +2,11 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.location;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.graphics.ColorUtils;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.graphics.ColorUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,28 +30,21 @@ import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.model.source.serializer.ConditionSerializer;
 import com.ibashkimi.lockscheduler.util.MapUtils;
 import com.ibashkimi.lockscheduler.util.Utils;
-import com.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.theme.utils.ThemeUtils;
 
 import org.json.JSONException;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 public class LocationConditionFragment extends Fragment implements OnMapReadyCallback {
 
     public static final int PLACE_PICKER_REQUEST = 1;
 
-    @BindView(R.id.address_text)
     TextView addressView;
 
-    @BindView(R.id.map_view)
     MapView mapView;
 
-    @BindView(R.id.map_cover)
     View mapCover;
 
-    @BindView(R.id.radius)
     TextView radiusView;
 
     private GoogleMap googleMap;
@@ -90,8 +83,8 @@ public class LocationConditionFragment extends Fragment implements OnMapReadyCal
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        circlePadding = (int) ThemeUtils.dpToPx(getContext(), 8);
-        circleColor = ThemeUtils.obtainColor(getContext(), R.attr.colorPrimary, Color.RED);
+        circlePadding = (int) ThemeUtils.dpToPx(requireContext(), 8);
+        circleColor = ThemeUtils.obtainColor(requireContext(), R.attr.colorPrimary, Color.RED);
         fillColor = ColorUtils.setAlphaComponent(circleColor, 0x25);
         mapStyle = MapUtils.resolveMapStyle(AppPreferencesHelper.INSTANCE.getMapStyle());
     }
@@ -100,7 +93,11 @@ public class LocationConditionFragment extends Fragment implements OnMapReadyCal
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_condition_place, container, false);
-        ButterKnife.bind(this, root);
+
+        addressView = root.findViewById(R.id.address_text);
+        mapView = root.findViewById(R.id.map_view);
+        mapCover = root.findViewById(R.id.map_cover);
+        radiusView = root.findViewById(R.id.radius);
 
         if (savedInstanceState != null) {
             try {
@@ -209,7 +206,7 @@ public class LocationConditionFragment extends Fragment implements OnMapReadyCal
                 .center(place)
                 .radius(condition.getRadius())
                 .fillColor(fillColor)
-                .strokeWidth(Utils.dpToPx(getContext(), 2))
+                .strokeWidth(Utils.dpToPx(requireContext(), 2))
                 .strokeColor(circleColor));
         LatLngBounds bounds = MapUtils.calculateBounds(place, condition.getRadius());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, circlePadding);

@@ -9,11 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.support.annotation.XmlRes
-import android.support.v4.app.DialogFragment
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceCategory
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.annotation.XmlRes
+import androidx.fragment.app.DialogFragment
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import android.text.InputType
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
@@ -22,8 +22,9 @@ import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.*
-import com.ibashkimi.support.activity.ThemePreferences
-import com.ibashkimi.support.preference.*
+import com.ibashkimi.theme.activity.ThemePreferences
+import com.ibashkimi.theme.preference.*
+import com.ibashkimi.theme.theme.Theme
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -55,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        var dialogFragment: DialogFragment? = null
+        var dialogFragment: androidx.fragment.app.DialogFragment? = null
         if (preference is ThemePreference) {
             dialogFragment = ThemePreferenceDialogFragmentCompat.newInstance(preference.getKey())
         }
@@ -95,7 +96,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             "theme" -> {
                 val themePrefs = ThemePreferences(preferenceManager.sharedPreferences)
-                val alertDialog = ThemeDialogFragment.newInstance(themePrefs.theme)
+                val alertDialog = ThemeDialogFragment.newInstance(themePrefs.getTheme(Theme.INDIGO_PINK))
                 alertDialog.listener = ThemeAdapter.ThemeSelectedListener { theme ->
                     preferenceManager.sharedPreferences
                             .edit()

@@ -5,12 +5,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.v4.graphics.ColorUtils
+import androidx.annotation.RequiresApi
+import androidx.core.graphics.ColorUtils
 import android.util.AttributeSet
 import android.view.View
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.support.utils.ThemeUtils
+import com.ibashkimi.theme.utils.ThemeUtils
 
 class MapCoverView : View {
     private val circlePaint: Paint = Paint()

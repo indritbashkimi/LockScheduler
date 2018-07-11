@@ -4,10 +4,10 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.transition.TransitionManager
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
-import android.support.v7.app.AlertDialog
+import androidx.transition.TransitionManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +28,7 @@ import java.util.*
 /**
  * Spaghetti code
  */
-class ConditionsFragment : Fragment(), View.OnClickListener {
+class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
     private val placeLayout: ViewGroup by bindView(R.id.locationLayout)
     private val placeDelete: View by bindView(R.id.locationDelete)
     private val locationTitle: TextView by bindView(R.id.location_title)
@@ -254,7 +254,7 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
         wifiTitle.setText(R.string.wifi_condition_title)
     }
 
-    private fun showLocationCondition(condition: PlaceCondition, transaction: FragmentTransaction? = null, notify: Boolean = true) {
+    private fun showLocationCondition(condition: PlaceCondition, transaction: androidx.fragment.app.FragmentTransaction? = null, notify: Boolean = true) {
         locationTitle.setText(R.string.location_condition_title)
         placeConditionAdded = true
         val fragment = locationConditionFragment
@@ -280,7 +280,7 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
         notifyConditionRemoved(Condition.Type.PLACE)
     }
 
-    private fun showTimeCondition(condition: TimeCondition, transaction: FragmentTransaction? = null, notify: Boolean = true) {
+    private fun showTimeCondition(condition: TimeCondition, transaction: androidx.fragment.app.FragmentTransaction? = null, notify: Boolean = true) {
         timeConditionAdded = true
         val fragment = timeConditionFragment
         fragment.setData(condition)

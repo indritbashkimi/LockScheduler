@@ -3,9 +3,6 @@ package com.ibashkimi.lockscheduler.addeditprofile.actions;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -17,28 +14,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 public class PinChooserActivity extends BaseActivity implements TextWatcher {
 
-    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    @BindView(R.id.message_text)
     TextView mMessageText;
 
-    @BindView(R.id.input_layout)
     TextInputLayout mInputLayout;
 
-    @BindView(R.id.editText)
     EditText mEditText;
 
-    @BindView(R.id.actionButton)
     Button mActionButton;
 
     private String mInput;
@@ -51,7 +43,6 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_pass_chooser);
-        ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -61,6 +52,15 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        mToolbar = findViewById(R.id.toolbar);
+        mMessageText = findViewById(R.id.message_text);
+        mInputLayout = findViewById(R.id.input_layout);
+        mEditText = findViewById(R.id.editText);
+        mActionButton = findViewById(R.id.actionButton);
+        findViewById(R.id.cancel).setOnClickListener(view -> {
+            onCancel();
+        });
 
         if (savedInstanceState == null) {
             mMinLength = getIntent().getIntExtra("min_length", mMinLength);
@@ -179,11 +179,10 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
         mEditText.removeTextChangedListener(this);
         mEditText.setText("");
         mActionButton.setOnClickListener(mFinalFabListener);
-        mActionButton.setText(R.string.ok);
+        mActionButton.setText(android.R.string.ok);
         mMessageText.setText(mInputType.equals("pin") ? R.string.confirm_pin : R.string.confirm_password);
     }
 
-    @OnClick(R.id.cancel)
     public void onCancel() {
         setResult(Activity.RESULT_CANCELED);
         finish();

@@ -2,12 +2,7 @@ package com.ibashkimi.lockscheduler.settings;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -17,8 +12,14 @@ import com.ibashkimi.lockscheduler.about.AboutActivity;
 import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
-import com.ibashkimi.support.activity.ThemePreferences;
-import com.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.theme.activity.ThemePreferences;
+import com.ibashkimi.theme.theme.NavBarColor;
+import com.ibashkimi.theme.theme.NightMode;
+import com.ibashkimi.theme.theme.Theme;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 
 
 public class SettingsActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -84,19 +85,19 @@ public class SettingsActivity extends BaseActivity implements SharedPreferences.
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         switch (s) {
             case ThemePreferences.KEY_THEME:
-                applyTheme(getThemePreferences().getTheme());
+                applyTheme(getThemePreferences().getTheme(Theme.INDIGO_PINK));
                 recreate();
                 break;
             case ThemePreferences.KEY_NIGHT_MODE:
-                applyNightMode(getThemePreferences().getNightMode());
+                applyNightMode(getThemePreferences().getNightMode(NightMode.DAY));
                 recreate();
                 break;
             case "loitering_delay":
                 Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
                 //App.getGeofenceApiHelper().initGeofences();
                 break;
-            case ThemePreferences.KEY_COLORED_NAV_BAR:
-                applyNavBarColor(getThemePreferences().getColoredNavBar());
+            case ThemePreferences.KEY_NAV_BAR_COLOR:
+                applyNavBarColor(getThemePreferences().getNavBarColor(NavBarColor.SYSTEM));
                 break;
         }
     }

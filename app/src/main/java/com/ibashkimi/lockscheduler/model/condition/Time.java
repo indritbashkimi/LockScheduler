@@ -1,13 +1,13 @@
 package com.ibashkimi.lockscheduler.model.condition;
 
-import com.ibashkimi.support.utils.CompareResult;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.time.CompareResult;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-import static com.ibashkimi.support.utils.CompareResult.EQUAL;
-import static com.ibashkimi.support.utils.CompareResult.HIGHER;
-import static com.ibashkimi.support.utils.CompareResult.LOWER;
+import static com.ibashkimi.lockscheduler.addeditprofile.conditions.time.CompareResult.EQUAL;
+import static com.ibashkimi.lockscheduler.addeditprofile.conditions.time.CompareResult.HIGHER;
+import static com.ibashkimi.lockscheduler.addeditprofile.conditions.time.CompareResult.LOWER;
 
 public class Time {
     public final int hour;

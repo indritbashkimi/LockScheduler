@@ -3,14 +3,14 @@ package com.ibashkimi.lockscheduler.about;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +21,6 @@ import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
-
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 public class AboutActivity extends BaseActivity {
@@ -77,9 +74,7 @@ public class AboutActivity extends BaseActivity {
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View root = inflater.inflate(R.layout.fragment_about, container, false);
-            ButterKnife.bind(this, root);
-            return root;
+            return inflater.inflate(R.layout.fragment_about, container, false);
         }
 
         @Override
@@ -91,6 +86,10 @@ public class AboutActivity extends BaseActivity {
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
+            view.findViewById(R.id.help).setOnClickListener(this);
+            view.findViewById(R.id.feedback).setOnClickListener(this);
+            view.findViewById(R.id.privacy_policy).setOnClickListener(this);
+            view.findViewById(R.id.licenses).setOnClickListener(this);
             view.findViewById(R.id.email).setOnClickListener(this);
             view.findViewById(R.id.facebook).setOnClickListener(this);
             view.findViewById(R.id.google_plus).setOnClickListener(this);
@@ -98,36 +97,23 @@ public class AboutActivity extends BaseActivity {
             view.findViewById(R.id.github).setOnClickListener(this);
         }
 
-        @OnClick(R.id.help)
-        public void onHelpClicked() {
-            startActivity(new Intent(getContext(), HelpActivity.class));
-        }
-
-        @OnClick(R.id.feedback)
-        public void onSendFeedbackClicked() {
-            PlatformUtils.sendFeedback(getContext());
-        }
-
-        /*@OnClick(R.id.uninstall)
-        public void onUninstallClicked() {
-            PlatformUtils.uninstall(AboutFragment.this.getContext());
-        }*/
-
-        @OnClick(R.id.privacy_policy)
-        public void onPrivacyPolicyClicked() {
-            Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-        }
-
-        @OnClick(R.id.licenses)
-        public void onLicensesClicked() {
-            ((AboutActivity) getActivity()).showLicenceFragment();
-        }
-
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.help:
+                    startActivity(new Intent(getContext(), HelpActivity.class));
+                    break;
+                case R.id.feedback:
+                    PlatformUtils.sendFeedback(requireContext());
+                    break;
+                case R.id.privacy_policy:
+                    Toast.makeText(getContext(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.licenses:
+                    ((AboutActivity) getActivity()).showLicenceFragment();
+                    break;
                 case R.id.email:
-                    PlatformUtils.sendFeedback(getContext());
+                    PlatformUtils.sendFeedback(requireContext());
                     break;
                 case R.id.facebook:
                     openUrl(R.string.social_facebook);

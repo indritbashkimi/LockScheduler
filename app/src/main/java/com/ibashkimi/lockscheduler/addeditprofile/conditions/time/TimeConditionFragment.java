@@ -4,11 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,20 +17,19 @@ import com.ibashkimi.lockscheduler.util.ConditionUtils;
 import com.ibashkimi.lockscheduler.util.Utils;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 
 public class TimeConditionFragment extends Fragment {
 
-    @BindView(R.id.days_summary)
     TextView daysSummary;
 
-    @BindView(R.id.start_time_summary)
     TextView startTimeSummary;
 
-    @BindView(R.id.end_time_summary)
     TextView endTimeSummary;
 
     private TimeCondition condition;
@@ -68,7 +62,12 @@ public class TimeConditionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_condition_time, container, false);
-        ButterKnife.bind(this, root);
+        daysSummary = root.findViewById(R.id.days_summary);
+        startTimeSummary = root.findViewById(R.id.start_time_summary);
+        endTimeSummary = root.findViewById(R.id.end_time_summary);
+        root.findViewById(R.id.days).setOnClickListener(view -> showWeekDays());
+        root.findViewById(R.id.start_time).setOnClickListener(view -> showStartTimePicker());
+        root.findViewById(R.id.end_time).setOnClickListener(view -> showEndTimePicker());
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("start_time_hour"))
@@ -117,7 +116,6 @@ public class TimeConditionFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.days)
     public void showWeekDays() {
         DaysPickerDialogFragment dialogFragment = new DaysPickerDialogFragment();
         dialogFragment.setDays(days);
@@ -130,19 +128,15 @@ public class TimeConditionFragment extends Fragment {
         daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
     }
 
-    @OnClick(R.id.start_time)
     public void showStartTimePicker() {
-        showTimePicker(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                Time time = new Time(i, i1);
-                if (endTime != null && !endTime.isMidnight() && endTime.compareTo(time).isNotHigher()) {
-                    showIntervalError();
-                    return;
-                }
-                startTimeSummary.setText(Utils.formatTime(i, i1));
-                startTime = new Time(i, i1);
+        showTimePicker((timePickerDialog, i, i1, i2) -> {
+            Time time = new Time(i, i1);
+            if (endTime != null && !endTime.isMidnight() && endTime.compareTo(time).isNotHigher()) {
+                showIntervalError();
+                return;
             }
+            startTimeSummary.setText(Utils.formatTime(i, i1));
+            startTime = new Time(i, i1);
         });
     }
 
@@ -150,19 +144,15 @@ public class TimeConditionFragment extends Fragment {
         Toast.makeText(getContext(), R.string.time_condition_interval_error, Toast.LENGTH_SHORT).show();
     }
 
-    @OnClick(R.id.end_time)
     public void showEndTimePicker() {
-        showTimePicker(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePickerDialog timePickerDialog, int i, int i1, int i2) {
-                Time time = new Time(i, i1);
-                if (startTime != null && !startTime.isMidnight() && startTime.compareTo(time).isNotLower()) {
-                    showIntervalError();
-                    return;
-                }
-                endTimeSummary.setText(Utils.formatTime(i, i1));
-                endTime = time;
+        showTimePicker((timePickerDialog, i, i1, i2) -> {
+            Time time = new Time(i, i1);
+            if (startTime != null && !startTime.isMidnight() && startTime.compareTo(time).isNotLower()) {
+                showIntervalError();
+                return;
             }
+            endTimeSummary.setText(Utils.formatTime(i, i1));
+            endTime = time;
         });
     }
 
@@ -213,14 +203,9 @@ public class TimeConditionFragment extends Fragment {
                 for (int i = 0; i < 7; i++)
                     days[i] = savedInstanceState.getBoolean("day_" + i);
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle(R.string.time_condition_days);
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    listener.onDaysSelected(days);
-                }
-            });
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> listener.onDaysSelected(days));
             builder.setNegativeButton(R.string.cancel, null);
             builder.setMultiChoiceItems(R.array.days_of_week, days, new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
@@ -232,7 +217,7 @@ public class TimeConditionFragment extends Fragment {
         }
 
         @Override
-        public void onSaveInstanceState(Bundle outState) {
+        public void onSaveInstanceState(@NonNull Bundle outState) {
             super.onSaveInstanceState(outState);
             for (int i = 0; i < 7; i++)
                 outState.putBoolean("day_" + i, days[i]);

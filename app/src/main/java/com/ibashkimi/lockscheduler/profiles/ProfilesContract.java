@@ -1,6 +1,6 @@
 package com.ibashkimi.lockscheduler.profiles;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.ui.BasePresenter;

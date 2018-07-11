@@ -1,7 +1,7 @@
 package com.ibashkimi.lockscheduler.util;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.model.condition.Time;

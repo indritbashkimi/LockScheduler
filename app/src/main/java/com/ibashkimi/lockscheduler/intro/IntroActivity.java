@@ -1,13 +1,10 @@
 package com.ibashkimi.lockscheduler.intro;
 
-import android.os.Bundle;
+import android.app.Activity;
 
-import com.heinrichreimersoftware.materialintro.slide.SimpleSlide;
-import com.ibashkimi.lockscheduler.R;
+public class IntroActivity extends Activity {
 
-public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.IntroActivity {
-
-    @Override
+    /*@Override
     protected void onCreate(Bundle savedInstanceState) {
         // https://github.com/HeinrichReimer/material-intro
         setFullscreen(true);
@@ -27,5 +24,5 @@ public class IntroActivity extends com.heinrichreimersoftware.materialintro.app.
                 .background(R.color.indigo_500)
                 .backgroundDark(R.color.indigo_700)
                 .build());
-    }
+    }*/
 }

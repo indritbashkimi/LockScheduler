@@ -1,14 +1,12 @@
 package com.ibashkimi.lockscheduler.profiles;
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.SelectableAdapter;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileUtils;
 import com.ibashkimi.lockscheduler.model.action.LockAction;
@@ -17,14 +15,13 @@ import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition;
 import com.ibashkimi.lockscheduler.model.condition.WifiCondition;
 import com.ibashkimi.lockscheduler.util.ConditionUtils;
-import com.ibashkimi.support.utils.SelectableAdapter;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
 
@@ -46,15 +43,16 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
         this.mItemListener = listener;
     }
 
+    @NonNull
     @Override
-    public ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(mItemLayout, parent, false);
         return new ProfileViewHolder(itemView, getItemListener());
     }
 
     @Override
-    public void onBindViewHolder(final ProfileViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ProfileViewHolder holder, int position) {
         final Profile profile = getProfiles().get(position);
         holder.init(profile);
         holder.setSelected(isSelected(position));
@@ -78,51 +76,55 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
         return mItemListener;
     }
 
-    static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    static class ProfileViewHolder extends RecyclerView.ViewHolder {
         Callback listener;
 
-        @BindView(R.id.name)
         TextView name;
 
-        @BindView(R.id.enter_lock_mode)
         TextView enterLock;
 
-        @BindView(R.id.exit_lock_mode)
         TextView exitLock;
 
-        @BindView(R.id.place_summary)
         TextView place;
 
-        @BindView(R.id.days)
         TextView days;
 
-        @BindView(R.id.interval)
         TextView interval;
 
-        @BindView(R.id.wifi_summary)
         TextView wifi;
 
-        @BindView(R.id.locationLayout)
         View placeLayout;
 
-        @BindView(R.id.time_layout)
         View timeLayout;
 
-        @BindView(R.id.wifi_layout)
         View wifiLayout;
 
-        @BindView(R.id.power_layout)
         View powerLayout;
 
-        @BindView(R.id.power_summary)
         TextView powerSummary;
 
-        @BindView(R.id.cover)
         View cover;
 
         ProfileViewHolder(View itemView, @NonNull Callback listener) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            name = itemView.findViewById(R.id.name);
+            enterLock = itemView.findViewById(R.id.enter_lock_mode);
+            exitLock = itemView.findViewById(R.id.exit_lock_mode);
+            place = itemView.findViewById(R.id.place_summary);
+            days = itemView.findViewById(R.id.days);
+            interval = itemView.findViewById(R.id.interval);
+            wifi = itemView.findViewById(R.id.wifi_summary);
+            placeLayout = itemView.findViewById(R.id.locationLayout);
+            timeLayout = itemView.findViewById(R.id.time_layout);
+            wifiLayout = itemView.findViewById(R.id.wifi_layout);
+            powerLayout = itemView.findViewById(R.id.power_layout);
+            powerSummary = itemView.findViewById(R.id.power_summary);
+            cover = itemView.findViewById(R.id.cover);
+            itemView.findViewById(R.id.root).setOnClickListener(view -> listener.onProfileClick(getAdapterPosition()));
+            itemView.findViewById(R.id.root).setOnLongClickListener(view -> {
+                listener.onProfileLongClick(getAdapterPosition());
+                return true;
+            });
 
             this.listener = listener;
         }
@@ -175,19 +177,6 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
 
         void setSelected(boolean selected) {
             cover.setVisibility(selected ? View.VISIBLE : View.GONE);
-        }
-
-        @OnClick(R.id.root)
-        @Override
-        public void onClick(View v) {
-            listener.onProfileClick(getAdapterPosition());
-        }
-
-        @OnLongClick(R.id.root)
-        @Override
-        public boolean onLongClick(View v) {
-            listener.onProfileLongClick(getAdapterPosition());
-            return true;
         }
     }
 }

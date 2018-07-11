@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,26 +27,20 @@ import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.support.utils.ThemeUtils;
+import com.ibashkimi.theme.utils.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Fragment used to display profile list.
  */
 public class ProfilesFragment extends Fragment implements ProfilesContract.View, ProfileAdapter.Callback {
 
-    @BindView(R.id.root)
     ViewGroup mRootView;
 
-    @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.no_profiles)
     View mNoTasksView;
 
     private ProfilesContract.Presenter mPresenter;
@@ -80,7 +74,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mAdapter = new ProfileAdapter(new ArrayList<Profile>(0), R.layout.item_profile, this);
+        mAdapter = new ProfileAdapter(new ArrayList<>(0), R.layout.item_profile, this);
     }
 
     @Override
@@ -92,7 +86,9 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
-        ButterKnife.bind(this, rootView);
+        mRootView = rootView.findViewById(R.id.root);
+        mRecyclerView = rootView.findViewById(R.id.recyclerView);
+mNoTasksView = rootView.findViewById(R.id.no_profiles);
 
         RecyclerView.LayoutManager layoutManager;
         int columnCount = getResources().getInteger(R.integer.profiles_column_count);
@@ -105,31 +101,26 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        final FloatingActionButton fab = getActivity().findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.addNewProfile();
-            }
-        });
+        final FloatingActionButton fab = requireActivity().findViewById(R.id.fab);
+        fab.setOnClickListener(v -> mPresenter.addNewProfile());
 
         return rootView;
     }
 
     private ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         @Override
-        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
             return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
                     ItemTouchHelper.DOWN | ItemTouchHelper.UP);
         }
 
         @Override
-        public void onMoved(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+        public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
             super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
         }
 
         @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             int targetPosition = target.getAdapterPosition();
             int pos1 = viewHolder.getAdapterPosition();
             mPresenter.swapProfiles(mAdapter.getProfiles().get(pos1), mAdapter.getProfiles().get(targetPosition));
@@ -149,7 +140,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         }
 
         @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
         }
     });
@@ -276,7 +267,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
             Drawable drawable = menu.findItem(R.id.action_delete).getIcon();
             drawable = DrawableCompat.wrap(drawable);
             // It works but it's a strange dependency
-            Context context = getActivity().findViewById(R.id.toolbar).getContext();
+            Context context = requireActivity().findViewById(R.id.toolbar).getContext();
             DrawableCompat.setTint(drawable, ThemeUtils.obtainColor(context, android.R.attr.textColorPrimary, Color.RED));
             menu.findItem(R.id.action_delete).setIcon(drawable);
             return true;

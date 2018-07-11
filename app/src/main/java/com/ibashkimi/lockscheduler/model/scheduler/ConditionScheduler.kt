@@ -1,6 +1,6 @@
 package com.ibashkimi.lockscheduler.model.scheduler
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 

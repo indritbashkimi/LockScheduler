@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:visibility="visible">
 
-    <android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.percentlayout.widget.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/map_container"
         android:layout_width="match_parent"
@@ -19,7 +19,9 @@
         <FrameLayout
             android:layout_alignParentTop="true"
             app:layout_aspectRatio="235%"
-            app:layout_widthPercent="100%">
+            app:layout_widthPercent="100%"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <com.google.android.gms.maps.MapView
                 android:id="@+id/map_view"
@@ -45,7 +47,7 @@
 
         </FrameLayout>
 
-    </android.support.percent.PercentFrameLayout>
+    </androidx.percentlayout.widget.PercentFrameLayout>
 
     <TextView
         android:id="@+id/address_text"

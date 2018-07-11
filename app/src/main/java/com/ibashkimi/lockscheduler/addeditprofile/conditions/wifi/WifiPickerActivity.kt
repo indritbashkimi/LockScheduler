@@ -7,9 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -18,7 +16,6 @@ import android.widget.CheckBox
 import android.widget.TextView
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.ui.BaseActivity
-import com.ibashkimi.support.utils.SelectableAdapter
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
@@ -31,7 +28,7 @@ class WifiPickerActivity : BaseActivity() {
 
     private val wifiAdapter: WifiAdapter = WifiAdapter(wifiItems)
 
-    lateinit private var recyclerView: RecyclerView
+    lateinit private var recyclerView: androidx.recyclerview.widget.RecyclerView
 
     lateinit private var turnOnWifi: TextView
 
@@ -61,7 +58,7 @@ class WifiPickerActivity : BaseActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = wifiAdapter
         turnOnWifi = findViewById(R.id.turnOnWifi)
@@ -207,7 +204,7 @@ class WifiPickerActivity : BaseActivity() {
             return wifiList.size
         }
 
-        internal inner class ViewHolder(var rootView: View) : RecyclerView.ViewHolder(rootView) {
+        internal inner class ViewHolder(var rootView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(rootView) {
             var title: TextView = rootView.findViewById(R.id.title)
             var checkBox: CheckBox = rootView.findViewById(R.id.checkbox)
         }

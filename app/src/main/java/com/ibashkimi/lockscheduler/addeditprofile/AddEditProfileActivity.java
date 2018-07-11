@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -27,10 +27,6 @@ import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View, ConditionsFragment.ConditionChangeListener {
 
     public static final int REQUEST_ADD_PROFILE = 1;
@@ -42,10 +38,8 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     public static final String ARGUMENT_EDIT_PROFILE_ID = "ARGUMENT_EDIT_PROFILE_ID";
 
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.profile_name)
     EditText mProfileName;
 
     private boolean mShowDelete;
@@ -56,7 +50,10 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_profile);
-        ButterKnife.bind(this);
+
+        toolbar = findViewById(R.id.toolbar);
+        mProfileName = findViewById(R.id.profile_name);
+        findViewById(R.id.fab).setOnClickListener(view -> onSave());
 
         setSupportActionBar(toolbar);
 
@@ -177,7 +174,6 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         toolbar.setTitle(title);
     }
 
-    @OnClick(R.id.fab)
     public void onSave() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         List<Action> enterActions = getEnterActionsFragment(fragmentManager).assembleData();
