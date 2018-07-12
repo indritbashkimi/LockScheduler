@@ -12,8 +12,11 @@
     <string name="feedback_chooser_title">Send email…</string>
     <string name="lock_scheduler_admin">Lock Scheduler</string>
     <string name="device_admin_description">Bla bla description</string>
-    <string name="location_permission_rationale">LockScheduler requires location permission to change lock settings when you go to certain places.</string>
+    <string name="location_permission_needed">Location Permission Needed</string>
+    <string name="location_permission_rationale2">LockScheduler requires location permission to change lock settings when you go to certain places</string>
+    <string name="location_permission_rationale">This app needs the Location permission, please accept to use location functionality</string>
     <string name="action_ask_again">Ask again</string>
+    <string name="radius_in_meters">Radius: %d m</string>
     <string name="location_permission_granted">Location permission granted</string>
     <string name="location_permission_denied">Location permission denied</string>
     <string name="permission_action_settings">Settings</string>

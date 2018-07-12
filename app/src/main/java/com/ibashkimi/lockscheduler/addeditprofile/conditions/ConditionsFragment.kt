@@ -221,11 +221,11 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
             if (resultCode == RESULT_OK) {
                 val latitude = data!!.getDoubleExtra("latitude", 0.0)
                 val longitude = data.getDoubleExtra("longitude", 0.0)
-                val radius = data.getFloatExtra("radius", 0f)
+                val radius = data.getIntExtra("radius", 0)
                 val address = data.getStringExtra("address")
 
                 //TransitionManager.beginDelayedTransition(locationL)
-                val placeCondition = PlaceCondition(latitude, longitude, radius.toInt(), address)
+                val placeCondition = PlaceCondition(latitude, longitude, radius, address)
                 val transaction = childFragmentManager.beginTransaction()
                 showLocationCondition(placeCondition, transaction, true)
                 //http://stackoverflow.com/questions/7469082/getting-exception-illegalstateexception-can-not-perform-this-action-after-onsa
