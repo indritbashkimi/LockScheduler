@@ -249,19 +249,15 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
             lastJob!!.cancel()
         lastJob = launch(CommonPool) {
             val geocoder = Geocoder(this@PlacePickerActivity, Locale.getDefault())
-            // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            // Here 1 represents max location result to returned, by documents it recommended 1 to 5
             try {
                 val addresses = geocoder.getFromLocation(center!!.latitude, center!!.longitude, 1)
                 if (addresses != null && addresses.isNotEmpty()) {
-                    if (addresses[0].maxAddressLineIndex > 0) {
-                        val lastAddress = addresses[0].getAddressLine(0)!!
-                        launch(UI) { setAddress(lastAddress) }
-                    }
+                    val lastAddress = addresses[0].getAddressLine(0)
+                    launch(UI) { setAddress(lastAddress) }
                 }
-            } catch (e: IllegalArgumentException) {
-                // no op
-            } catch (e: IOException) {
-                // no op
+            } catch (e: Exception) {
+                Log.d(TAG, "exception: ${e.message}")
             }
         }
     }
