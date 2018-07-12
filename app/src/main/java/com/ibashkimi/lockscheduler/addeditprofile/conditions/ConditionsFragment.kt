@@ -31,15 +31,15 @@ import java.util.*
 class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
     private val placeLayout: ViewGroup by bindView(R.id.locationLayout)
     private val placeDelete: View by bindView(R.id.locationDelete)
+    private val placeSummary: TextView by bindView(R.id.location_summary)
     private val locationTitle: TextView by bindView(R.id.location_title)
     private val timeLayout: ViewGroup by bindView(R.id.timeLayout)
     private val timeTitle: TextView by bindView(R.id.time_title)
     private val timeDelete: View by bindView(R.id.timeDelete)
     private val wifiLayout: ViewGroup by bindView(R.id.wifiLayout)
     private val wifiTitle: TextView by bindView(R.id.wifi_title)
-    private val wifiBody: View by bindView(R.id.wifiBody)
     private val wifiDelete: View by bindView(R.id.wifiDelete)
-    private val wifiSummary: TextView by bindView(R.id.networks_summary)
+    private val wifiSummary: TextView by bindView(R.id.wifi_summary)
     private val powerLayout: View by bindView(R.id.powerLayout)
     private val powerSummary: TextView by bindView(R.id.power_summary)
     private val powerDelete: View by bindView(R.id.powerDelete)
@@ -70,7 +70,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
                 conditions.add(timeCondition)
         }
         if (wifiConditionAdded) {
-            if (wifiItems != null && wifiItems!!.size > 0)
+            if (wifiItems != null && wifiItems!!.isNotEmpty())
                 conditions.add(WifiCondition(wifiItems!!))
         }
         if (powerConditionAdded) {
@@ -249,7 +249,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
         val wifiList = arrayOfNulls<CharSequence>(networks.size)
         for (i in wifiList.indices) wifiList[i] = networks[i].ssid
         wifiSummary.text = ConditionUtils.concatenate(wifiList, ", ")
-        wifiBody.visibility = View.VISIBLE
+        wifiSummary.visibility = View.VISIBLE
         wifiDelete.visibility = View.VISIBLE
         wifiTitle.setText(R.string.wifi_condition_title)
     }
@@ -257,21 +257,15 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     private fun showLocationCondition(condition: PlaceCondition, transaction: androidx.fragment.app.FragmentTransaction? = null, notify: Boolean = true) {
         locationTitle.setText(R.string.location_condition_title)
         placeConditionAdded = true
-        val fragment = locationConditionFragment
-        fragment.setData(condition)
-        if (transaction != null)
-            transaction.replace(R.id.place_condition_container, fragment, "place_condition")
-        else {
-            childFragmentManager.beginTransaction()
-                    .replace(R.id.place_condition_container, fragment, "place_condition")
-                    .commit()
-        }
+        placeSummary.visibility = View.VISIBLE
+        placeSummary.text = getString(R.string.location_summary, condition.address, condition.radius)
         placeDelete.visibility = View.VISIBLE
+
         if (notify)
             notifyConditionChanged(condition)
     }
 
-    fun removeLocationCondition() {
+    private fun removeLocationCondition() {
         placeConditionAdded = false
         TransitionManager.beginDelayedTransition(placeLayout)
         childFragmentManager.beginTransaction().remove(locationConditionFragment).commit()
@@ -319,7 +313,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
         wifiConditionAdded = false
         //fragmentManager.beginTransaction().remove(getWifiConditionFragment()).commit();
         wifiDelete.visibility = View.GONE
-        wifiBody.visibility = View.GONE
+        wifiSummary.visibility = View.GONE
         wifiTitle.setText(R.string.wifi_condition_add_title)
         wifiItems = null
         notifyConditionRemoved(Condition.Type.WIFI)
