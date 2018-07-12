@@ -14,7 +14,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
-import com.ibashkimi.lockscheduler.profiles.ProfilesActivity;
+import com.ibashkimi.lockscheduler.ui.MainActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -66,7 +66,7 @@ public class TransitionsIntentService extends IntentService {
         NotificationManager mNotifyMgr =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
-        Intent notificationIntent = new Intent(this, ProfilesActivity.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
         mBuilder.setContentIntent(intent);

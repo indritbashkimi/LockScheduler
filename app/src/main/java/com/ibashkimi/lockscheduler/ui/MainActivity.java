@@ -1,38 +1,30 @@
-package com.ibashkimi.lockscheduler.profiles;
+package com.ibashkimi.lockscheduler.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.about.AboutActivity;
-import com.ibashkimi.lockscheduler.help.HelpActivity;
-import com.ibashkimi.lockscheduler.intro.IntroActivity;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.settings.SettingsActivity;
-import com.ibashkimi.lockscheduler.ui.BaseActivity;
-import com.ibashkimi.lockscheduler.util.PlatformUtils;
+import com.ibashkimi.lockscheduler.profiles.ProfilesFragment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
 
-public class ProfilesActivity extends BaseActivity {
+public class MainActivity extends BaseActivity {
 
-    private static final String TAG = ProfilesActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG_PROFILES = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
@@ -63,10 +55,6 @@ public class ProfilesActivity extends BaseActivity {
                     .add(R.id.profiles_container, profilesFragment)
                     .commit();
         }
-
-        ProfilesPresenter profilesPresenter = new ProfilesPresenter(
-                ProfileManager.INSTANCE, profilesFragment);
-        profilesFragment.setPresenter(profilesPresenter);
     }
 
     @Override
@@ -90,14 +78,9 @@ public class ProfilesActivity extends BaseActivity {
         View rootView = findViewById(R.id.rootView);
         Snackbar snackbar = Snackbar.make(rootView, R.string.location_permission_rationale,
                 Snackbar.LENGTH_LONG);
-        snackbar.setAction(R.string.action_ask_again, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityCompat.requestPermissions(ProfilesActivity.this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                        RESULT_LOCATION_PERMISSION);
-            }
-        });
+        snackbar.setAction(R.string.action_ask_again, view -> ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                RESULT_LOCATION_PERMISSION));
         snackbar.show();
     }
 
@@ -115,18 +98,15 @@ public class ProfilesActivity extends BaseActivity {
             attachPermissionDeniedFragment();
             Snackbar snackbar = Snackbar.make(findViewById(R.id.rootView), R.string.location_permission_denied,
                     Snackbar.LENGTH_LONG);
-            snackbar.setAction(R.string.permission_action_settings, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Intent i = new Intent();
-                    i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    i.addCategory(Intent.CATEGORY_DEFAULT);
-                    i.setData(Uri.parse("package:" + getPackageName()));
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    startActivity(i);
-                }
+            snackbar.setAction(R.string.permission_action_settings, v -> {
+                final Intent i = new Intent();
+                i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                i.addCategory(Intent.CATEGORY_DEFAULT);
+                i.setData(Uri.parse("package:" + getPackageName()));
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                startActivity(i);
             });
             snackbar.show();
         }
@@ -150,38 +130,6 @@ public class ProfilesActivity extends BaseActivity {
                 .beginTransaction()
                 .replace(R.id.profiles_container, fragment, FRAGMENT_TAG_PERMISSION_DENIED)
                 .commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent();
-                intent.setClass(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_help:
-                Intent helpIntent = new Intent(this, HelpActivity.class);
-                startActivity(helpIntent);
-                return true;
-            case R.id.action_about:
-                Intent aboutIntent = new Intent(this, AboutActivity.class);
-                startActivity(aboutIntent);
-                return true;
-            case R.id.action_uninstall:
-                PlatformUtils.uninstall(this);
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

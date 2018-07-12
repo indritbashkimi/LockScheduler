@@ -5,43 +5,49 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.about.AboutActivity;
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
+import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
+import com.ibashkimi.lockscheduler.settings.SettingsActivity;
+import com.ibashkimi.lockscheduler.util.PlatformUtils;
 import com.ibashkimi.theme.utils.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Fragment used to display profile list.
  */
 public class ProfilesFragment extends Fragment implements ProfilesContract.View, ProfileAdapter.Callback {
 
-    ViewGroup mRootView;
+    private ViewGroup mRootView;
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
-    View mNoTasksView;
+    private View mNoTasksView;
 
     private ProfilesContract.Presenter mPresenter;
 
@@ -64,15 +70,11 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mPresenter.start();
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        setPresenter(new ProfilesPresenter(ProfileManager.INSTANCE, this));
 
         mAdapter = new ProfileAdapter(new ArrayList<>(0), R.layout.item_profile, this);
     }
@@ -83,12 +85,42 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                Intent intent = new Intent();
+                intent.setClass(requireContext(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_help:
+                Intent helpIntent = new Intent(requireContext(), HelpActivity.class);
+                startActivity(helpIntent);
+                return true;
+            case R.id.action_about:
+                Intent aboutIntent = new Intent(requireContext(), AboutActivity.class);
+                startActivity(aboutIntent);
+                return true;
+            case R.id.action_uninstall:
+                PlatformUtils.uninstall(requireContext());
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_profiles, container, false);
         mRootView = rootView.findViewById(R.id.root);
         mRecyclerView = rootView.findViewById(R.id.recyclerView);
-mNoTasksView = rootView.findViewById(R.id.no_profiles);
+        mNoTasksView = rootView.findViewById(R.id.no_profiles);
 
         RecyclerView.LayoutManager layoutManager;
         int columnCount = getResources().getInteger(R.integer.profiles_column_count);
@@ -105,6 +137,12 @@ mNoTasksView = rootView.findViewById(R.id.no_profiles);
         fab.setOnClickListener(v -> mPresenter.addNewProfile());
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
     }
 
     private ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
