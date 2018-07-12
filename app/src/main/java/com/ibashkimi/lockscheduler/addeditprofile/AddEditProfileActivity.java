@@ -59,14 +59,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            Drawable icon = ContextCompat.getDrawable(this, R.drawable.ic_cancel_toolbar);
-            /*TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.titleTextAppearance, typedValue, true);
-            int color = ThemeUtils.getColorsFromStyle(this, typedValue.data, new int[]{R.attr.titleTextColor}, Color.GREEN)[0];
-            //int color = ThemeUtils.getColorFromAttribute(toolbar.getContext(), android.R.attr.textColorPrimaryInverse);
-            icon.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);*/
-
-            actionBar.setHomeAsUpIndicator(icon);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
             actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayShowCustomEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
