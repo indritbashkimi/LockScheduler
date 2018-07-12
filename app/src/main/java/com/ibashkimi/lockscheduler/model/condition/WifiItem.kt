@@ -1,3 +1,7 @@
 package com.ibashkimi.lockscheduler.model.condition
 
-data class WifiItem(val ssid: String)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
+data class WifiItem(val ssid: String): Parcelable

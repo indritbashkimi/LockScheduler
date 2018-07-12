@@ -7,13 +7,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import kotlinx.coroutines.experimental.CommonPool
@@ -28,9 +28,9 @@ class WifiPickerActivity : BaseActivity() {
 
     private val wifiAdapter: WifiAdapter = WifiAdapter(wifiItems)
 
-    lateinit private var recyclerView: androidx.recyclerview.widget.RecyclerView
+    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
 
-    lateinit private var turnOnWifi: TextView
+    private lateinit var turnOnWifi: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class WifiPickerActivity : BaseActivity() {
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = wifiAdapter
         turnOnWifi = findViewById(R.id.turnOnWifi)
-        findViewById<View>(R.id.fab).setOnClickListener({ onSave() })
+        findViewById<View>(R.id.fab).setOnClickListener { onSave() }
     }
 
     private val wifiBroadcastReceiver = object : BroadcastReceiver() {
@@ -116,7 +116,8 @@ class WifiPickerActivity : BaseActivity() {
     private fun load() {
         getWifiList(object : Callback {
             override fun onDataLoaded(items: List<SelectableWifiItem>) {
-                items.filterNot { wifiItems.contains(it) }.forEach { wifiItems.add(it) }
+                items.filterNot { wifiItems.contains(SelectableWifiItem(it.ssid, true)) }
+                        .forEach { wifiItems.add(it) }
                 showWifiList()
             }
 
@@ -183,9 +184,9 @@ class WifiPickerActivity : BaseActivity() {
         fun onDataNotAvailable()
     }
 
-    inner class SelectableWifiItem(val ssid: String, var isSelected: Boolean = false)
+    data class SelectableWifiItem(val ssid: String, var isSelected: Boolean = false)
 
-    internal inner class WifiAdapter(var wifiList: List<SelectableWifiItem>) : SelectableAdapter<WifiAdapter.ViewHolder>() {
+    internal inner class WifiAdapter(private var wifiList: List<SelectableWifiItem>) : SelectableAdapter<WifiAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_wifi_connection, parent, false)

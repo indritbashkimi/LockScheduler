@@ -38,6 +38,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {

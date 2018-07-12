@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 
 
@@ -46,5 +47,29 @@ inline fun AppCompatActivity.handlePermissionResult(permission: String,
             if (grantResults[i] == PackageManager.PERMISSION_GRANTED) whenGranted() else whenDenied()
             return
         }
+    }
+}
+
+
+fun Fragment.isPermissionGranted(permission: String): Boolean {
+    return ActivityCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+}
+
+fun Fragment.isPermissionRationaleNeeded(permission: String): Boolean {
+    return ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), permission)
+}
+
+fun Fragment.requestPermission(permission: String, requestCode: Int) {
+    this.requestPermissions(kotlin.arrayOf(permission), requestCode)
+}
+
+inline fun Fragment.checkPermission(permission: String,
+                                             whenGranted: (Fragment.() -> Unit),
+                                             whenExplanationNeed: (Fragment.() -> Unit),
+                                             whenDenied: (Fragment.() -> Unit)) {
+    when {
+        isPermissionGranted(permission) -> whenGranted()
+        isPermissionRationaleNeeded(permission) -> whenExplanationNeed()
+        else -> whenDenied()
     }
 }

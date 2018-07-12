@@ -98,6 +98,7 @@
     <string name="friday_short">Fri</string>
     <string name="saturday_short">Sat</string>
     <string name="sunday_short">Sun</string>
+    <string name="time_condition_summary">%s\nStart time: %s, end time: %s</string>
     <string name="add_edit_profile_name">Name</string>
     <string name="place_picker_select_location">Select this location</string>
     <string name="place_picker_permission_denied">Permission denied</string>
@@ -147,6 +148,8 @@
     <string name="title_condition_enter">When conditions are true</string>
     <string name="title_condition_exit">When conditions are false</string>
     <string name="power_condition_title">Power state</string>
+    <string name="power_condition_add_title">Add power state</string>
     <string name="about_lib_intro">Lock Scheduler is built using these libraries</string>
     <string name="action_remove_condition">Remove</string>
+    <string name="time_picker_activity">Pick time</string>
 </resources>

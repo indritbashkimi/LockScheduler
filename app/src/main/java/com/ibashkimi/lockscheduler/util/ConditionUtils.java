@@ -41,7 +41,7 @@ public class ConditionUtils {
     }
 
     public static String internvalToString(Time startTime, Time endTime) {
-        return String.format(Locale.ENGLISH, "%02d:%02d - %02d:%02d", startTime.hour, startTime.minute, endTime.hour, endTime.minute);
+        return String.format(Locale.ENGLISH, "%02d:%02d - %02d:%02d", startTime.getHour(), startTime.getMinute(), endTime.getHour(), endTime.getMinute());
     }
 
     public static String getDayName(Context context, int dayIndex) {

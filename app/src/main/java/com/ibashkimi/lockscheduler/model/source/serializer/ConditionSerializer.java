@@ -23,10 +23,10 @@ public class ConditionSerializer {
             for (int i = 0; i < 7; i++) {
                 jsonObject.put("day_" + i, condition.getDaysActive()[i]);
             }
-            jsonObject.put("start_time_hour", condition.getStartTime().hour);
-            jsonObject.put("start_time_minute", condition.getStartTime().minute);
-            jsonObject.put("end_time_hour", condition.getEndTime().hour);
-            jsonObject.put("end_time_minute", condition.getEndTime().minute);
+            jsonObject.put("start_time_hour", condition.getStartTime().getHour());
+            jsonObject.put("start_time_minute", condition.getStartTime().getMinute());
+            jsonObject.put("end_time_hour", condition.getEndTime().getHour());
+            jsonObject.put("end_time_minute", condition.getEndTime().getMinute());
         } catch (JSONException e) {
             e.printStackTrace();
             return "";

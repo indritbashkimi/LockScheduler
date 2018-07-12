@@ -91,7 +91,6 @@
             </intent-filter>
             -->
         </receiver>
-
         <receiver android:name=".receiver.PowerStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
@@ -110,6 +109,9 @@
         <activity
             android:name=".addeditprofile.actions.PinChooserActivity"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".addeditprofile.conditions.time.TimePickerActivity"
+            android:label="@string/time_picker_activity" />
     </application>
 
 </manifest>
