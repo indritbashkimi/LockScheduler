@@ -1,9 +1,6 @@
 package com.ibashkimi.lockscheduler.profiles;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +15,6 @@ import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
-import com.ibashkimi.theme.utils.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -53,11 +48,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     private ProfileAdapter mAdapter;
 
     private ActionMode mActionMode;
-
-
-    public static ProfilesFragment newInstance() {
-        return new ProfilesFragment();
-    }
 
     public ProfilesFragment() {
         // Requires empty public constructor
@@ -172,7 +162,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
      * Toggle the selection state of an item.
      * <p>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
-     * Note that the selection must already be started (mActionMode must not be null).
+     * Note that the selection must already be started (actionMode must not be null).
      *
      * @param position Position of the item to toggle the selection state
      */
@@ -286,13 +276,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             mode.getMenuInflater().inflate(R.menu.profile_selected, menu);
-            // Tint drawable
-            Drawable drawable = menu.findItem(R.id.action_delete).getIcon();
-            drawable = DrawableCompat.wrap(drawable);
-            // It works but it's a strange dependency
-            Context context = requireActivity().findViewById(R.id.toolbar).getContext();
-            DrawableCompat.setTint(drawable, ThemeUtils.obtainColor(context, android.R.attr.textColorPrimary, Color.RED));
-            menu.findItem(R.id.action_delete).setIcon(drawable);
             return true;
         }
 
