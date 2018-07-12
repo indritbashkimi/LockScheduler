@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/profilesFragment">
+
+    <fragment
+        android:id="@+id/profilesFragment"
+        android:name="com.ibashkimi.lockscheduler.profiles.ProfilesFragment"
+        android:label="fragment_profiles"
+        tools:layout="@layout/fragment_profiles">
+        <action
+            android:id="@+id/action_profilesFragment_to_settingsActivity"
+            app:destination="@id/settings" />
+        <action
+            android:id="@+id/action_profilesFragment_to_helpActivity"
+            app:destination="@id/help" />
+        <action
+            android:id="@+id/action_profilesFragment_to_aboutActivity"
+            app:destination="@id/about" />
+    </fragment>
+    <activity
+        android:id="@+id/settings"
+        android:name="com.ibashkimi.lockscheduler.settings.SettingsActivity"
+        android:label="@string/title_activity_settings"
+        tools:layout="@layout/activity_settings" />
+    <activity
+        android:id="@+id/help"
+        android:name="com.ibashkimi.lockscheduler.help.HelpActivity"
+        android:label="@string/help_title"
+        tools:layout="@layout/activity_help" />
+    <activity
+        android:id="@+id/about"
+        android:name="com.ibashkimi.lockscheduler.about.AboutActivity"
+        android:label="@string/title_about"
+        tools:layout="@layout/fragment_about" />
+</navigation>

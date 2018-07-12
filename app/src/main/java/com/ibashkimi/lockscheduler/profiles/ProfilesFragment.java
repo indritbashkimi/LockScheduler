@@ -12,15 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.about.AboutActivity;
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity;
-import com.ibashkimi.lockscheduler.help.HelpActivity;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.settings.SettingsActivity;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
 import com.ibashkimi.theme.utils.ThemeUtils;
 
@@ -33,6 +29,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -91,26 +90,13 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent();
-                intent.setClass(requireContext(), SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_help:
-                Intent helpIntent = new Intent(requireContext(), HelpActivity.class);
-                startActivity(helpIntent);
-                return true;
-            case R.id.action_about:
-                Intent aboutIntent = new Intent(requireContext(), AboutActivity.class);
-                startActivity(aboutIntent);
-                return true;
-            case R.id.action_uninstall:
-                PlatformUtils.uninstall(requireContext());
-                return true;
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment);
+        if (NavigationUI.onNavDestinationSelected(item, navController)) {
+            return true;
+        } else if (item.getItemId() == R.id.action_uninstall) {
+            PlatformUtils.uninstall(requireContext());
+            return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -133,8 +119,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         mRecyclerView.setAdapter(mAdapter);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-        final FloatingActionButton fab = requireActivity().findViewById(R.id.fab);
-        fab.setOnClickListener(v -> mPresenter.addNewProfile());
+        rootView.findViewById(R.id.fab).setOnClickListener(v -> mPresenter.addNewProfile());
 
         return rootView;
     }
@@ -153,12 +138,12 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
         }
 
         @Override
-        public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, RecyclerView.ViewHolder target, int toPos, int x, int y) {
+        public void onMoved(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, int fromPos, @NonNull RecyclerView.ViewHolder target, int toPos, int x, int y) {
             super.onMoved(recyclerView, viewHolder, fromPos, target, toPos, x, y);
         }
 
         @Override
-        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             int targetPosition = target.getAdapterPosition();
             int pos1 = viewHolder.getAdapterPosition();
             mPresenter.swapProfiles(mAdapter.getProfiles().get(pos1), mAdapter.getProfiles().get(targetPosition));
@@ -288,7 +273,7 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
     @Override
     public void onProfileLongClick(int position) {
         if (mActionMode == null) {
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
+            mActionMode = ((AppCompatActivity) requireActivity()).startSupportActionMode(new ActionModeCallback());
         }
         toggleSelection(position);
     }

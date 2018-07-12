@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:a=".profiles.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_help"
+        android:id="@+id/help"
         android:orderInCategory="200"
         android:title="@string/action_help"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/about"
         android:orderInCategory="300"
         android:title="@string/action_about"
         app:showAsAction="never" />

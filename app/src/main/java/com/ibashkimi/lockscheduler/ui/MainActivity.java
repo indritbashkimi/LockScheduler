@@ -1,34 +1,20 @@
 package com.ibashkimi.lockscheduler.ui;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.profiles.ProfilesFragment;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    /*private static final String TAG = MainActivity.class.getSimpleName();
     private static final String FRAGMENT_TAG_PROFILES = "main_fragment";
     private static final String FRAGMENT_TAG_PERMISSION_DENIED = "permission_denied_fragment";
     private static final int RESULT_ADMIN_ENABLE = 1;
-    private static final int RESULT_LOCATION_PERMISSION = 2;
+    private static final int RESULT_LOCATION_PERMISSION = 2;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,19 +31,14 @@ public class MainActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ProfilesFragment profilesFragment =
-                (ProfilesFragment) getSupportFragmentManager().findFragmentById(R.id.profiles_container);
-        if (profilesFragment == null) {
-            profilesFragment = ProfilesFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.profiles_container, profilesFragment)
-                    .commit();
-        }
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        return Navigation.findNavController(this, R.id.main_nav_host_fragment).navigateUp();
+    }
+
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == RESULT_LOCATION_PERMISSION) {
@@ -159,5 +140,5 @@ public class MainActivity extends BaseActivity {
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             return inflater.inflate(R.layout.fragment_permission_denied, container, false);
         }
-    }
+    }*/
 }
