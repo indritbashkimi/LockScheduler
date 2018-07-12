@@ -6,28 +6,34 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.InputType
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.annotation.XmlRes
-import androidx.fragment.app.DialogFragment
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import android.text.InputType
-import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.ibashkimi.lockscheduler.Constants
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.*
 import com.ibashkimi.theme.activity.ThemePreferences
-import com.ibashkimi.theme.preference.*
+import com.ibashkimi.theme.preference.ThemeAdapter
+import com.ibashkimi.theme.theme.NavBarColor
+import com.ibashkimi.theme.theme.NightMode
 import com.ibashkimi.theme.theme.Theme
 
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val sharedPreferences: SharedPreferences by lazy {
         context!!.getSharedPreferences(Constants.PREFERNCES_NAME, Context.MODE_PRIVATE)
@@ -37,6 +43,42 @@ class SettingsFragment : PreferenceFragmentCompat() {
         get() = sharedPreferences.getInt("lock_if_granted", LockAction.LockType.UNCHANGED)
         set(value) = sharedPreferences.edit().putInt("lock_if_granted", value).apply()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.settings, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment)
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        AppPreferencesHelper.preferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        AppPreferencesHelper.preferences.unregisterOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        val themeActivity = requireActivity() as BaseActivity
+        when (key) {
+            ThemePreferences.KEY_NIGHT_MODE -> themeActivity.applyNightMode(themeActivity.themePreferences
+                    .getNightMode(NightMode.DAYNIGHT))
+            ThemePreferences.KEY_NAV_BAR_COLOR -> themeActivity.applyNavBarColor(themeActivity.themePreferences
+                    .getNavBarColor(NavBarColor.SYSTEM))
+            "loitering_delay" -> Toast.makeText(requireContext(), "Not implemented yet", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreatePreferences(bundle: Bundle?, s: String?) {
         preferenceManager.sharedPreferencesName = AppPreferencesHelper.PREFERENCES_NAME
         addPreferencesFromResource(R.xml.preferences)
@@ -45,7 +87,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun addPreferencesFromResource(@XmlRes preferencesResId: Int) {
         super.addPreferencesFromResource(preferencesResId)
         // Colored navigation bar
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && !Utils.hasNavBar(context)) {
+        if (!Utils.hasNavBar(requireContext())) {
             val category = findPreference("appearance") as PreferenceCategory
             category.removePreference(findPreference("colored_navigation_bar"))
         }
@@ -65,7 +107,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (dialogFragment != null) {
             dialogFragment.setTargetFragment(this, 0)
             dialogFragment.show(fragmentManager,
-                    "android.support.v7.preference" + ".PreferenceFragment.DIALOG")
+                    "androidx.preference" + ".PreferenceFragment.DIALOG")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
@@ -231,9 +273,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     companion object {
-        private val REQUEST_CODE_ALERT_RINGTONE = 0
-        private val REQUEST_CODE_PIN = 1
-        private val REQUEST_CODE_PASSWORD = 2
-        private val REQUEST_CODE_ADMIN_PERMISSION = 3
+        private const val REQUEST_CODE_ALERT_RINGTONE = 0
+        private const val REQUEST_CODE_PIN = 1
+        private const val REQUEST_CODE_PASSWORD = 2
+        private const val REQUEST_CODE_ADMIN_PERMISSION = 3
     }
 }

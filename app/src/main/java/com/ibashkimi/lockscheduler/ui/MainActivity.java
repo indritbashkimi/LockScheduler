@@ -5,7 +5,9 @@ import android.os.Bundle;
 import com.ibashkimi.lockscheduler.R;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 
 public class MainActivity extends BaseActivity {
@@ -31,11 +33,16 @@ public class MainActivity extends BaseActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        NavigationUI.setupActionBarWithNavController(this, getNavController());
+    }
+
+    private NavController getNavController() {
+        return Navigation.findNavController(this, R.id.main_nav_host_fragment);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        return Navigation.findNavController(this, R.id.main_nav_host_fragment).navigateUp();
+        return getNavController().navigateUp();
     }
 
     /*@Override

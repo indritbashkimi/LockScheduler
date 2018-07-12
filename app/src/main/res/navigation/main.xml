@@ -8,31 +8,49 @@
     <fragment
         android:id="@+id/profilesFragment"
         android:name="com.ibashkimi.lockscheduler.profiles.ProfilesFragment"
-        android:label="fragment_profiles"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_profiles">
         <action
-            android:id="@+id/action_profilesFragment_to_settingsActivity"
+            android:id="@+id/action_profiles_to_settings"
             app:destination="@id/settings" />
         <action
-            android:id="@+id/action_profilesFragment_to_helpActivity"
+            android:id="@+id/action_profiles_to_help"
             app:destination="@id/help" />
         <action
-            android:id="@+id/action_profilesFragment_to_aboutActivity"
+            android:id="@+id/action_profiles_to_about"
             app:destination="@id/about" />
     </fragment>
-    <activity
+    <fragment
         android:id="@+id/settings"
-        android:name="com.ibashkimi.lockscheduler.settings.SettingsActivity"
-        android:label="@string/title_activity_settings"
-        tools:layout="@layout/activity_settings" />
-    <activity
+        android:name="com.ibashkimi.lockscheduler.settings.SettingsFragment"
+        android:label="@string/title_activity_settings">
+        <action
+            android:id="@+id/action_settings_to_help"
+            app:destination="@id/help" />
+        <action
+            android:id="@+id/action_settings_to_about"
+            app:destination="@id/about" />
+    </fragment>
+    <fragment
         android:id="@+id/help"
-        android:name="com.ibashkimi.lockscheduler.help.HelpActivity"
+        android:name="com.ibashkimi.lockscheduler.help.HelpFragment"
         android:label="@string/help_title"
         tools:layout="@layout/activity_help" />
-    <activity
+    <fragment
         android:id="@+id/about"
-        android:name="com.ibashkimi.lockscheduler.about.AboutActivity"
+        android:name="com.ibashkimi.lockscheduler.about.AboutFragment"
         android:label="@string/title_about"
-        tools:layout="@layout/fragment_about" />
+        tools:layout="@layout/fragment_about">
+        <action
+            android:id="@+id/action_about_to_licenses"
+            app:destination="@id/licenses" />
+        <action
+            android:id="@+id/action_about_to_help"
+            app:destination="@id/help" />
+    </fragment>
+    <fragment
+        android:id="@+id/licenses"
+        android:name="com.ibashkimi.lockscheduler.about.LicensesFragment"
+        android:label="@string/about_licenses"
+        tools:layout="@layout/fragment_licenses" />
 </navigation>

@@ -4,16 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +16,14 @@ import com.ibashkimi.theme.utils.ThemeUtils;
 
 import java.security.InvalidParameterException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 public class LicensesFragment extends Fragment {
 
@@ -37,18 +35,6 @@ public class LicensesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.fragment_licences_title);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
-            actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setDisplayShowCustomEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new LibraryAdapter(getActivity()));
@@ -130,16 +116,13 @@ public class LicensesFragment extends Fragment {
             holder.link.setText(lib.link);
             holder.licence.setText(lib.license);
 
-            View.OnClickListener clickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = holder.getAdapterPosition();
-                    if (position == RecyclerView.NO_POSITION) return;
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
-                    CustomTabsIntent customTabsIntent = builder.build();
-                    customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].link)));
-                }
+            View.OnClickListener clickListener = v -> {
+                int position = holder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(ThemeUtils.obtainColor(host, R.attr.colorPrimary, Color.RED));
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(host, Uri.parse(v.getContext().getString(libs[position - 1].link)));
             };
             holder.itemView.setOnClickListener(clickListener);
             holder.website.setOnClickListener(clickListener);

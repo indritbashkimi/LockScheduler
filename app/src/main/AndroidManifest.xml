@@ -49,9 +49,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".addeditprofile.AddEditProfileActivity" />
-        <activity
-            android:name=".about.AboutActivity"
-            android:label="@string/title_about" />
 
         <receiver
             android:name=".model.api.LockSchedulerAdmin"
@@ -102,14 +99,6 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ibashkimi.lockscheduler.ui.MainActivity" />
-        </activity>
         <activity android:name=".intro.IntroActivity" />
         <activity android:name=".ui.GoPremiumActivity" />
         <activity
@@ -121,9 +110,6 @@
         <activity
             android:name=".addeditprofile.actions.PinChooserActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".help.HelpActivity"
-            android:label="@string/help_title" />
     </application>
 
 </manifest>
