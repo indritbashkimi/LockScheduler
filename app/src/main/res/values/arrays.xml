@@ -17,9 +17,9 @@
     </string-array>
 
     <string-array name="pref_night_mode_phone_value">
-        <item>auto</item>
-        <item>on</item>
-        <item>off</item>
+        <item>daynight</item>
+        <item>night</item>
+        <item>day</item>
     </string-array>
 
     <string-array name="pref_map_style_human">
