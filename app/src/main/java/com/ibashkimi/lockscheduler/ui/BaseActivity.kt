@@ -12,7 +12,7 @@ abstract class BaseActivity : DayNightActivity() {
 
     private val preferencesName = AppPreferencesHelper.PREFERENCES_NAME
 
-    protected val preferences: SharedPreferences by lazy {
+    val preferences: SharedPreferences by lazy {
         getSharedPreferences(preferencesName, Context.MODE_PRIVATE)
     }
 

@@ -15,22 +15,20 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.XmlRes
 import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
-import com.ibashkimi.lockscheduler.Constants
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.*
 import com.ibashkimi.theme.activity.ThemePreferences
-import com.ibashkimi.theme.preference.ThemeAdapter
 import com.ibashkimi.theme.theme.NavBarColor
 import com.ibashkimi.theme.theme.NightMode
-import com.ibashkimi.theme.theme.Theme
 
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -97,22 +95,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         updateSummary(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED))
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference) {
-        var dialogFragment: androidx.fragment.app.DialogFragment? = null
-        if (preference is ThemePreference) {
-            dialogFragment = ThemePreferenceDialogFragmentCompat.newInstance(preference.getKey())
-        }
-
-        // If it was one of our custom Preferences, show its dialog
-        if (dialogFragment != null) {
-            dialogFragment.setTargetFragment(this, 0)
-            dialogFragment.show(fragmentManager,
-                    "androidx.preference" + ".PreferenceFragment.DIALOG")
-        } else {
-            super.onDisplayPreferenceDialog(preference)
-        }
-    }
-
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
             "notifications_ringtone" -> {
@@ -137,16 +119,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 return true
             }
             "theme" -> {
-                val themePrefs = ThemePreferences(preferenceManager.sharedPreferences)
-                val alertDialog = ThemeDialogFragment.newInstance(themePrefs.getTheme(Theme.INDIGO_PINK))
-                alertDialog.listener = ThemeAdapter.ThemeSelectedListener { theme ->
-                    preferenceManager.sharedPreferences
-                            .edit()
-                            .putString("theme", theme.name)
-                            .apply()
-
-                }
-                alertDialog.show(activity!!.supportFragmentManager, "theme_dialog")
+                findNavController(requireActivity(), R.id.main_nav_host_fragment)
+                        .navigate(R.id.action_settings_to_themeFragment)
                 return true
             }
             "min_password_length" -> {
@@ -164,8 +138,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 return true
             }
             "lock_at_boot" -> {
-                showPasswordDialog(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED),
-                        { which -> onLockTypeSelected(positionToLockType(which)) })
+                showPasswordDialog(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED)
+                ) { which -> onLockTypeSelected(positionToLockType(which)) }
             }
         }
         return super.onPreferenceTreeClick(preference)
@@ -212,12 +186,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             REQUEST_CODE_ALERT_RINGTONE -> {
                 if (data != null) {
                     val ringtone = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                    if (ringtone != null) {
-                        ringtonePreferenceValue = ringtone.toString()
-                    } else {
-                        // "Silent" was selected
-                        ringtonePreferenceValue = ""
-                    }
+                    ringtonePreferenceValue = ringtone?.toString() ?: ""
                 }
             }
             REQUEST_CODE_PIN -> if (resultCode == Activity.RESULT_OK) {
