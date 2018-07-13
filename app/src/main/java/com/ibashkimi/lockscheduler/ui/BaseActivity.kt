@@ -2,8 +2,7 @@ package com.ibashkimi.lockscheduler.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatDelegate
-import com.ibashkimi.lockscheduler.Constants
+import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.theme.activity.DayNightActivity
 import com.ibashkimi.theme.activity.ThemePreferences
 import com.ibashkimi.theme.activity.ThemeSupportPreferences
@@ -11,7 +10,7 @@ import com.ibashkimi.theme.activity.ThemeSupportPreferences
 
 abstract class BaseActivity : DayNightActivity() {
 
-    protected val preferencesName = Constants.PREFERNCES_NAME
+    private val preferencesName = AppPreferencesHelper.PREFERENCES_NAME
 
     protected val preferences: SharedPreferences by lazy {
         getSharedPreferences(preferencesName, Context.MODE_PRIVATE)

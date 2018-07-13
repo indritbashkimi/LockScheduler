@@ -36,7 +36,7 @@ import com.ibashkimi.theme.theme.Theme
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context!!.getSharedPreferences(Constants.PREFERNCES_NAME, Context.MODE_PRIVATE)
+        context!!.getSharedPreferences(AppPreferencesHelper.PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
     private var lockTypeIfGranted: Int
