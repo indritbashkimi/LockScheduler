@@ -270,8 +270,6 @@ public class ProfilesFragment extends Fragment implements ProfilesContract.View,
 
 
     private class ActionModeCallback implements ActionMode.Callback {
-        @SuppressWarnings("unused")
-        private final String TAG = ActionModeCallback.class.getSimpleName();
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {

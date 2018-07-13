@@ -2,19 +2,10 @@ package com.ibashkimi.lockscheduler.addeditprofile;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
@@ -26,6 +17,13 @@ import com.ibashkimi.lockscheduler.model.condition.Condition;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View, ConditionsFragment.ConditionChangeListener {
 
@@ -219,11 +217,11 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     @Override
     public void onConditionChanged(@NonNull Condition condition) {
-        Toast.makeText(this, "Condition changed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Condition changed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onConditionRemoved(int type) {
-        Toast.makeText(this, "Condition removed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Condition removed", Toast.LENGTH_SHORT).show();
     }
 }
