@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion versions.android.compileSdk
+    buildToolsVersion versions.android.buildTools
     defaultConfig {
         applicationId "com.ibashkimi.lockscheduler"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion versions.android.minSdk
+        targetSdkVersion versions.android.targetSdk
         versionCode 1
         versionName "1.0"
         resConfigs "en", "it", "sq"
@@ -44,45 +44,45 @@ androidExtensions {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha3', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    implementation project(':theme')
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'androidx.vectordrawable:vectordrawable-animated:1.0.0-beta01'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0-beta01'
-    implementation 'com.google.android.material:material:1.0.0-beta01'
-    implementation 'androidx.cardview:cardview:1.0.0-beta01'
-    implementation 'androidx.percentlayout:percentlayout:1.0.0-beta01'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-beta01'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.0-beta01'
-    implementation 'androidx.preference:preference:1.0.0-beta01'
-    implementation 'androidx.legacy:legacy-preference-v14:1.0.0-beta01'
-    implementation 'androidx.browser:browser:1.0.0-beta01'
-    implementation "com.google.android.gms:play-services-analytics:16.0.1"
-    implementation "com.google.android.gms:play-services-maps:15.0.1"
-    implementation "com.google.android.gms:play-services-places:15.0.1"
-    implementation "com.google.android.gms:play-services-location:15.0.1"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
-    implementation 'com.google.maps.android:android-maps-utils:0.5'
-    implementation 'com.afollestad.material-dialogs:core:0.9.5.0'
-    implementation 'com.google.android:flexbox:0.3.1'
-    implementation 'com.wdullaer:materialdatetimepicker:3.2.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.7.16'
+    
+    testImplementation deps.test.junit
+    androidTestImplementation deps.test.espresso.core
+    
+    implementation "com.ibashkimi.theme:theme:0.1.0"
+    
+    implementation deps.androidx.appcompat
+    implementation deps.androidx.vectordrawableanimated
+    implementation deps.google.material
+    implementation deps.androidx.cardview
+    implementation deps.androidx.percentlayout
+    implementation deps.androidx.vectordrawable
+    implementation deps.androidx.preference
+    implementation deps.androidx.browser
+    implementation "com.google.android.gms:play-services-analytics:16.0.8"
+    implementation deps.playservices.maps
+    implementation deps.playservices.places
+    implementation deps.playservices.location
+    implementation deps.kotlin.stdlib
+    implementation deps.androidx.constraintlayout
+    implementation deps.playservices.mapsutils
+    implementation 'com.afollestad.material-dialogs:core:3.0.0-rc1'
+    implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.0'
+    implementation deps.kotlin.coroutines
+    testImplementation deps.test.junit
+    testImplementation 'org.mockito:mockito-core:2.19.0'
     // ViewModel and LiveData
-    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0-beta01"
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.0.0-beta01"
-    implementation "androidx.room:room-runtime:2.0.0-beta01"
-    annotationProcessor "androidx.room:room-compiler:2.0.0-beta01"
+    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.compiler
+    annotationProcessor deps.lifecycle.compiler
+    implementation deps.room.runtime
+    annotationProcessor deps.room.compiler
     // Java8 support for Lifecycles
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.0.0-beta01"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha01"
     // Paging
-    implementation "androidx.paging:paging-runtime:2.0.0-beta01"
-    implementation "android.arch.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "android.arch.navigation:navigation-ui-ktx:$nav_version"
+    implementation deps.androidx.paging.runtime
+    implementation deps.navigation.fragmentktx
+    implementation deps.navigation.uiktx
 
 }
 
