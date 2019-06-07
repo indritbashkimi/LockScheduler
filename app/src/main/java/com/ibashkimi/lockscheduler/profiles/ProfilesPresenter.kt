@@ -4,9 +4,9 @@ import android.app.Activity
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.ProfileRepository
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Listens to user actions from the UI ([ProfilesFragment]), retrieves the data and updates the
@@ -41,9 +41,9 @@ internal class ProfilesPresenter(private val repository: ProfileRepository, priv
         if (!profilesView.isActive) {
             return
         }
-        launch(CommonPool) {
+        CoroutineScope(Dispatchers.Default).launch {
             val profiles = repository.getAll()
-            launch(UI) {
+            launch(Dispatchers.Main) {
                 if (profiles.isEmpty())
                     profilesView.showNoProfiles()
                 else

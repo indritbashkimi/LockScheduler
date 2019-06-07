@@ -5,10 +5,10 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="0dp"
     android:layout_marginLeft="@dimen/profile_item_margin_left_right"
-    android:layout_marginRight="@dimen/profile_item_margin_left_right"
     android:layout_marginTop="16dp"
+    android:layout_marginRight="@dimen/profile_item_margin_left_right"
+    android:layout_marginBottom="0dp"
     android:foreground="?attr/selectableItemBackground"
     android:hapticFeedbackEnabled="false"
     card:cardCornerRadius="2dp"
@@ -60,8 +60,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp">
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
                 <TextView
                     android:id="@+id/enter_lock_mode"
@@ -111,8 +111,8 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="Via Antonio Gramsci 14, Villa Verucchio 47827 RN" />
 
@@ -147,8 +147,8 @@
                     android:id="@+id/days"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="4dp"
                     android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     tools:text="Mon, Tue, Wed, Thu, Fri, Sat, Sun" />
 
@@ -189,8 +189,8 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="WiFi-23, Cantinetta, asjkdlfj asdkjf akjasdkjf kòasdjfk ljaskdjlf klasdkjl fasdklf jasdklj " />
 
@@ -221,8 +221,8 @@
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:maxLines="2"
-                android:paddingBottom="4dp"
                 android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="When connected" />
 

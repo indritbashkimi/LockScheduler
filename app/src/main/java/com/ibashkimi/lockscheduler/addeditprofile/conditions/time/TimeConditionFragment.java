@@ -20,6 +20,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -155,7 +156,8 @@ public class TimeConditionFragment extends Fragment {
                 callback,
                 true);
         timePickerDialog.setThemeDark(isNight());
-        timePickerDialog.show(getActivity().getFragmentManager(), "time_picker_dialog");
+        AppCompatActivity activity = (AppCompatActivity) requireActivity();
+        timePickerDialog.show(activity.getSupportFragmentManager(), "time_picker_dialog");
     }
 
     public TimeCondition getCondition() {

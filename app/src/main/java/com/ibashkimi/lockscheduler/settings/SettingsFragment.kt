@@ -21,6 +21,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
@@ -86,12 +87,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         super.addPreferencesFromResource(preferencesResId)
         // Colored navigation bar
         if (!Utils.hasNavBar(requireContext())) {
-            val category = findPreference("appearance") as PreferenceCategory
-            category.removePreference(findPreference("colored_navigation_bar"))
+            findPreference<PreferenceCategory>("appearance")
+                    ?.removePreference(findPreference("colored_navigation_bar"))
         }
 
-        findPreference("min_pin_length").summary = "" + getIntPreference("min_pin_length", 4)
-        findPreference("min_password_length").summary = "" + getIntPreference("min_password_length", 4)
+        findPreference<Preference>("min_pin_length")?.summary = "" + getIntPreference("min_pin_length", 4)
+        findPreference<Preference>("min_password_length")?.summary = "" + getIntPreference("min_password_length", 4)
         updateSummary(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED))
     }
 
@@ -124,17 +125,23 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 return true
             }
             "min_password_length" -> {
-                MaterialDialog.Builder(context!!)
-                        .title(R.string.pref_min_password_length_dialog_title)
-                        .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input("", "" + getIntPreference("min_password_length", 4)) { _, input -> setPreference("min_password_length", Integer.parseInt(input.toString())) }.show()
+                MaterialDialog(requireContext()).show {
+                    title(R.string.pref_min_password_length_dialog_title)
+                    input(inputType = InputType.TYPE_CLASS_NUMBER,
+                            prefill = getIntPreference("min_password_length", 4).toString()) { _, text ->
+                        setPreference("min_password_length", Integer.parseInt(text.toString()))
+                    }
+                }
                 return true
             }
             "min_pin_length" -> {
-                MaterialDialog.Builder(context!!)
-                        .title(R.string.pref_min_pin_length_dialog_title)
-                        .inputType(InputType.TYPE_CLASS_NUMBER)
-                        .input("", "" + getIntPreference("min_pin_length", 4)) { _, input -> setPreference("min_pin_length", Integer.parseInt(input.toString())) }.show()
+                MaterialDialog(requireContext()).show {
+                    title(R.string.pref_min_pin_length_dialog_title)
+                    input(inputType = InputType.TYPE_CLASS_NUMBER,
+                            prefill = getIntPreference("min_pin_length", 4).toString()) { _, charSequence ->
+                        setPreference("min_pin_length", Integer.parseInt(charSequence.toString()))
+                    }
+                }
                 return true
             }
             "lock_at_boot" -> {
@@ -178,7 +185,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private fun updateSummary(lockType: Int) {
-        findPreference("lock_at_boot").setSummary(lockTypeToTextRes(lockType))
+        findPreference<Preference>("lock_at_boot")?.setSummary(lockTypeToTextRes(lockType))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -220,17 +227,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     private fun setPreference(key: String, value: String, updateSummary: Boolean = false) {
         preferenceManager.sharedPreferences.edit().putString(key, value).apply()
         if (updateSummary)
-            findPreference(key).summary = value
+            findPreference<Preference>(key)?.summary = value
     }
 
     private fun setPreference(key: String, value: Int, updateSummary: Boolean = false) {
         preferenceManager.sharedPreferences.edit().putInt(key, value).apply()
         if (updateSummary)
-            findPreference(key).summary = Integer.toString(value)
+            findPreference<Preference>(key)?.summary = Integer.toString(value)
     }
 
     private fun getStringPreference(key: String, defaultValue: String?): String {
-        return preferenceManager.sharedPreferences.getString(key, defaultValue)
+        return preferenceManager.sharedPreferences.getString(key, defaultValue)!!
     }
 
     private fun getIntPreference(key: String, defaultValue: Int): Int {

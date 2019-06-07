@@ -3,12 +3,6 @@ package com.ibashkimi.lockscheduler.model.prefs
 interface PreferencesHelper {
     var mapStyle: String
 
-    var nightMode: String
-
-    var theme: Int
-
-    var isColoredNavigationBarActive: Boolean
-
     var minPasswordLength: Int
 
     var minPinLength: Int

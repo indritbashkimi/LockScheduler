@@ -24,9 +24,6 @@ android {
             minifyEnabled false
         }
     }
-    dataBinding {
-        enabled = true
-    }
     repositories {
         maven { url 'https://jitpack.io' }
     }
@@ -41,7 +38,9 @@ android {
 androidExtensions {
     experimental = true
 }
-
+configurations {
+    all*.exclude group: 'com.google.guava', module: 'listenablefuture'
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
@@ -63,12 +62,13 @@ dependencies {
     implementation deps.playservices.places
     implementation deps.playservices.location
     implementation deps.kotlin.stdlib
+    implementation deps.kotlin.coroutines
     implementation deps.androidx.constraintlayout
     implementation deps.playservices.mapsutils
     implementation 'com.afollestad.material-dialogs:core:3.0.0-rc1'
+    implementation 'com.afollestad.material-dialogs:input:3.0.0-rc1'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'com.wdullaer:materialdatetimepicker:4.2.0'
-    implementation deps.kotlin.coroutines
     testImplementation deps.test.junit
     testImplementation 'org.mockito:mockito-core:2.19.0'
     // ViewModel and LiveData

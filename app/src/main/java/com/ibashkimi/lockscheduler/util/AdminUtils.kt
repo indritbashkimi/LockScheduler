@@ -12,7 +12,7 @@ import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 
 
-fun androidx.fragment.app.Fragment.showPasswordDialog(lockType: Int, onSelected: (Int) -> Unit) {
+fun Fragment.showPasswordDialog(lockType: Int, onSelected: (Int) -> Unit) {
     val builder = AlertDialog.Builder(context!!)
     val items = resources.getStringArray(R.array.lock_types)
     val selectedItem = when (lockType) {
@@ -23,10 +23,10 @@ fun androidx.fragment.app.Fragment.showPasswordDialog(lockType: Int, onSelected:
         else -> throw IllegalArgumentException("Cannot determine selected item.")
     }
     builder.setTitle(R.string.dialog_lock_settings_title)
-            .setSingleChoiceItems(items, selectedItem, { dialog, which ->
+            .setSingleChoiceItems(items, selectedItem) { dialog, which ->
                 onSelected(which)
                 dialog.dismiss()
-            })
+            }
     builder.create().show()
 }
 
@@ -46,7 +46,7 @@ fun positionToLockType(position: Int) = when (position) {
     else -> throw IllegalStateException("Cannot determine lock type. position=$position.")
 }
 
-fun androidx.fragment.app.Fragment.isAdminPermissionGranted(): Boolean {
+fun Fragment.isAdminPermissionGranted(): Boolean {
     return LockSchedulerAdmin.isAdminActive(context!!)
 }
 
@@ -55,7 +55,7 @@ fun isAdminRationaleNeeded(): Boolean {
 }
 
 
-fun androidx.fragment.app.Fragment.showAdminPermissionRationale(onOk: () -> Unit, onCancel: () -> Unit) {
+fun Fragment.showAdminPermissionRationale(onOk: () -> Unit, onCancel: () -> Unit) {
     val builder = AlertDialog.Builder(context!!)
     builder.setTitle(R.string.admin_permission_rationale_title)
             .setMessage(R.string.admin_permission_rationale)
@@ -64,7 +64,7 @@ fun androidx.fragment.app.Fragment.showAdminPermissionRationale(onOk: () -> Unit
     builder.create().show()
 }
 
-fun androidx.fragment.app.Fragment.checkAdminPermission(onGranted: () -> Unit, onRationaleNeeded: () -> Unit, onDenied: () -> Unit) {
+fun Fragment.checkAdminPermission(onGranted: () -> Unit, onRationaleNeeded: () -> Unit, onDenied: () -> Unit) {
     when {
         isAdminPermissionGranted() -> onGranted()
         isAdminRationaleNeeded() -> onRationaleNeeded()
@@ -72,21 +72,21 @@ fun androidx.fragment.app.Fragment.checkAdminPermission(onGranted: () -> Unit, o
     }
 }
 
-fun androidx.fragment.app.Fragment.showPasswordChooser(requestCode: Int) {
+fun Fragment.showPasswordChooser(requestCode: Int) {
     val intent = Intent(context, PinChooserActivity::class.java)
     intent.putExtra("type", "password")
     intent.putExtra("min_length", AppPreferencesHelper.minPasswordLength)
     startActivityForResult(intent, requestCode)
 }
 
-fun androidx.fragment.app.Fragment.showPinChooser(requestCode: Int) {
+fun Fragment.showPinChooser(requestCode: Int) {
     val intent = Intent(context, PinChooserActivity::class.java)
     intent.putExtra("type", "pin")
     intent.putExtra("min_length", AppPreferencesHelper.minPinLength)
     startActivityForResult(intent, requestCode)
 }
 
-fun androidx.fragment.app.Fragment.askAdminPermission(requestCode: Int) {
+fun Fragment.askAdminPermission(requestCode: Int) {
     startActivityForResult(AdminUtils.buildAddAdminIntent(context!!), requestCode)
 }
 

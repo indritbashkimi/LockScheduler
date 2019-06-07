@@ -4,14 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.action.LockAction
-//import com.ibashkimi.support.preference.Themes
 
 object AppPreferencesHelper : PreferencesHelper {
     const val PREFERENCES_NAME = "settings"
-    const val THEME_KEY = "theme_id"
-    const val NIGHT_MODE_KEY = "night_mode"
     const val MAP_STYLE_KEY = "map_style"
-    const val COLORED_NAVIGATION_BAR_KEY = "colored_navigation_bar"
     const val MIN_PASSWORD_LENGTH_KEY = "min_password_length"
     const val MIN_PIN_LENGTH_KEY = "min_pin_length"
     const val NOTIFICATIONS_SHOW_KEY = "notifications_show"
@@ -24,26 +20,8 @@ object AppPreferencesHelper : PreferencesHelper {
     val preferences = App.getInstance().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)!!
 
     override var mapStyle: String
-        get() = get(MAP_STYLE_KEY, "normal")
+        get() = get(MAP_STYLE_KEY, "normal")!!
         set(value) = put(MAP_STYLE_KEY, value)
-
-    override var nightMode: String
-        get() = get(NIGHT_MODE_KEY, "auto")
-        set(value) = put(MAP_STYLE_KEY, value)
-
-    override var theme: Int
-        get() = TODO("not implemented")
-        set(value) {
-            TODO("not implemented")
-        }
-
-    /*override var theme: Int
-        get() = get(THEME_KEY, Themes.Theme.APP_THEME_DAYNIGHT_INDIGO)
-        set(value) = put(THEME_KEY, value)*/
-
-    override var isColoredNavigationBarActive: Boolean
-        get() = get(COLORED_NAVIGATION_BAR_KEY, false)
-        set(value) = put(COLORED_NAVIGATION_BAR_KEY, value)
 
     override var minPasswordLength: Int
         get() = get(MIN_PASSWORD_LENGTH_KEY, 4)
@@ -58,7 +36,7 @@ object AppPreferencesHelper : PreferencesHelper {
         set(value) = put(NOTIFICATIONS_SHOW_KEY, value)
 
     override var notificationsRingtone: String
-        get() = get(NOTIFICATIONS_RINGTONE_KEY, "DEFAULT_SOUND")
+        get() = get(NOTIFICATIONS_RINGTONE_KEY, "DEFAULT_SOUND")!!
         set(value) = put(NOTIFICATIONS_RINGTONE_KEY, value)
 
     override var isVibrateActive: Boolean
@@ -66,15 +44,15 @@ object AppPreferencesHelper : PreferencesHelper {
         set(value) = put(NOTIFICATIONS_VIBRATE_KEY, value)
 
     override var bootDelay: String
-        get() = get(BOOT_DELAY_KEY, "0")
+        get() = get(BOOT_DELAY_KEY, "0")!!
         set(value) = put(BOOT_DELAY_KEY, value)
 
     override var loiteringDelay: String
-        get() = get(LOITERING_DELAY_KEY, "0")
+        get() = get(LOITERING_DELAY_KEY, "0")!!
         set(value) = put(LOITERING_DELAY_KEY, value)
 
     override var passwordExpiration: String
-        get() = get(PASSWORD_EXPIRATION_KEY, "0")
+        get() = get(PASSWORD_EXPIRATION_KEY, "0")!!
         set(value) = put(PASSWORD_EXPIRATION_KEY, value)
 
     override var lockAtBoot: Int
@@ -82,7 +60,7 @@ object AppPreferencesHelper : PreferencesHelper {
         set(value) = put("lock_at_boot", value)
 
     override var lockAtBootInput: String
-        get() = get("lock_at_boot_input", "")
+        get() = get("lock_at_boot_input", "")!!
         set(value) = put("lock_at_boot_input", value)
 
     override var isAdminRationaleNeeded: Boolean

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+android:id/title"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
@@ -32,7 +32,7 @@
 
         <!-- Preference should place its actual preference widget here. -->
         <LinearLayout
-            android:id="@+android:id/widget_frame"
+            android:id="@+id/widget_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@android:id/summary"

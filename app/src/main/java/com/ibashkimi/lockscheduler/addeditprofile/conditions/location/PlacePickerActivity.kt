@@ -31,10 +31,10 @@ import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.MapUtils
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.util.*
 
 class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
@@ -99,10 +99,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
-        outState?.putParcelable("center", center)
-        outState?.putInt("radius", radius)
+        outState.putParcelable("center", center)
+        outState.putInt("radius", radius)
     }
 
     /*override fun onResume() {
@@ -228,14 +228,14 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
     private fun updateAddress() {
         if (lastJob != null)
             lastJob!!.cancel()
-        lastJob = launch(CommonPool) {
+        lastJob = CoroutineScope(Dispatchers.Default).launch {
             val geocoder = Geocoder(this@PlacePickerActivity, Locale.getDefault())
             // Here 1 represents max location result to returned, by documents it recommended 1 to 5
             try {
                 val addresses = geocoder.getFromLocation(center!!.latitude, center!!.longitude, 1)
                 if (addresses != null && addresses.isNotEmpty()) {
                     val lastAddress = addresses[0].getAddressLine(0)
-                    launch(UI) { setAddress(lastAddress) }
+                    launch(Dispatchers.Main) { setAddress(lastAddress) }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "exception: ${e.message}")
@@ -277,6 +277,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             when (resultCode) {
                 RESULT_OK -> {
@@ -287,7 +288,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 }
                 PlaceAutocomplete.RESULT_ERROR -> {
                     val status = PlaceAutocomplete.getStatus(this, data)
-                    Log.i(TAG, status.statusMessage)
+                    Log.i(TAG, status?.statusMessage ?: "null")
                 }
                 RESULT_CANCELED -> {
                     // The user canceled the operation.

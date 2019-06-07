@@ -2,6 +2,8 @@ package com.ibashkimi.lockscheduler.model.action;
 
 import androidx.annotation.IntDef;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Locale;
@@ -73,6 +75,7 @@ public class LockAction extends Action {
         return true;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return String.format(Locale.ENGLISH, "LockMode[%s]", lockTypeToString(lockType));

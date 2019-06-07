@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,20 +17,21 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
 public class PinChooserActivity extends BaseActivity implements TextWatcher {
 
-    Toolbar mToolbar;
+    private Toolbar mToolbar;
 
-    TextView mMessageText;
+    private TextView mMessageText;
 
-    TextInputLayout mInputLayout;
+    private TextInputLayout mInputLayout;
 
-    EditText mEditText;
+    private EditText mEditText;
 
-    Button mActionButton;
+    private Button mActionButton;
 
     private String mInput;
 
@@ -58,9 +58,7 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
         mInputLayout = findViewById(R.id.input_layout);
         mEditText = findViewById(R.id.editText);
         mActionButton = findViewById(R.id.actionButton);
-        findViewById(R.id.cancel).setOnClickListener(view -> {
-            onCancel();
-        });
+        findViewById(R.id.cancel).setOnClickListener(view -> onCancel());
 
         if (savedInstanceState == null) {
             mMinLength = getIntent().getIntExtra("min_length", mMinLength);
@@ -89,7 +87,7 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("min_length", mMinLength);
         outState.putString("type", mInputType);
@@ -113,26 +111,15 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
         mActionButton.setEnabled(s.length() >= mMinLength);
     }
 
-    private View.OnClickListener mFirstFabListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onContinuePressed();
-        }
-    };
+    private View.OnClickListener mFirstFabListener = v -> onContinuePressed();
 
-    private View.OnClickListener mFinalFabListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onDonePressed();
-        }
-    };
+    private View.OnClickListener mFinalFabListener = v -> onDonePressed();
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onCancel();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onCancel();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -157,20 +144,17 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
         mActionButton.setOnClickListener(mFirstFabListener);
         mEditText.addTextChangedListener(this);
         mEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId) {
-                    case EditorInfo.IME_ACTION_NEXT:
-                        if (mEditText.getText().length() >= mMinLength)
-                            onContinuePressed();
-                        return true;
-                    case EditorInfo.IME_ACTION_DONE:
-                        onDonePressed();
-                        return true;
-                }
-                return false;
+        mEditText.setOnEditorActionListener((v, actionId, event) -> {
+            switch (actionId) {
+                case EditorInfo.IME_ACTION_NEXT:
+                    if (mEditText.getText().length() >= mMinLength)
+                        onContinuePressed();
+                    return true;
+                case EditorInfo.IME_ACTION_DONE:
+                    onDonePressed();
+                    return true;
             }
+            return false;
         });
     }
 

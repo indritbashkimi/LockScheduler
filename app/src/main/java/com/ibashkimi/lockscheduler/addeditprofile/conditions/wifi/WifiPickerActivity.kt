@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -16,10 +17,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.ui.BaseActivity
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class WifiPickerActivity : BaseActivity() {
@@ -48,12 +49,12 @@ class WifiPickerActivity : BaseActivity() {
         if (savedInstanceState == null) {
             val extras = intent.extras
             if (extras != null && extras.containsKey("ssids")) {
-                val ssids = extras.getStringArray("ssids")
+                val ssids = extras.getStringArray("ssids") ?: emptyArray()
                 ssids.indices.mapTo(wifiItems) { SelectableWifiItem(ssids[it], true) }
             }
         } else {
-            val ssids = savedInstanceState.getStringArray("ssids")
-            val selected = savedInstanceState.getBooleanArray("isSelected")
+            val ssids = savedInstanceState.getStringArray("ssids") ?: emptyArray()
+            val selected = savedInstanceState.getBooleanArray("isSelected")!!
             ssids.indices.mapTo(wifiItems) { SelectableWifiItem(ssids[it], selected[it]) }
         }
 
@@ -78,9 +79,9 @@ class WifiPickerActivity : BaseActivity() {
         registerReceiver(wifiBroadcastReceiver, intentFilter)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.let {
+        outState.let {
             val ssids: MutableList<String> = mutableListOf()
             val selected: MutableList<Boolean> = mutableListOf()
             for (wifi in wifiItems) {
@@ -132,7 +133,7 @@ class WifiPickerActivity : BaseActivity() {
     fun getWifiList(callback: Callback) {
         if (lastJob != null)
             lastJob!!.cancel()
-        lastJob = launch(CommonPool) {
+        lastJob = CoroutineScope(Dispatchers.Default).launch {
             val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             if (wifiManager.isWifiEnabled) {
                 val wifiList = ArrayList<SelectableWifiItem>()
@@ -141,9 +142,9 @@ class WifiPickerActivity : BaseActivity() {
                     ssid = ssid.substring(1, ssid.length - 1) // Remove " at the start and end.
                     wifiList.add(SelectableWifiItem(ssid))
                 }
-                launch(UI) { callback.onDataLoaded(wifiList) }
+                launch(Dispatchers.Main) { callback.onDataLoaded(wifiList) }
             } else {
-                launch(UI) { callback.onDataNotAvailable() }
+                launch(Dispatchers.Main) { callback.onDataNotAvailable() }
             }
         }
 

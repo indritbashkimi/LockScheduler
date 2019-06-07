@@ -21,7 +21,7 @@ class PowerConditionScheduler(repository: ProfilesDataSource, val listener: Cond
         super.register(profile)
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val batteryStatus = App.getInstance().registerReceiver(null, filter)
-        val status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+        val status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
         val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
         val condition = profile.getCondition(Condition.Type.POWER) as PowerCondition
         condition.isTrue = if (condition.powerConnected) isCharging else !isCharging

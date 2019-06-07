@@ -20,7 +20,7 @@ class ThemeFragment : Fragment(), PremiumThemeAdapter.ThemeSelectedListener {
 
     private lateinit var themeAdapter: PremiumThemeAdapter
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         baseActivity = context as BaseActivity?
                 ?: throw IllegalStateException("Activity must be BaseActivity.")

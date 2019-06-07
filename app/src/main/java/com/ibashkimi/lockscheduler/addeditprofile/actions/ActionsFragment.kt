@@ -23,7 +23,7 @@ class ActionsFragment : Fragment() {
     private var input: String? = null
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context!!.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
     }
 
     private var lockTypeIfGranted: Int
@@ -48,9 +48,9 @@ class ActionsFragment : Fragment() {
         return actions
     }
 
-    private var lockSummary: TextView? = null
+    private lateinit var lockSummary: TextView
 
-    private var lockSettings: View? = null
+    private lateinit var lockSettings: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +67,8 @@ class ActionsFragment : Fragment() {
         }
         val titleView: TextView = rootView.findViewById(R.id.title)
         titleView.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
-        lockSettings!!.setOnClickListener {
-            showPasswordDialog(lockType, { which -> onLockTypeSelected(positionToLockType(which)) })
+        lockSettings.setOnClickListener {
+            showPasswordDialog(lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
         }
         updateSummary()
         return rootView
@@ -107,7 +107,7 @@ class ActionsFragment : Fragment() {
     }
 
     private fun updateSummary() {
-        lockSummary!!.setText(lockTypeToTextRes(lockType))
+        lockSummary.setText(lockTypeToTextRes(lockType))
     }
 
     private fun onAdminPermissionDenied() {
@@ -147,9 +147,9 @@ class ActionsFragment : Fragment() {
     }
 
     companion object {
-        private val REQUEST_PIN = 1
-        private val REQUEST_PASSWORD = 2
-        private val REQUEST_ADMIN_PERMISSION = 3
+        private const val REQUEST_PIN = 1
+        private const val REQUEST_PASSWORD = 2
+        private const val REQUEST_ADMIN_PERMISSION = 3
 
         fun newInstance(isEnter: Boolean): ActionsFragment {
             val fragment = ActionsFragment()
