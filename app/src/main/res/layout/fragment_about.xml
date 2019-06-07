@@ -10,20 +10,13 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_marginTop="16dp"
-            android:contentDescription="@null"
-            app:srcCompat="@mipmap/ic_launcher" />
-
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/app_name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+            android:textAppearance="?textAppearanceHeadline5" />
 
         <TextView
             android:id="@+id/version"
@@ -38,26 +31,7 @@
             android:gravity="center"
             android:padding="16dp"
             android:text="@string/app_description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Share"/>
-
-            <Button
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rate" />
-
-        </LinearLayout>-->
+            android:textAppearance="?textAppearanceBody1" />
 
         <TextView
             android:layout_width="match_parent"
@@ -102,8 +76,6 @@
 
         </FrameLayout>
 
-        <include layout="@layout/day_night_divider" />
-
         <FrameLayout
             android:id="@+id/feedback"
             android:layout_width="match_parent"
@@ -121,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
+                android:tint="?attr/colorSecondary"
                 app:srcCompat="@drawable/ic_feedback" />
 
             <TextView
@@ -134,8 +106,6 @@
                 android:text="@string/about_send_feedback" />
 
         </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
 
         <TextView
             android:layout_width="match_parent"
@@ -165,7 +135,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
+                android:tint="?attr/colorSecondary"
                 app:srcCompat="@drawable/ic_privacy_policy" />
 
             <TextView
@@ -178,8 +148,6 @@
                 android:text="@string/about_privacy_policy" />
 
         </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
 
         <FrameLayout
             android:id="@+id/licenses"
@@ -197,7 +165,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
                 android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
+                android:tint="?attr/colorSecondary"
                 app:srcCompat="@drawable/ic_licenses" />
 
             <TextView
@@ -208,177 +176,6 @@
                 android:paddingStart="56dp"
                 android:paddingEnd="16dp"
                 android:text="@string/about_licenses" />
-
-        </FrameLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/about_header_contact"
-            android:textAppearance="@style/MyPreferenceCategory"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="14sp" />
-
-        <FrameLayout
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="?listPreferredItemHeightSmall"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/about_icon_email" />
-
-            <TextView
-                style="@style/MyPreferenceTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="56dp"
-                android:paddingEnd="16dp"
-                android:text="@string/about_email" />
-
-        </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
-
-        <FrameLayout
-            android:id="@+id/facebook"
-            android:layout_width="match_parent"
-            android:layout_height="?listPreferredItemHeightSmall"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/about_icon_facebook" />
-
-            <TextView
-                style="@style/MyPreferenceTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="56dp"
-                android:paddingEnd="16dp"
-                android:text="@string/about_facebook" />
-
-        </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
-
-        <FrameLayout
-            android:id="@+id/twitter"
-            android:layout_width="match_parent"
-            android:layout_height="?listPreferredItemHeightSmall"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:contentDescription="@null"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/about_icon_twitter" />
-
-            <TextView
-                style="@style/MyPreferenceTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="56dp"
-                android:paddingEnd="16dp"
-                android:text="@string/about_twitter" />
-
-        </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
-
-        <FrameLayout
-            android:id="@+id/google_plus"
-            android:layout_width="match_parent"
-            android:layout_height="?listPreferredItemHeightSmall"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/about_icon_google_plus" />
-
-            <TextView
-                style="@style/MyPreferenceTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="56dp"
-                android:paddingEnd="16dp"
-                android:text="@string/about_google_plus" />
-
-        </FrameLayout>
-
-        <include layout="@layout/day_night_divider" />
-
-        <FrameLayout
-            android:id="@+id/github"
-            android:layout_width="match_parent"
-            android:layout_height="?listPreferredItemHeightSmall"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:contentDescription="@null"
-                android:tint="?attr/colorAccent"
-                app:srcCompat="@drawable/about_icon_github" />
-
-            <TextView
-                style="@style/MyPreferenceTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="56dp"
-                android:paddingEnd="16dp"
-                android:text="@string/about_github" />
 
         </FrameLayout>
 
