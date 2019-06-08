@@ -1,13 +1,8 @@
 package com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,13 +10,15 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.ui.BaseActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
+// TODO: must have location permission for scanning wifi starting from api 28?
+// TODO: use the new change wifi state dialog if wifi is off
 
 class WifiPickerActivity : BaseActivity() {
 
@@ -29,7 +26,7 @@ class WifiPickerActivity : BaseActivity() {
 
     private val wifiAdapter: WifiAdapter = WifiAdapter(wifiItems)
 
-    private lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+    private lateinit var recyclerView: RecyclerView
 
     private lateinit var turnOnWifi: TextView
 
@@ -59,24 +56,25 @@ class WifiPickerActivity : BaseActivity() {
         }
 
         recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.isNestedScrollingEnabled = false
         recyclerView.adapter = wifiAdapter
         turnOnWifi = findViewById(R.id.turnOnWifi)
         findViewById<View>(R.id.fab).setOnClickListener { onSave() }
-    }
 
-    private val wifiBroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            load()
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
-        registerReceiver(wifiBroadcastReceiver, intentFilter)
+        val viewModel = ViewModelProviders.of(this).get(WifiPickerViewModel::class.java)
+        viewModel.wifiEnabled.observe(this, Observer { isWifiEnabled ->
+            if (isWifiEnabled) {
+                showWifiList()
+            } else {
+                showTurnOnWifi()
+            }
+        })
+        viewModel.wifiScanResults.observe(this, Observer { scanResult ->
+            scanResult.filterNot { wifiItems.contains(SelectableWifiItem(it.SSID, true)) }
+                    .forEach { wifiItems.add(SelectableWifiItem(it.SSID, false)) }
+            wifiAdapter.notifyDataSetChanged()
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -95,13 +93,6 @@ class WifiPickerActivity : BaseActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(wifiBroadcastReceiver)
-        if (lastJob != null)
-            lastJob!!.cancel()
-    }
-
     private fun showTurnOnWifi() {
         recyclerView.visibility = View.GONE
         turnOnWifi.visibility = View.VISIBLE
@@ -112,42 +103,6 @@ class WifiPickerActivity : BaseActivity() {
         recyclerView.visibility = View.VISIBLE
 
         wifiAdapter.notifyDataSetChanged()
-    }
-
-    private fun load() {
-        getWifiList(object : Callback {
-            override fun onDataLoaded(items: List<SelectableWifiItem>) {
-                items.filterNot { wifiItems.contains(SelectableWifiItem(it.ssid, true)) }
-                        .forEach { wifiItems.add(it) }
-                showWifiList()
-            }
-
-            override fun onDataNotAvailable() {
-                showTurnOnWifi()
-            }
-        })
-    }
-
-    private var lastJob: Job? = null
-
-    fun getWifiList(callback: Callback) {
-        if (lastJob != null)
-            lastJob!!.cancel()
-        lastJob = CoroutineScope(Dispatchers.Default).launch {
-            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-            if (wifiManager.isWifiEnabled) {
-                val wifiList = ArrayList<SelectableWifiItem>()
-                for (wifiConfiguration in wifiManager.configuredNetworks) {
-                    var ssid = wifiConfiguration.SSID
-                    ssid = ssid.substring(1, ssid.length - 1) // Remove " at the start and end.
-                    wifiList.add(SelectableWifiItem(ssid))
-                }
-                launch(Dispatchers.Main) { callback.onDataLoaded(wifiList) }
-            } else {
-                launch(Dispatchers.Main) { callback.onDataNotAvailable() }
-            }
-        }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -178,11 +133,6 @@ class WifiPickerActivity : BaseActivity() {
     fun onCancel() {
         setResult(Activity.RESULT_CANCELED)
         finish()
-    }
-
-    interface Callback {
-        fun onDataLoaded(items: List<SelectableWifiItem>)
-        fun onDataNotAvailable()
     }
 
     data class SelectableWifiItem(val ssid: String, var isSelected: Boolean = false)
