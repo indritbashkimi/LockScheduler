@@ -145,21 +145,25 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
                                 dialogInterface.dismiss()
                             }
                             .setPositiveButton(android.R.string.ok) { _, _ ->
-                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
+                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_PLACE)
                             }
                             .create().show()
                 },
                 whenDenied = {
-                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
+                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_PLACE)
                 }
         )
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
-            PERMISSION_REQUEST_LOCATION -> {
+            PERMISSION_REQUEST_LOCATION_PLACE -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     showPlacePicker()
+            }
+            PERMISSION_REQUEST_LOCATION_WIFI -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    showWifiPicker()
             }
         }
     }
@@ -173,16 +177,35 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     }
 
     private fun showWifiPicker() {
-        val intent = Intent(context, WifiPickerActivity::class.java)
-        val items = wifiCondition?.wifiList
-        if (items != null && items.isNotEmpty()) {
-            val itemReps = arrayOfNulls<String>(items.size)
-            for (i in items.indices) {
-                itemReps[i] = items[i].ssid
-            }
-            intent.putExtra("ssids", itemReps)
-        }
-        startActivityForResult(intent, REQUEST_WIFI_PICKER)
+        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
+                whenGranted = {
+                    val intent = Intent(context, WifiPickerActivity::class.java)
+                    val items = wifiCondition?.wifiList
+                    if (items != null && items.isNotEmpty()) {
+                        val itemReps = arrayOfNulls<String>(items.size)
+                        for (i in items.indices) {
+                            itemReps[i] = items[i].ssid
+                        }
+                        intent.putExtra("ssids", itemReps)
+                    }
+                    startActivityForResult(intent, REQUEST_WIFI_PICKER)
+                },
+                whenExplanationNeed = {
+                    AlertDialog.Builder(requireContext())
+                            .setTitle(R.string.location_permission_needed)
+                            .setMessage(R.string.location_permission_rationale)
+                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                                dialogInterface.dismiss()
+                            }
+                            .setPositiveButton(android.R.string.ok) { _, _ ->
+                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_WIFI)
+                            }
+                            .create().show()
+                },
+                whenDenied = {
+                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_WIFI)
+                }
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -340,7 +363,8 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
         const val REQUEST_LOCATION_PICKER = 3
         const val REQUEST_TIME_PICKER = 4
         const val REQUEST_WIFI_PICKER = 5
-        const val PERMISSION_REQUEST_LOCATION = 1
+        const val PERMISSION_REQUEST_LOCATION_PLACE = 1
+        const val PERMISSION_REQUEST_LOCATION_WIFI = 2
 
         fun newInstance(): ConditionsFragment {
             return ConditionsFragment()
