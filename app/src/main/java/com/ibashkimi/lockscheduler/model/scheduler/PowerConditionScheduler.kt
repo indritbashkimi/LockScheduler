@@ -23,19 +23,19 @@ class PowerConditionScheduler(repository: ProfilesDataSource, val listener: Cond
         val batteryStatus = App.getInstance().registerReceiver(null, filter)
         val status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
         val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
-        val condition = profile.getCondition(Condition.Type.POWER) as PowerCondition
-        condition.isTrue = if (condition.powerConnected) isCharging else !isCharging
-        return condition.isTrue
+        val condition = profile.conditions.powerCondition!!
+        condition.isTriggered = if (condition.powerConnected) isCharging else !isCharging
+        return condition.isTriggered
     }
 
     @Synchronized
     fun onPowerStateEvent(isPowerConnected: Boolean) {
         for (profile in registeredProfiles) {
             val wasActive = profile.isActive()
-            val condition = profile.getCondition(Condition.Type.POWER) as PowerCondition
-            val wasTrue = condition.isTrue
-            condition.isTrue = if (condition.powerConnected) isPowerConnected else !isPowerConnected
-            if (condition.isTrue != wasTrue)
+            val condition = profile.conditions.powerCondition!!
+            val wasTrue = condition.isTriggered
+            condition.isTriggered = if (condition.powerConnected) isPowerConnected else !isPowerConnected
+            if (condition.isTriggered != wasTrue)
                 listener.notifyConditionChanged(profile, condition, wasActive)
         }
     }

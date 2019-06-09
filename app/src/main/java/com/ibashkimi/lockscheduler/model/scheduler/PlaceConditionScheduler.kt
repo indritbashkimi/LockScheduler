@@ -43,8 +43,8 @@ class PlaceConditionScheduler(val geofenceApiHelper: GeofenceApiHelper, reposito
                 unregister(geofence.requestId)
             } else {
                 val wasActive = profile.isActive()
-                val condition = profile.getCondition(Condition.Type.PLACE) as PlaceCondition
-                condition.isTrue = geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
+                val condition = profile.conditions.placeCondition!!
+                condition.isTriggered = geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
                 listener.notifyConditionChanged(profile, condition, wasActive)
             }
         }

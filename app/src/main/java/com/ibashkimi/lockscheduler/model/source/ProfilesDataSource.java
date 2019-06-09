@@ -27,11 +27,11 @@ public interface ProfilesDataSource {
     @Nullable
     Profile getProfile(@NonNull String profileId);
 
-    List<Profile> getConditionProfiles(@Condition.Type int conditionType);
+    List<Profile> getConditionProfiles(Condition.Type conditionType);
 
     void saveProfile(@NonNull Profile profile);
 
-    void saveCondition(@NonNull String profileId, @Condition.Type int conditionType);
+    void saveCondition(@NonNull String profileId, Condition.Type conditionType);
 
     void deleteProfiles();
 
@@ -39,7 +39,7 @@ public interface ProfilesDataSource {
 
     void deleteProfile(@NonNull String profileId);
 
-    void deleteCondition(@NonNull String profileId, @Condition.Type int conditionType);
+    void deleteCondition(@NonNull String profileId, Condition.Type conditionType);
 
     void updateProfile(@NonNull Profile profile);
 

@@ -6,8 +6,7 @@ import com.ibashkimi.lockscheduler.model.condition.PlaceCondition
 
 fun isLocationPermissionOk(context: Context): Boolean {
     val shouldCheckPermission = ProfileManager.getAll()
-            .map { it.getCondition(Condition.Type.PLACE) }
-            .any { it is PlaceCondition }
+            .map { it.conditions.placeCondition != null }
     TODO()
     return false
 }

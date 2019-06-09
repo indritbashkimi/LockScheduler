@@ -4,46 +4,49 @@ import com.ibashkimi.lockscheduler.model.condition.Condition;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 
 public class ConditionTest {
 
     @Test
-    public void getType() throws Exception {
+    public void getType() {
         Condition condition = new ConditionImpl(Condition.Type.PLACE);
-        assertTrue(condition.getType() == Condition.Type.PLACE);
+        assertSame(condition.getType(), Condition.Type.PLACE);
         condition = new ConditionImpl(Condition.Type.TIME);
-        assertTrue(condition.getType() != Condition.Type.PLACE);
-        assertTrue(condition.getType() == Condition.Type.TIME);
+        assertNotSame(condition.getType(), Condition.Type.PLACE);
+        assertSame(condition.getType(), Condition.Type.TIME);
         condition = new ConditionImpl(Condition.Type.WIFI);
-        assertTrue(condition.getType() != Condition.Type.PLACE);
-        assertTrue(condition.getType() != Condition.Type.TIME);
-        assertTrue(condition.getType() == Condition.Type.WIFI);
+        assertNotSame(condition.getType(), Condition.Type.PLACE);
+        assertNotSame(condition.getType(), Condition.Type.TIME);
+        assertSame(condition.getType(), Condition.Type.WIFI);
     }
 
     @Test
-    public void isTrue() throws Exception {
+    public void isTrue() {
         Condition condition = new ConditionImpl(Condition.Type.PLACE);
-        assertTrue(!condition.isTrue());
-        condition.setTrue(true);
-        assertTrue(condition.isTrue());
+        assertFalse(condition.isTriggered());
+        condition.setTriggered(true);
+        assertTrue(condition.isTriggered());
     }
 
     @Test
-    public void setTrue() throws Exception {
+    public void setTrue() {
         Condition condition = new ConditionImpl(Condition.Type.PLACE);
-        condition.setTrue(false);
-        assertTrue(!condition.isTrue());
-        condition.setTrue(true);
-        assertTrue(condition.isTrue());
+        condition.setTriggered(false);
+        assertFalse(condition.isTriggered());
+        condition.setTriggered(true);
+        assertTrue(condition.isTriggered());
     }
 
 
     private class ConditionImpl extends Condition {
 
-        ConditionImpl(int type) {
-            super(type);
+        ConditionImpl(Condition.Type type) {
+            super(type, false);
         }
     }
 

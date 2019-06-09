@@ -30,11 +30,11 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
     override fun register(profile: Profile): Boolean {
         Log.d(TAG, "register() called with profile=$profile")
         super.register(profile)
-        val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
+        val condition = profile.conditions.timeCondition!!
         val now = Calendar.getInstance().timeInMillis
-        condition.isTrue = shouldBeActive(now, condition)
+        condition.isTriggered = shouldBeActive(now, condition)
         setAlarm(profile.id, condition.getNextAlarm(now))
-        return condition.isTrue
+        return condition.isTriggered
     }
 
     override fun unregister(profileId: String) {
@@ -49,18 +49,18 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         if (profile == null) {
             unregister(profileId)
         } else {
-            val condition = profile.getCondition(Condition.Type.TIME) as TimeCondition
+            val condition = profile.conditions.timeCondition!!
             doAlarmJob(profile, condition)
         }
     }
 
     fun doAlarmJob(profile: Profile, condition: TimeCondition) {
         val wasActive = profile.isActive()
-        val isTrue = condition.isTrue
+        val isTrue = condition.isTriggered
         val now = Calendar.getInstance().timeInMillis
         val shouldBeActive = shouldBeActive(now, condition)
-        condition.isTrue = shouldBeActive
-        if (condition.isTrue != isTrue)
+        condition.isTriggered = shouldBeActive
+        if (condition.isTriggered != isTrue)
             listener.notifyConditionChanged(profile, condition, wasActive)
 
         val nextAlarm = condition.getNextAlarm(now)
@@ -109,13 +109,13 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
         val alarmTime: Time
-        if (isTrue) {
+        if (isTriggered) {
             alarmTime = endTime
             if (alarmTime.isMidnight)
                 cal.add(Calendar.DAY_OF_MONTH, 1)
         } else {
             alarmTime = startTime
-            val now = com.ibashkimi.lockscheduler.model.condition.Time.fromTimeStamp(currTimeMillis)
+            val now = Time.fromTimeStamp(currTimeMillis)
             if (startTime.compareTo(now).isLower) {
                 cal.add(Calendar.DAY_OF_MONTH, 1)
             }

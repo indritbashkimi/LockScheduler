@@ -24,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class TimeConditionFragment extends Fragment {
 
@@ -85,7 +87,7 @@ public class TimeConditionFragment extends Fragment {
                 endTime = new Time(0, 0);
             }
         }
-        TimeCondition timeCondition = new TimeCondition(days, startTime, endTime);
+        TimeCondition timeCondition = new TimeCondition(days, startTime, endTime, false);
         daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
         startTimeSummary.setText(Utils.formatTime(startTime.getHour(), startTime.getMinute()));
         endTimeSummary.setText(Utils.formatTime(endTime.getHour(), endTime.getMinute()));
@@ -119,7 +121,7 @@ public class TimeConditionFragment extends Fragment {
 
     private void onDaysSelected(boolean[] days) {
         this.days = days.clone();
-        TimeCondition timeCondition = new TimeCondition(days, new Time(0, 0), new Time(0, 0));
+        TimeCondition timeCondition = new TimeCondition(days, new Time(0, 0), new Time(0, 0), false);
         daysSummary.setText(ConditionUtils.daysToString(getContext(), timeCondition));
     }
 
@@ -182,7 +184,7 @@ public class TimeConditionFragment extends Fragment {
         }
 
         @Override
-        public void onAttach(Context context) {
+        public void onAttach(@NotNull Context context) {
             super.onAttach(context);
             Fragment parent = getParentFragment();
             if (parent == null || !(parent instanceof TimeConditionFragment)) {
@@ -203,12 +205,7 @@ public class TimeConditionFragment extends Fragment {
             builder.setTitle(R.string.time_condition_days);
             builder.setPositiveButton(android.R.string.ok, (dialog, which) -> listener.onDaysSelected(days));
             builder.setNegativeButton(R.string.cancel, null);
-            builder.setMultiChoiceItems(R.array.days_of_week, days, new DialogInterface.OnMultiChoiceClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                    days[which] = isChecked;
-                }
-            });
+            builder.setMultiChoiceItems(R.array.days_of_week, days, (dialog, which, isChecked) -> days[which] = isChecked);
             return builder.create();
         }
 

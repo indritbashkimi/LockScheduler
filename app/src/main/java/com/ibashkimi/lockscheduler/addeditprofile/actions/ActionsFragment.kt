@@ -5,17 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.action.Action
+import com.ibashkimi.lockscheduler.model.Actions
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
-import java.util.*
 
 class ActionsFragment : Fragment() {
     private var lockType = LockAction.LockType.UNCHANGED
@@ -26,26 +25,31 @@ class ActionsFragment : Fragment() {
         requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
     }
 
-    private var lockTypeIfGranted: Int
-        get() = sharedPreferences.getInt("lock_if_granted", LockAction.LockType.UNCHANGED)
-        set(value) = sharedPreferences.edit().putInt("lock_if_granted", value).apply()
+    private var lockTypeIfGranted: String
+        get() = sharedPreferences.getString("lock_if_granted", LockAction.LockType.UNCHANGED.value)!!
+        set(value) = sharedPreferences.edit().putString("lock_if_granted", value).apply()
 
     private var isEnter = false
 
-    fun setData(actions: List<Action>) {
-        val action = actions[0] as LockAction
-        lockType = action.lockType
-        if (lockType == LockAction.LockType.PIN || lockType == LockAction.LockType.PASSWORD)
-            input = action.input
+    fun setData(actions: Actions) {
+        val action: LockAction = actions.lockAction!!
+        lockType = action.lockMode.lockType
+        input = when(action.lockMode) {
+            is LockAction.LockMode.Pin -> action.lockMode.input
+            is LockAction.LockMode.Password -> action.lockMode.input
+            else -> null
+        }
     }
 
-    fun assembleData(): List<Action> {
-        val actions = ArrayList<Action>(1)
-        val action = LockAction(lockType)
-        if (lockType == LockAction.LockType.PIN || lockType == LockAction.LockType.PASSWORD)
-            action.input = input
-        actions.add(action)
-        return actions
+    fun assembleData(): Actions {
+        return Actions.Builder().apply {
+            lockAction = LockAction(when (lockType) {
+                LockAction.LockType.PIN -> LockAction.LockMode.Pin(input!!)
+                LockAction.LockType.PASSWORD -> LockAction.LockMode.Password(input!!)
+                LockAction.LockType.SWIPE -> LockAction.LockMode.Swipe
+                LockAction.LockType.UNCHANGED -> LockAction.LockMode.Unchanged
+            })
+        }.build()
     }
 
     private lateinit var lockSummary: TextView
@@ -62,7 +66,8 @@ class ActionsFragment : Fragment() {
         lockSummary = rootView.findViewById(R.id.lockSummary)
         lockSettings = rootView.findViewById(R.id.lockSettings)
         if (savedInstanceState != null) {
-            lockType = savedInstanceState.getInt("enter_lock_type", LockAction.LockType.UNCHANGED)
+            val savedLockType = savedInstanceState.getString("enter_lock_type", LockAction.LockType.UNCHANGED.value)!!
+            lockType = LockAction.LockType.valueOf(savedLockType)
             input = savedInstanceState.getString("enter_input")
         }
         val titleView: TextView = rootView.findViewById(R.id.title)
@@ -74,7 +79,7 @@ class ActionsFragment : Fragment() {
         return rootView
     }
 
-    private fun onLockTypeSelected(lockType: Int) {
+    private fun onLockTypeSelected(lockType: LockAction.LockType) {
         if (lockType == LockAction.LockType.UNCHANGED) {
             this.lockType = LockAction.LockType.UNCHANGED
             updateSummary()
@@ -92,14 +97,14 @@ class ActionsFragment : Fragment() {
                         }
                     },
                     onRationaleNeeded = {
-                        lockTypeIfGranted = lockType
+                        lockTypeIfGranted = lockType.value
                         showAdminPermissionRationale(
                                 onOk = { askAdminPermission(REQUEST_ADMIN_PERMISSION) },
                                 onCancel = { onAdminPermissionDenied() }
                         )
                     },
                     onDenied = {
-                        lockTypeIfGranted = lockType
+                        lockTypeIfGranted = lockType.value
                         askAdminPermission(REQUEST_ADMIN_PERMISSION)
                     }
             )
@@ -116,7 +121,7 @@ class ActionsFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("enter_lock_type", lockType)
+        outState.putString("enter_lock_type", lockType.value)
         outState.putString("enter_input", input)
     }
 
@@ -137,8 +142,8 @@ class ActionsFragment : Fragment() {
                     onGranted = {
                         Toast.makeText(context, "Admin permission granted", Toast.LENGTH_SHORT).show()
                         when (lockTypeIfGranted) {
-                            LockAction.LockType.PIN -> showPinChooser(REQUEST_PASSWORD)
-                            LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_PIN)
+                            LockAction.LockType.PIN.value -> showPinChooser(REQUEST_PASSWORD)
+                            LockAction.LockType.PASSWORD.value -> showPasswordChooser(REQUEST_PIN)
                         }
                     },
                     onDenied = { onAdminPermissionDenied() })

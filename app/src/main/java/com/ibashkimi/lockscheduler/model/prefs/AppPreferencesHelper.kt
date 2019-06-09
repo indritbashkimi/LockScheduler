@@ -55,9 +55,11 @@ object AppPreferencesHelper : PreferencesHelper {
         get() = get(PASSWORD_EXPIRATION_KEY, "0")!!
         set(value) = put(PASSWORD_EXPIRATION_KEY, value)
 
-    override var lockAtBoot: Int
-        get() = get("lock_at_boot", LockAction.LockType.UNCHANGED)
-        set(value) = put("lock_at_boot", value)
+    override var lockAtBoot: LockAction.LockType
+        get() = preferences.getString("lock_at_boot", null)?.let {
+            LockAction.LockType.valueOf(it)
+        } ?: LockAction.LockType.UNCHANGED
+        set(value) = put("lock_at_boot", value.name)
 
     override var lockAtBootInput: String
         get() = get("lock_at_boot_input", "")!!

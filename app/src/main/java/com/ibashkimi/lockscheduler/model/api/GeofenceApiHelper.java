@@ -16,7 +16,6 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.ibashkimi.lockscheduler.App;
 import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileUtils;
 import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService;
@@ -67,7 +66,7 @@ public class GeofenceApiHelper {
         }
         boolean hasPlaceConditions = false;
         for (Profile profile : profiles) {
-            if (ProfileUtils.getPlaceCondition(profile) != null) {
+            if (profile.getConditions().getPlaceCondition() != null) {
                 hasPlaceConditions = true;
                 break;
             }
@@ -129,7 +128,7 @@ public class GeofenceApiHelper {
         ArrayList<Geofence> geofences = new ArrayList<>();
         PlaceCondition placeCondition;
         for (Profile profile : profiles) {
-            placeCondition = ProfileUtils.getPlaceCondition(profile);
+            placeCondition = profile.getConditions().getPlaceCondition();
             if (placeCondition != null) {
                 Geofence.Builder builder = new Geofence.Builder()
                         .setRequestId(profile.getId())

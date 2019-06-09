@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.SelectableAdapter;
 import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileUtils;
 import com.ibashkimi.lockscheduler.model.action.LockAction;
 import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
 import com.ibashkimi.lockscheduler.model.condition.PowerCondition;
@@ -135,22 +134,22 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
             } else {
                 name.setVisibility(View.GONE);
             }
-            LockAction enterLockAction = ProfileUtils.getLockAction(profile, true);
+            LockAction enterLockAction = profile.getEnterExitActions().getEnterActions().getLockAction();
             if (enterLockAction == null)
                 throw new IllegalArgumentException("Profile " + profile.getName() + " doesn't contain an enter lock action.");
-            enterLock.setText(LockAction.lockTypeToString(enterLockAction.getLockType()));
-            LockAction exitLockAction = ProfileUtils.getLockAction(profile, false);
+            enterLock.setText(enterLockAction.getLockMode().getLockType().getValue());
+            LockAction exitLockAction = profile.getEnterExitActions().getExitActions().getLockAction();
             if (exitLockAction == null)
                 throw new IllegalArgumentException("Profile " + profile.getName() + " doesn't contain an exit lock action.");
-            exitLock.setText(LockAction.lockTypeToString(exitLockAction.getLockType()));
-            PlaceCondition placeCondition = ProfileUtils.getPlaceCondition(profile);
+            exitLock.setText(exitLockAction.getLockMode().getLockType().getValue());
+            PlaceCondition placeCondition = profile.getConditions().getPlaceCondition();
             if (placeCondition != null) {
                 place.setText(placeCondition.getAddress());
                 placeLayout.setVisibility(View.VISIBLE);
             } else {
                 placeLayout.setVisibility(View.GONE);
             }
-            TimeCondition timeCondition = ProfileUtils.getTimeCondition(profile);
+            TimeCondition timeCondition = profile.getConditions().getTimeCondition();
             if (timeCondition != null) {
                 days.setText(ConditionUtils.daysToString(itemView.getContext(), timeCondition));
                 interval.setText(ConditionUtils.internvalToString(timeCondition.getStartTime(), timeCondition.getEndTime()));
@@ -158,7 +157,7 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
             } else {
                 timeLayout.setVisibility(View.GONE);
             }
-            WifiCondition wifiCondition = ProfileUtils.getWifiCondition(profile);
+            WifiCondition wifiCondition = profile.getConditions().getWifiCondition();
             if (wifiCondition != null) {
                 CharSequence[] wifiList = new CharSequence[wifiCondition.getWifiList().size()];
                 for (int i = 0; i < wifiList.length; i++)
@@ -168,7 +167,7 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
             } else {
                 wifiLayout.setVisibility(View.GONE);
             }
-            PowerCondition powerCondition = ProfileUtils.getPowerCondition(profile);
+            PowerCondition powerCondition = profile.getConditions().getPowerCondition();
             if (powerCondition != null) {
                 powerLayout.setVisibility(View.VISIBLE);
                 powerSummary.setText(powerCondition.getPowerConnected() ? R.string.power_connected : R.string.power_disconnected);

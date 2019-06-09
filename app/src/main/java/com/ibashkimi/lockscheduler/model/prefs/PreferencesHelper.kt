@@ -1,5 +1,7 @@
 package com.ibashkimi.lockscheduler.model.prefs
 
+import com.ibashkimi.lockscheduler.model.action.LockAction
+
 interface PreferencesHelper {
     var mapStyle: String
 
@@ -19,7 +21,7 @@ interface PreferencesHelper {
 
     var passwordExpiration: String
 
-    var lockAtBoot: Int
+    var lockAtBoot: LockAction.LockType
 
     var lockAtBootInput: String
 

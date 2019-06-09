@@ -6,9 +6,9 @@ import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.model.condition.WifiCondition
 import com.ibashkimi.lockscheduler.model.condition.WifiItem
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
+
 
 class WifiConditionScheduler(repository: ProfilesDataSource, val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.WIFI, repository) {
@@ -30,9 +30,9 @@ class WifiConditionScheduler(repository: ProfilesDataSource, val listener: Condi
                 wifiItem = WifiItem(ssid.substring(1, ssid.length - 1))
             }
         }
-        val condition = profile.getCondition(Condition.Type.WIFI) as WifiCondition
-        condition.isTrue = wifiItem != null && condition.wifiList.contains(wifiItem)
-        return condition.isTrue
+        val condition = profile.conditions.wifiCondition!!
+        condition.isTriggered = wifiItem != null && condition.wifiList.contains(wifiItem)
+        return condition.isTriggered
 
     }
 
@@ -47,19 +47,19 @@ class WifiConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         for (profile in registeredProfiles) {
             Log.d(TAG, "checking profile = $profile")
             val wasActive = profile.isActive()
-            val condition = profile.getCondition(Condition.Type.WIFI) as WifiCondition
-            val isTrue = condition.isTrue
+            val condition = profile.conditions.wifiCondition!!
+            val isTrue = condition.isTriggered
             if (wifiItem == null) {
-                condition.isTrue = false
+                condition.isTriggered = false
             } else {
-                condition.isTrue = condition.wifiList.contains(wifiItem)
+                condition.isTriggered = condition.wifiList.contains(wifiItem)
             }
-            if (condition.isTrue != isTrue)
+            if (condition.isTriggered != isTrue)
                 listener.notifyConditionChanged(profile, condition, wasActive)
         }
     }
 
     companion object {
-        val TAG = "WifiConditionScheduler"
+        const val TAG = "WifiConditionScheduler"
     }
 }

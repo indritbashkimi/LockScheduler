@@ -2,8 +2,8 @@ package com.ibashkimi.lockscheduler.util
 
 import android.app.Activity
 import android.content.Intent
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.actions.PinChooserActivity
 import com.ibashkimi.lockscheduler.model.action.LockAction
@@ -12,7 +12,7 @@ import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 
 
-fun Fragment.showPasswordDialog(lockType: Int, onSelected: (Int) -> Unit) {
+fun Fragment.showPasswordDialog(lockType: LockAction.LockType, onSelected: (Int) -> Unit) {
     val builder = AlertDialog.Builder(context!!)
     val items = resources.getStringArray(R.array.lock_types)
     val selectedItem = when (lockType) {
@@ -30,12 +30,11 @@ fun Fragment.showPasswordDialog(lockType: Int, onSelected: (Int) -> Unit) {
     builder.create().show()
 }
 
-fun lockTypeToTextRes(lockType: Int) = when (lockType) {
+fun lockTypeToTextRes(lockType: LockAction.LockType) = when (lockType) {
     LockAction.LockType.UNCHANGED -> R.string.lock_mode_nothing
     LockAction.LockType.PIN -> R.string.lock_mode_pin
     LockAction.LockType.PASSWORD -> R.string.lock_mode_password
     LockAction.LockType.SWIPE -> R.string.lock_mode_swipe
-    else -> throw IllegalStateException("Cannot determine summary.")
 }
 
 fun positionToLockType(position: Int) = when (position) {

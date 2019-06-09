@@ -5,4 +5,6 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 
 @Parcelize
-data class WifiCondition(val wifiList: @RawValue List<WifiItem>) : Condition(Condition.Type.WIFI), Parcelable
+data class WifiCondition(val wifiList: @RawValue List<WifiItem>,
+                         override var isTriggered: Boolean = false)
+    : Condition(Type.WIFI, isTriggered), Parcelable

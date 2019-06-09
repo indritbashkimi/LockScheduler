@@ -14,7 +14,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.XmlRes
-import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
@@ -38,9 +37,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         context!!.getSharedPreferences(AppPreferencesHelper.PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
-    private var lockTypeIfGranted: Int
-        get() = sharedPreferences.getInt("lock_if_granted", LockAction.LockType.UNCHANGED)
-        set(value) = sharedPreferences.edit().putInt("lock_if_granted", value).apply()
+    private var lockTypeIfGranted: LockAction.LockType
+        get() {
+            val rep = sharedPreferences.getString("lock_if_granted", LockAction.LockType.UNCHANGED.name)!!
+            return LockAction.LockType.values().first { it.value == rep }
+        }
+        set(value) = sharedPreferences.edit().putString("lock_if_granted", value.name).apply()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment)
+        val navController = findNavController(requireActivity(), R.id.main_nav_host_fragment)
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item)
     }
@@ -93,7 +95,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
         findPreference<Preference>("min_pin_length")?.summary = "" + getIntPreference("min_pin_length", 4)
         findPreference<Preference>("min_password_length")?.summary = "" + getIntPreference("min_password_length", 4)
-        updateSummary(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED))
+        val rep = getStringPreference("lock_at_boot", LockAction.LockType.UNCHANGED.name)
+        updateSummary(LockAction.LockType.valueOf(rep))
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -145,16 +148,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 return true
             }
             "lock_at_boot" -> {
-                showPasswordDialog(getIntPreference("lock_at_boot", LockAction.LockType.UNCHANGED)
-                ) { which -> onLockTypeSelected(positionToLockType(which)) }
+                showPasswordDialog(LockAction.LockType.valueOf(getStringPreference("lock_at_boot", LockAction.LockType.UNCHANGED.name))) { which ->
+                    onLockTypeSelected(positionToLockType(which))
+                }
             }
         }
         return super.onPreferenceTreeClick(preference)
     }
 
-    private fun onLockTypeSelected(lockType: Int) {
+    private fun onLockTypeSelected(lockType: LockAction.LockType) {
         if (lockType == LockAction.LockType.UNCHANGED) {
-            setPreference("lock_at_boot", LockAction.LockType.UNCHANGED)
+            setPreference("lock_at_boot", LockAction.LockType.UNCHANGED.name)
             updateSummary(LockAction.LockType.UNCHANGED)
         } else {
             checkAdminPermission(
@@ -163,7 +167,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                             LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PIN)
                             LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PASSWORD)
                             LockAction.LockType.SWIPE -> {
-                                setPreference("lock_at_boot", LockAction.LockType.SWIPE)
+                                setPreference("lock_at_boot", LockAction.LockType.SWIPE.name)
                                 updateSummary(LockAction.LockType.SWIPE)
                             }
                             else -> throw IllegalStateException("Unknown lock type $lockType.")
@@ -184,7 +188,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         }
     }
 
-    private fun updateSummary(lockType: Int) {
+    private fun updateSummary(lockType: LockAction.LockType) {
         findPreference<Preference>("lock_at_boot")?.setSummary(lockTypeToTextRes(lockType))
     }
 

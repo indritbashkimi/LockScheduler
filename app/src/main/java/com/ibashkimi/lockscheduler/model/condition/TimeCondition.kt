@@ -6,9 +6,10 @@ import java.util.*
 
 @Parcelize
 data class TimeCondition(var daysActive: BooleanArray = booleanArrayOf(true, true, true, true, true, true, true),
-                    var startTime: Time = Time(0, 0),
-                    var endTime: Time = Time(0, 0))
-    : Condition(Condition.Type.TIME), Parcelable {
+                         var startTime: Time = Time(0, 0),
+                         var endTime: Time = Time(0, 0),
+                         override var isTriggered: Boolean = false)
+    : Condition(Type.TIME, isTriggered), Parcelable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

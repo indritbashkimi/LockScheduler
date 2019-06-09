@@ -2,9 +2,10 @@ package com.ibashkimi.lockscheduler.model.scheduler
 
 import androidx.annotation.CallSuper
 import com.ibashkimi.lockscheduler.model.Profile
+import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
-abstract class ConditionScheduler(val conditionType: Int, private val repository: ProfilesDataSource) {
+abstract class ConditionScheduler(val conditionType: Condition.Type, private val repository: ProfilesDataSource) {
 
     abstract fun init()
 

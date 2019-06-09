@@ -1,7 +1,6 @@
 package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
-import androidx.collection.ArrayMap
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -13,7 +12,7 @@ import java.util.*
 
 object ProfileManager : ConditionChangeListener, ProfileRepository {
 
-    val repository: ProfilesDataSource = DatabaseDataSource.getInstance()
+    val repository: ProfilesDataSource = DatabaseDataSource
 
     val geofenceApiHelper: GeofenceApiHelper = GeofenceApiHelper.getInstance()
 
@@ -21,7 +20,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
 
     var isCacheDirty = true
 
-    val priorities: IntArray = intArrayOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
+    val priorities: List<Condition.Type> = listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
 
@@ -34,7 +33,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     fun init() {
         for (profile in getAll()) {
             val wasActive = profile.isActive()
-            for (condition in profile.conditions.orderByPriority()) {
+            for (condition in profile.conditions.all.orderByPriority()) {
                 if (!register(profile, condition)) break
             }
             cachedProfiles[profile.id] = profile
@@ -50,7 +49,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         repository.beginTransaction()
         repository.saveProfile(profile)
         cachedProfiles[profile.id] = profile
-        for (condition in profile.conditions.orderByPriority()) {
+        for (condition in profile.conditions.all.orderByPriority()) {
             if (!register(profile, condition)) break
         }
         repository.updateProfile(profile)
@@ -105,27 +104,27 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         val oldProfile = get(profile.id) ?:
                 throw IllegalArgumentException("Cannot find profile with id=${profile.id}.")
         val wasActive = oldProfile.isActive()
-        oldProfile.conditions.orderByPriority().reversed()
-                .filter { it !in profile.conditions }
+        oldProfile.conditions.conditions.orderByPriority().reversed()
+                .filter { it !in profile.conditions.all }
                 .forEach { unregister(oldProfile, it) }
         if (wasActive) {
-            for (condition in profile.conditions) {
-                val oldCondition = oldProfile.getCondition(condition.type)
+            for (condition in profile.conditions.all) {
+                val oldCondition = oldProfile.conditions.of(condition.type)
                 if (oldCondition != null && oldCondition == condition)
-                    condition.isTrue = oldCondition.isTrue
+                    condition.isTriggered = oldCondition.isTriggered
                 else
-                    condition.isTrue = false
+                    condition.isTriggered = false
             }
             if (!profile.isActive()) {
-                oldProfile.conditions.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
-                profile.conditions.forEach { it.isTrue = false }
-                for (condition in profile.conditions.orderByPriority()) {
+                oldProfile.conditions.all.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
+                profile.conditions.all.forEach { it.isTriggered = false }
+                for (condition in profile.conditions.all.orderByPriority()) {
                     if (!register(profile, condition)) break
                 }
             }
         } else {
-            oldProfile.conditions.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
-            for (condition in profile.conditions.orderByPriority()) {
+            oldProfile.conditions.all.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
+            for (condition in profile.conditions.all.orderByPriority()) {
                 if (!register(profile, condition)) break
             }
         }
@@ -140,7 +139,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         repository.beginTransaction()
         val profile = get(id)
         if (profile != null) {
-            for (condition in profile.conditions.orderByPriority().reversed()) {
+            for (condition in profile.conditions.all.orderByPriority().reversed()) {
                 unregister(profile, condition)
             }
         } else {
@@ -155,7 +154,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     override fun removeAll() {
         repository.beginTransaction()
         for (profile in repository.profiles) {
-            for (condition in profile.conditions.orderByPriority().reversed()) {
+            for (condition in profile.conditions.all.orderByPriority().reversed()) {
                 unregister(profile, condition)
             }
         }
@@ -189,7 +188,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         }
     }
 
-    private fun getCondition(conditions: List<Condition>, priority: Int): Condition? {
+    private fun getCondition(conditions: List<Condition>, priority: Condition.Type): Condition? {
         for (condition in conditions)
             if (condition.type == priority)
                 return condition
@@ -200,11 +199,11 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     override fun notifyConditionChanged(profile: Profile, condition: Condition, wasActive: Boolean) {
         repository.updateProfile(profile)
         cachedProfiles[profile.id] = profile
-        if (condition.isTrue) {
-            for (nextCondition in getNextConditions(profile.conditions, condition))
+        if (condition.isTriggered) {
+            for (nextCondition in getNextConditions(profile.conditions.conditions, condition))
                 if (!register(profile, nextCondition)) break
         } else {
-            for (nextCondition in getNextConditions(profile.conditions, condition))
+            for (nextCondition in getNextConditions(profile.conditions.conditions, condition))
                 unregister(profile, nextCondition)
         }
         if (profile.isActive() != wasActive) {
@@ -213,7 +212,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     }
 
     private fun notifyProfileStateChanged(profile: Profile) {
-        ActionManager.performActions(if (profile.isActive()) profile.enterActions else profile.exitActions)
+        ActionManager.performActions(if (profile.isActive()) profile.enterExitActions.enterActions.actions else profile.enterExitActions.exitActions.actions)
         val intent = Intent(App.getInstance(), TransitionsIntentService::class.java)
         intent.action = "profile_state_changed"
         intent.putExtra("profile_id", profile.id)
@@ -226,7 +225,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         val resConditions: MutableList<Condition> = mutableListOf()
         for (priorityIndex in priorities.indices) {
             if (priorities[priorityIndex] == condition.type) {
-                for (index in priorityIndex + 1..priorities.size - 1) {
+                for (index in priorityIndex + 1 until priorities.size) {
                     val resCondition = getCondition(conditions, priorities[index])
                     resCondition?.let {
                         resConditions.add(resCondition)

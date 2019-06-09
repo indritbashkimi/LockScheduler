@@ -1,12 +1,11 @@
 package com.ibashkimi.lockscheduler.addeditprofile;
 
+import com.ibashkimi.lockscheduler.model.Actions;
+import com.ibashkimi.lockscheduler.model.Conditions;
 import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.action.Action;
-import com.ibashkimi.lockscheduler.model.condition.Condition;
 import com.ibashkimi.lockscheduler.ui.BasePresenter;
 import com.ibashkimi.lockscheduler.ui.BaseView;
 
-import java.util.List;
 
 /**
  * This specifies the contract between the view and the presenter.
@@ -30,7 +29,7 @@ interface AddEditProfileContract {
 
     interface Presenter extends BasePresenter {
 
-        void saveProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions);
+        void saveProfile(String title, Conditions conditions, Actions trueActions, Actions falseActions);
 
         void deleteProfile();
 

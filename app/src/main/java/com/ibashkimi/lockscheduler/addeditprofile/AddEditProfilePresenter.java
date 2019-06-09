@@ -3,12 +3,11 @@ package com.ibashkimi.lockscheduler.addeditprofile;
 import androidx.annotation.NonNull;
 
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.model.Actions;
+import com.ibashkimi.lockscheduler.model.Conditions;
+import com.ibashkimi.lockscheduler.model.EnterExitActions;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.ProfileRepository;
-import com.ibashkimi.lockscheduler.model.action.Action;
-import com.ibashkimi.lockscheduler.model.condition.Condition;
-
-import java.util.List;
 
 public class AddEditProfilePresenter implements AddEditProfileContract.Presenter {
 
@@ -48,7 +47,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     }
 
     @Override
-    public void saveProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+    public void saveProfile(String title, Conditions conditions, Actions trueActions, Actions falseActions) {
         if (isNewProfile()) {
             createProfile(title, conditions, trueActions, falseActions);
         } else {
@@ -71,13 +70,12 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         return mProfileId == null;
     }
 
-    private void createProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+    private void createProfile(String title, Conditions conditions, Actions enterActions, Actions exitActions) {
         Profile newProfile = new Profile(
                 Long.toString(System.currentTimeMillis()),
                 title,
                 conditions,
-                trueActions,
-                falseActions);
+                new EnterExitActions(enterActions, exitActions));
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
@@ -86,7 +84,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
         }
     }
 
-    private void updateProfile(String title, List<Condition> conditions, List<Action> trueActions, List<Action> falseActions) {
+    private void updateProfile(String title, Conditions conditions, Actions trueActions, Actions falseActions) {
         if (isNewProfile()) {
             throw new RuntimeException("updateProfile() was called but task is new.");
         }
@@ -94,8 +92,7 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
                 mProfileId,
                 title,
                 conditions,
-                trueActions,
-                falseActions);
+                new EnterExitActions(trueActions, falseActions));
         if (!isValid(newProfile)) {
             mAddProfileView.showLoadProfileError();
         } else {
@@ -105,6 +102,6 @@ public class AddEditProfilePresenter implements AddEditProfileContract.Presenter
     }
 
     public boolean isValid(Profile profile) {
-        return profile.getConditions().size() > 0;
+        return !profile.getConditions().isEmpty();
     }
 }

@@ -19,6 +19,7 @@ import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.WifiPickerActi
 import com.ibashkimi.lockscheduler.extention.bindView
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
+import com.ibashkimi.lockscheduler.model.Conditions
 import com.ibashkimi.lockscheduler.model.condition.*
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.ConditionUtils
@@ -51,24 +52,20 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     private var wifiCondition: WifiCondition? = null
     private var powerCondition: PowerCondition? = null
 
-    fun setData(conditions: List<Condition>) {
-        for (condition in conditions) {
-            when (condition) {
-                is PlaceCondition -> placeCondition = condition
-                is TimeCondition -> timeCondition = condition
-                is WifiCondition -> wifiCondition = condition
-                is PowerCondition -> powerCondition = condition
-            }
-        }
+    fun setData(conditions: Conditions) {
+        placeCondition = conditions.placeCondition
+        timeCondition = conditions.timeCondition
+        wifiCondition = conditions.wifiCondition
+        powerCondition = conditions.powerCondition
     }
 
-    fun assembleConditions(): List<Condition> {
-        val conditions = ArrayList<Condition>(3)
-        placeCondition?.let { conditions.add(it) }
-        timeCondition?.let { conditions.add(it) }
-        wifiCondition?.let { conditions.add(it) }
-        powerCondition?.let { conditions.add(it) }
-        return conditions
+    fun assembleConditions(): Conditions {
+        return Conditions.Builder().also { builder ->
+            placeCondition?.let { builder.placeCondition = it }
+            timeCondition?.let { builder.timeCondition = it }
+            wifiCondition?.let { builder.wifiCondition = it }
+            powerCondition?.let { builder.powerCondition = it }
+        }.build()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -194,7 +191,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
                 val latitude = data!!.getDoubleExtra("latitude", 0.0)
                 val longitude = data.getDoubleExtra("longitude", 0.0)
                 val radius = data.getIntExtra("radius", 0)
-                val address = data.getStringExtra("address")
+                val address = data.getStringExtra("address")!!
 
                 //TransitionManager.beginDelayedTransition(locationL)
                 val placeCondition = PlaceCondition(latitude, longitude, radius, address)
@@ -321,7 +318,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
                 .create().show()
     }
 
-    private fun notifyConditionRemoved(@Condition.Type type: Int) {
+    private fun notifyConditionRemoved(type: Condition.Type) {
         if (conditionChangeListener != null)
             conditionChangeListener!!.onConditionRemoved(type)
     }
@@ -335,7 +332,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
 
         fun onConditionChanged(condition: Condition)
 
-        fun onConditionRemoved(@Condition.Type type: Int)
+        fun onConditionRemoved(type: Condition.Type)
     }
 
     companion object {

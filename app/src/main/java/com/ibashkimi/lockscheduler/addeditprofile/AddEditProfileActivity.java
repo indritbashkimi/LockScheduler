@@ -7,23 +7,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
-import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
-import com.ibashkimi.lockscheduler.model.Profile;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.model.action.Action;
-import com.ibashkimi.lockscheduler.model.condition.Condition;
-import com.ibashkimi.lockscheduler.ui.BaseActivity;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment;
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment;
+import com.ibashkimi.lockscheduler.model.Actions;
+import com.ibashkimi.lockscheduler.model.Conditions;
+import com.ibashkimi.lockscheduler.model.Profile;
+import com.ibashkimi.lockscheduler.model.ProfileManager;
+import com.ibashkimi.lockscheduler.model.condition.Condition;
+import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 public class AddEditProfileActivity extends BaseActivity implements AddEditProfileContract.View, ConditionsFragment.ConditionChangeListener {
 
@@ -140,10 +139,10 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         ActionsFragment enterActionsFragment = getEnterActionsFragment(fragmentManager);
-        enterActionsFragment.setData(profile.getEnterActions());
+        enterActionsFragment.setData(profile.getEnterExitActions().getEnterActions());
 
         ActionsFragment exitActionsFragment = getEnterActionsFragment(fragmentManager);
-        exitActionsFragment.setData(profile.getExitActions());
+        exitActionsFragment.setData(profile.getEnterExitActions().getExitActions());
 
         ConditionsFragment conditionsFragment = getConditionsFragment(fragmentManager);
         conditionsFragment.setData(profile.getConditions());
@@ -167,9 +166,9 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
 
     public void onSave() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        List<Action> enterActions = getEnterActionsFragment(fragmentManager).assembleData();
-        List<Action> exitActions = getExitActionsFragment(fragmentManager).assembleData();
-        List<Condition> conditions = getConditionsFragment(fragmentManager).assembleConditions();
+        Actions enterActions = getEnterActionsFragment(fragmentManager).assembleData();
+        Actions exitActions = getExitActionsFragment(fragmentManager).assembleData();
+        Conditions conditions = getConditionsFragment(fragmentManager).assembleConditions();
         String title = mProfileName.getText().toString();
         if (title.equals(""))
             title = getString(R.string.profile_name_hint);
@@ -221,7 +220,7 @@ public class AddEditProfileActivity extends BaseActivity implements AddEditProfi
     }
 
     @Override
-    public void onConditionRemoved(int type) {
+    public void onConditionRemoved(Condition.Type type) {
         //Toast.makeText(this, "Condition removed", Toast.LENGTH_SHORT).show();
     }
 }
