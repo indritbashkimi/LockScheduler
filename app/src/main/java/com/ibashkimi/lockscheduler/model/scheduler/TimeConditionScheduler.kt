@@ -8,6 +8,7 @@ import android.util.Log
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
+import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
@@ -125,7 +126,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, private val listene
         return cal.timeInMillis
     }
 
-    private fun checkDaysValidityForDebug(daysActive: BooleanArray) {
+    private fun checkDaysValidityForDebug(daysActive: DaysOfWeek) {
         if ((0..6).none { daysActive[it] })
             throw RuntimeException("All days are false.")
     }

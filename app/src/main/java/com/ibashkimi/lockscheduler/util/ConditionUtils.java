@@ -20,7 +20,7 @@ public class ConditionUtils {
     public static String daysToString(Context context, TimeCondition timeCondition) {
         ArrayList<Integer> activeDays = new ArrayList<>(7);
         for (int i = 0; i < 7; i++) {
-            if (timeCondition.getDaysActive()[i])
+            if (timeCondition.getDaysActive().get(i))
                 activeDays.add(i);
         }
 

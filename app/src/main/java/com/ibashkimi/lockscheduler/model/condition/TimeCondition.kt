@@ -2,32 +2,55 @@ package com.ibashkimi.lockscheduler.model.condition
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
-data class TimeCondition(var daysActive: BooleanArray = booleanArrayOf(true, true, true, true, true, true, true),
+data class TimeCondition(var daysActive: DaysOfWeek = DaysOfWeek(),
                          var startTime: Time = Time(0, 0),
                          var endTime: Time = Time(0, 0),
                          override var isTriggered: Boolean = false)
-    : Condition(Type.TIME, isTriggered), Parcelable {
+    : Condition(Type.TIME, isTriggered), Parcelable
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+@Parcelize
+data class DaysOfWeek (
+        var monday: Boolean = false,
+        var tuesday: Boolean = false,
+        var wednesday: Boolean = false,
+        var thursday: Boolean = false,
+        var friday: Boolean = false,
+        var saturday: Boolean = false,
+        var sunday: Boolean = false) : Parcelable {
 
-        other as TimeCondition
-
-        if (!Arrays.equals(daysActive, other.daysActive)) return false
-        if (startTime != other.startTime) return false
-        if (endTime != other.endTime) return false
-
-        return true
+    operator fun get(index: Int): Boolean {
+        return when(index) {
+            0 -> monday
+            1 -> tuesday
+            2 -> wednesday
+            3 -> thursday
+            4 -> friday
+            5 -> saturday
+            6 -> sunday
+            else -> throw IndexOutOfBoundsException("Invalid index $index. Valid range: [0 : 6].")
+        }
     }
 
-    override fun hashCode(): Int {
-        var result = Arrays.hashCode(daysActive)
-        result = 31 * result + startTime.hashCode()
-        result = 31 * result + endTime.hashCode()
-        return result
+    operator fun set(index: Int, value: Boolean) {
+        return when(index) {
+            0 -> monday = value
+            1 -> tuesday = value
+            2 -> wednesday = value
+            3 -> thursday = value
+            4 -> friday = value
+            5 -> saturday = value
+            6 -> sunday = value
+            else -> throw IndexOutOfBoundsException("Invalid index $index. Valid range: [0 : 6].")
+        }
+    }
+
+    fun asBooleanArray(): BooleanArray {
+        return booleanArrayOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
+    }
+
+    fun createCopy(): DaysOfWeek {
+        return DaysOfWeek(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
     }
 }

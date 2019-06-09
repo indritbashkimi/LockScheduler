@@ -160,7 +160,7 @@ fun TimeCondition.toJson(): JSONObject {
 }
 
 fun JSONObject.toTimeCondition(): TimeCondition {
-    val daysActive = BooleanArray(7)
+    val daysActive = DaysOfWeek()
     for (i in 0..6) {
         daysActive[i] = getBoolean("day_$i")
     }
