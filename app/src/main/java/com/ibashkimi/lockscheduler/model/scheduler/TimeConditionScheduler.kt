@@ -15,8 +15,6 @@ import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Calendar.HOUR_OF_DAY
-import java.util.Calendar.MINUTE
 
 class TimeConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.TIME, repository) {
@@ -84,7 +82,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, private val listene
         if (!condition.daysActive[dayOfWeek]) {
             return false
         }
-        val now = Time(calendar.get(HOUR_OF_DAY), calendar.get(MINUTE))
+        val now = Time(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
         val start = condition.startTime
         val end = condition.endTime
         Log.d(TAG, "now=$now, start=$start, end=$end")
@@ -155,7 +153,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, private val listene
 
     private fun printCalendar(tag: String, calendar: Calendar) {
         val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH)
-        val date: Date = Date(calendar.timeInMillis)
+        val date = Date(calendar.timeInMillis)
         Log.d(TAG, "$tag: ${dateFormat.format(date)}")
     }
 

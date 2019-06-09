@@ -30,7 +30,6 @@ public class WifiReceiver extends BroadcastReceiver {
                         String ssid = wifiInfo.getSSID();
                         wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
                     }
-
                 }
             }
             ProfileManager.INSTANCE.getWifiHandler().onWifiChanged(wifiItem);
