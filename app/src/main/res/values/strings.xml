@@ -61,6 +61,7 @@
     <string name="loading_profiles_error">Error while loading profiles</string>
     <string name="successfully_saved_profile_message">Profile saved</string>
     <string name="successfully_removed_profile_message">Profile deleted</string>
+    <string name="successfully_updated_profile_message">Profile updated</string>
     <string name="edit_profile">Edit profile</string>
     <string name="conditions_title">Conditions</string>
     <string name="actions_title">Screen lock</string>
@@ -132,4 +133,5 @@
     <string name="about_lib_intro">Lock Scheduler is built using these libraries</string>
     <string name="action_remove_condition">Remove</string>
     <string name="time_picker_activity">Pick time</string>
+    <string name="admin_permission_granted_msg">Admin permission granted</string>
 </resources>

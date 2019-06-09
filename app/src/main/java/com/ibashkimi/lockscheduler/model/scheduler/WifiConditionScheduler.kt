@@ -10,7 +10,7 @@ import com.ibashkimi.lockscheduler.model.condition.WifiItem
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
 
-class WifiConditionScheduler(repository: ProfilesDataSource, val listener: ConditionChangeListener)
+class WifiConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.WIFI, repository) {
 
     override fun init() {

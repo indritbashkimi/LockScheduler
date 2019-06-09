@@ -6,10 +6,9 @@ import com.google.android.gms.location.GeofencingEvent
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.model.condition.PlaceCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
-class PlaceConditionScheduler(val geofenceApiHelper: GeofenceApiHelper, repository: ProfilesDataSource, val listener: ConditionChangeListener)
+class PlaceConditionScheduler(private val geofenceApiHelper: GeofenceApiHelper, repository: ProfilesDataSource, val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.PLACE, repository) {
 
     private val TAG = "PlaceCondition"

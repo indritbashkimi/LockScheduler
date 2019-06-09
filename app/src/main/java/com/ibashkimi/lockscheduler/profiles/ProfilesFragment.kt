@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity
 import com.ibashkimi.lockscheduler.model.Profile
@@ -198,19 +198,19 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
     }
 
     private fun showSuccessfullySavedMessage() {
-        showMessage(getString(R.string.successfully_saved_profile_message))
+        showMessage(R.string.successfully_saved_profile_message)
     }
 
     private fun showSuccessfullyRemovedMessage() {
-        showMessage(getString(R.string.successfully_removed_profile_message))
+        showMessage(R.string.successfully_removed_profile_message)
     }
 
     private fun showSuccessfullyUpdatedMessage() {
-        showMessage("Profile updated.")
+        showMessage(R.string.successfully_updated_profile_message)
     }
 
-    private fun showMessage(message: String) {
-        Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show()
+    private fun showMessage(message: Int) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onProfileClick(position: Int) {

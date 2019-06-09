@@ -5,7 +5,7 @@ import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
-abstract class ConditionScheduler(val conditionType: Condition.Type, private val repository: ProfilesDataSource) {
+abstract class ConditionScheduler(private val conditionType: Condition.Type, private val repository: ProfilesDataSource) {
 
     abstract fun init()
 

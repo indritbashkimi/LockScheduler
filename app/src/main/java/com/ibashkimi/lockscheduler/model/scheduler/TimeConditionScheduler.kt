@@ -17,7 +17,7 @@ import java.util.*
 import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MINUTE
 
-class TimeConditionScheduler(repository: ProfilesDataSource, val listener: ConditionChangeListener)
+class TimeConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.TIME, repository) {
 
     private val TAG = "TimeCondition"
@@ -54,7 +54,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         }
     }
 
-    fun doAlarmJob(profile: Profile, condition: TimeCondition) {
+    private fun doAlarmJob(profile: Profile, condition: TimeCondition) {
         val wasActive = profile.isActive()
         val isTrue = condition.isTriggered
         val now = Calendar.getInstance().timeInMillis
@@ -67,7 +67,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         setAlarm(profile.id, nextAlarm)
     }
 
-    fun shouldBeActive(currTime: Long, condition: TimeCondition): Boolean {
+    private fun shouldBeActive(currTime: Long, condition: TimeCondition): Boolean {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = currTime
         var dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
@@ -101,7 +101,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         return start.compareTo(now).isNotHigher && now.compareTo(end).isLower
     }
 
-    fun TimeCondition.getNextAlarm(currTimeMillis: Long): Long {
+    private fun TimeCondition.getNextAlarm(currTimeMillis: Long): Long {
         checkDaysValidityForDebug(daysActive)
 
         val cal = Calendar.getInstance()
@@ -130,7 +130,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
             throw RuntimeException("All days are false.")
     }
 
-    fun setAlarm(profileId: String, nextAlarm: Long) {
+    private fun setAlarm(profileId: String, nextAlarm: Long) {
         Log.d(TAG, "set alarm called with profileId=$profileId, next alarm = $nextAlarm")
         printTimestamp("nextAlarm", nextAlarm)
         val context = App.getInstance()
@@ -142,7 +142,7 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi)
     }
 
-    fun cancelAlarm(profileId: String) {
+    private fun cancelAlarm(profileId: String) {
         Log.d(TAG, "cancelAlarm. profileId=$profileId")
         val context = App.getInstance()
         val intent = Intent(context, AlarmReceiver::class.java)
@@ -152,13 +152,13 @@ class TimeConditionScheduler(repository: ProfilesDataSource, val listener: Condi
         alarmManager.cancel(sender)
     }
 
-    fun printCalendar(tag: String, calendar: Calendar) {
+    private fun printCalendar(tag: String, calendar: Calendar) {
         val dateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH)
         val date: Date = Date(calendar.timeInMillis)
         Log.d(TAG, "$tag: ${dateFormat.format(date)}")
     }
 
-    fun printTimestamp(tag: String, timestamp: Long) {
+    private fun printTimestamp(tag: String, timestamp: Long) {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = timestamp
         printCalendar(tag, calendar)

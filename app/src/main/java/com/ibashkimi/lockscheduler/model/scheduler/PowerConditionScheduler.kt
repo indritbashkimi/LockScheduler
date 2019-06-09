@@ -6,11 +6,10 @@ import android.os.BatteryManager
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.model.condition.PowerCondition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
 
-class PowerConditionScheduler(repository: ProfilesDataSource, val listener: ConditionChangeListener)
+class PowerConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
     : ConditionScheduler(Condition.Type.POWER, repository) {
 
     override fun init() {

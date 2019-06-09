@@ -202,21 +202,22 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
             REQUEST_CODE_PIN -> if (resultCode == Activity.RESULT_OK) {
                 AppPreferencesHelper.lockAtBoot = LockAction.LockType.PIN
-                AppPreferencesHelper.lockAtBootInput = data!!.getStringExtra("input")
+                AppPreferencesHelper.lockAtBootInput = data!!.getStringExtra("input")!!
                 updateSummary(LockAction.LockType.PIN)
             }
             REQUEST_CODE_PASSWORD -> if (resultCode == Activity.RESULT_OK) {
                 AppPreferencesHelper.lockAtBoot = LockAction.LockType.PASSWORD
-                AppPreferencesHelper.lockAtBootInput = data!!.getStringExtra("input")
+                AppPreferencesHelper.lockAtBootInput = data!!.getStringExtra("input")!!
                 updateSummary(LockAction.LockType.PASSWORD)
             }
             REQUEST_CODE_ADMIN_PERMISSION -> handleAdminPermissionResult(
                     resultCode = resultCode,
                     onGranted = {
-                        Toast.makeText(context, "Admin permission granted", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.admin_permission_granted_msg, Toast.LENGTH_SHORT).show()
                         when (lockTypeIfGranted) {
                             LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PASSWORD)
                             LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PIN)
+                            else -> {} // do nothing
                         }
                     },
                     onDenied = { onAdminPermissionDenied() })

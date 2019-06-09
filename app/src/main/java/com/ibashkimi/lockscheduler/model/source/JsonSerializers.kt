@@ -101,6 +101,22 @@ fun Conditions.toJson(): JSONObject {
     return jsonObject
 }
 
+fun JSONObject.toConditions(): Conditions {
+    val size = getInt("conditions_len")
+    val conditions = ArrayList<Condition>(size)
+    for (i in 0 until size) {
+        val conditionJson = getJSONObject("condition_$i")
+        val condition: Condition = when (Condition.Type.valueOf(conditionJson.getString("type"))) {
+            Condition.Type.PLACE -> conditionJson.toPlaceCondition()
+            Condition.Type.TIME -> conditionJson.toTimeCondition()
+            Condition.Type.WIFI -> conditionJson.toWifiCondition()
+            Condition.Type.POWER -> conditionJson.toPowerCondition()
+        }
+        conditions.add(condition)
+    }
+    return Conditions(conditions)
+}
+
 fun Condition.toJson(): JSONObject {
     return when (this) {
         is PlaceCondition -> this.toJson()
@@ -121,6 +137,14 @@ fun PlaceCondition.toJson(): JSONObject {
             .put("address", address)
 }
 
+fun JSONObject.toPlaceCondition() = PlaceCondition(
+        isTriggered = getBoolean("triggered"),
+        latitude = getDouble("latitude"),
+        longitude = getDouble("longitude"),
+        radius = getInt("radius"),
+        address = getString("address")
+)
+
 fun TimeCondition.toJson(): JSONObject {
     val jsonObject = JSONObject()
             .put("type", type.name)
@@ -135,49 +159,6 @@ fun TimeCondition.toJson(): JSONObject {
     return jsonObject
 }
 
-fun PowerCondition.toJson(): JSONObject {
-    return JSONObject()
-            .put("type", type.name)
-            .put("triggered", isTriggered)
-            .put("power_connected", powerConnected)
-}
-
-fun WifiCondition.toJson(): JSONObject {
-    val json = JSONObject()
-            .put("type", type.value)
-            .put("triggered", isTriggered)
-            .put("wifi_items_len", wifiList.size)
-    for (i in 0 until wifiList.size) {
-        json.put("wifi_item_$i", wifiList[i].ssid)
-    }
-    return json
-}
-
-fun JSONObject.toConditions(): Conditions {
-    val size = getInt("conditions_len")
-    val conditions = ArrayList<Condition>(size)
-    for (i in 0 until size) {
-        val conditionJson = getJSONObject("condition_$i")
-        val condition: Condition = when (Condition.Type.valueOf(conditionJson.getString("type"))) {
-            Condition.Type.PLACE -> conditionJson.toPlaceCondition()
-            Condition.Type.TIME -> conditionJson.toTimeCondition()
-            Condition.Type.WIFI -> conditionJson.toWifiCondition()
-            Condition.Type.POWER -> conditionJson.toPowerCondition()
-        }
-        conditions.add(condition)
-    }
-    return Conditions(conditions)
-}
-
-fun JSONObject.toPlaceCondition() = PlaceCondition(
-        isTriggered = getBoolean("triggered"),
-        latitude = getDouble("latitude"),
-        longitude = getDouble("longitude"),
-        radius = getInt("radius"),
-        address = getString("address")
-)
-
-
 fun JSONObject.toTimeCondition(): TimeCondition {
     val daysActive = BooleanArray(7)
     for (i in 0..6) {
@@ -188,8 +169,25 @@ fun JSONObject.toTimeCondition(): TimeCondition {
     return TimeCondition(daysActive, startTime, endTime, getBoolean("triggered"))
 }
 
+fun PowerCondition.toJson(): JSONObject {
+    return JSONObject()
+            .put("type", type.name)
+            .put("triggered", isTriggered)
+            .put("power_connected", powerConnected)
+}
+
 fun JSONObject.toPowerCondition() = PowerCondition(getBoolean("power_connected"), getBoolean("triggered"))
 
+fun WifiCondition.toJson(): JSONObject {
+    val json = JSONObject()
+            .put("type", type.name)
+            .put("triggered", isTriggered)
+            .put("wifi_items_len", wifiList.size)
+    for (i in 0 until wifiList.size) {
+        json.put("wifi_item_$i", wifiList[i].ssid)
+    }
+    return json
+}
 
 fun JSONObject.toWifiCondition(): WifiCondition {
     val wifiItemSize = getInt("wifi_items_len")

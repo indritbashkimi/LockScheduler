@@ -60,13 +60,13 @@ fun Fragment.isPermissionRationaleNeeded(permission: String): Boolean {
 }
 
 fun Fragment.requestPermission(permission: String, requestCode: Int) {
-    this.requestPermissions(kotlin.arrayOf(permission), requestCode)
+    this.requestPermissions(arrayOf(permission), requestCode)
 }
 
 inline fun Fragment.checkPermission(permission: String,
-                                             whenGranted: (Fragment.() -> Unit),
-                                             whenExplanationNeed: (Fragment.() -> Unit),
-                                             whenDenied: (Fragment.() -> Unit)) {
+                                    whenGranted: (Fragment.() -> Unit),
+                                    whenExplanationNeed: (Fragment.() -> Unit),
+                                    whenDenied: (Fragment.() -> Unit)) {
     when {
         isPermissionGranted(permission) -> whenGranted()
         isPermissionRationaleNeeded(permission) -> whenExplanationNeed()

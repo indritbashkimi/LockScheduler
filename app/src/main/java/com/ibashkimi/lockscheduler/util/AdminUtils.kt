@@ -20,7 +20,6 @@ fun Fragment.showPasswordDialog(lockType: LockAction.LockType, onSelected: (Int)
         LockAction.LockType.SWIPE -> 1
         LockAction.LockType.PIN -> 2
         LockAction.LockType.PASSWORD -> 3
-        else -> throw IllegalArgumentException("Cannot determine selected item.")
     }
     builder.setTitle(R.string.dialog_lock_settings_title)
             .setSingleChoiceItems(items, selectedItem) { dialog, which ->

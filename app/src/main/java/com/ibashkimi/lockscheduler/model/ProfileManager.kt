@@ -1,6 +1,7 @@
 package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
+import androidx.collection.ArrayMap
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -12,15 +13,15 @@ import java.util.*
 
 object ProfileManager : ConditionChangeListener, ProfileRepository {
 
-    val repository: ProfilesDataSource = DatabaseDataSource
+    private val repository: ProfilesDataSource = DatabaseDataSource
 
-    val geofenceApiHelper: GeofenceApiHelper = GeofenceApiHelper.getInstance()
+    private val geofenceApiHelper: GeofenceApiHelper = GeofenceApiHelper.getInstance()
 
-    val cachedProfiles: androidx.collection.ArrayMap<String, Profile> = androidx.collection.ArrayMap()
+    private val cachedProfiles: ArrayMap<String, Profile> = ArrayMap()
+
+    private val priorities: List<Condition.Type> = listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     var isCacheDirty = true
-
-    val priorities: List<Condition.Type> = listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
 
@@ -95,7 +96,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     private fun refreshCache() {
         cachedProfiles.clear()
         for (profile in repository.profiles)
-            cachedProfiles.put(profile.id, profile)
+            cachedProfiles[profile.id] = profile
         isCacheDirty = false
     }
 
@@ -237,7 +238,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         return resConditions
     }
 
-    fun List<Condition>.orderByPriority(): List<Condition> {
+    private fun List<Condition>.orderByPriority(): List<Condition> {
         val result: ArrayList<Condition> = ArrayList(this.size)
         result.add(this.highestPriority())
         for (condition in getNextConditions(this, result[0])) {
@@ -246,7 +247,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         return result
     }
 
-    fun List<Condition>.highestPriority(): Condition {
+    private fun List<Condition>.highestPriority(): Condition {
         if (priorities.isEmpty()) {
             throw RuntimeException("Priority list cannot be empty.")
         }

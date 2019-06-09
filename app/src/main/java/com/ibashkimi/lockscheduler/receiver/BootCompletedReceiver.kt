@@ -19,7 +19,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "onReceive")
         // TODO: API 24 ACTION_LOCKED_BOOT_COMPLETED https://developer.android.com/reference/android/content/Intent.html#ACTION_BOOT_COMPLETED
-        Log.d(TAG, "action = " + intent.action!!)
+        Log.d(TAG, "action = ${intent.action}")
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             when (AppPreferencesHelper.lockAtBoot) {
                 LockAction.LockType.SWIPE -> LockManager.resetPassword(context)

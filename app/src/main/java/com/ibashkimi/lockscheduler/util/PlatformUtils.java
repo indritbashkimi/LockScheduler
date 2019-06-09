@@ -30,19 +30,16 @@ public class PlatformUtils {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(R.string.uninstall_message)
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.action_uninstall, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ProfileManager.INSTANCE.removeAll();
+                .setPositiveButton(R.string.action_uninstall, (dialog, which) -> {
+                    ProfileManager.INSTANCE.removeAll();
 
-                        if (LockSchedulerAdmin.isAdminActive(context))
-                            LockSchedulerAdmin.removeAdmin(context);
+                    if (LockSchedulerAdmin.isAdminActive(context))
+                        LockSchedulerAdmin.removeAdmin(context);
 
-                        Uri packageUri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                        Intent uninstallIntent =
-                                new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);
-                        context.startActivity(uninstallIntent);
-                    }
+                    Uri packageUri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                    Intent uninstallIntent =
+                            new Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri);
+                    context.startActivity(uninstallIntent);
                 });
         builder.create().show();
     }
