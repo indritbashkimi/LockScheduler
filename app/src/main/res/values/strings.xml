@@ -134,4 +134,6 @@
     <string name="action_remove_condition">Remove</string>
     <string name="time_picker_activity">Pick time</string>
     <string name="admin_permission_granted_msg">Admin permission granted</string>
+    <string name="profile_not_found_msg">Profile not found</string>
+    <string name="default_profile_name">Profile</string>
 </resources>

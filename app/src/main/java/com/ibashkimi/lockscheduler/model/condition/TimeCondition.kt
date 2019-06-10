@@ -12,13 +12,13 @@ data class TimeCondition(var daysActive: DaysOfWeek = DaysOfWeek(),
 
 @Parcelize
 data class DaysOfWeek (
-        var monday: Boolean = false,
-        var tuesday: Boolean = false,
-        var wednesday: Boolean = false,
-        var thursday: Boolean = false,
-        var friday: Boolean = false,
-        var saturday: Boolean = false,
-        var sunday: Boolean = false) : Parcelable {
+        var monday: Boolean = true,
+        var tuesday: Boolean = true,
+        var wednesday: Boolean = true,
+        var thursday: Boolean = true,
+        var friday: Boolean = true,
+        var saturday: Boolean = true,
+        var sunday: Boolean = true) : Parcelable {
 
     operator fun get(index: Int): Boolean {
         return when(index) {

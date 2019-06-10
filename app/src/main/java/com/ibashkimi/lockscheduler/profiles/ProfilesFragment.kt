@@ -1,23 +1,19 @@
 package com.ibashkimi.lockscheduler.profiles
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileActivity
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.util.PlatformUtils
 import java.util.*
@@ -73,35 +69,12 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         setHasOptionsMenu(true)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // If a profile was successfully added, show snackbar
-        if (resultCode == Activity.RESULT_CANCELED)
-            return
-        if (AddEditProfileActivity.REQUEST_ADD_PROFILE == requestCode) {
-            viewModel.loadData()
-            showSuccessfullySavedMessage()
-        } else if (AddEditProfileActivity.REQUEST_EDIT_PROFILE == requestCode) {
-            val extras = data?.getStringExtra("extra")
-            if (extras != null) {
-                viewModel.loadData()
-                when (extras) {
-                    "deleted" -> showSuccessfullyRemovedMessage()
-                    "updated" -> showSuccessfullyUpdatedMessage()
-                    else -> throw RuntimeException("Unhandled case.")
-                }
-            } else {
-                throw RuntimeException("This should not be possible.")
-            }
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_main, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = Navigation.findNavController(requireActivity(), R.id.main_nav_host_fragment)
-        if (NavigationUI.onNavDestinationSelected(item, navController)) {
+        if (NavigationUI.onNavDestinationSelected(item, findNavController())) {
             return true
         } else if (item.itemId == R.id.action_uninstall) {
             PlatformUtils.uninstall(requireContext())
@@ -174,21 +147,16 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
     }
 
     private fun showAddProfile() {
-        val intent = Intent(context, AddEditProfileActivity::class.java)
-        startActivityForResult(intent, AddEditProfileActivity.REQUEST_ADD_PROFILE)
+        findNavController()
+                .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(null))
     }
 
-    private fun showProfileDetailsUi(profileId: String) {
-        val intent = Intent(context, AddEditProfileActivity::class.java)
-        intent.putExtra(AddEditProfileActivity.ARGUMENT_EDIT_PROFILE_ID, profileId)
-        startActivityForResult(intent, AddEditProfileActivity.REQUEST_EDIT_PROFILE)
+    private fun showProfileDetailsUi(profile: Profile) {
+        findNavController()
+                .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(profile.id))
     }
 
-    /*private fun setLoadingIndicator(active: Boolean) {
-
-    }
-
-    private fun showLoadingProfilesError() {
+    /*private fun showLoadingProfilesError() {
         showMessage(getString(R.string.loading_profiles_error))
     }*/
 
@@ -197,28 +165,12 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         noTasksView.visibility = View.VISIBLE
     }
 
-    private fun showSuccessfullySavedMessage() {
-        showMessage(R.string.successfully_saved_profile_message)
-    }
-
-    private fun showSuccessfullyRemovedMessage() {
-        showMessage(R.string.successfully_removed_profile_message)
-    }
-
-    private fun showSuccessfullyUpdatedMessage() {
-        showMessage(R.string.successfully_updated_profile_message)
-    }
-
-    private fun showMessage(message: Int) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
     override fun onProfileClick(position: Int) {
         if (actionMode != null) {
             toggleSelection(position)
         } else {
             val p = adapter.profiles[position]
-            showProfileDetailsUi(p.id)
+            showProfileDetailsUi(p)
         }
     }
 

@@ -2,7 +2,6 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,15 +10,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateVMFactory
+import androidx.lifecycle.ViewModelProviders
 import androidx.transition.TransitionManager
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.location.PlacePickerActivity
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.time.TimePickerActivity
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.WifiPickerActivity
 import com.ibashkimi.lockscheduler.extention.bindView
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
-import com.ibashkimi.lockscheduler.model.Conditions
 import com.ibashkimi.lockscheduler.model.condition.*
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.util.ConditionUtils
@@ -27,7 +29,7 @@ import com.ibashkimi.lockscheduler.util.Utils
 import java.util.*
 
 
-class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListener {
+class ConditionsFragment : Fragment(), View.OnClickListener {
     private val locationLayout: ViewGroup by bindView(R.id.locationLayout)
     private val locationTitle: TextView by bindView(R.id.location_title)
     private val locationDelete: View by bindView(R.id.locationDelete)
@@ -45,28 +47,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     private val powerDelete: View by bindView(R.id.powerDelete)
     private val powerSummary: TextView by bindView(R.id.power_summary)
 
-    private var conditionChangeListener: ConditionChangeListener? = null
-
-    private var placeCondition: PlaceCondition? = null
-    private var timeCondition: TimeCondition? = null
-    private var wifiCondition: WifiCondition? = null
-    private var powerCondition: PowerCondition? = null
-
-    fun setData(conditions: Conditions) {
-        placeCondition = conditions.placeCondition
-        timeCondition = conditions.timeCondition
-        wifiCondition = conditions.wifiCondition
-        powerCondition = conditions.powerCondition
-    }
-
-    fun assembleConditions(): Conditions {
-        return Conditions.Builder().also { builder ->
-            placeCondition?.let { builder.placeCondition = it }
-            timeCondition?.let { builder.timeCondition = it }
-            wifiCondition?.let { builder.wifiCondition = it }
-            powerCondition?.let { builder.powerCondition = it }
-        }.build()
-    }
+    private lateinit var viewModel: AddEditProfileViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_conditions, container, false)
@@ -82,55 +63,41 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
         wifiLayout.setOnClickListener(this)
         wifiDelete.setOnClickListener(this)
 
-        if (savedInstanceState != null) {
-            placeCondition = savedInstanceState.getParcelable("location_condition")
-            timeCondition = savedInstanceState.getParcelable("time_condition")
-            wifiCondition = savedInstanceState.getParcelable("wifi_condition")
-            powerCondition = savedInstanceState.getParcelable("power_condition")
-        }
+        viewModel = ViewModelProviders.of(requireParentFragment(), SavedStateVMFactory(requireParentFragment()))
+                .get(AddEditProfileViewModel::class.java)
+        viewModel.getPlaceCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { placeCondition ->
+            placeCondition?.let { showLocationCondition(it) } ?: removeLocationCondition()
+        })
+        viewModel.getPowerCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { powerCondition ->
+            powerCondition?.let { showPowerCondition(it) } ?: removePowerCondition()
+        })
+        viewModel.getTimeCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { timeCondition ->
+            timeCondition?.let { showTimeCondition(it) } ?: removeTimeCondition()
+        })
+        viewModel.getWifiCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { wifiCondition ->
+            wifiCondition?.let { showWifiCondition(it) } ?: removeWifiCondition()
+        })
 
-        placeCondition?.let { showLocationCondition(it, false) }
-        timeCondition?.let { showTimeCondition(it, false) }
-        wifiCondition?.let { showWifiCondition(it, false) }
-        powerCondition?.let { showPowerCondition(it, false) }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ConditionChangeListener)
-            conditionChangeListener = context
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        conditionChangeListener = null
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable("location_condition", placeCondition)
-        outState.putParcelable("time_condition", timeCondition)
-        outState.putParcelable("wifi_condition", wifiCondition)
-        outState.putParcelable("power_condition", powerCondition)
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.locationLayout -> showPlacePicker()
-            R.id.locationDelete -> removeLocationCondition()
+            R.id.locationDelete -> viewModel.setPlaceCondition(null)
             R.id.timeLayout -> showTimePicker()
-            R.id.timeDelete -> removeTimeCondition()
+            R.id.timeDelete -> viewModel.setTimeCondition(null)
             R.id.wifiLayout -> showWifiPicker()
-            R.id.wifiDelete -> removeWifiCondition()
+            R.id.wifiDelete -> viewModel.setWifiCondition(null)
             R.id.powerLayout -> showPowerConditionDialog()
-            R.id.powerDelete -> removePowerCondition()
+            R.id.powerDelete -> viewModel.setPowerCondition(null)
         }
     }
 
     private fun showPlacePicker() {
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
                 whenGranted = {
-                    val intent = Intent(context, PlacePickerActivity::class.java)
+                    val placeCondition = viewModel.getPlaceCondition().value
+                    val intent = Intent(requireContext(), PlacePickerActivity::class.java)
                     intent.putExtra("latitude", placeCondition?.latitude)
                     intent.putExtra("longitude", placeCondition?.longitude)
                     intent.putExtra("radius", placeCondition?.radius ?: 300)
@@ -169,6 +136,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     }
 
     private fun showTimePicker() {
+        val timeCondition = viewModel.getTimeCondition().value
         val intent = Intent(requireContext(), TimePickerActivity::class.java)
         if (timeCondition != null) {
             intent.putExtra("time_condition", timeCondition)
@@ -179,6 +147,7 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
     private fun showWifiPicker() {
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
                 whenGranted = {
+                    val wifiCondition = viewModel.getWifiCondition().value
                     val intent = Intent(context, WifiPickerActivity::class.java)
                     val items = wifiCondition?.wifiList
                     if (items != null && items.isNotEmpty()) {
@@ -218,71 +187,57 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
 
                 //TransitionManager.beginDelayedTransition(locationL)
                 val placeCondition = PlaceCondition(latitude, longitude, radius, address)
-                showLocationCondition(placeCondition, true)
+                viewModel.setPlaceCondition(placeCondition) //showLocationCondition(placeCondition)
             }
         } else if (requestCode == REQUEST_WIFI_PICKER) {
             if (resultCode == RESULT_OK) {
-                val ssidArray = data!!.getStringArrayExtra("ssids")
+                val ssidArray = data!!.getStringArrayExtra("ssids")!!
                 val items = ArrayList<WifiItem>(ssidArray.size)
                 ssidArray.mapTo(items) { WifiItem(it) }
-                if (items.isNotEmpty())
-                    showWifiCondition(WifiCondition(items), true)
-                else
-                    removeWifiCondition()
+                viewModel.setWifiCondition(if (items.isNotEmpty()) WifiCondition(items) else null)
             }
         } else if (requestCode == REQUEST_TIME_PICKER) {
             if (resultCode == RESULT_OK) {
-                showTimeCondition(data!!.getParcelableExtra("time_condition"), true)
+                viewModel.setTimeCondition(data!!.getParcelableExtra("time_condition")!!)
             }
         }
     }
 
-    private fun showLocationCondition(condition: PlaceCondition, notify: Boolean = true) {
-        placeCondition = condition
+    private fun showLocationCondition(condition: PlaceCondition) {
         TransitionManager.beginDelayedTransition(locationLayout)
         locationTitle.setText(R.string.location_condition_title)
         locationSummary.visibility = View.VISIBLE
         locationSummary.text = getString(R.string.location_summary, condition.address, condition.radius)
         locationDelete.visibility = View.VISIBLE
-        if (notify)
-            notifyConditionChanged(condition)
     }
 
     private fun removeLocationCondition() {
-        placeCondition = null
         TransitionManager.beginDelayedTransition(locationLayout)
         locationDelete.visibility = View.GONE
         locationSummary.visibility = View.GONE
         locationSummary.text = null
         locationTitle.setText(R.string.location_condition_add_title)
-        notifyConditionRemoved(Condition.Type.PLACE)
     }
 
-    private fun showTimeCondition(condition: TimeCondition, notify: Boolean = true) {
-        timeCondition = condition
+    private fun showTimeCondition(condition: TimeCondition) {
         TransitionManager.beginDelayedTransition(timeLayout)
         timeSummary.visibility = View.VISIBLE
         timeSummary.text = getString(R.string.time_condition_summary,
-                ConditionUtils.daysToString(context, timeCondition),
+                ConditionUtils.daysToString(context, condition),
                 Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
                 Utils.formatTime(condition.endTime.hour, condition.endTime.minute))
         timeDelete.visibility = View.VISIBLE
-        if (notify)
-            notifyConditionChanged(condition)
     }
 
     private fun removeTimeCondition() {
-        timeCondition = null
         TransitionManager.beginDelayedTransition(timeLayout)
         timeDelete.visibility = View.GONE
         timeSummary.visibility = View.GONE
         timeSummary.text = null
         timeTitle.setText(R.string.time_condition_add_title)
-        notifyConditionRemoved(Condition.Type.TIME)
     }
 
-    private fun showWifiCondition(condition: WifiCondition, notify: Boolean) {
-        wifiCondition = condition
+    private fun showWifiCondition(condition: WifiCondition) {
         TransitionManager.beginDelayedTransition(wifiLayout)
         val wifiList = arrayOfNulls<CharSequence>(condition.wifiList.size)
         for (i in wifiList.indices) wifiList[i] = condition.wifiList[i].ssid
@@ -291,71 +246,46 @@ class ConditionsFragment : androidx.fragment.app.Fragment(), View.OnClickListene
         wifiDelete.visibility = View.VISIBLE
         wifiTitle.setText(R.string.wifi_condition_title)
         wifiDelete.visibility = View.VISIBLE
-        if (notify)
-            notifyConditionChanged(condition)
     }
 
     private fun removeWifiCondition() {
-        wifiCondition = null
         TransitionManager.beginDelayedTransition(wifiLayout)
         wifiDelete.visibility = View.GONE
         wifiSummary.visibility = View.GONE
         wifiSummary.text = null
         wifiTitle.setText(R.string.wifi_condition_add_title)
-        notifyConditionRemoved(Condition.Type.WIFI)
     }
 
-    private fun showPowerCondition(condition: PowerCondition, notify: Boolean) {
-        powerCondition = condition
+    private fun showPowerCondition(condition: PowerCondition) {
         TransitionManager.beginDelayedTransition(powerLayout)
         powerTitle.setText(R.string.power_condition_title)
         powerSummary.setText(if (condition.powerConnected) R.string.power_connected else R.string.power_disconnected)
         powerSummary.visibility = View.VISIBLE
         powerDelete.visibility = View.VISIBLE
         powerDelete.visibility = View.VISIBLE
-        if (notify)
-            notifyConditionChanged(condition)
     }
 
     private fun removePowerCondition() {
-        powerCondition = null
         TransitionManager.beginDelayedTransition(locationLayout)
         powerTitle.setText(R.string.power_condition_add_title)
         powerDelete.visibility = View.GONE
         powerSummary.visibility = View.GONE
         powerSummary.text = null
-        notifyConditionRemoved(Condition.Type.POWER)
     }
 
     private fun showPowerConditionDialog() {
+        val powerCondition = viewModel.getPowerCondition().value
         val items = resources.getStringArray(R.array.power_state)
         var selectedItem = -1
         if (powerCondition != null)
-            selectedItem = if (powerCondition != null && powerCondition!!.powerConnected) 0 else 1
-        val builder = AlertDialog.Builder(context!!)
+            selectedItem = if (powerCondition.powerConnected) 0 else 1
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(R.string.power_condition_title)
                 .setSingleChoiceItems(items, selectedItem) { dialog, which ->
-                    showPowerCondition(PowerCondition(which == 0), true)
+                    viewModel.setPowerCondition(PowerCondition(which == 0))
                     dialog.dismiss()
                 }
                 .create().show()
-    }
-
-    private fun notifyConditionRemoved(type: Condition.Type) {
-        if (conditionChangeListener != null)
-            conditionChangeListener!!.onConditionRemoved(type)
-    }
-
-    private fun notifyConditionChanged(condition: Condition) {
-        if (conditionChangeListener != null)
-            conditionChangeListener!!.onConditionChanged(condition)
-    }
-
-    interface ConditionChangeListener {
-
-        fun onConditionChanged(condition: Condition)
-
-        fun onConditionRemoved(type: Condition.Type)
     }
 
     companion object {

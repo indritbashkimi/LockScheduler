@@ -2,6 +2,7 @@ package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
 import androidx.collection.ArrayMap
+import androidx.lifecycle.MutableLiveData
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -22,6 +23,8 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     private val priorities: List<Condition.Type> = listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     var isCacheDirty = true
+
+    var lastUpdateLiveData = MutableLiveData<Long>()
 
     val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
 
@@ -59,6 +62,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         if (profile.isActive()) {
             notifyProfileStateChanged(profile)
         }
+        notifyChanged()
     }
 
     private fun register(profile: Profile, condition: Condition): Boolean {
@@ -100,6 +104,10 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         isCacheDirty = false
     }
 
+    private fun notifyChanged() {
+        lastUpdateLiveData.postValue(System.currentTimeMillis())
+    }
+
     @Synchronized
     override fun update(profile: Profile) {
         val oldProfile = get(profile.id) ?:
@@ -133,6 +141,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         cachedProfiles[profile.id] = profile
         if (profile.isActive() != wasActive)
             notifyProfileStateChanged(profile)
+        notifyChanged()
     }
 
     @Synchronized
@@ -149,6 +158,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         repository.deleteProfile(id)
         cachedProfiles.remove(id)
         repository.endTransaction()
+        notifyChanged()
     }
 
     @Synchronized
@@ -163,6 +173,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         repository.deleteConditions()
         cachedProfiles.clear()
         repository.endTransaction()
+        notifyChanged()
     }
 
     @Synchronized

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'androidx.navigation.safeargs'
 
 android {
     compileSdkVersion versions.android.compileSdk
@@ -68,7 +69,7 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:3.0.0-rc1'
     implementation 'com.afollestad.material-dialogs:input:3.0.0-rc1'
     implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.wdullaer:materialdatetimepicker:4.2.0'
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.1'
     testImplementation deps.test.junit
     testImplementation 'org.mockito:mockito-core:2.19.0'
     // ViewModel and LiveData
@@ -83,7 +84,7 @@ dependencies {
     implementation deps.androidx.paging.runtime
     implementation deps.navigation.fragmentktx
     implementation deps.navigation.uiktx
-
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01'
 }
 
 // ADD THIS AT THE BOTTOM

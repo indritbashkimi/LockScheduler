@@ -11,15 +11,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateVMFactory
+import androidx.lifecycle.ViewModelProviders
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.Actions
+import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
 
 class ActionsFragment : Fragment() {
-    private var lockType = LockAction.LockType.UNCHANGED
 
-    private var input: String? = null
+    private lateinit var viewModel: AddEditProfileViewModel
 
     private val sharedPreferences: SharedPreferences by lazy {
         requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -31,30 +34,21 @@ class ActionsFragment : Fragment() {
 
     private var isEnter = false
 
-    fun setData(actions: Actions) {
-        val action: LockAction = actions.lockAction!!
-        lockType = action.lockMode.lockType
-        input = when(action.lockMode) {
-            is LockAction.LockMode.Pin -> action.lockMode.input
-            is LockAction.LockMode.Password -> action.lockMode.input
-            else -> null
-        }
-    }
-
-    fun assembleData(): Actions {
-        return Actions.Builder().apply {
-            lockAction = LockAction(when (lockType) {
-                LockAction.LockType.PIN -> LockAction.LockMode.Pin(input!!)
-                LockAction.LockType.PASSWORD -> LockAction.LockMode.Password(input!!)
-                LockAction.LockType.SWIPE -> LockAction.LockMode.Swipe
-                LockAction.LockType.UNCHANGED -> LockAction.LockMode.Unchanged
-            })
-        }.build()
-    }
-
     private lateinit var lockSummary: TextView
 
     private lateinit var lockSettings: View
+
+    private val lockActionLiveData: MutableLiveData<LockAction>
+        get() {
+            return (if (isEnter) viewModel.getWhenActiveLockAction() else viewModel.getWhenInactiveLockAction())
+        }
+
+    private fun setLockAction(lockAction: LockAction) {
+        if (isEnter)
+            viewModel.setWhenActiveLockAction(lockAction)
+        else
+            viewModel.setWhenInactiveLockAction(lockAction)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,24 +59,24 @@ class ActionsFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_actions, container, false) as ViewGroup
         lockSummary = rootView.findViewById(R.id.lockSummary)
         lockSettings = rootView.findViewById(R.id.lockSettings)
-        if (savedInstanceState != null) {
-            val savedLockType = savedInstanceState.getString("enter_lock_type", LockAction.LockType.UNCHANGED.value)!!
-            lockType = LockAction.LockType.valueOf(savedLockType)
-            input = savedInstanceState.getString("enter_input")
-        }
         val titleView: TextView = rootView.findViewById(R.id.title)
         titleView.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
         lockSettings.setOnClickListener {
-            showPasswordDialog(lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
+            showPasswordDialog(lockActionLiveData.value!!.lockMode.lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
         }
-        updateSummary()
+
+        viewModel = ViewModelProviders.of(requireParentFragment(), SavedStateVMFactory(requireParentFragment()))
+                .get(AddEditProfileViewModel::class.java)
+        lockActionLiveData.observe(viewLifecycleOwner, Observer {
+            updateSummary(it)
+        })
+
         return rootView
     }
 
     private fun onLockTypeSelected(lockType: LockAction.LockType) {
         if (lockType == LockAction.LockType.UNCHANGED) {
-            this.lockType = LockAction.LockType.UNCHANGED
-            updateSummary()
+            setLockAction(LockAction(LockAction.LockMode.Unchanged))
         } else {
             checkAdminPermission(
                     onGranted = {
@@ -90,8 +84,7 @@ class ActionsFragment : Fragment() {
                             LockAction.LockType.PIN -> showPinChooser(REQUEST_PIN)
                             LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_PASSWORD)
                             LockAction.LockType.SWIPE -> {
-                                this.lockType = LockAction.LockType.SWIPE
-                                updateSummary()
+                                setLockAction(LockAction(LockAction.LockMode.Swipe))
                             }
                             else -> throw IllegalStateException("Unknown lock type $lockType.")
                         }
@@ -111,31 +104,21 @@ class ActionsFragment : Fragment() {
         }
     }
 
-    private fun updateSummary() {
-        lockSummary.setText(lockTypeToTextRes(lockType))
+    private fun updateSummary(lockAction: LockAction) {
+        lockSummary.setText(lockTypeToTextRes(lockAction.lockMode.lockType))
     }
 
     private fun onAdminPermissionDenied() {
         Toast.makeText(context, "Admin permission denied", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("enter_lock_type", lockType.value)
-        outState.putString("enter_input", input)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQUEST_PIN -> if (resultCode == Activity.RESULT_OK) {
-                lockType = LockAction.LockType.PIN
-                input = data!!.getStringExtra("input")
-                updateSummary()
+                setLockAction(LockAction(LockAction.LockMode.Pin(data!!.getStringExtra("input")!!)))
             }
             REQUEST_PASSWORD -> if (resultCode == Activity.RESULT_OK) {
-                lockType = LockAction.LockType.PASSWORD
-                input = data!!.getStringExtra("input")
-                updateSummary()
+                setLockAction(LockAction(LockAction.LockMode.Password(data!!.getStringExtra("input")!!)))
             }
             REQUEST_ADMIN_PERMISSION -> handleAdminPermissionResult(
                     resultCode = resultCode,

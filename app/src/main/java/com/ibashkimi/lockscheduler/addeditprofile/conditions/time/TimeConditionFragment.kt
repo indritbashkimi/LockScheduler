@@ -2,14 +2,16 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.time
 
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
@@ -17,10 +19,6 @@ import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.util.ConditionUtils
 import com.ibashkimi.lockscheduler.util.Utils
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 
 
 class TimeConditionFragment : Fragment() {
@@ -30,8 +28,6 @@ class TimeConditionFragment : Fragment() {
     private var startTimeSummary: TextView? = null
 
     private var endTimeSummary: TextView? = null
-
-    private var condition: TimeCondition? = null
 
     private var days: DaysOfWeek? = null
 
