@@ -4,8 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.media.RingtoneManager
-import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputType
@@ -101,25 +100,24 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            "notifications_ringtone" -> {
-                val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
-                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
-                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
-                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, Settings.System.DEFAULT_NOTIFICATION_URI)
-                val existingValue = ringtonePreferenceValue
-                if (existingValue != null) {
-                    if (existingValue.isEmpty()) {
-                        // Select "Silent"
-                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, null as Uri?)
-                    } else {
-                        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(existingValue))
+            "notifications" -> {
+                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+                        putExtra(Settings.EXTRA_CHANNEL_ID, PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID)
                     }
                 } else {
-                    // No ringtone has been selected, set to the default
-                    intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Settings.System.DEFAULT_NOTIFICATION_URI)
+                    val intent = Intent()
+                    intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+
+                    //for Android 5-7
+                    intent.putExtra("app_package", requireContext().packageName)
+                    intent.putExtra("app_uid", requireContext().applicationInfo.uid)
+
+                    // for Android 8 and above
+                    //intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName())
                 }
-                startActivityForResult(intent, REQUEST_CODE_ALERT_RINGTONE)
+                startActivity(intent)
                 return true
             }
             "theme" -> {
@@ -194,12 +192,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            REQUEST_CODE_ALERT_RINGTONE -> {
-                if (data != null) {
-                    val ringtone = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
-                    ringtonePreferenceValue = ringtone?.toString() ?: ""
-                }
-            }
             REQUEST_CODE_PIN -> if (resultCode == Activity.RESULT_OK) {
                 AppPreferencesHelper.lockAtBoot = LockAction.LockType.PIN
                 AppPreferencesHelper.lockAtBootInput = data!!.getStringExtra("input")!!
@@ -217,17 +209,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                         when (lockTypeIfGranted) {
                             LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PASSWORD)
                             LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PIN)
-                            else -> {} // do nothing
+                            else -> {
+                            } // do nothing
                         }
                     },
                     onDenied = { onAdminPermissionDenied() })
         }
     }
-
-    private var ringtonePreferenceValue: String?
-        get() = getStringPreference("notifications_ringtone", "")
-        set(ringtone) = setPreference("notifications_ringtone", ringtone!!, false)
-
 
     private fun setPreference(key: String, value: String, updateSummary: Boolean = false) {
         preferenceManager.sharedPreferences.edit().putString(key, value).apply()
@@ -254,7 +242,6 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     companion object {
-        private const val REQUEST_CODE_ALERT_RINGTONE = 0
         private const val REQUEST_CODE_PIN = 1
         private const val REQUEST_CODE_PASSWORD = 2
         private const val REQUEST_CODE_ADMIN_PERMISSION = 3

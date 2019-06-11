@@ -5,8 +5,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
+
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
@@ -15,6 +14,7 @@ import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.model.ProfileManager;
 import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.MainActivity;
+import com.ibashkimi.lockscheduler.util.NotificationUtilsKt;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -52,19 +52,12 @@ public class TransitionsIntentService extends IntentService {
     }
 
     private void sendNotification(String title, String content, int notificationId) {
-        boolean vibrate = AppPreferencesHelper.INSTANCE.isVibrateActive();
-        String ringtone = AppPreferencesHelper.INSTANCE.getNotificationsRingtone();
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
+                new NotificationCompat.Builder(this, NotificationUtilsKt.PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_notif)
                         .setContentTitle(title)
-                        .setContentText(content)
-                        .setSound(alarmSound);
+                        .setContentText(content);
 
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -72,11 +65,10 @@ public class TransitionsIntentService extends IntentService {
         mBuilder.setContentIntent(intent);
         Notification notification = mBuilder.build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notification.defaults |= Notification.DEFAULT_LIGHTS;
-        if (vibrate)
-            notification.defaults |= Notification.DEFAULT_VIBRATE;
-        notification.sound = Uri.parse(ringtone);
 
+        // Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotifyMgr.notify(notificationId, notification);
     }
 }

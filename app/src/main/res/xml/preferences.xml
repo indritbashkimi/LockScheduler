@@ -53,23 +53,10 @@
 
     <androidx.preference.PreferenceCategory android:title="@string/pref_notifications">
 
-        <androidx.preference.SwitchPreferenceCompat
-            android:defaultValue="true"
-            android:key="notifications_show"
-            android:title="@string/pref_title_show_notifications" />
-
         <androidx.preference.Preference
-            android:defaultValue="content://settings/system/notification_sound"
-            android:dependency="notifications_show"
-            android:key="notifications_ringtone"
-            android:ringtoneType="notification"
-            android:title="@string/pref_title_ringtone" />
-
-        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
-            android:dependency="notifications_show"
-            android:key="notifications_vibrate"
-            android:title="@string/pref_title_vibrate" />
+            android:key="notifications"
+            android:title="@string/pref_notifications" />
 
     </androidx.preference.PreferenceCategory>
 

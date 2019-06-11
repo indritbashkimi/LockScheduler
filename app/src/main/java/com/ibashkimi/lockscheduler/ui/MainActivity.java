@@ -1,8 +1,10 @@
 package com.ibashkimi.lockscheduler.ui;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.util.NotificationUtilsKt;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -22,11 +24,11 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*SharedPreferences prefs = getPreferences();
+        SharedPreferences prefs = getPreferences();
         if (prefs.getBoolean("first_run", true)) {
-            startActivity(new Intent(this, IntroActivity.class));
+            NotificationUtilsKt.createNotificationChannels(this);
             prefs.edit().putBoolean("first_run", false).apply();
-        }*/
+        }
         // TODO: 7/12/18
 
         setContentView(R.layout.activity_profiles);
