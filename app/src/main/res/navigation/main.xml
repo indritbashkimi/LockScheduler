@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_profiles">
         <action
             android:id="@+id/action_profiles_to_add_edit_profile"
-            app:destination="@id/add_edit_profile" />
+            app:destination="@id/add_edit_profile"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_profiles_to_settings"
             app:destination="@id/settings" />
@@ -25,7 +29,8 @@
     </fragment>
     <fragment
         android:id="@+id/add_edit_profile"
-        android:name="com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileFragment">
+        android:name="com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileFragment"
+        tools:layout="@layout/fragment_add_edit_profile">
         <argument
             android:name="profileId"
             app:argType="string"
