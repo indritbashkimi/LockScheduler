@@ -60,7 +60,7 @@ dependencies {
     implementation deps.androidx.browser
     implementation "com.google.android.gms:play-services-analytics:16.0.8"
     implementation deps.playservices.maps
-    implementation deps.playservices.places
+    implementation 'com.google.android.libraries.places:places-compat:1.1.0'
     implementation deps.playservices.location
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines

@@ -45,7 +45,6 @@ def versions = [
         playservices : [
                 auth        : '16.0.1',
                 location    : '16.0.0',
-                places      : '16.0.0',
                 maps        : '16.1.0',
                 mapsutils   : '0.5'
         ],

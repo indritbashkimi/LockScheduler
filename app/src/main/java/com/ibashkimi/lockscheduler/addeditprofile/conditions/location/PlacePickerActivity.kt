@@ -20,12 +20,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
-import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.compat.ui.PlaceAutocomplete
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
