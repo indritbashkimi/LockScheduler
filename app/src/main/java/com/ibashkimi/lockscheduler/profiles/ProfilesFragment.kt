@@ -5,8 +5,8 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.databinding.FragmentProfilesBinding
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.util.PlatformUtils
 import java.util.*
@@ -23,17 +24,13 @@ import java.util.*
  */
 class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
-    private lateinit var rootView: ViewGroup
+    private lateinit var binding: FragmentProfilesBinding
 
-    private lateinit var recyclerView: RecyclerView
-
-    private lateinit var noTasksView: View
+    private val viewModel: ProfilesViewModel by viewModels()
 
     private lateinit var adapter: ProfileAdapter
 
     private var actionMode: ActionMode? = null
-
-    private lateinit var viewModel: ProfilesViewModel
 
     private val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
         override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -85,10 +82,7 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_profiles, container, false)
-        this.rootView = rootView.findViewById(R.id.root)
-        recyclerView = rootView.findViewById(R.id.recyclerView)
-        noTasksView = rootView.findViewById(R.id.no_profiles)
+        binding = FragmentProfilesBinding.inflate(inflater, container, false)
 
         val layoutManager: RecyclerView.LayoutManager
         val columnCount = resources.getInteger(R.integer.profiles_column_count)
@@ -97,14 +91,13 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         else
             layoutManager = GridLayoutManager(context, columnCount)
 
-        recyclerView.layoutManager = layoutManager
+        binding.recyclerView.layoutManager = layoutManager
         adapter = ProfileAdapter(ArrayList(0), R.layout.item_profile, this)
-        recyclerView.adapter = adapter
-        itemTouchHelper.attachToRecyclerView(recyclerView)
+        binding.recyclerView.adapter = adapter
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
-        rootView.findViewById<View>(R.id.fab).setOnClickListener { showAddProfile() }
+        binding.fab.setOnClickListener { showAddProfile() }
 
-        viewModel = ViewModelProviders.of(this).get(ProfilesViewModel::class.java)
         viewModel.profilesLiveData.observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()) {
                 showNoProfiles()
@@ -113,7 +106,7 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
             }
         })
 
-        return rootView
+        return binding.root
     }
 
     /**
@@ -142,8 +135,8 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
     private fun showProfiles(profiles: List<Profile>) {
         adapter.setData(profiles)
 
-        recyclerView.visibility = View.VISIBLE
-        noTasksView.visibility = View.GONE
+        binding.recyclerView.visibility = View.VISIBLE
+        binding.noProfiles.visibility = View.GONE
     }
 
     private fun showAddProfile() {
@@ -161,8 +154,8 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
     }*/
 
     private fun showNoProfiles() {
-        recyclerView.visibility = View.GONE
-        noTasksView.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
+        binding.noProfiles.visibility = View.VISIBLE
     }
 
     override fun onProfileClick(position: Int) {

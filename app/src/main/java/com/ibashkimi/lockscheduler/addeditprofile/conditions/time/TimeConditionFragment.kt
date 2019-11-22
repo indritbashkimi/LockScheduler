@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.databinding.FragmentConditionTimeBinding
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
@@ -23,11 +23,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 
 class TimeConditionFragment : Fragment() {
 
-    private var daysSummary: TextView? = null
-
-    private var startTimeSummary: TextView? = null
-
-    private var endTimeSummary: TextView? = null
+    private lateinit var binding: FragmentConditionTimeBinding
 
     private var days: DaysOfWeek? = null
 
@@ -47,13 +43,11 @@ class TimeConditionFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_condition_time, container, false) as ViewGroup
-        daysSummary = root.findViewById(R.id.days_summary)
-        startTimeSummary = root.findViewById(R.id.start_time_summary)
-        endTimeSummary = root.findViewById(R.id.end_time_summary)
-        root.findViewById<View>(R.id.days).setOnClickListener { showWeekDays() }
-        root.findViewById<View>(R.id.start_time).setOnClickListener { showStartTimePicker() }
-        root.findViewById<View>(R.id.end_time).setOnClickListener { showEndTimePicker() }
+        binding = FragmentConditionTimeBinding.inflate(inflater, container, false)
+
+        binding.days.setOnClickListener { showWeekDays() }
+        binding.startTime.setOnClickListener { showStartTimePicker() }
+        binding.endTime.setOnClickListener { showEndTimePicker() }
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("start_time_hour"))
@@ -76,12 +70,12 @@ class TimeConditionFragment : Fragment() {
             }
         }
         val timeCondition = TimeCondition(days!!, startTime!!, endTime!!, false)
-        daysSummary!!.text = ConditionUtils.daysToString(context, timeCondition)
-        startTimeSummary!!.text = Utils.formatTime(startTime!!.hour, startTime!!.minute)
-        endTimeSummary!!.text = Utils.formatTime(endTime!!.hour, endTime!!.minute)
+        binding.daysSummary.text = ConditionUtils.daysToString(context, timeCondition)
+        binding.startTimeSummary.text = Utils.formatTime(startTime!!.hour, startTime!!.minute)
+        binding.endTimeSummary.text = Utils.formatTime(endTime!!.hour, endTime!!.minute)
 
 
-        return root
+        return binding.root
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -108,7 +102,7 @@ class TimeConditionFragment : Fragment() {
     private fun onDaysSelected(days: DaysOfWeek) {
         this.days = days.createCopy()
         val timeCondition = TimeCondition(days, Time(0, 0), Time(0, 0), false)
-        daysSummary!!.text = ConditionUtils.daysToString(context, timeCondition)
+        binding.daysSummary.text = ConditionUtils.daysToString(context, timeCondition)
     }
 
     private fun showStartTimePicker() {
@@ -118,7 +112,7 @@ class TimeConditionFragment : Fragment() {
                 showIntervalError()
                 return@OnTimeSetListener
             }
-            startTimeSummary!!.text = Utils.formatTime(hourOfDay, minute)
+            binding.startTimeSummary.text = Utils.formatTime(hourOfDay, minute)
             startTime = Time(hourOfDay, minute)
         })
     }
@@ -134,7 +128,7 @@ class TimeConditionFragment : Fragment() {
                 showIntervalError()
                 return@OnTimeSetListener
             }
-            endTimeSummary!!.text = Utils.formatTime(hourOfDay, minute)
+            binding.endTimeSummary.text = Utils.formatTime(hourOfDay, minute)
             endTime = time
         })
     }

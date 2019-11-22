@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -18,10 +17,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
+import com.ibashkimi.lockscheduler.databinding.FragmentActionsBinding
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
 
 class ActionsFragment : Fragment() {
+
+    private lateinit var binding: FragmentActionsBinding
 
     private lateinit var viewModel: AddEditProfileViewModel
 
@@ -34,10 +36,6 @@ class ActionsFragment : Fragment() {
         set(value) = sharedPreferences.edit().putString("lock_if_granted", value).apply()
 
     private var isEnter = false
-
-    private lateinit var lockSummary: TextView
-
-    private lateinit var lockSettings: View
 
     private val lockActionLiveData: MutableLiveData<LockAction>
         get() {
@@ -57,12 +55,10 @@ class ActionsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_actions, container, false) as ViewGroup
-        lockSummary = rootView.findViewById(R.id.lockSummary)
-        lockSettings = rootView.findViewById(R.id.lockSettings)
-        val titleView: TextView = rootView.findViewById(R.id.title)
-        titleView.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
-        lockSettings.setOnClickListener {
+        binding = FragmentActionsBinding.inflate(inflater, container, false)
+
+        binding.title.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
+        binding.lockSettings.setOnClickListener {
             showPasswordDialog(lockActionLiveData.value!!.lockMode.lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
         }
 
@@ -72,7 +68,7 @@ class ActionsFragment : Fragment() {
             updateSummary(it)
         })
 
-        return rootView
+        return binding.root
     }
 
     private fun onLockTypeSelected(lockType: LockAction.LockType) {
@@ -106,7 +102,7 @@ class ActionsFragment : Fragment() {
     }
 
     private fun updateSummary(lockAction: LockAction) {
-        lockSummary.setText(lockTypeToTextRes(lockAction.lockMode.lockType))
+        binding.lockSummary.setText(lockTypeToTextRes(lockAction.lockMode.lockType))
     }
 
     private fun onAdminPermissionDenied() {

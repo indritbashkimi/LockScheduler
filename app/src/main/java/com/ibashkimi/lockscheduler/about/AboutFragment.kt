@@ -11,19 +11,18 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation.findNavController
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.databinding.FragmentAboutBinding
 import com.ibashkimi.lockscheduler.util.PlatformUtils
 
 class AboutFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_about, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.findViewById<View>(R.id.help).setOnClickListener(this)
-        view.findViewById<View>(R.id.feedback).setOnClickListener(this)
-        view.findViewById<View>(R.id.privacy_policy).setOnClickListener(this)
-        view.findViewById<View>(R.id.licenses).setOnClickListener(this)
+        return FragmentAboutBinding.inflate(inflater, container, false).apply {
+            help.setOnClickListener(this@AboutFragment)
+            feedback.setOnClickListener(this@AboutFragment)
+            privacyPolicy.setOnClickListener(this@AboutFragment)
+            licenses.setOnClickListener(this@AboutFragment)
+        }.root
     }
 
     override fun onClick(v: View) {

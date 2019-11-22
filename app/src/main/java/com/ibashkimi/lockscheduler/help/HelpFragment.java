@@ -1,6 +1,9 @@
 package com.ibashkimi.lockscheduler.help;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,12 +11,10 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.databinding.FragmentHelpBinding;
+import com.ibashkimi.lockscheduler.databinding.ItemHelpBinding;
 import com.ibashkimi.lockscheduler.util.PlatformUtils;
 
 
@@ -37,16 +38,15 @@ public class HelpFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_help, container, false);
+        FragmentHelpBinding binding = FragmentHelpBinding.inflate(inflater, container, false);
 
-        rootView.findViewById(R.id.feedback).setOnClickListener(v -> PlatformUtils.sendFeedback(requireContext()));
-        rootView.findViewById(R.id.uninstall).setOnClickListener(v -> PlatformUtils.uninstall(HelpFragment.this.getContext()));
+        binding.feedback.setOnClickListener(v -> PlatformUtils.sendFeedback(requireActivity()));
+        binding.uninstall.setOnClickListener(v -> PlatformUtils.uninstall(requireActivity()));
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(adapter);
-        return rootView;
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        binding.recyclerView.setNestedScrollingEnabled(false);
+        binding.recyclerView.setAdapter(adapter);
+        return binding.getRoot();
     }
 
     private static class HelpItem {
@@ -72,16 +72,14 @@ public class HelpFragment extends Fragment {
         @NonNull
         @Override
         public HelpViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.
-                    from(parent.getContext()).
-                    inflate(R.layout.item_help, parent, false);
-            return new HelpViewHolder(itemView);
+            return new HelpViewHolder(ItemHelpBinding
+                    .inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull HelpAdapter.HelpViewHolder holder, int position) {
-            holder.title.setText(items[position].title);
-            holder.content.setText(items[position].content);
+            holder.binding.title.setText(items[position].title);
+            holder.binding.content.setText(items[position].content);
         }
 
         @Override
@@ -91,13 +89,11 @@ public class HelpFragment extends Fragment {
 
 
         static class HelpViewHolder extends RecyclerView.ViewHolder {
-            TextView title;
-            TextView content;
+            ItemHelpBinding binding;
 
-            HelpViewHolder(View itemView) {
-                super(itemView);
-                title = itemView.findViewById(R.id.help_title);
-                content = itemView.findViewById(R.id.help_content);
+            HelpViewHolder(ItemHelpBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }

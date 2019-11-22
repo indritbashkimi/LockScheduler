@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.SavedStateViewModelFactory
@@ -20,7 +19,7 @@ import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.location.PlacePickerActivity
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.time.TimePickerActivity
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.WifiPickerActivity
-import com.ibashkimi.lockscheduler.extention.bindView
+import com.ibashkimi.lockscheduler.databinding.FragmentConditionsBinding
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -31,40 +30,25 @@ import java.util.*
 
 
 class ConditionsFragment : Fragment(), View.OnClickListener {
-    private val locationLayout: ViewGroup by bindView(R.id.locationLayout)
-    private val locationTitle: TextView by bindView(R.id.location_title)
-    private val locationDelete: View by bindView(R.id.locationDelete)
-    private val locationSummary: TextView by bindView(R.id.location_summary)
-    private val timeLayout: ViewGroup by bindView(R.id.timeLayout)
-    private val timeTitle: TextView by bindView(R.id.time_title)
-    private val timeDelete: View by bindView(R.id.timeDelete)
-    private val timeSummary: TextView by bindView(R.id.time_summary)
-    private val wifiLayout: ViewGroup by bindView(R.id.wifiLayout)
-    private val wifiTitle: TextView by bindView(R.id.wifi_title)
-    private val wifiDelete: View by bindView(R.id.wifiDelete)
-    private val wifiSummary: TextView by bindView(R.id.wifi_summary)
-    private val powerLayout: ViewGroup by bindView(R.id.powerLayout)
-    private val powerTitle: TextView by bindView(R.id.powerTitle)
-    private val powerDelete: View by bindView(R.id.powerDelete)
-    private val powerSummary: TextView by bindView(R.id.power_summary)
 
-    //private lateinit var binding: ConditionsFragment
+    private lateinit var binding: FragmentConditionsBinding
+
     private lateinit var viewModel: AddEditProfileViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        return inflater.inflate(R.layout.fragment_conditions, container, false)
+        binding = FragmentConditionsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        locationLayout.setOnClickListener(this)
-        locationDelete.setOnClickListener(this)
-        powerLayout.setOnClickListener(this)
-        powerDelete.setOnClickListener(this)
-        timeLayout.setOnClickListener(this)
-        timeDelete.setOnClickListener(this)
-        wifiLayout.setOnClickListener(this)
-        wifiDelete.setOnClickListener(this)
+        binding.locationLayout.setOnClickListener(this)
+        binding.locationDelete.setOnClickListener(this)
+        binding.powerLayout.setOnClickListener(this)
+        binding.powerDelete.setOnClickListener(this)
+        binding.timeLayout.setOnClickListener(this)
+        binding.timeDelete.setOnClickListener(this)
+        binding.wifiLayout.setOnClickListener(this)
+        binding.wifiDelete.setOnClickListener(this)
 
         viewModel = ViewModelProvider(requireParentFragment(), SavedStateViewModelFactory(App.getInstance(), requireParentFragment()))
                 .get(AddEditProfileViewModel::class.java)
@@ -207,73 +191,89 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
     }
 
     private fun showLocationCondition(condition: PlaceCondition) {
-        TransitionManager.beginDelayedTransition(locationLayout)
-        locationTitle.setText(R.string.location_condition_title)
-        locationSummary.visibility = View.VISIBLE
-        locationSummary.text = getString(R.string.location_summary, condition.address, condition.radius)
-        locationDelete.visibility = View.VISIBLE
+        binding.apply {
+            TransitionManager.beginDelayedTransition(locationLayout)
+            locationTitle.setText(R.string.location_condition_title)
+            locationSummary.visibility = View.VISIBLE
+            locationSummary.text = getString(R.string.location_summary, condition.address, condition.radius)
+            locationDelete.visibility = View.VISIBLE
+        }
     }
 
     private fun removeLocationCondition() {
-        TransitionManager.beginDelayedTransition(locationLayout)
-        locationDelete.visibility = View.GONE
-        locationSummary.visibility = View.GONE
-        locationSummary.text = null
-        locationTitle.setText(R.string.location_condition_add_title)
+        binding.apply {
+            TransitionManager.beginDelayedTransition(locationLayout)
+            locationDelete.visibility = View.GONE
+            locationSummary.visibility = View.GONE
+            locationSummary.text = null
+            locationTitle.setText(R.string.location_condition_add_title)
+        }
     }
 
     private fun showTimeCondition(condition: TimeCondition) {
-        TransitionManager.beginDelayedTransition(timeLayout)
-        timeSummary.visibility = View.VISIBLE
-        timeSummary.text = getString(R.string.time_condition_summary,
-                ConditionUtils.daysToString(context, condition),
-                Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
-                Utils.formatTime(condition.endTime.hour, condition.endTime.minute))
-        timeDelete.visibility = View.VISIBLE
+        binding.apply {
+            TransitionManager.beginDelayedTransition(timeLayout)
+            timeSummary.visibility = View.VISIBLE
+            timeSummary.text = getString(R.string.time_condition_summary,
+                    ConditionUtils.daysToString(context, condition),
+                    Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
+                    Utils.formatTime(condition.endTime.hour, condition.endTime.minute))
+            timeDelete.visibility = View.VISIBLE
+        }
     }
 
     private fun removeTimeCondition() {
-        TransitionManager.beginDelayedTransition(timeLayout)
-        timeDelete.visibility = View.GONE
-        timeSummary.visibility = View.GONE
-        timeSummary.text = null
-        timeTitle.setText(R.string.time_condition_add_title)
+        binding.apply {
+            TransitionManager.beginDelayedTransition(timeLayout)
+            timeDelete.visibility = View.GONE
+            timeSummary.visibility = View.GONE
+            timeSummary.text = null
+            timeTitle.setText(R.string.time_condition_add_title)
+        }
     }
 
     private fun showWifiCondition(condition: WifiCondition) {
-        TransitionManager.beginDelayedTransition(wifiLayout)
-        val wifiList = arrayOfNulls<CharSequence>(condition.wifiList.size)
-        for (i in wifiList.indices) wifiList[i] = condition.wifiList[i].ssid
-        wifiSummary.text = ConditionUtils.concatenate(wifiList, ", ")
-        wifiSummary.visibility = View.VISIBLE
-        wifiDelete.visibility = View.VISIBLE
-        wifiTitle.setText(R.string.wifi_condition_title)
-        wifiDelete.visibility = View.VISIBLE
+        binding.apply {
+            TransitionManager.beginDelayedTransition(wifiLayout)
+            val wifiList = arrayOfNulls<CharSequence>(condition.wifiList.size)
+            for (i in wifiList.indices) wifiList[i] = condition.wifiList[i].ssid
+            wifiSummary.text = ConditionUtils.concatenate(wifiList, ", ")
+            wifiSummary.visibility = View.VISIBLE
+            wifiDelete.visibility = View.VISIBLE
+            wifiTitle.setText(R.string.wifi_condition_title)
+            wifiDelete.visibility = View.VISIBLE
+        }
     }
 
     private fun removeWifiCondition() {
-        TransitionManager.beginDelayedTransition(wifiLayout)
-        wifiDelete.visibility = View.GONE
-        wifiSummary.visibility = View.GONE
-        wifiSummary.text = null
-        wifiTitle.setText(R.string.wifi_condition_add_title)
+        binding.apply {
+            TransitionManager.beginDelayedTransition(wifiLayout)
+            wifiDelete.visibility = View.GONE
+            wifiSummary.visibility = View.GONE
+            wifiSummary.text = null
+            wifiTitle.setText(R.string.wifi_condition_add_title)
+        }
     }
 
     private fun showPowerCondition(condition: PowerCondition) {
-        TransitionManager.beginDelayedTransition(powerLayout)
-        powerTitle.setText(R.string.power_condition_title)
-        powerSummary.setText(if (condition.powerConnected) R.string.power_connected else R.string.power_disconnected)
-        powerSummary.visibility = View.VISIBLE
-        powerDelete.visibility = View.VISIBLE
-        powerDelete.visibility = View.VISIBLE
+        binding.apply {
+            TransitionManager.beginDelayedTransition(powerLayout)
+            powerTitle.setText(R.string.power_condition_title)
+            powerSummary.setText(if (condition.powerConnected) R.string.power_connected else R.string.power_disconnected)
+            powerSummary.visibility = View.VISIBLE
+            powerDelete.visibility = View.VISIBLE
+            powerDelete.visibility = View.VISIBLE
+        }
     }
 
     private fun removePowerCondition() {
-        TransitionManager.beginDelayedTransition(locationLayout)
-        powerTitle.setText(R.string.power_condition_add_title)
-        powerDelete.visibility = View.GONE
-        powerSummary.visibility = View.GONE
-        powerSummary.text = null
+        binding.apply {
+            TransitionManager.beginDelayedTransition(locationLayout)
+            powerTitle.setText(R.string.power_condition_add_title)
+            powerDelete.visibility = View.GONE
+            powerSummary.visibility = View.GONE
+            powerSummary.text = null
+        }
     }
 
     private fun showPowerConditionDialog() {

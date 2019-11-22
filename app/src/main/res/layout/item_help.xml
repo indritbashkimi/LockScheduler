@@ -10,7 +10,7 @@
     android:paddingBottom="8dp">
 
     <TextView
-        android:id="@+id/help_title"
+        android:id="@+id/title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="16sp"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         tools:text="How to uninstall" />
 
     <TextView
-        android:id="@+id/help_content"
+        android:id="@+id/content"
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

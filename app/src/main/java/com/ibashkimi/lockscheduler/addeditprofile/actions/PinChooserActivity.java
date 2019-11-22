@@ -9,29 +9,16 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
-import com.google.android.material.textfield.TextInputLayout;
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.ui.BaseActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.databinding.ActivityPinPassChooserBinding;
+import com.ibashkimi.lockscheduler.ui.BaseActivity;
+
 public class PinChooserActivity extends BaseActivity implements TextWatcher {
-
-    private Toolbar mToolbar;
-
-    private TextView mMessageText;
-
-    private TextInputLayout mInputLayout;
-
-    private EditText mEditText;
-
-    private Button mActionButton;
 
     private String mInput;
 
@@ -39,12 +26,16 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
 
     private String mInputType;
 
+    private ActivityPinPassChooserBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pin_pass_chooser);
 
-        setSupportActionBar(mToolbar);
+        binding = ActivityPinPassChooserBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar);
@@ -53,11 +44,6 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mToolbar = findViewById(R.id.toolbar);
-        mMessageText = findViewById(R.id.message_text);
-        mInputLayout = findViewById(R.id.input_layout);
-        mEditText = findViewById(R.id.editText);
-        mActionButton = findViewById(R.id.actionButton);
         findViewById(R.id.cancel).setOnClickListener(view -> onCancel());
 
         if (savedInstanceState == null) {
@@ -69,7 +55,7 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
             mInputType = savedInstanceState.getString("type");
             mInput = savedInstanceState.getString("input");
             String currInput = savedInstanceState.getString("curr_input");
-            mEditText.setText(currInput);
+            binding.editText.setText(currInput);
             boolean isConfirmState = savedInstanceState.getBoolean("is_confirm_state");
             if (isConfirmState)
                 setConfirmState();
@@ -77,10 +63,10 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
                 setInitialState();
         }
         if (mInputType.equals("pin")) {
-            mEditText.setInputType(InputType.TYPE_CLASS_NUMBER |
+            binding.editText.setInputType(InputType.TYPE_CLASS_NUMBER |
                     InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         } else {
-            mEditText.setInputType(InputType.TYPE_CLASS_TEXT |
+            binding.editText.setInputType(InputType.TYPE_CLASS_TEXT |
                     InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
 
@@ -92,7 +78,7 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
         outState.putInt("min_length", mMinLength);
         outState.putString("type", mInputType);
         outState.putString("input", mInput);
-        outState.putString("curr_input", mEditText.getText().toString());
+        outState.putString("curr_input", binding.editText.getText().toString());
         outState.putBoolean("is_confirm_state", mInput != null);
     }
 
@@ -108,7 +94,7 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        mActionButton.setEnabled(s.length() >= mMinLength);
+        binding.actionButton.setEnabled(s.length() >= mMinLength);
     }
 
     private View.OnClickListener mFirstFabListener = v -> onContinuePressed();
@@ -125,29 +111,29 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
     }
 
     public void onContinuePressed() {
-        mInput = mEditText.getText().toString();
+        mInput = binding.editText.getText().toString();
         setConfirmState();
     }
 
     public void onDonePressed() {
-        if (mEditText.getText().toString().equals(mInput)) {
+        if (binding.editText.getText().toString().equals(mInput)) {
             onSave();
         } else {
-            mInputLayout.setError(getString(R.string.password_mismatch_error));
+            binding.inputLayout.setError(getString(R.string.password_mismatch_error));
         }
     }
 
     private void setInitialState() {
-        mMessageText.setText(getResources().getQuantityString(mInputType.equals("pin") ? R.plurals.pin_digits : R.plurals.password_digits, mMinLength, mMinLength));
-        mActionButton.setEnabled(false);
-        mActionButton.setText(R.string.continue_text);
-        mActionButton.setOnClickListener(mFirstFabListener);
-        mEditText.addTextChangedListener(this);
-        mEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-        mEditText.setOnEditorActionListener((v, actionId, event) -> {
+        binding.messageText.setText(getResources().getQuantityString(mInputType.equals("pin") ? R.plurals.pin_digits : R.plurals.password_digits, mMinLength, mMinLength));
+        binding.actionButton.setEnabled(false);
+        binding.actionButton.setText(R.string.continue_text);
+        binding.actionButton.setOnClickListener(mFirstFabListener);
+        binding.editText.addTextChangedListener(this);
+        binding.editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        binding.editText.setOnEditorActionListener((v, actionId, event) -> {
             switch (actionId) {
                 case EditorInfo.IME_ACTION_NEXT:
-                    if (mEditText.getText().length() >= mMinLength)
+                    if (binding.editText.getText().length() >= mMinLength)
                         onContinuePressed();
                     return true;
                 case EditorInfo.IME_ACTION_DONE:
@@ -159,12 +145,12 @@ public class PinChooserActivity extends BaseActivity implements TextWatcher {
     }
 
     private void setConfirmState() {
-        mEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        mEditText.removeTextChangedListener(this);
-        mEditText.setText("");
-        mActionButton.setOnClickListener(mFinalFabListener);
-        mActionButton.setText(android.R.string.ok);
-        mMessageText.setText(mInputType.equals("pin") ? R.string.confirm_pin : R.string.confirm_password);
+        binding.editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        binding.editText.removeTextChangedListener(this);
+        binding.editText.setText("");
+        binding.actionButton.setOnClickListener(mFinalFabListener);
+        binding.actionButton.setText(android.R.string.ok);
+        binding.messageText.setText(mInputType.equals("pin") ? R.string.confirm_pin : R.string.confirm_password);
     }
 
     public void onCancel() {

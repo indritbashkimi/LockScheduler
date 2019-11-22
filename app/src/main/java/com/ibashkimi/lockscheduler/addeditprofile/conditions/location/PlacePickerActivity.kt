@@ -14,10 +14,7 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.compat.ui.PlaceAutocomplete
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.databinding.ActivityPlacePickerBinding
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.requestPermission
 import com.ibashkimi.lockscheduler.ui.BaseActivity
@@ -39,9 +37,7 @@ import java.util.*
 
 class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
-    private lateinit var mapCoverView: MapCoverView
-    private lateinit var addressView: TextView
-    private lateinit var radiusView: TextView
+    private lateinit var binding: ActivityPlacePickerBinding
 
     private var mapType = GoogleMap.MAP_TYPE_NORMAL
 
@@ -54,10 +50,11 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_place_picker)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        binding = ActivityPlacePickerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         val actionBar = supportActionBar
         if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true)
@@ -90,10 +87,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
             radius = savedInstanceState.getInt("radius")
         }
 
-        addressView = findViewById(R.id.address)
-        radiusView = findViewById(R.id.radius)
-        mapCoverView = findViewById(R.id.mapCover)
-        findViewById<View>(R.id.selectLocationCard).setOnClickListener { onSave() }
+        binding.selectLocationCard.setOnClickListener { onSave() }
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -204,7 +198,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun onMapIdle(googleMap: GoogleMap) {
         val projection = googleMap.projection
-        val cover = mapCoverView
+        val cover = binding.mapCover
         val startPoint = projection.fromScreenLocation(Point((cover.centerX - cover.radius).toInt(), cover.centerY.toInt()))
         val endPoint = projection.fromScreenLocation(Point(cover.centerX.toInt(), cover.centerY.toInt()))
 
@@ -219,8 +213,8 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         center = projection.visibleRegion.latLngBounds.center
         address = center!!.latitude.toString() + " : " + center!!.longitude.toString()
 
-        addressView.text = address
-        radiusView.text = getString(R.string.radius_in_meters, radius)
+        binding.address.text = address
+        binding.radius.text = getString(R.string.radius_in_meters, radius)
 
         updateAddress()
     }
@@ -245,7 +239,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
 
     private fun setAddress(address: CharSequence) {
         this.address = address
-        addressView.text = address
+        binding.address.text = address
     }
 
     private fun onCancel() {
