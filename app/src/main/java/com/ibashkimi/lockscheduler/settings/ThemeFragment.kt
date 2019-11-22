@@ -37,7 +37,7 @@ class ThemeFragment : Fragment(), PremiumThemeAdapter.ThemeSelectedListener {
         root.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerView).apply {
             layoutManager = GridLayoutManager(requireContext(), resources.getInteger(com.ibashkimi.theme.R.integer.theme_columns))
             val theme = baseActivity!!.themePreferences.getTheme(Theme.INDIGO_PINK)
-            themeAdapter = PremiumThemeAdapter(requireContext(), themes, themes.indexOf(theme), { false }, this@ThemeFragment)
+            themeAdapter = PremiumThemeAdapter(themes, themes.indexOf(theme), { false }, this@ThemeFragment)
             adapter = themeAdapter
         }
 

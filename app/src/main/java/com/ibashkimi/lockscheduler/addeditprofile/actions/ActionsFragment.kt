@@ -13,8 +13,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateVMFactory
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
+import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.model.action.LockAction
@@ -65,7 +66,7 @@ class ActionsFragment : Fragment() {
             showPasswordDialog(lockActionLiveData.value!!.lockMode.lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
         }
 
-        viewModel = ViewModelProviders.of(requireParentFragment(), SavedStateVMFactory(requireParentFragment()))
+        viewModel = ViewModelProvider(requireParentFragment(), SavedStateViewModelFactory(App.getInstance(), requireParentFragment()))
                 .get(AddEditProfileViewModel::class.java)
         lockActionLiveData.observe(viewLifecycleOwner, Observer {
             updateSummary(it)

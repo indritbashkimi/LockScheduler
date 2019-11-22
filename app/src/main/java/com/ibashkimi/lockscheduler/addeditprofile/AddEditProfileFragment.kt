@@ -8,11 +8,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.SavedStateVMFactory
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.actions.ActionsFragment
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.ConditionsFragment
@@ -43,7 +43,7 @@ class AddEditProfileFragment : Fragment() {
 
         rootView.findViewById<View>(R.id.fab).setOnClickListener { onSave() }
 
-        viewModel = ViewModelProviders.of(this, SavedStateVMFactory(this))
+        viewModel = ViewModelProvider(this, SavedStateViewModelFactory(App.getInstance(), this))
                 .get(AddEditProfileViewModel::class.java)
 
         if (savedInstanceState == null) {

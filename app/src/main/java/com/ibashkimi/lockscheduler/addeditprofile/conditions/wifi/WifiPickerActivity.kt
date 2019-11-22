@@ -11,7 +11,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
@@ -62,7 +62,7 @@ class WifiPickerActivity : BaseActivity() {
         turnOnWifi = findViewById(R.id.turnOnWifi)
         findViewById<View>(R.id.fab).setOnClickListener { onSave() }
 
-        val viewModel = ViewModelProviders.of(this).get(WifiPickerViewModel::class.java)
+        val viewModel = ViewModelProvider(this).get(WifiPickerViewModel::class.java)
         viewModel.wifiEnabled.observe(this, Observer { isWifiEnabled ->
             if (isWifiEnabled) {
                 showWifiList()

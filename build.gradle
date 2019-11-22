@@ -3,10 +3,11 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0-beta04'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.android.tools.build:gradle:4.0.0-alpha04'
+        classpath 'com.google.gms:google-services:4.3.3'
         classpath deps.kotlin.plugin
         classpath deps.navigation.safeArgs.plugin
     }
@@ -18,6 +19,7 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }
 

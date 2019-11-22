@@ -11,9 +11,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.SavedStateVMFactory
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.transition.TransitionManager
+import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.location.PlacePickerActivity
@@ -47,9 +48,11 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
     private val powerDelete: View by bindView(R.id.powerDelete)
     private val powerSummary: TextView by bindView(R.id.power_summary)
 
+    //private lateinit var binding: ConditionsFragment
     private lateinit var viewModel: AddEditProfileViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.fragment_conditions, container, false)
     }
 
@@ -63,7 +66,7 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
         wifiLayout.setOnClickListener(this)
         wifiDelete.setOnClickListener(this)
 
-        viewModel = ViewModelProviders.of(requireParentFragment(), SavedStateVMFactory(requireParentFragment()))
+        viewModel = ViewModelProvider(requireParentFragment(), SavedStateViewModelFactory(App.getInstance(), requireParentFragment()))
                 .get(AddEditProfileViewModel::class.java)
         viewModel.getPlaceCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { placeCondition ->
             placeCondition?.let { showLocationCondition(it) } ?: removeLocationCondition()

@@ -34,6 +34,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 androidExtensions {
@@ -58,20 +61,20 @@ dependencies {
     implementation deps.androidx.vectordrawable
     implementation deps.androidx.preference
     implementation deps.androidx.browser
-    implementation "com.google.android.gms:play-services-analytics:16.0.8"
+    implementation "com.google.android.gms:play-services-analytics:17.0.0"
     implementation deps.playservices.maps
-    implementation 'com.google.android.libraries.places:places-compat:1.1.0'
+    implementation 'com.google.android.libraries.places:places-compat:2.1.0'
     implementation deps.playservices.location
     implementation deps.kotlin.stdlib
     implementation deps.kotlin.coroutines
     implementation deps.androidx.constraintlayout
     implementation deps.playservices.mapsutils
-    implementation 'com.afollestad.material-dialogs:core:3.0.0-rc1'
-    implementation 'com.afollestad.material-dialogs:input:3.0.0-rc1'
-    implementation 'com.google.android:flexbox:1.1.0'
-    implementation 'com.wdullaer:materialdatetimepicker:4.2.1'
+    implementation 'com.afollestad.material-dialogs:core:3.1.1'
+    implementation 'com.afollestad.material-dialogs:input:3.1.1'
+    implementation 'com.google.android:flexbox:2.0.0'
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
     testImplementation deps.test.junit
-    testImplementation 'org.mockito:mockito-core:2.19.0'
+    testImplementation 'org.mockito:mockito-core:3.1.0'
     // ViewModel and LiveData
     implementation deps.lifecycle.extensions
     implementation deps.lifecycle.compiler
@@ -79,12 +82,12 @@ dependencies {
     implementation deps.room.runtime
     annotationProcessor deps.room.compiler
     // Java8 support for Lifecycles
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha01"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc02"
     // Paging
     implementation deps.androidx.paging.runtime
-    implementation deps.navigation.fragmentktx
-    implementation deps.navigation.uiktx
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-alpha01'
+    implementation deps.navigation.fragment
+    implementation deps.navigation.ui
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc02'
 }
 
 // ADD THIS AT THE BOTTOM
