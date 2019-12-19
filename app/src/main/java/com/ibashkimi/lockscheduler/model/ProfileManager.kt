@@ -2,7 +2,6 @@ package com.ibashkimi.lockscheduler.model
 
 import android.content.Intent
 import androidx.collection.ArrayMap
-import androidx.lifecycle.MutableLiveData
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
@@ -10,7 +9,13 @@ import com.ibashkimi.lockscheduler.model.scheduler.*
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.source.local.DatabaseDataSource
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import java.util.*
+import kotlin.collections.HashSet
 
 object ProfileManager : ConditionChangeListener, ProfileRepository {
 
@@ -24,7 +29,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
 
     var isCacheDirty = true
 
-    var lastUpdateLiveData = MutableLiveData<Long>()
+    private val dataChangedObservers = HashSet<(Long) -> Unit>()
 
     val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
 
@@ -46,6 +51,14 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
                 notifyProfileStateChanged(profile)
             }
         }
+    }
+
+    private fun registerDatabaseObserver(observer: (Long) -> Unit) {
+        dataChangedObservers.add(observer)
+    }
+
+    private fun unregisterDatabaseObserver(observer: (Long) -> Unit) {
+        dataChangedObservers.remove(observer)
     }
 
     @Synchronized
@@ -85,6 +98,12 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         }
     }
 
+    private fun refreshedCachedProfiles(): List<Profile> {
+        if (isCacheDirty)
+            refreshCache()
+        return cachedProfiles.values.toList()
+    }
+
     override fun get(id: String): Profile? {
         if (isCacheDirty)
             refreshCache()
@@ -97,6 +116,15 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         return cachedProfiles.values.toList()
     }
 
+    fun getProfilesFlow(): Flow<List<Profile>> = callbackFlow {
+        val observer: (Long) -> Unit = {
+            offer(refreshedCachedProfiles())
+        }
+        registerDatabaseObserver(observer)
+        offer(refreshedCachedProfiles())
+        awaitClose { unregisterDatabaseObserver(observer) }
+    }.flowOn(Dispatchers.IO)
+
     private fun refreshCache() {
         cachedProfiles.clear()
         for (profile in repository.profiles)
@@ -105,7 +133,8 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     }
 
     private fun notifyChanged() {
-        lastUpdateLiveData.postValue(System.currentTimeMillis())
+        val lastChanged = System.currentTimeMillis()
+        dataChangedObservers.forEach { it(lastChanged) }
     }
 
     @Synchronized

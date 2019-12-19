@@ -98,7 +98,7 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
         binding.fab.setOnClickListener { showAddProfile() }
 
-        viewModel.profilesLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.profiles.observe(viewLifecycleOwner, Observer {
             if (it.isEmpty()) {
                 showNoProfiles()
             } else {
