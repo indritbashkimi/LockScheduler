@@ -3,13 +3,13 @@ package com.ibashkimi.lockscheduler.ui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.util.NotificationUtilsKt;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.lockscheduler.util.NotificationUtilsKt;
 
 
 public class MainActivity extends BaseActivity {

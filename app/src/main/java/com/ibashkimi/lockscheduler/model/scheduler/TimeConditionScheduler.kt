@@ -16,8 +16,10 @@ import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TimeConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
-    : ConditionScheduler(Condition.Type.TIME, repository) {
+class TimeConditionScheduler(
+    repository: ProfilesDataSource,
+    private val listener: ConditionChangeListener
+) : ConditionScheduler(Condition.Type.TIME, repository) {
 
     private val TAG = "TimeCondition"
 
@@ -137,7 +139,8 @@ class TimeConditionScheduler(repository: ProfilesDataSource, private val listene
         val intent = Intent(context, AlarmReceiver::class.java)
         val alarmId = profileId.toLong().toInt()
         intent.putExtra("profileId", profileId)
-        val pi = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pi =
+            PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi)
     }
 

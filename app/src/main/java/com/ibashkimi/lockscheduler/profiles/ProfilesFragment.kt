@@ -33,12 +33,21 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
     private var actionMode: ActionMode? = null
 
     private val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
-        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-            return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG,
-                    ItemTouchHelper.DOWN or ItemTouchHelper.UP)
+        override fun getMovementFlags(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder
+        ): Int {
+            return makeFlag(
+                ItemTouchHelper.ACTION_STATE_DRAG,
+                ItemTouchHelper.DOWN or ItemTouchHelper.UP
+            )
         }
 
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
             val targetPosition = target.adapterPosition
             val pos1 = viewHolder.adapterPosition
             viewModel.swapProfiles(adapter.profiles[pos1], adapter.profiles[targetPosition])
@@ -80,8 +89,10 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentProfilesBinding.inflate(inflater, container, false)
 
         val layoutManager: RecyclerView.LayoutManager
@@ -141,12 +152,12 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
     private fun showAddProfile() {
         findNavController()
-                .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(null))
+            .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(null))
     }
 
     private fun showProfileDetailsUi(profile: Profile) {
         findNavController()
-                .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(profile.id))
+            .navigate(ProfilesFragmentDirections.actionProfilesToAddEditProfile(profile.id))
     }
 
     /*private fun showLoadingProfilesError() {
@@ -169,11 +180,11 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
     override fun onProfileLongClick(position: Int) {
         if (actionMode == null) {
-            actionMode = (requireActivity() as AppCompatActivity).startSupportActionMode(ActionModeCallback())
+            actionMode =
+                (requireActivity() as AppCompatActivity).startSupportActionMode(ActionModeCallback())
         }
         toggleSelection(position)
     }
-
 
     private inner class ActionModeCallback : ActionMode.Callback {
 

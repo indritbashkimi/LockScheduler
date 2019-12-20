@@ -101,24 +101,28 @@ class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel()
             wifiCondition = getWifiCondition().value
         }.build()
         val profileName: String = getProfileName()
-                ?: App.getInstance().getString(R.string.default_profile_name)
+            ?: App.getInstance().getString(R.string.default_profile_name)
         if (conditions.all.isEmpty()) {
-            Toast.makeText(App.getInstance(), "Add at least one condition", Toast.LENGTH_SHORT).show()
+            Toast.makeText(App.getInstance(), "Add at least one condition", Toast.LENGTH_SHORT)
+                .show()
             return false
         }
         val activeAction = getWhenActiveLockAction().value
         if (activeAction == null) {
-            Toast.makeText(App.getInstance(), "Active action not specified", Toast.LENGTH_SHORT).show()
+            Toast.makeText(App.getInstance(), "Active action not specified", Toast.LENGTH_SHORT)
+                .show()
             return false
         }
         val inactiveAction = getWhenInactiveLockAction().value
         if (inactiveAction == null) {
-            Toast.makeText(App.getInstance(), "Inactive action not specified", Toast.LENGTH_SHORT).show()
+            Toast.makeText(App.getInstance(), "Inactive action not specified", Toast.LENGTH_SHORT)
+                .show()
             return false
         }
         val actions = EnterExitActions(
-                Actions.Builder().apply { lockAction = activeAction }.build(),
-                Actions.Builder().apply { lockAction = inactiveAction }.build())
+            Actions.Builder().apply { lockAction = activeAction }.build(),
+            Actions.Builder().apply { lockAction = inactiveAction }.build()
+        )
         getProfileId()?.let { profileId ->
             repository.update(updateProfile(profileId, profileName, conditions, actions))
         } ?: repository.add(createProfile(profileName, conditions, actions))
@@ -132,19 +136,27 @@ class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel()
         } ?: false
     }
 
-    private fun createProfile(title: String, conditions: Conditions, actions: EnterExitActions): Profile {
-        return Profile(
-                System.currentTimeMillis().toString(),
-                title,
-                conditions,
-                actions)
-    }
+    private fun createProfile(
+        title: String,
+        conditions: Conditions,
+        actions: EnterExitActions
+    ) = Profile(
+        System.currentTimeMillis().toString(),
+        title,
+        conditions,
+        actions
+    )
 
-    private fun updateProfile(id: String, title: String, conditions: Conditions, actions: EnterExitActions): Profile {
-        return Profile(
-                id,
-                title,
-                conditions,
-                actions)
-    }
+    private fun updateProfile(
+        id: String,
+        title: String,
+        conditions: Conditions,
+        actions: EnterExitActions
+    ) = Profile(
+        id,
+        title,
+        conditions,
+        actions
+    )
+
 }

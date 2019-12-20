@@ -5,10 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.core.graphics.ColorUtils
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.core.graphics.ColorUtils
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.theme.utils.ThemeUtils
 
@@ -22,12 +22,22 @@ class MapCoverView : View {
 
     private var margin: Int = 100
 
-    @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = R.style.AppTheme_DayNight) : super(context, attrs, defStyleAttr) {
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = R.style.AppTheme_DayNight
+    ) : super(context, attrs, defStyleAttr) {
         init(context)
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes) {
         init(context)
     }
 

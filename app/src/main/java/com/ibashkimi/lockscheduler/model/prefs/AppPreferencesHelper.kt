@@ -17,7 +17,8 @@ object AppPreferencesHelper : PreferencesHelper {
     const val LOITERING_DELAY_KEY = "loitering_delay"
     const val PASSWORD_EXPIRATION_KEY = "password_expiration"
 
-    val preferences = App.getInstance().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)!!
+    val preferences =
+        App.getInstance().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)!!
 
     override var mapStyle: String
         get() = get(MAP_STYLE_KEY, "normal")!!

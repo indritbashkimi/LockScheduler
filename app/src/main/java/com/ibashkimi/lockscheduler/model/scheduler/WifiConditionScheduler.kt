@@ -10,8 +10,10 @@ import com.ibashkimi.lockscheduler.model.condition.WifiItem
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
 
-class WifiConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
-    : ConditionScheduler(Condition.Type.WIFI, repository) {
+class WifiConditionScheduler(
+    repository: ProfilesDataSource,
+    private val listener: ConditionChangeListener
+) : ConditionScheduler(Condition.Type.WIFI, repository) {
 
     override fun init() {
         for (profile in registeredProfiles)
@@ -22,7 +24,8 @@ class WifiConditionScheduler(repository: ProfilesDataSource, private val listene
         Log.d(TAG, "register() called with profile=$profile")
         super.register(profile)
         var wifiItem: WifiItem? = null
-        val wifiManager = App.getInstance().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
+        val wifiManager =
+            App.getInstance().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
         if (wifiManager != null) {
             val wifiInfo = wifiManager.connectionInfo
             if (wifiInfo != null) {

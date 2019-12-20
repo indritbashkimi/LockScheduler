@@ -4,9 +4,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -25,9 +26,8 @@ import java.util.List;
 
 
 public class GeofenceApiHelper {
-    private static GeofenceApiHelper sInstance;
     private static final String TAG = "GeofenceApiHelper";
-
+    private static GeofenceApiHelper sInstance;
     private PendingIntent mGeofencePendingIntent;
     private GoogleApiHelper mGoogleApiHandler;
 

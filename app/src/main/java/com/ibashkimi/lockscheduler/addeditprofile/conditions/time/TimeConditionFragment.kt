@@ -42,7 +42,11 @@ class TimeConditionFragment : Fragment() {
         return result
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentConditionTimeBinding.inflate(inflater, container, false)
 
         binding.days.setOnClickListener { showWeekDays() }
@@ -51,14 +55,21 @@ class TimeConditionFragment : Fragment() {
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("start_time_hour"))
-                startTime = Time(savedInstanceState.getInt("start_time_hour"), savedInstanceState.getInt("start_time_minute"))
+                startTime = Time(
+                    savedInstanceState.getInt("start_time_hour"),
+                    savedInstanceState.getInt("start_time_minute")
+                )
             if (savedInstanceState.containsKey("end_time_hour"))
-                endTime = Time(savedInstanceState.getInt("end_time_hour"), savedInstanceState.getInt("end_time_minute"))
+                endTime = Time(
+                    savedInstanceState.getInt("end_time_hour"),
+                    savedInstanceState.getInt("end_time_minute")
+                )
             if (savedInstanceState.containsKey("days")) {
                 days = savedInstanceState.getParcelable("days")
             }
         } else {
-            val timeCondition = requireActivity().intent.getParcelableExtra<TimeCondition>("time_condition")
+            val timeCondition =
+                requireActivity().intent.getParcelableExtra<TimeCondition>("time_condition")
             if (timeCondition != null) {
                 days = timeCondition.daysActive
                 startTime = timeCondition.startTime
@@ -73,7 +84,6 @@ class TimeConditionFragment : Fragment() {
         binding.daysSummary.text = ConditionUtils.daysToString(context, timeCondition)
         binding.startTimeSummary.text = Utils.formatTime(startTime!!.hour, startTime!!.minute)
         binding.endTimeSummary.text = Utils.formatTime(endTime!!.hour, endTime!!.minute)
-
 
         return binding.root
     }
@@ -135,8 +145,9 @@ class TimeConditionFragment : Fragment() {
 
     private fun showTimePicker(callback: TimePickerDialog.OnTimeSetListener) {
         val timePickerDialog = TimePickerDialog.newInstance(
-                callback,
-                true)
+            callback,
+            true
+        )
         timePickerDialog.isThemeDark = isNight
         val activity = requireActivity() as AppCompatActivity
         timePickerDialog.show(activity.supportFragmentManager, "time_picker_dialog")
@@ -164,12 +175,16 @@ class TimeConditionFragment : Fragment() {
             if (savedInstanceState != null) {
                 days = savedInstanceState.getParcelable("days")
             }
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(R.string.time_condition_days)
-            builder.setPositiveButton(android.R.string.ok) { _, _ -> listener?.onDaysSelected(days!!) }
-            builder.setNegativeButton(R.string.cancel, null)
-            builder.setMultiChoiceItems(R.array.days_of_week, days!!.asBooleanArray()) { dialog, which, isChecked -> days!![which] = isChecked }
-            return builder.create()
+            return AlertDialog.Builder(requireContext()).run {
+                setTitle(R.string.time_condition_days)
+                setPositiveButton(android.R.string.ok) { _, _ -> listener?.onDaysSelected(days!!) }
+                setNegativeButton(R.string.cancel, null)
+                setMultiChoiceItems(
+                    R.array.days_of_week,
+                    days!!.asBooleanArray()
+                ) { dialog, which, isChecked -> days!![which] = isChecked }
+                create()
+            }
         }
 
         override fun onSaveInstanceState(outState: Bundle) {

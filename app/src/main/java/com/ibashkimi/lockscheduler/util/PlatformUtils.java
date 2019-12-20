@@ -1,9 +1,9 @@
 package com.ibashkimi.lockscheduler.util;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+
 import androidx.appcompat.app.AlertDialog;
 
 import com.ibashkimi.lockscheduler.BuildConfig;

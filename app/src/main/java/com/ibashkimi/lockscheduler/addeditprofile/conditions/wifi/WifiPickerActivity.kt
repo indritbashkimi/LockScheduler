@@ -72,7 +72,7 @@ class WifiPickerActivity : BaseActivity() {
         })
         viewModel.wifiScanResults.observe(this, Observer { scanResult ->
             scanResult.filterNot { wifiItems.contains(SelectableWifiItem(it.SSID, true)) }
-                    .forEach { wifiItems.add(SelectableWifiItem(it.SSID, false)) }
+                .forEach { wifiItems.add(SelectableWifiItem(it.SSID, false)) }
             wifiAdapter.notifyDataSetChanged()
         })
     }
@@ -120,8 +120,8 @@ class WifiPickerActivity : BaseActivity() {
         if (wifiItems.isNotEmpty()) {
             val ssids: MutableList<String> = mutableListOf()
             wifiItems
-                    .filter { it.isSelected }
-                    .mapTo(ssids) { it.ssid }
+                .filter { it.isSelected }
+                .mapTo(ssids) { it.ssid }
             intent.putExtra("ssids", ssids.toTypedArray())
             setResult(Activity.RESULT_OK, intent)
         } else {
@@ -137,10 +137,12 @@ class WifiPickerActivity : BaseActivity() {
 
     data class SelectableWifiItem(val ssid: String, var isSelected: Boolean = false)
 
-    internal inner class WifiAdapter(private var wifiList: List<SelectableWifiItem>) : SelectableAdapter<WifiAdapter.ViewHolder>() {
+    internal inner class WifiAdapter(private var wifiList: List<SelectableWifiItem>) :
+        SelectableAdapter<WifiAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_wifi_connection, parent, false)
+            val itemView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_wifi_connection, parent, false)
             return ViewHolder(itemView)
         }
 
@@ -148,7 +150,9 @@ class WifiPickerActivity : BaseActivity() {
             val wifiItem = wifiList[position]
             holder.title.text = wifiItem.ssid
             holder.checkBox.isChecked = wifiItem.isSelected
-            holder.checkBox.setOnCheckedChangeListener { _, isChecked -> wifiList[holder.adapterPosition].isSelected = isChecked }
+            holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+                wifiList[holder.adapterPosition].isSelected = isChecked
+            }
             holder.rootView.setOnClickListener { holder.checkBox.performClick() }
         }
 
@@ -156,7 +160,8 @@ class WifiPickerActivity : BaseActivity() {
             return wifiList.size
         }
 
-        internal inner class ViewHolder(var rootView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(rootView) {
+        internal inner class ViewHolder(var rootView: View) :
+            androidx.recyclerview.widget.RecyclerView.ViewHolder(rootView) {
             var title: TextView = rootView.findViewById(R.id.title)
             var checkBox: CheckBox = rootView.findViewById(R.id.checkbox)
         }

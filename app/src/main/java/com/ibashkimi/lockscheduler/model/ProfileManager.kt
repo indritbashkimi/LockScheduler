@@ -25,13 +25,20 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
 
     private val cachedProfiles: ArrayMap<String, Profile> = ArrayMap()
 
-    private val priorities: List<Condition.Type> = listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
+    private val priorities: List<Condition.Type> =
+        listOf(Condition.Type.TIME, Condition.Type.WIFI, Condition.Type.POWER, Condition.Type.PLACE)
 
     var isCacheDirty = true
 
     private val dataChangedObservers = HashSet<(Long) -> Unit>()
 
-    val placeHandler: PlaceConditionScheduler by lazy { PlaceConditionScheduler(geofenceApiHelper, repository, this) }
+    val placeHandler: PlaceConditionScheduler by lazy {
+        PlaceConditionScheduler(
+            geofenceApiHelper,
+            repository,
+            this
+        )
+    }
 
     val timeHandler: TimeConditionScheduler by lazy { TimeConditionScheduler(repository, this) }
 
@@ -111,9 +118,7 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     }
 
     override fun getAll(): List<Profile> {
-        if (isCacheDirty)
-            refreshCache()
-        return cachedProfiles.values.toList()
+        return refreshedCachedProfiles()
     }
 
     fun getProfilesFlow(): Flow<List<Profile>> = callbackFlow {
@@ -139,12 +144,12 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
 
     @Synchronized
     override fun update(profile: Profile) {
-        val oldProfile = get(profile.id) ?:
-                throw IllegalArgumentException("Cannot find profile with id=${profile.id}.")
+        val oldProfile = get(profile.id)
+            ?: throw IllegalArgumentException("Cannot find profile with id=${profile.id}.")
         val wasActive = oldProfile.isActive()
         oldProfile.conditions.conditions.orderByPriority().reversed()
-                .filter { it !in profile.conditions.all }
-                .forEach { unregister(oldProfile, it) }
+            .filter { it !in profile.conditions.all }
+            .forEach { unregister(oldProfile, it) }
         if (wasActive) {
             for (condition in profile.conditions.all) {
                 val oldCondition = oldProfile.conditions.of(condition.type)
@@ -154,14 +159,16 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
                     condition.isTriggered = false
             }
             if (!profile.isActive()) {
-                oldProfile.conditions.all.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
+                oldProfile.conditions.all.orderByPriority().reversed()
+                    .forEach { unregister(oldProfile, it) }
                 profile.conditions.all.forEach { it.isTriggered = false }
                 for (condition in profile.conditions.all.orderByPriority()) {
                     if (!register(profile, condition)) break
                 }
             }
         } else {
-            oldProfile.conditions.all.orderByPriority().reversed().forEach { unregister(oldProfile, it) }
+            oldProfile.conditions.all.orderByPriority().reversed()
+                .forEach { unregister(oldProfile, it) }
             for (condition in profile.conditions.all.orderByPriority()) {
                 if (!register(profile, condition)) break
             }
@@ -237,7 +244,11 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
     }
 
     @Synchronized
-    override fun notifyConditionChanged(profile: Profile, condition: Condition, wasActive: Boolean) {
+    override fun notifyConditionChanged(
+        profile: Profile,
+        condition: Condition,
+        wasActive: Boolean
+    ) {
         repository.updateProfile(profile)
         cachedProfiles[profile.id] = profile
         if (condition.isTriggered) {
@@ -262,7 +273,10 @@ object ProfileManager : ConditionChangeListener, ProfileRepository {
         App.getInstance().startService(intent)
     }
 
-    private fun getNextConditions(conditions: List<Condition>, condition: Condition): List<Condition> {
+    private fun getNextConditions(
+        conditions: List<Condition>,
+        condition: Condition
+    ): List<Condition> {
         val resConditions: MutableList<Condition> = mutableListOf()
         for (priorityIndex in priorities.indices) {
             if (priorities[priorityIndex] == condition.type) {

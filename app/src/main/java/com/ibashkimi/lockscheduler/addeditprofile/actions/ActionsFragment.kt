@@ -32,7 +32,10 @@ class ActionsFragment : Fragment() {
     }
 
     private var lockTypeIfGranted: String
-        get() = sharedPreferences.getString("lock_if_granted", LockAction.LockType.UNCHANGED.value)!!
+        get() = sharedPreferences.getString(
+            "lock_if_granted",
+            LockAction.LockType.UNCHANGED.value
+        )!!
         set(value) = sharedPreferences.edit().putString("lock_if_granted", value).apply()
 
     private var isEnter = false
@@ -54,16 +57,27 @@ class ActionsFragment : Fragment() {
         isEnter = arguments!!.getBoolean("is_enter")
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentActionsBinding.inflate(inflater, container, false)
 
         binding.title.setText(if (isEnter) R.string.title_condition_enter else R.string.title_condition_exit)
         binding.lockSettings.setOnClickListener {
-            showPasswordDialog(lockActionLiveData.value!!.lockMode.lockType) { which -> onLockTypeSelected(positionToLockType(which)) }
+            showPasswordDialog(lockActionLiveData.value!!.lockMode.lockType) { which ->
+                onLockTypeSelected(
+                    positionToLockType(which)
+                )
+            }
         }
 
-        viewModel = ViewModelProvider(requireParentFragment(), SavedStateViewModelFactory(App.getInstance(), requireParentFragment()))
-                .get(AddEditProfileViewModel::class.java)
+        viewModel = ViewModelProvider(
+            requireParentFragment(),
+            SavedStateViewModelFactory(App.getInstance(), requireParentFragment())
+        )
+            .get(AddEditProfileViewModel::class.java)
         lockActionLiveData.observe(viewLifecycleOwner, Observer {
             updateSummary(it)
         })
@@ -76,27 +90,27 @@ class ActionsFragment : Fragment() {
             setLockAction(LockAction(LockAction.LockMode.Unchanged))
         } else {
             checkAdminPermission(
-                    onGranted = {
-                        when (lockType) {
-                            LockAction.LockType.PIN -> showPinChooser(REQUEST_PIN)
-                            LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_PASSWORD)
-                            LockAction.LockType.SWIPE -> {
-                                setLockAction(LockAction(LockAction.LockMode.Swipe))
-                            }
-                            else -> throw IllegalStateException("Unknown lock type $lockType.")
+                onGranted = {
+                    when (lockType) {
+                        LockAction.LockType.PIN -> showPinChooser(REQUEST_PIN)
+                        LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_PASSWORD)
+                        LockAction.LockType.SWIPE -> {
+                            setLockAction(LockAction(LockAction.LockMode.Swipe))
                         }
-                    },
-                    onRationaleNeeded = {
-                        lockTypeIfGranted = lockType.value
-                        showAdminPermissionRationale(
-                                onOk = { askAdminPermission(REQUEST_ADMIN_PERMISSION) },
-                                onCancel = { onAdminPermissionDenied() }
-                        )
-                    },
-                    onDenied = {
-                        lockTypeIfGranted = lockType.value
-                        askAdminPermission(REQUEST_ADMIN_PERMISSION)
+                        else -> throw IllegalStateException("Unknown lock type $lockType.")
                     }
+                },
+                onRationaleNeeded = {
+                    lockTypeIfGranted = lockType.value
+                    showAdminPermissionRationale(
+                        onOk = { askAdminPermission(REQUEST_ADMIN_PERMISSION) },
+                        onCancel = { onAdminPermissionDenied() }
+                    )
+                },
+                onDenied = {
+                    lockTypeIfGranted = lockType.value
+                    askAdminPermission(REQUEST_ADMIN_PERMISSION)
+                }
             )
         }
     }
@@ -118,15 +132,15 @@ class ActionsFragment : Fragment() {
                 setLockAction(LockAction(LockAction.LockMode.Password(data!!.getStringExtra("input")!!)))
             }
             REQUEST_ADMIN_PERMISSION -> handleAdminPermissionResult(
-                    resultCode = resultCode,
-                    onGranted = {
-                        Toast.makeText(context, "Admin permission granted", Toast.LENGTH_SHORT).show()
-                        when (lockTypeIfGranted) {
-                            LockAction.LockType.PIN.value -> showPinChooser(REQUEST_PASSWORD)
-                            LockAction.LockType.PASSWORD.value -> showPasswordChooser(REQUEST_PIN)
-                        }
-                    },
-                    onDenied = { onAdminPermissionDenied() })
+                resultCode = resultCode,
+                onGranted = {
+                    Toast.makeText(context, "Admin permission granted", Toast.LENGTH_SHORT).show()
+                    when (lockTypeIfGranted) {
+                        LockAction.LockType.PIN.value -> showPinChooser(REQUEST_PASSWORD)
+                        LockAction.LockType.PASSWORD.value -> showPasswordChooser(REQUEST_PIN)
+                    }
+                },
+                onDenied = { onAdminPermissionDenied() })
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

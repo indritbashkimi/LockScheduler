@@ -35,7 +35,11 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
 
     private lateinit var viewModel: AddEditProfileViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentConditionsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -50,20 +54,27 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
         binding.wifiLayout.setOnClickListener(this)
         binding.wifiDelete.setOnClickListener(this)
 
-        viewModel = ViewModelProvider(requireParentFragment(), SavedStateViewModelFactory(App.getInstance(), requireParentFragment()))
-                .get(AddEditProfileViewModel::class.java)
-        viewModel.getPlaceCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { placeCondition ->
-            placeCondition?.let { showLocationCondition(it) } ?: removeLocationCondition()
-        })
-        viewModel.getPowerCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { powerCondition ->
-            powerCondition?.let { showPowerCondition(it) } ?: removePowerCondition()
-        })
-        viewModel.getTimeCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { timeCondition ->
-            timeCondition?.let { showTimeCondition(it) } ?: removeTimeCondition()
-        })
-        viewModel.getWifiCondition().observe(viewLifecycleOwner, androidx.lifecycle.Observer { wifiCondition ->
-            wifiCondition?.let { showWifiCondition(it) } ?: removeWifiCondition()
-        })
+        viewModel = ViewModelProvider(
+            requireParentFragment(),
+            SavedStateViewModelFactory(App.getInstance(), requireParentFragment())
+        )
+            .get(AddEditProfileViewModel::class.java)
+        viewModel.getPlaceCondition()
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { placeCondition ->
+                placeCondition?.let { showLocationCondition(it) } ?: removeLocationCondition()
+            })
+        viewModel.getPowerCondition()
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { powerCondition ->
+                powerCondition?.let { showPowerCondition(it) } ?: removePowerCondition()
+            })
+        viewModel.getTimeCondition()
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { timeCondition ->
+                timeCondition?.let { showTimeCondition(it) } ?: removeTimeCondition()
+            })
+        viewModel.getWifiCondition()
+            .observe(viewLifecycleOwner, androidx.lifecycle.Observer { wifiCondition ->
+                wifiCondition?.let { showWifiCondition(it) } ?: removeWifiCondition()
+            })
 
     }
 
@@ -82,34 +93,44 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
 
     private fun showPlacePicker() {
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                whenGranted = {
-                    val placeCondition = viewModel.getPlaceCondition().value
-                    val intent = Intent(requireContext(), PlacePickerActivity::class.java)
-                    intent.putExtra("latitude", placeCondition?.latitude)
-                    intent.putExtra("longitude", placeCondition?.longitude)
-                    intent.putExtra("radius", placeCondition?.radius ?: 300)
-                    intent.putExtra("map_type", AppPreferencesHelper.mapStyle)
-                    startActivityForResult(intent, REQUEST_LOCATION_PICKER)
-                },
-                whenExplanationNeed = {
-                    AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.location_permission_needed)
-                            .setMessage(R.string.location_permission_rationale)
-                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_PLACE)
-                            }
-                            .create().show()
-                },
-                whenDenied = {
-                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_PLACE)
-                }
+            whenGranted = {
+                val placeCondition = viewModel.getPlaceCondition().value
+                val intent = Intent(requireContext(), PlacePickerActivity::class.java)
+                intent.putExtra("latitude", placeCondition?.latitude)
+                intent.putExtra("longitude", placeCondition?.longitude)
+                intent.putExtra("radius", placeCondition?.radius ?: 300)
+                intent.putExtra("map_type", AppPreferencesHelper.mapStyle)
+                startActivityForResult(intent, REQUEST_LOCATION_PICKER)
+            },
+            whenExplanationNeed = {
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.location_permission_needed)
+                    .setMessage(R.string.location_permission_rationale)
+                    .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        requestPermission(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            PERMISSION_REQUEST_LOCATION_PLACE
+                        )
+                    }
+                    .create().show()
+            },
+            whenDenied = {
+                requestPermission(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    PERMISSION_REQUEST_LOCATION_PLACE
+                )
+            }
         )
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             PERMISSION_REQUEST_LOCATION_PLACE -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -133,34 +154,40 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
 
     private fun showWifiPicker() {
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                whenGranted = {
-                    val wifiCondition = viewModel.getWifiCondition().value
-                    val intent = Intent(context, WifiPickerActivity::class.java)
-                    val items = wifiCondition?.wifiList
-                    if (items != null && items.isNotEmpty()) {
-                        val itemReps = arrayOfNulls<String>(items.size)
-                        for (i in items.indices) {
-                            itemReps[i] = items[i].ssid
-                        }
-                        intent.putExtra("ssids", itemReps)
+            whenGranted = {
+                val wifiCondition = viewModel.getWifiCondition().value
+                val intent = Intent(context, WifiPickerActivity::class.java)
+                val items = wifiCondition?.wifiList
+                if (items != null && items.isNotEmpty()) {
+                    val itemReps = arrayOfNulls<String>(items.size)
+                    for (i in items.indices) {
+                        itemReps[i] = items[i].ssid
                     }
-                    startActivityForResult(intent, REQUEST_WIFI_PICKER)
-                },
-                whenExplanationNeed = {
-                    AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.location_permission_needed)
-                            .setMessage(R.string.location_permission_rationale)
-                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_WIFI)
-                            }
-                            .create().show()
-                },
-                whenDenied = {
-                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION_WIFI)
+                    intent.putExtra("ssids", itemReps)
                 }
+                startActivityForResult(intent, REQUEST_WIFI_PICKER)
+            },
+            whenExplanationNeed = {
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.location_permission_needed)
+                    .setMessage(R.string.location_permission_rationale)
+                    .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        requestPermission(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            PERMISSION_REQUEST_LOCATION_WIFI
+                        )
+                    }
+                    .create().show()
+            },
+            whenDenied = {
+                requestPermission(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    PERMISSION_REQUEST_LOCATION_WIFI
+                )
+            }
         )
     }
 
@@ -195,7 +222,8 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
             TransitionManager.beginDelayedTransition(locationLayout)
             locationTitle.setText(R.string.location_condition_title)
             locationSummary.visibility = View.VISIBLE
-            locationSummary.text = getString(R.string.location_summary, condition.address, condition.radius)
+            locationSummary.text =
+                getString(R.string.location_summary, condition.address, condition.radius)
             locationDelete.visibility = View.VISIBLE
         }
     }
@@ -214,10 +242,12 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
         binding.apply {
             TransitionManager.beginDelayedTransition(timeLayout)
             timeSummary.visibility = View.VISIBLE
-            timeSummary.text = getString(R.string.time_condition_summary,
-                    ConditionUtils.daysToString(context, condition),
-                    Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
-                    Utils.formatTime(condition.endTime.hour, condition.endTime.minute))
+            timeSummary.text = getString(
+                R.string.time_condition_summary,
+                ConditionUtils.daysToString(context, condition),
+                Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
+                Utils.formatTime(condition.endTime.hour, condition.endTime.minute)
+            )
             timeDelete.visibility = View.VISIBLE
         }
     }
@@ -284,11 +314,11 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
             selectedItem = if (powerCondition.powerConnected) 0 else 1
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(R.string.power_condition_title)
-                .setSingleChoiceItems(items, selectedItem) { dialog, which ->
-                    viewModel.setPowerCondition(PowerCondition(which == 0))
-                    dialog.dismiss()
-                }
-                .create().show()
+            .setSingleChoiceItems(items, selectedItem) { dialog, which ->
+                viewModel.setPowerCondition(PowerCondition(which == 0))
+                dialog.dismiss()
+            }
+            .create().show()
     }
 
     companion object {

@@ -18,7 +18,8 @@ class WifiPickerViewModel(application: Application) : AndroidViewModel(applicati
 
     private val wifiBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiManager =
+                context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             wifiEnabled.value = wifiManager.isWifiEnabled
             scanWifiConnections()
         }
@@ -42,7 +43,8 @@ class WifiPickerViewModel(application: Application) : AndroidViewModel(applicati
 
     fun scanWifiConnections() {
         viewModelScope.launch {
-            val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val wifiManager =
+                context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
             if (wifiManager.isWifiEnabled) {
                 wifiScanResults.postValue(wifiManager.scanResults)
             }

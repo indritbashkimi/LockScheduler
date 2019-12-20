@@ -9,8 +9,10 @@ import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
 
-class PowerConditionScheduler(repository: ProfilesDataSource, private val listener: ConditionChangeListener)
-    : ConditionScheduler(Condition.Type.POWER, repository) {
+class PowerConditionScheduler(
+    repository: ProfilesDataSource,
+    private val listener: ConditionChangeListener
+) : ConditionScheduler(Condition.Type.POWER, repository) {
 
     override fun init() {
 
@@ -33,7 +35,8 @@ class PowerConditionScheduler(repository: ProfilesDataSource, private val listen
             val wasActive = profile.isActive()
             val condition = profile.conditions.powerCondition!!
             val wasTrue = condition.isTriggered
-            condition.isTriggered = if (condition.powerConnected) isPowerConnected else !isPowerConnected
+            condition.isTriggered =
+                if (condition.powerConnected) isPowerConnected else !isPowerConnected
             if (condition.isTriggered != wasTrue)
                 listener.notifyConditionChanged(profile, condition, wasActive)
         }

@@ -11,11 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.theme.utils.ThemeUtils;
-
-import java.security.InvalidParameterException;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -23,6 +18,11 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.ibashkimi.lockscheduler.R;
+import com.ibashkimi.theme.utils.ThemeUtils;
+
+import java.security.InvalidParameterException;
 
 
 public class LicensesFragment extends Fragment {
@@ -45,10 +45,9 @@ public class LicensesFragment extends Fragment {
 
         private static final int VIEW_TYPE_INTRO = 0;
         private static final int VIEW_TYPE_LIBRARY = 1;
-        Library[] libs;
-
         //private final CircleTransform circleCrop;
         final Activity host;
+        Library[] libs;
 
         LibraryAdapter(Activity host) {
             this.host = host;

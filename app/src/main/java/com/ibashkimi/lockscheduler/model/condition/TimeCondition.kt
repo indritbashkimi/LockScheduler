@@ -4,24 +4,26 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class TimeCondition(var daysActive: DaysOfWeek = DaysOfWeek(),
-                         var startTime: Time = Time(0, 0),
-                         var endTime: Time = Time(0, 0),
-                         override var isTriggered: Boolean = false)
-    : Condition(Type.TIME, isTriggered), Parcelable
+data class TimeCondition(
+    var daysActive: DaysOfWeek = DaysOfWeek(),
+    var startTime: Time = Time(0, 0),
+    var endTime: Time = Time(0, 0),
+    override var isTriggered: Boolean = false
+) : Condition(Type.TIME, isTriggered), Parcelable
 
 @Parcelize
-data class DaysOfWeek (
-        var monday: Boolean = true,
-        var tuesday: Boolean = true,
-        var wednesday: Boolean = true,
-        var thursday: Boolean = true,
-        var friday: Boolean = true,
-        var saturday: Boolean = true,
-        var sunday: Boolean = true) : Parcelable {
+data class DaysOfWeek(
+    var monday: Boolean = true,
+    var tuesday: Boolean = true,
+    var wednesday: Boolean = true,
+    var thursday: Boolean = true,
+    var friday: Boolean = true,
+    var saturday: Boolean = true,
+    var sunday: Boolean = true
+) : Parcelable {
 
     operator fun get(index: Int): Boolean {
-        return when(index) {
+        return when (index) {
             0 -> monday
             1 -> tuesday
             2 -> wednesday
@@ -34,7 +36,7 @@ data class DaysOfWeek (
     }
 
     operator fun set(index: Int, value: Boolean) {
-        return when(index) {
+        return when (index) {
             0 -> monday = value
             1 -> tuesday = value
             2 -> wednesday = value

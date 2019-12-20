@@ -11,31 +11,34 @@ import org.json.JSONObject
 
 fun Profile.toJson(): JSONObject {
     return JSONObject()
-            .put("id", "" + id)
-            .put("name", name)
-            .put("actions", enterExitActions.toJson())
-            .put("conditions", conditions.toJson())
+        .put("id", "" + id)
+        .put("name", name)
+        .put("actions", enterExitActions.toJson())
+        .put("conditions", conditions.toJson())
 }
 
 fun String.toProfile() = JSONObject(this).toProfile()
 
 fun JSONObject.toProfile(): Profile {
-    return Profile(getString("id"),
-            getString("name"),
-            getJSONObject("conditions").toConditions(),
-            getJSONObject("actions").toEnterExitActions())
+    return Profile(
+        getString("id"),
+        getString("name"),
+        getJSONObject("conditions").toConditions(),
+        getJSONObject("actions").toEnterExitActions()
+    )
 }
 
 fun EnterExitActions.toJson(): JSONObject {
     return JSONObject()
-            .put("enter_actions", enterActions.toJson())
-            .put("exit_actions", exitActions.toJson())
+        .put("enter_actions", enterActions.toJson())
+        .put("exit_actions", exitActions.toJson())
 }
 
 fun JSONObject.toEnterExitActions(): EnterExitActions {
     return EnterExitActions(
-            getJSONObject("enter_actions").toActions(),
-            getJSONObject("exit_actions").toActions())
+        getJSONObject("enter_actions").toActions(),
+        getJSONObject("exit_actions").toActions()
+    )
 }
 
 fun Actions.toJson(): JSONObject {
@@ -69,8 +72,8 @@ fun Action.toJson(): JSONObject {
 
 fun LockAction.toJson(): JSONObject {
     val json = JSONObject()
-            .put("type", type)
-            .put("lockType", lockMode.lockType.name)
+        .put("type", type)
+        .put("lockType", lockMode.lockType.name)
     when (lockMode) {
         is LockAction.LockMode.Pin -> {
             json.put("input", lockMode.input)
@@ -129,30 +132,30 @@ fun Condition.toJson(): JSONObject {
 
 fun PlaceCondition.toJson(): JSONObject {
     return JSONObject()
-            .put("type", type.name)
-            .put("triggered", isTriggered)
-            .put("latitude", latitude)
-            .put("longitude", longitude)
-            .put("radius", radius)
-            .put("address", address)
+        .put("type", type.name)
+        .put("triggered", isTriggered)
+        .put("latitude", latitude)
+        .put("longitude", longitude)
+        .put("radius", radius)
+        .put("address", address)
 }
 
 fun JSONObject.toPlaceCondition() = PlaceCondition(
-        isTriggered = getBoolean("triggered"),
-        latitude = getDouble("latitude"),
-        longitude = getDouble("longitude"),
-        radius = getInt("radius"),
-        address = getString("address")
+    isTriggered = getBoolean("triggered"),
+    latitude = getDouble("latitude"),
+    longitude = getDouble("longitude"),
+    radius = getInt("radius"),
+    address = getString("address")
 )
 
 fun TimeCondition.toJson(): JSONObject {
     val jsonObject = JSONObject()
-            .put("type", type.name)
-            .put("triggered", isTriggered)
-            .put("start_time_hour", startTime.hour)
-            .put("start_time_minute", startTime.minute)
-            .put("end_time_hour", endTime.hour)
-            .put("end_time_minute", endTime.minute)
+        .put("type", type.name)
+        .put("triggered", isTriggered)
+        .put("start_time_hour", startTime.hour)
+        .put("start_time_minute", startTime.minute)
+        .put("end_time_hour", endTime.hour)
+        .put("end_time_minute", endTime.minute)
     for (i in 0..6) {
         jsonObject.put("day_$i", daysActive[i])
     }
@@ -171,18 +174,19 @@ fun JSONObject.toTimeCondition(): TimeCondition {
 
 fun PowerCondition.toJson(): JSONObject {
     return JSONObject()
-            .put("type", type.name)
-            .put("triggered", isTriggered)
-            .put("power_connected", powerConnected)
+        .put("type", type.name)
+        .put("triggered", isTriggered)
+        .put("power_connected", powerConnected)
 }
 
-fun JSONObject.toPowerCondition() = PowerCondition(getBoolean("power_connected"), getBoolean("triggered"))
+fun JSONObject.toPowerCondition() =
+    PowerCondition(getBoolean("power_connected"), getBoolean("triggered"))
 
 fun WifiCondition.toJson(): JSONObject {
     val json = JSONObject()
-            .put("type", type.name)
-            .put("triggered", isTriggered)
-            .put("wifi_items_len", wifiList.size)
+        .put("type", type.name)
+        .put("triggered", isTriggered)
+        .put("wifi_items_len", wifiList.size)
     for (i in 0 until wifiList.size) {
         json.put("wifi_item_$i", wifiList[i].ssid)
     }

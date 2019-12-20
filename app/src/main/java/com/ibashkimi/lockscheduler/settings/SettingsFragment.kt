@@ -30,7 +30,8 @@ import com.ibashkimi.theme.theme.NavBarColor
 import com.ibashkimi.theme.theme.NightMode
 
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val sharedPreferences: SharedPreferences by lazy {
         context!!.getSharedPreferences(AppPreferencesHelper.PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -38,7 +39,8 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     private var lockTypeIfGranted: LockAction.LockType
         get() {
-            val rep = sharedPreferences.getString("lock_if_granted", LockAction.LockType.UNCHANGED.name)!!
+            val rep =
+                sharedPreferences.getString("lock_if_granted", LockAction.LockType.UNCHANGED.name)!!
             return LockAction.LockType.values().first { it.value == rep }
         }
         set(value) = sharedPreferences.edit().putString("lock_if_granted", value.name).apply()
@@ -71,11 +73,19 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val themeActivity = requireActivity() as BaseActivity
         when (key) {
-            ThemePreferences.KEY_NIGHT_MODE -> themeActivity.applyNightMode(themeActivity.themePreferences
-                    .getNightMode(NightMode.DAYNIGHT))
-            ThemePreferences.KEY_NAV_BAR_COLOR -> themeActivity.applyNavBarColor(themeActivity.themePreferences
-                    .getNavBarColor(NavBarColor.SYSTEM))
-            "loitering_delay" -> Toast.makeText(requireContext(), "Not implemented yet", Toast.LENGTH_SHORT).show()
+            ThemePreferences.KEY_NIGHT_MODE -> themeActivity.applyNightMode(
+                themeActivity.themePreferences
+                    .getNightMode(NightMode.DAYNIGHT)
+            )
+            ThemePreferences.KEY_NAV_BAR_COLOR -> themeActivity.applyNavBarColor(
+                themeActivity.themePreferences
+                    .getNavBarColor(NavBarColor.SYSTEM)
+            )
+            "loitering_delay" -> Toast.makeText(
+                requireContext(),
+                "Not implemented yet",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -89,11 +99,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // Colored navigation bar
         if (!Utils.hasNavBar(requireContext())) {
             findPreference<PreferenceCategory>("appearance")
-                    ?.removePreference(findPreference("colored_navigation_bar"))
+                ?.removePreference(findPreference("colored_navigation_bar"))
         }
 
-        findPreference<Preference>("min_pin_length")?.summary = "" + getIntPreference("min_pin_length", 4)
-        findPreference<Preference>("min_password_length")?.summary = "" + getIntPreference("min_password_length", 4)
+        findPreference<Preference>("min_pin_length")?.summary =
+            "" + getIntPreference("min_pin_length", 4)
+        findPreference<Preference>("min_password_length")?.summary =
+            "" + getIntPreference("min_password_length", 4)
         val rep = getStringPreference("lock_at_boot", LockAction.LockType.UNCHANGED.name)
         updateSummary(LockAction.LockType.valueOf(rep))
     }
@@ -104,7 +116,10 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
                         putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
-                        putExtra(Settings.EXTRA_CHANNEL_ID, PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID)
+                        putExtra(
+                            Settings.EXTRA_CHANNEL_ID,
+                            PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID
+                        )
                     }
                 } else {
                     val intent = Intent()
@@ -122,14 +137,16 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             }
             "theme" -> {
                 findNavController(requireActivity(), R.id.main_nav_host_fragment)
-                        .navigate(R.id.action_settings_to_themeFragment)
+                    .navigate(R.id.action_settings_to_themeFragment)
                 return true
             }
             "min_password_length" -> {
                 MaterialDialog(requireContext()).show {
                     title(R.string.pref_min_password_length_dialog_title)
-                    input(inputType = InputType.TYPE_CLASS_NUMBER,
-                            prefill = getIntPreference("min_password_length", 4).toString()) { _, text ->
+                    input(
+                        inputType = InputType.TYPE_CLASS_NUMBER,
+                        prefill = getIntPreference("min_password_length", 4).toString()
+                    ) { _, text ->
                         setPreference("min_password_length", Integer.parseInt(text.toString()))
                     }
                 }
@@ -138,15 +155,24 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             "min_pin_length" -> {
                 MaterialDialog(requireContext()).show {
                     title(R.string.pref_min_pin_length_dialog_title)
-                    input(inputType = InputType.TYPE_CLASS_NUMBER,
-                            prefill = getIntPreference("min_pin_length", 4).toString()) { _, charSequence ->
+                    input(
+                        inputType = InputType.TYPE_CLASS_NUMBER,
+                        prefill = getIntPreference("min_pin_length", 4).toString()
+                    ) { _, charSequence ->
                         setPreference("min_pin_length", Integer.parseInt(charSequence.toString()))
                     }
                 }
                 return true
             }
             "lock_at_boot" -> {
-                showPasswordDialog(LockAction.LockType.valueOf(getStringPreference("lock_at_boot", LockAction.LockType.UNCHANGED.name))) { which ->
+                showPasswordDialog(
+                    LockAction.LockType.valueOf(
+                        getStringPreference(
+                            "lock_at_boot",
+                            LockAction.LockType.UNCHANGED.name
+                        )
+                    )
+                ) { which ->
                     onLockTypeSelected(positionToLockType(which))
                 }
             }
@@ -160,28 +186,28 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             updateSummary(LockAction.LockType.UNCHANGED)
         } else {
             checkAdminPermission(
-                    onGranted = {
-                        when (lockType) {
-                            LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PIN)
-                            LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PASSWORD)
-                            LockAction.LockType.SWIPE -> {
-                                setPreference("lock_at_boot", LockAction.LockType.SWIPE.name)
-                                updateSummary(LockAction.LockType.SWIPE)
-                            }
-                            else -> throw IllegalStateException("Unknown lock type $lockType.")
+                onGranted = {
+                    when (lockType) {
+                        LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PIN)
+                        LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PASSWORD)
+                        LockAction.LockType.SWIPE -> {
+                            setPreference("lock_at_boot", LockAction.LockType.SWIPE.name)
+                            updateSummary(LockAction.LockType.SWIPE)
                         }
-                    },
-                    onRationaleNeeded = {
-                        lockTypeIfGranted = lockType
-                        showAdminPermissionRationale(
-                                onOk = { askAdminPermission(REQUEST_CODE_ADMIN_PERMISSION) },
-                                onCancel = { onAdminPermissionDenied() }
-                        )
-                    },
-                    onDenied = {
-                        lockTypeIfGranted = lockType
-                        askAdminPermission(REQUEST_CODE_ADMIN_PERMISSION)
+                        else -> throw IllegalStateException("Unknown lock type $lockType.")
                     }
+                },
+                onRationaleNeeded = {
+                    lockTypeIfGranted = lockType
+                    showAdminPermissionRationale(
+                        onOk = { askAdminPermission(REQUEST_CODE_ADMIN_PERMISSION) },
+                        onCancel = { onAdminPermissionDenied() }
+                    )
+                },
+                onDenied = {
+                    lockTypeIfGranted = lockType
+                    askAdminPermission(REQUEST_CODE_ADMIN_PERMISSION)
+                }
             )
         }
     }
@@ -203,17 +229,21 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 updateSummary(LockAction.LockType.PASSWORD)
             }
             REQUEST_CODE_ADMIN_PERMISSION -> handleAdminPermissionResult(
-                    resultCode = resultCode,
-                    onGranted = {
-                        Toast.makeText(context, R.string.admin_permission_granted_msg, Toast.LENGTH_SHORT).show()
-                        when (lockTypeIfGranted) {
-                            LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PASSWORD)
-                            LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PIN)
-                            else -> {
-                            } // do nothing
-                        }
-                    },
-                    onDenied = { onAdminPermissionDenied() })
+                resultCode = resultCode,
+                onGranted = {
+                    Toast.makeText(
+                        context,
+                        R.string.admin_permission_granted_msg,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    when (lockTypeIfGranted) {
+                        LockAction.LockType.PIN -> showPinChooser(REQUEST_CODE_PASSWORD)
+                        LockAction.LockType.PASSWORD -> showPasswordChooser(REQUEST_CODE_PIN)
+                        else -> {
+                        } // do nothing
+                    }
+                },
+                onDenied = { onAdminPermissionDenied() })
         }
     }
 

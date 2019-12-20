@@ -5,6 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ibashkimi.lockscheduler.R;
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.SelectableAdapter;
 import com.ibashkimi.lockscheduler.model.Profile;
@@ -17,25 +21,13 @@ import com.ibashkimi.lockscheduler.util.ConditionUtils;
 
 import java.util.List;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 
 class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder> {
-
-    interface Callback {
-
-        void onProfileClick(int position);
-
-        void onProfileLongClick(int position);
-    }
 
     private List<Profile> mProfiles;
     private Callback mItemListener;
     @LayoutRes
     private int mItemLayout;
-
     ProfileAdapter(List<Profile> profiles, @LayoutRes int itemLayout, @NonNull Callback listener) {
         this.mProfiles = profiles;
         this.mItemLayout = itemLayout;
@@ -73,6 +65,13 @@ class ProfileAdapter extends SelectableAdapter<ProfileAdapter.ProfileViewHolder>
 
     private Callback getItemListener() {
         return mItemListener;
+    }
+
+    interface Callback {
+
+        void onProfileClick(int position);
+
+        void onProfileLongClick(int position);
     }
 
     static class ProfileViewHolder extends RecyclerView.ViewHolder {

@@ -16,7 +16,11 @@ import com.ibashkimi.lockscheduler.util.PlatformUtils
 
 class AboutFragment : Fragment(), View.OnClickListener {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return FragmentAboutBinding.inflate(inflater, container, false).apply {
             help.setOnClickListener(this@AboutFragment)
             feedback.setOnClickListener(this@AboutFragment)
@@ -30,7 +34,11 @@ class AboutFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.help -> navController.navigate(R.id.action_about_to_help)
             R.id.feedback -> PlatformUtils.sendFeedback(requireContext())
-            R.id.privacy_policy -> Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show()
+            R.id.privacy_policy -> Toast.makeText(
+                context,
+                "Not implemented yet",
+                Toast.LENGTH_SHORT
+            ).show()
             R.id.licenses -> navController.navigate(R.id.action_about_to_licenses)
         }
     }

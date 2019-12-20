@@ -4,10 +4,12 @@ import com.ibashkimi.lockscheduler.model.action.Action
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.condition.*
 
-data class Profile(val id: String,
-                   val name: String,
-                   val conditions: Conditions,
-                   val enterExitActions: EnterExitActions) {
+data class Profile(
+    val id: String,
+    val name: String,
+    val conditions: Conditions,
+    val enterExitActions: EnterExitActions
+) {
 
     fun isActive(): Boolean = conditions.areAllTriggered()
 }

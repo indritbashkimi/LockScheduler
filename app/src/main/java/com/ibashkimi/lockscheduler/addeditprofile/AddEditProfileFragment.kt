@@ -34,8 +34,13 @@ class AddEditProfileFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_add_edit_profile, container, false) as ViewGroup
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val rootView =
+            inflater.inflate(R.layout.fragment_add_edit_profile, container, false) as ViewGroup
 
         toolbar = requireActivity().findViewById(R.id.toolbar)
 
@@ -44,7 +49,7 @@ class AddEditProfileFragment : Fragment() {
         rootView.findViewById<View>(R.id.fab).setOnClickListener { onSave() }
 
         viewModel = ViewModelProvider(this, SavedStateViewModelFactory(App.getInstance(), this))
-                .get(AddEditProfileViewModel::class.java)
+            .get(AddEditProfileViewModel::class.java)
 
         if (savedInstanceState == null) {
             viewModel.setProfileId(args.profileId)
@@ -97,13 +102,25 @@ class AddEditProfileFragment : Fragment() {
     private fun attachChildFragments() {
         childFragmentManager.apply {
             beginTransaction()
-                    .replace(R.id.enter_actions_container, findFragmentByTag(ENTER_ACTIONS_FRAGMENT) as ActionsFragment?
-                            ?: ActionsFragment.newInstance(true), ENTER_ACTIONS_FRAGMENT)
-                    .replace(R.id.exit_actions_container, findFragmentByTag(EXIT_ACTIONS_FRAGMENT) as ActionsFragment?
-                            ?: ActionsFragment.newInstance(false), EXIT_ACTIONS_FRAGMENT)
-                    .replace(R.id.conditions_container, findFragmentByTag(CONDITIONS_FRAGMENT) as ConditionsFragment?
-                            ?: ConditionsFragment.newInstance(), CONDITIONS_FRAGMENT)
-                    .commit()
+                .replace(
+                    R.id.enter_actions_container,
+                    findFragmentByTag(ENTER_ACTIONS_FRAGMENT) as ActionsFragment?
+                        ?: ActionsFragment.newInstance(true),
+                    ENTER_ACTIONS_FRAGMENT
+                )
+                .replace(
+                    R.id.exit_actions_container,
+                    findFragmentByTag(EXIT_ACTIONS_FRAGMENT) as ActionsFragment?
+                        ?: ActionsFragment.newInstance(false),
+                    EXIT_ACTIONS_FRAGMENT
+                )
+                .replace(
+                    R.id.conditions_container,
+                    findFragmentByTag(CONDITIONS_FRAGMENT) as ConditionsFragment?
+                        ?: ConditionsFragment.newInstance(),
+                    CONDITIONS_FRAGMENT
+                )
+                .commit()
         }
 
     }

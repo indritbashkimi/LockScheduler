@@ -8,8 +8,11 @@ import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
 
-class PlaceConditionScheduler(private val geofenceApiHelper: GeofenceApiHelper, repository: ProfilesDataSource, val listener: ConditionChangeListener)
-    : ConditionScheduler(Condition.Type.PLACE, repository) {
+class PlaceConditionScheduler(
+    private val geofenceApiHelper: GeofenceApiHelper,
+    repository: ProfilesDataSource,
+    val listener: ConditionChangeListener
+) : ConditionScheduler(Condition.Type.PLACE, repository) {
 
     private val TAG = "PlaceCondition"
 
@@ -43,7 +46,8 @@ class PlaceConditionScheduler(private val geofenceApiHelper: GeofenceApiHelper, 
             } else {
                 val wasActive = profile.isActive()
                 val condition = profile.conditions.placeCondition!!
-                condition.isTriggered = geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
+                condition.isTriggered =
+                    geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
                 listener.notifyConditionChanged(profile, condition, wasActive)
             }
         }

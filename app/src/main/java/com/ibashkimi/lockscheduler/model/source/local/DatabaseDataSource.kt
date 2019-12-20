@@ -33,16 +33,20 @@ object DatabaseDataSource : ProfilesDataSource {
     override fun getProfiles(): List<Profile>? {
         val profiles = ArrayList<Profile>()
         try {
-            val projection = arrayOf(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID, PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP)
+            val projection = arrayOf(
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID,
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP
+            )
 
             val c = mDb.query(
-                    PersistenceContract.TABLE_PROFILE, projection, null, null, null, null, null)
+                PersistenceContract.TABLE_PROFILE, projection, null, null, null, null, null
+            )
 
             if (c != null && c.count > 0) {
                 while (c.moveToNext()) {
                     //String id = c.getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID));
                     val rep = c
-                            .getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP))
+                        .getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP))
 
                     val profile = rep.toProfile()
                     profiles.add(profile)
@@ -62,13 +66,23 @@ object DatabaseDataSource : ProfilesDataSource {
 
     override fun getProfile(profileId: String): Profile? {
         try {
-            val projection = arrayOf(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID, PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP)
+            val projection = arrayOf(
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID,
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP
+            )
 
             val selection = PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID + " LIKE ?"
             val selectionArgs = arrayOf(profileId)
 
             val c = mDb.query(
-                    PersistenceContract.TABLE_PROFILE, projection, selection, selectionArgs, null, null, null)
+                PersistenceContract.TABLE_PROFILE,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+            )
 
             var profile: Profile? = null
 
@@ -76,7 +90,7 @@ object DatabaseDataSource : ProfilesDataSource {
                 c.moveToFirst()
                 //String id = c.getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID));
                 val rep = c
-                        .getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP))
+                    .getString(c.getColumnIndexOrThrow(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP))
 
                 profile = rep.toProfile()
             }
@@ -95,18 +109,29 @@ object DatabaseDataSource : ProfilesDataSource {
     override fun getConditionProfiles(conditionType: Condition.Type): List<Profile> {
         val profileIds = ArrayList<String>()
         try {
-            val projection = arrayOf(PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID, PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE)
+            val projection = arrayOf(
+                PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID,
+                PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE
+            )
 
-            val selection = PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE + " LIKE ?"
+            val selection =
+                PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE + " LIKE ?"
             val selectionArgs = arrayOf(conditionToString(conditionType))
 
             val c = mDb.query(
-                    PersistenceContract.TABLE_CONDITION_HANDLER, projection, selection, selectionArgs, null, null, null)
+                PersistenceContract.TABLE_CONDITION_HANDLER,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+            )
 
             if (c != null && c.count > 0) {
                 while (c.moveToNext()) {
                     val id = c
-                            .getString(c.getColumnIndexOrThrow(PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID))
+                        .getString(c.getColumnIndexOrThrow(PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID))
                     profileIds.add(id)
                 }
             }
@@ -126,7 +151,10 @@ object DatabaseDataSource : ProfilesDataSource {
         try {
             val values = ContentValues()
             values.put(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID, profile.id)
-            values.put(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP, profile.toJson().toString())
+            values.put(
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP,
+                profile.toJson().toString()
+            )
 
             mDb.insert(PersistenceContract.TABLE_PROFILE, null, values)
         } catch (e: IllegalStateException) {
@@ -139,7 +167,10 @@ object DatabaseDataSource : ProfilesDataSource {
         try {
             val values = ContentValues()
             values.put(PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID, profileId)
-            values.put(PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE, conditionToString(conditionType))
+            values.put(
+                PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE,
+                conditionToString(conditionType)
+            )
 
             mDb.insert(PersistenceContract.TABLE_CONDITION_HANDLER, null, values)
         } catch (e: IllegalStateException) {
@@ -192,7 +223,8 @@ object DatabaseDataSource : ProfilesDataSource {
 
     override fun deleteCondition(profileId: String, conditionType: Condition.Type) {
         try {
-            val selection = PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID + "=? and " + PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE + "=? "
+            val selection =
+                PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_PROFILE_ID + "=? and " + PersistenceContract.ConditionHandlerEntry.COLUMN_NAME_CONDITION_TYPE + "=? "
             val selectionArgs = arrayOf(profileId, conditionToString(conditionType))
             mDb.delete(PersistenceContract.TABLE_CONDITION_HANDLER, selection, selectionArgs)
         } catch (e: IllegalStateException) {
@@ -205,7 +237,10 @@ object DatabaseDataSource : ProfilesDataSource {
         try {
             val values = ContentValues()
             values.put(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID, profile.id)
-            values.put(PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP, profile.toJson().toString())
+            values.put(
+                PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_REP,
+                profile.toJson().toString()
+            )
 
             val selection = PersistenceContract.ProfileEntry.COLUMN_NAME_PROFILE_ID + " LIKE ?"
             val selectionArgs = arrayOf(profile.id)

@@ -78,7 +78,11 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                         "satellite" -> GoogleMap.MAP_TYPE_SATELLITE
                         "hybrid" -> GoogleMap.MAP_TYPE_HYBRID
                         "terrain" -> GoogleMap.MAP_TYPE_TERRAIN
-                        else -> throw IllegalArgumentException("Unknown map type ${extras.getString("map_type")}")
+                        else -> throw IllegalArgumentException(
+                            "Unknown map type ${extras.getString(
+                                "map_type"
+                            )}"
+                        )
                     }
                 }
             }
@@ -123,7 +127,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
             R.id.action_place_search -> {
                 try {
                     val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .build(this)
+                        .build(this)
                     startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
                 } catch (e: GooglePlayServicesRepairableException) {
                     e.printStackTrace()
@@ -156,34 +160,40 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         }
 
         checkPermission(Manifest.permission.ACCESS_FINE_LOCATION,
-                whenGranted = {
-                    googleMap.isMyLocationEnabled = true
-                    if (center == null) {
-                        val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-                        val provider = locationManager.getBestProvider(Criteria(), true)
-                        val myLocation = locationManager.getLastKnownLocation(provider)
-                        center = if (myLocation != null)
-                            LatLng(myLocation.latitude, myLocation.longitude)
-                        else
-                            LatLng(0.0, 0.0)
-                        moveCamera(googleMap, center!!, radius.toDouble())
-                    }
-                },
-                whenExplanationNeed = {
-                    AlertDialog.Builder(this)
-                            .setTitle(R.string.location_permission_needed)
-                            .setMessage(R.string.location_permission_rationale)
-                            .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
-                                dialogInterface.dismiss()
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
-                            }
-                            .create().show()
-                },
-                whenDenied = {
-                    requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION)
+            whenGranted = {
+                googleMap.isMyLocationEnabled = true
+                if (center == null) {
+                    val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+                    val provider = locationManager.getBestProvider(Criteria(), true)
+                    val myLocation = locationManager.getLastKnownLocation(provider)
+                    center = if (myLocation != null)
+                        LatLng(myLocation.latitude, myLocation.longitude)
+                    else
+                        LatLng(0.0, 0.0)
+                    moveCamera(googleMap, center!!, radius.toDouble())
                 }
+            },
+            whenExplanationNeed = {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.location_permission_needed)
+                    .setMessage(R.string.location_permission_rationale)
+                    .setNegativeButton(android.R.string.cancel) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        requestPermission(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            PERMISSION_REQUEST_LOCATION
+                        )
+                    }
+                    .create().show()
+            },
+            whenDenied = {
+                requestPermission(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    PERMISSION_REQUEST_LOCATION
+                )
+            }
         )
     }
 
@@ -199,15 +209,23 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
     private fun onMapIdle(googleMap: GoogleMap) {
         val projection = googleMap.projection
         val cover = binding.mapCover
-        val startPoint = projection.fromScreenLocation(Point((cover.centerX - cover.radius).toInt(), cover.centerY.toInt()))
-        val endPoint = projection.fromScreenLocation(Point(cover.centerX.toInt(), cover.centerY.toInt()))
+        val startPoint = projection.fromScreenLocation(
+            Point(
+                (cover.centerX - cover.radius).toInt(),
+                cover.centerY.toInt()
+            )
+        )
+        val endPoint =
+            projection.fromScreenLocation(Point(cover.centerX.toInt(), cover.centerY.toInt()))
 
         // The computed distance is stored in results[0].
         //If results has length 2 or greater, the initial bearing is stored in results[1].
         //If results has length 3 or greater, the final bearing is stored in results[2].
         val results = FloatArray(1)
-        Location.distanceBetween(startPoint.latitude, startPoint.longitude,
-                endPoint.latitude, endPoint.longitude, results)
+        Location.distanceBetween(
+            startPoint.latitude, startPoint.longitude,
+            endPoint.latitude, endPoint.longitude, results
+        )
         radius = results[0].toInt()
 
         center = projection.visibleRegion.latLngBounds.center
@@ -261,8 +279,10 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
         finish()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
         when (requestCode) {
             PERMISSION_REQUEST_LOCATION -> {
                 recreate()
@@ -277,7 +297,8 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 RESULT_OK -> {
                     val place = PlaceAutocomplete.getPlace(this, data)
                     this.center = place.latLng
-                    val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                    val mapFragment =
+                        supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
                     mapFragment.getMapAsync(this)
                 }
                 PlaceAutocomplete.RESULT_ERROR -> {

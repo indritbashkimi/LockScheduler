@@ -23,7 +23,8 @@ class TimePickerActivity : BaseActivity() {
         }
 
         findViewById<View>(R.id.fab).setOnClickListener {
-            val fragment = supportFragmentManager.findFragmentById(R.id.time_fragment) as TimeConditionFragment
+            val fragment =
+                supportFragmentManager.findFragmentById(R.id.time_fragment) as TimeConditionFragment
             val condition = fragment.assembleCondition()
             val intent = Intent()
             intent.putExtra("time_condition", condition)

@@ -22,10 +22,10 @@ fun Fragment.showPasswordDialog(lockType: LockAction.LockType, onSelected: (Int)
         LockAction.LockType.PASSWORD -> 3
     }
     builder.setTitle(R.string.dialog_lock_settings_title)
-            .setSingleChoiceItems(items, selectedItem) { dialog, which ->
-                onSelected(which)
-                dialog.dismiss()
-            }
+        .setSingleChoiceItems(items, selectedItem) { dialog, which ->
+            onSelected(which)
+            dialog.dismiss()
+        }
     builder.create().show()
 }
 
@@ -56,13 +56,17 @@ fun isAdminRationaleNeeded(): Boolean {
 fun Fragment.showAdminPermissionRationale(onOk: () -> Unit, onCancel: () -> Unit) {
     val builder = AlertDialog.Builder(context!!)
     builder.setTitle(R.string.admin_permission_rationale_title)
-            .setMessage(R.string.admin_permission_rationale)
-            .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
-            .setNegativeButton(R.string.cancel) { _, _ -> onCancel() }
+        .setMessage(R.string.admin_permission_rationale)
+        .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
+        .setNegativeButton(R.string.cancel) { _, _ -> onCancel() }
     builder.create().show()
 }
 
-fun Fragment.checkAdminPermission(onGranted: () -> Unit, onRationaleNeeded: () -> Unit, onDenied: () -> Unit) {
+fun Fragment.checkAdminPermission(
+    onGranted: () -> Unit,
+    onRationaleNeeded: () -> Unit,
+    onDenied: () -> Unit
+) {
     when {
         isAdminPermissionGranted() -> onGranted()
         isAdminRationaleNeeded() -> onRationaleNeeded()

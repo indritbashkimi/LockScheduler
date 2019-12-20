@@ -12,6 +12,14 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
 
     private static final String TAG = "LockSchedulerAdmin";
 
+    public static boolean isAdminActive(@NonNull Context context) {
+        return AdminUtils.getDevicePolicyManager(context).isAdminActive(AdminUtils.getComponentName(context));
+    }
+
+    public static void removeAdmin(@NonNull Context context) {
+        AdminUtils.getDevicePolicyManager(context).removeActiveAdmin(AdminUtils.getComponentName(context));
+    }
+
     void showToast(Context context, CharSequence msg) {
         Log.d(TAG, msg.toString());
         Toast.makeText(context, "Lock Scheduler: " + msg, Toast.LENGTH_SHORT).show();
@@ -52,13 +60,5 @@ public class LockSchedulerAdmin extends DeviceAdminReceiver {
         super.onPasswordExpiring(context, intent);
         showToast(context, "password expired");
         LockManager.resetPassword(context);
-    }
-
-    public static boolean isAdminActive(@NonNull Context context) {
-        return AdminUtils.getDevicePolicyManager(context).isAdminActive(AdminUtils.getComponentName(context));
-    }
-
-    public static void removeAdmin(@NonNull Context context) {
-        AdminUtils.getDevicePolicyManager(context).removeActiveAdmin(AdminUtils.getComponentName(context));
     }
 }

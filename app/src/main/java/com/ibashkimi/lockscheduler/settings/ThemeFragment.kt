@@ -23,7 +23,7 @@ class ThemeFragment : Fragment(), PremiumThemeAdapter.ThemeSelectedListener {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         baseActivity = context as BaseActivity?
-                ?: throw IllegalStateException("Activity must be BaseActivity.")
+            ?: throw IllegalStateException("Activity must be BaseActivity.")
     }
 
     override fun onDetach() {
@@ -31,13 +31,21 @@ class ThemeFragment : Fragment(), PremiumThemeAdapter.ThemeSelectedListener {
         baseActivity = null
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding = FragmentThemeBinding.inflate(inflater, container, false)
 
         binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(requireContext(), resources.getInteger(com.ibashkimi.theme.R.integer.theme_columns))
+            layoutManager = GridLayoutManager(
+                requireContext(),
+                resources.getInteger(com.ibashkimi.theme.R.integer.theme_columns)
+            )
             val theme = baseActivity!!.themePreferences.getTheme(Theme.INDIGO_PINK)
-            themeAdapter = PremiumThemeAdapter(themes, themes.indexOf(theme), { false }, this@ThemeFragment)
+            themeAdapter =
+                PremiumThemeAdapter(themes, themes.indexOf(theme), { false }, this@ThemeFragment)
             adapter = themeAdapter
         }
 

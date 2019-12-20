@@ -2,9 +2,10 @@ package com.ibashkimi.lockscheduler.model.api;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 public class LockManager {
 

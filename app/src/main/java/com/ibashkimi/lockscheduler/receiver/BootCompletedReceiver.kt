@@ -23,9 +23,16 @@ class BootCompletedReceiver : BroadcastReceiver() {
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             when (AppPreferencesHelper.lockAtBoot) {
                 LockAction.LockType.SWIPE -> LockManager.resetPassword(context)
-                LockAction.LockType.PASSWORD -> LockManager.setPassword(context, AppPreferencesHelper.lockAtBootInput)
-                LockAction.LockType.PIN -> LockManager.setPin(context, AppPreferencesHelper.lockAtBootInput)
-                LockAction.LockType.UNCHANGED -> { } // do nothing
+                LockAction.LockType.PASSWORD -> LockManager.setPassword(
+                    context,
+                    AppPreferencesHelper.lockAtBootInput
+                )
+                LockAction.LockType.PIN -> LockManager.setPin(
+                    context,
+                    AppPreferencesHelper.lockAtBootInput
+                )
+                LockAction.LockType.UNCHANGED -> {
+                } // do nothing
             }
 
             val delay = java.lang.Long.parseLong(AppPreferencesHelper.bootDelay)
@@ -39,7 +46,12 @@ class BootCompletedReceiver : BroadcastReceiver() {
                 val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val alarmIntent = Intent(context, AlarmReceiver::class.java)
                 alarmIntent.putExtra("boot", "boot")
-                val pi = PendingIntent.getBroadcast(context, 1, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                val pi = PendingIntent.getBroadcast(
+                    context,
+                    1,
+                    alarmIntent,
+                    PendingIntent.FLAG_CANCEL_CURRENT
+                )
                 val now = System.currentTimeMillis()
                 val nextAlarm = now + delay
                 am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi)
