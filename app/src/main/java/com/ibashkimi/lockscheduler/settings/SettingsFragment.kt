@@ -22,7 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.*
 import com.ibashkimi.theme.activity.ThemePreferences

@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.scheduler
+package com.ibashkimi.lockscheduler.scheduler
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -11,7 +11,7 @@ import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
-import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
+import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
 import java.util.*

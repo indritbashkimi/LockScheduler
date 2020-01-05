@@ -1,4 +1,6 @@
-package com.ibashkimi.lockscheduler.model
+package com.ibashkimi.lockscheduler.data
+
+import com.ibashkimi.lockscheduler.model.Profile
 
 interface ProfileRepository {
     fun add(profile: Profile)

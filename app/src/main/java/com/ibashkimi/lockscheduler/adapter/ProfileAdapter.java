@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.profiles;
+package com.ibashkimi.lockscheduler.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,13 +1,14 @@
-package com.ibashkimi.lockscheduler.model
+package com.ibashkimi.lockscheduler.data
 
 import android.content.Intent
 import androidx.collection.ArrayMap
 import com.ibashkimi.lockscheduler.App
-import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
+import com.ibashkimi.lockscheduler.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.*
-import com.ibashkimi.lockscheduler.model.scheduler.*
-import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
-import com.ibashkimi.lockscheduler.model.source.local.DatabaseDataSource
+import com.ibashkimi.lockscheduler.scheduler.*
+import com.ibashkimi.lockscheduler.data.local.DatabaseDataSource
+import com.ibashkimi.lockscheduler.model.ActionManager
+import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose

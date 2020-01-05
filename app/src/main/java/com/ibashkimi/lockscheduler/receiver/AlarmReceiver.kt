@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.PowerManager
 import android.widget.Toast
 
-import com.ibashkimi.lockscheduler.model.ProfileManager
+import com.ibashkimi.lockscheduler.data.ProfileManager
 
 class AlarmReceiver : BroadcastReceiver() {
 

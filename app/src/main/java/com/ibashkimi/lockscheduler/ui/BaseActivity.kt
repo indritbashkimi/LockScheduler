@@ -2,7 +2,7 @@ package com.ibashkimi.lockscheduler.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 import com.ibashkimi.theme.activity.DayNightActivity
 import com.ibashkimi.theme.activity.ThemePreferences
 import com.ibashkimi.theme.activity.ThemeSupportPreferences

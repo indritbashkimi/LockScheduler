@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.source
+package com.ibashkimi.lockscheduler.data
 
 import com.ibashkimi.lockscheduler.model.Actions
 import com.ibashkimi.lockscheduler.model.Conditions

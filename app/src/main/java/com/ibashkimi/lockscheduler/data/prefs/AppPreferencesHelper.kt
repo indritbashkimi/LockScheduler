@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.prefs
+package com.ibashkimi.lockscheduler.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences

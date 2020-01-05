@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.ibashkimi.lockscheduler.model.Profile
-import com.ibashkimi.lockscheduler.model.ProfileManager
+import com.ibashkimi.lockscheduler.data.ProfileManager
 
 class ProfilesViewModel : ViewModel() {
 

@@ -1,12 +1,12 @@
-package com.ibashkimi.lockscheduler.model.scheduler
+package com.ibashkimi.lockscheduler.scheduler
 
 import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.ibashkimi.lockscheduler.model.Profile
-import com.ibashkimi.lockscheduler.model.api.GeofenceApiHelper
+import com.ibashkimi.lockscheduler.api.GeofenceApiHelper
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
+import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 
 class PlaceConditionScheduler(
     private val geofenceApiHelper: GeofenceApiHelper,

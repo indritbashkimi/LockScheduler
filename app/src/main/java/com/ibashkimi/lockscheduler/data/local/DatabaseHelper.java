@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.source.local;
+package com.ibashkimi.lockscheduler.data.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

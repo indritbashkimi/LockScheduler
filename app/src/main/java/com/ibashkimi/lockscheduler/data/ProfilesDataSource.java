@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.source;
+package com.ibashkimi.lockscheduler.data;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

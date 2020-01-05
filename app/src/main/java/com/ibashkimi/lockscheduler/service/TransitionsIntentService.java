@@ -11,8 +11,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.location.GeofencingEvent;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
+import com.ibashkimi.lockscheduler.data.ProfileManager;
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.ui.MainActivity;
 import com.ibashkimi.lockscheduler.util.NotificationUtilsKt;
 

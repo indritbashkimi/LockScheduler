@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.api;
+package com.ibashkimi.lockscheduler.api;
 
 import android.content.Context;
 import android.os.Bundle;

@@ -8,8 +8,8 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.ibashkimi.lockscheduler.BuildConfig;
 import com.ibashkimi.lockscheduler.R;
-import com.ibashkimi.lockscheduler.model.ProfileManager;
-import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin;
+import com.ibashkimi.lockscheduler.data.ProfileManager;
+import com.ibashkimi.lockscheduler.api.LockSchedulerAdmin;
 
 public class PlatformUtils {
 

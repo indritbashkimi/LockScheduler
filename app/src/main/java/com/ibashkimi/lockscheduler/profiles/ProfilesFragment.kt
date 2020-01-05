@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.adapter.ProfileAdapter
 import com.ibashkimi.lockscheduler.databinding.FragmentProfilesBinding
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.util.PlatformUtils

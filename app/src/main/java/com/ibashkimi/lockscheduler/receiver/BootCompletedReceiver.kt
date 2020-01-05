@@ -8,10 +8,10 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 
-import com.ibashkimi.lockscheduler.model.ProfileManager
+import com.ibashkimi.lockscheduler.data.ProfileManager
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.model.api.LockManager
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.api.LockManager
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 
 
 class BootCompletedReceiver : BroadcastReceiver() {

@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.model.api;
+package com.ibashkimi.lockscheduler.api;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,7 +18,7 @@ import com.google.android.gms.location.LocationServices;
 import com.ibashkimi.lockscheduler.App;
 import com.ibashkimi.lockscheduler.model.Profile;
 import com.ibashkimi.lockscheduler.model.condition.PlaceCondition;
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper;
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper;
 import com.ibashkimi.lockscheduler.service.TransitionsIntentService;
 
 import java.util.ArrayList;

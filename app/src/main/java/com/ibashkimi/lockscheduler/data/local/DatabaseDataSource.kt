@@ -1,13 +1,13 @@
-package com.ibashkimi.lockscheduler.model.source.local
+package com.ibashkimi.lockscheduler.data.local
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.model.source.ProfilesDataSource
-import com.ibashkimi.lockscheduler.model.source.toJson
-import com.ibashkimi.lockscheduler.model.source.toProfile
+import com.ibashkimi.lockscheduler.data.ProfilesDataSource
+import com.ibashkimi.lockscheduler.data.toJson
+import com.ibashkimi.lockscheduler.data.toProfile
 import org.json.JSONException
 import java.util.*
 

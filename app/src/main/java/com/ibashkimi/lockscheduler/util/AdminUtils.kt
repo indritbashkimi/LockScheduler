@@ -7,9 +7,9 @@ import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.actions.PinChooserActivity
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.model.api.AdminUtils
-import com.ibashkimi.lockscheduler.model.api.LockSchedulerAdmin
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.api.AdminUtils
+import com.ibashkimi.lockscheduler.api.LockSchedulerAdmin
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 
 
 fun Fragment.showPasswordDialog(lockType: LockAction.LockType, onSelected: (Int) -> Unit) {
