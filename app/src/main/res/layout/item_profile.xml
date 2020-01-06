@@ -16,7 +16,6 @@
     card:cardUseCompatPadding="false">
 
     <LinearLayout
-        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
@@ -50,11 +49,10 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
-                android:tint="@color/ib_textColorDisabled"
+                android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_lock" />
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+            <LinearLayout
                 android:id="@+id/lock_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +99,7 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
-                android:tint="@color/ib_textColorDisabled"
+                android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_place" />
 
             <TextView
@@ -134,7 +132,7 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
-                android:tint="@color/ib_textColorDisabled"
+                android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_time" />
 
             <LinearLayout
@@ -178,7 +176,7 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
-                android:tint="@color/ib_textColorDisabled"
+                android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_wifi" />
 
             <TextView
@@ -211,7 +209,7 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
-                android:tint="@color/ib_textColorDisabled"
+                android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_power" />
 
             <TextView
@@ -230,6 +228,24 @@
 
     </LinearLayout>
 
-    <include layout="@layout/item_profile_cover" />
+    <FrameLayout
+        android:id="@+id/cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibity="visible">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="?attr/colorPrimaryDark" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/card_border" />
+
+    </FrameLayout>
 
 </androidx.cardview.widget.CardView>
