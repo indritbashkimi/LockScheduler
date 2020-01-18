@@ -24,12 +24,6 @@
             android:summary="%s"
             android:title="@string/pref_title_map_style" />
 
-        <androidx.preference.CheckBoxPreference
-            android:defaultValue="false"
-            android:key="colored_navigation_bar"
-            android:summary="@string/pref_colored_navigation_bar_summary"
-            android:title="@string/pref_colored_navigation_bar" />
-
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory android:title="@string/pref_header_general">

@@ -25,9 +25,6 @@ import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 import com.ibashkimi.lockscheduler.util.*
-import com.ibashkimi.theme.activity.ThemePreferences
-import com.ibashkimi.theme.theme.NavBarColor
-import com.ibashkimi.theme.theme.NightMode
 
 
 class SettingsFragment : PreferenceFragmentCompat(),
@@ -96,12 +93,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun addPreferencesFromResource(@XmlRes preferencesResId: Int) {
         super.addPreferencesFromResource(preferencesResId)
-        // Colored navigation bar
-        if (!Utils.hasNavBar(requireContext())) {
-            findPreference<PreferenceCategory>("appearance")
-                ?.removePreference(findPreference("colored_navigation_bar"))
-        }
-
         findPreference<Preference>("min_pin_length")?.summary =
             "" + getIntPreference("min_pin_length", 4)
         findPreference<Preference>("min_password_length")?.summary =
