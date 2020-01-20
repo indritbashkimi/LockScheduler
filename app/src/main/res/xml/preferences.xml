@@ -5,16 +5,12 @@
         android:title="@string/appearance_preference">
 
         <androidx.preference.ListPreference
-            android:defaultValue="auto"
-            android:entries="@array/pref_night_mode_human_value"
-            android:entryValues="@array/pref_night_mode_phone_value"
+            android:defaultValue="system_default"
+            android:entries="@array/pref_theme_human_value"
+            android:entryValues="@array/pref_theme_phone_value"
             android:key="night_mode"
             android:summary="%s"
             android:title="@string/pref_title_night_mode" />
-
-        <androidx.preference.Preference
-            android:key="theme"
-            android:title="@string/pref_title_theme" />
 
         <androidx.preference.ListPreference
             android:defaultValue="normal"

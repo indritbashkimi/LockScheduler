@@ -46,9 +46,6 @@
         <action
             android:id="@+id/action_settings_to_about"
             app:destination="@id/about" />
-        <action
-            android:id="@+id/action_settings_to_themeFragment"
-            app:destination="@id/themeFragment" />
     </fragment>
     <fragment
         android:id="@+id/help"
@@ -72,8 +69,4 @@
         android:name="com.ibashkimi.lockscheduler.about.LicensesFragment"
         android:label="@string/about_licenses"
         tools:layout="@layout/fragment_licenses" />
-    <fragment
-        android:id="@+id/themeFragment"
-        android:name="com.ibashkimi.lockscheduler.settings.ThemeFragment"
-        android:label="@string/title_change_theme" />
 </navigation>

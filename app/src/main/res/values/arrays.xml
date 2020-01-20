@@ -10,16 +10,16 @@
         <item>@string/sunday</item>
     </string-array>
 
-    <string-array name="pref_night_mode_human_value">
-        <item>@string/auto</item>
+    <string-array name="pref_theme_human_value">
+        <item>@string/system_default</item>
         <item>@string/on</item>
         <item>@string/off</item>
     </string-array>
 
-    <string-array name="pref_night_mode_phone_value">
-        <item>daynight</item>
-        <item>night</item>
-        <item>day</item>
+    <string-array name="pref_theme_phone_value">
+        <item>system_default</item>
+        <item>on</item>
+        <item>off</item>
     </string-array>
 
     <string-array name="pref_map_style_human">

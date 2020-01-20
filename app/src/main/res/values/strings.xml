@@ -21,7 +21,7 @@
     <string name="help_title">@string/help</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="auto">Auto</string>
+    <string name="system_default">System default</string>
     <string name="website">Website</string>
     <string name="profile_name_hint">Profile</string>
     <string name="new_profile">New profile</string>

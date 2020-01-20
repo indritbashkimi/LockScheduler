@@ -53,8 +53,6 @@ dependencies {
     testImplementation deps.test.junit
     androidTestImplementation deps.test.espresso.core
     
-    implementation "com.ibashkimi.theme:theme:0.1.0"
-    
     implementation deps.androidx.appcompat
     implementation deps.androidx.vectordrawableanimated
     implementation deps.google.material

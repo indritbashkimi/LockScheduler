@@ -21,9 +21,8 @@ import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
-import com.ibashkimi.lockscheduler.ui.BaseActivity
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
 
 
@@ -31,7 +30,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val sharedPreferences: SharedPreferences by lazy {
-        context!!.getSharedPreferences(AppPreferencesHelper.PREFERENCES_NAME, Context.MODE_PRIVATE)
+        requireContext().getSharedPreferences(AppPreferencesHelper.PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
 
     private var lockTypeIfGranted: LockAction.LockType
@@ -68,16 +67,10 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        val themeActivity = requireActivity() as BaseActivity
         when (key) {
-            ThemePreferences.KEY_NIGHT_MODE -> themeActivity.applyNightMode(
-                themeActivity.themePreferences
-                    .getNightMode(NightMode.DAYNIGHT)
-            )
-            ThemePreferences.KEY_NAV_BAR_COLOR -> themeActivity.applyNavBarColor(
-                themeActivity.themePreferences
-                    .getNavBarColor(NavBarColor.SYSTEM)
-            )
+            "night_mode" -> {
+                requireActivity().recreate()// todo, does this work?
+            }
             "loitering_delay" -> Toast.makeText(
                 requireContext(),
                 "Not implemented yet",
@@ -124,11 +117,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
                     //intent.putExtra("android.provider.extra.APP_PACKAGE", getPackageName())
                 }
                 startActivity(intent)
-                return true
-            }
-            "theme" -> {
-                findNavController(requireActivity(), R.id.main_nav_host_fragment)
-                    .navigate(R.id.action_settings_to_themeFragment)
                 return true
             }
             "min_password_length" -> {
@@ -247,7 +235,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private fun setPreference(key: String, value: Int, updateSummary: Boolean = false) {
         preferenceManager.sharedPreferences.edit().putInt(key, value).apply()
         if (updateSummary)
-            findPreference<Preference>(key)?.summary = Integer.toString(value)
+            findPreference<Preference>(key)?.summary = value.toString()
     }
 
     private fun getStringPreference(key: String, defaultValue: String?): String {
