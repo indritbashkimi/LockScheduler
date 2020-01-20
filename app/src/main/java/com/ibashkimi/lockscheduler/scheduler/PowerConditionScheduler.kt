@@ -4,9 +4,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
 import com.ibashkimi.lockscheduler.App
+import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
-import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 
 
 class PowerConditionScheduler(
@@ -14,11 +14,12 @@ class PowerConditionScheduler(
     private val listener: ConditionChangeListener
 ) : ConditionScheduler(Condition.Type.POWER, repository) {
 
-    override fun init() {
+    override suspend fun init() {
 
     }
 
-    override fun register(profile: Profile): Boolean {
+    override suspend fun register(profile: Profile): Boolean {
+        android.util.Log.d("PowerConditionScheduler", "register called with profile ${profile.id}")
         super.register(profile)
         val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val batteryStatus = App.getInstance().registerReceiver(null, filter)

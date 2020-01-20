@@ -3,8 +3,10 @@ package com.ibashkimi.lockscheduler.profiles
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.data.ProfileManager
+import kotlinx.coroutines.launch
 
 class ProfilesViewModel : ViewModel() {
 
@@ -13,10 +15,10 @@ class ProfilesViewModel : ViewModel() {
     val profiles: LiveData<List<Profile>> = repository.getProfilesFlow().asLiveData()
 
     fun delete(profileId: String) {
-        repository.remove(profileId)
+        viewModelScope.launch { repository.remove(profileId) }
     }
 
     fun swapProfiles(profile1: Profile, profile2: Profile) {
-        repository.swap(profile1, profile2)
+        viewModelScope.launch { repository.swap(profile1, profile2) }
     }
 }

@@ -4,25 +4,27 @@ import androidx.annotation.CallSuper
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 abstract class ConditionScheduler(
     private val conditionType: Condition.Type,
     private val repository: ProfilesDataSource
 ) {
 
-    abstract fun init()
+    abstract suspend fun init()
 
     protected val registeredProfiles: List<Profile>
         get() = repository.getConditionProfiles(conditionType)
 
     @CallSuper
-    open fun register(profile: Profile): Boolean {
+    open suspend fun register(profile: Profile): Boolean {
         repository.saveCondition(profile.id, conditionType)
         return true
     }
 
     @CallSuper
-    open fun unregister(profileId: String) {
+    open suspend fun unregister(profileId: String) {
         repository.deleteCondition(profileId, conditionType)
     }
 

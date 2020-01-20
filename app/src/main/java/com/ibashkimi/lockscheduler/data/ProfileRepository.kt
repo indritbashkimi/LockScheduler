@@ -1,19 +1,20 @@
 package com.ibashkimi.lockscheduler.data
 
 import com.ibashkimi.lockscheduler.model.Profile
+import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    fun add(profile: Profile)
+    suspend fun add(profile: Profile)
 
-    fun get(id: String): Profile?
+    suspend fun get(id: String): Profile?
 
-    fun getAll(): List<Profile>
+    suspend fun getAll(): List<Profile>
 
-    fun remove(id: String)
+    suspend fun remove(id: String)
 
-    fun removeAll()
+    suspend fun removeAll()
 
-    fun swap(profile1: Profile, profile2: Profile)
+    suspend fun swap(profile1: Profile, profile2: Profile)
 
-    fun update(profile: Profile)
+    suspend fun update(profile: Profile)
 }

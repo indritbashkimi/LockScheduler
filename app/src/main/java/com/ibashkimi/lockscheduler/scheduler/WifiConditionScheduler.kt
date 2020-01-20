@@ -8,6 +8,8 @@ import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.WifiItem
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 class WifiConditionScheduler(
@@ -15,31 +17,31 @@ class WifiConditionScheduler(
     private val listener: ConditionChangeListener
 ) : ConditionScheduler(Condition.Type.WIFI, repository) {
 
-    override fun init() {
+    override suspend fun init() {
         for (profile in registeredProfiles)
             register(profile)
     }
 
-    override fun register(profile: Profile): Boolean {
+    override suspend fun register(profile: Profile): Boolean {
         Log.d(TAG, "register() called with profile=$profile")
         super.register(profile)
-        var wifiItem: WifiItem? = null
-        val wifiManager =
-            App.getInstance().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
-        if (wifiManager != null) {
-            val wifiInfo = wifiManager.connectionInfo
-            if (wifiInfo != null) {
-                val ssid = wifiInfo.ssid
-                wifiItem = WifiItem(ssid.substring(1, ssid.length - 1))
+            var wifiItem: WifiItem? = null
+            val wifiManager =
+                App.getInstance().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
+            if (wifiManager != null) {
+                val wifiInfo = wifiManager.connectionInfo
+                if (wifiInfo != null) {
+                    val ssid = wifiInfo.ssid
+                    val bssid = wifiInfo.bssid
+                    wifiItem = WifiItem(ssid.substring(1, ssid.length - 1), bssid)
+                }
             }
-        }
-        val condition = profile.conditions.wifiCondition!!
-        condition.isTriggered = wifiItem != null && condition.wifiList.contains(wifiItem)
-        return condition.isTriggered
-
+            val condition = profile.conditions.wifiCondition!!
+            condition.isTriggered = wifiItem != null && condition.wifiList.contains(wifiItem)
+           return condition.isTriggered
     }
 
-    override fun unregister(profileId: String) {
+    override suspend fun unregister(profileId: String) {
         Log.d(TAG, "register() called with profile=$profileId")
         super.unregister(profileId)
     }

@@ -13,6 +13,8 @@ import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,28 +25,28 @@ class TimeConditionScheduler(
 
     private val TAG = "TimeCondition"
 
-    override fun init() {
+    override suspend fun init() {
         for (profile in registeredProfiles)
             register(profile)
     }
 
-    override fun register(profile: Profile): Boolean {
+    override suspend fun register(profile: Profile): Boolean {
         Log.d(TAG, "register() called with profile=$profile")
         super.register(profile)
-        val condition = profile.conditions.timeCondition!!
-        val now = Calendar.getInstance().timeInMillis
-        condition.isTriggered = shouldBeActive(now, condition)
-        setAlarm(profile.id, condition.getNextAlarm(now))
-        return condition.isTriggered
+            val condition = profile.conditions.timeCondition!!
+            val now = Calendar.getInstance().timeInMillis
+            condition.isTriggered = shouldBeActive(now, condition)
+            setAlarm(profile.id, condition.getNextAlarm(now))
+           return condition.isTriggered
     }
 
-    override fun unregister(profileId: String) {
+    override suspend fun unregister(profileId: String) {
         Log.d(TAG, "unregister() called with profile=$profileId")
         super.unregister(profileId)
         cancelAlarm(profileId)
     }
 
-    fun onAlarm(profileId: String) {
+    suspend fun onAlarm(profileId: String) {
         Log.d(TAG, "onAlarm called with profile=$profileId")
         val profile = getProfile(profileId)
         if (profile == null) {
@@ -92,14 +94,12 @@ class TimeConditionScheduler(
             return true
         }
         if (start.isMidnight) {
-            val res = now.compareTo(end).isLower
-            return res
+            return now.isLowerThan(end)
         }
         if (end.isMidnight) {
-            val res = now.compareTo(start).isNotLower
-            return res
+            return now.isHigherThan(start)
         }
-        return start.compareTo(now).isNotHigher && now.compareTo(end).isLower
+        return now.isHigherThan(start) && now.isLowerThan(end)
     }
 
     private fun TimeCondition.getNextAlarm(currTimeMillis: Long): Long {
@@ -117,7 +117,7 @@ class TimeConditionScheduler(
         } else {
             alarmTime = startTime
             val now = Time.fromTimeStamp(currTimeMillis)
-            if (startTime.compareTo(now).isLower) {
+            if (startTime.isLowerThan(now)) {
                 cal.add(Calendar.DAY_OF_MONTH, 1)
             }
         }

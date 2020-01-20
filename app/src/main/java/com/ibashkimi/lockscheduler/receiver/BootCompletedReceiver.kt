@@ -12,6 +12,9 @@ import com.ibashkimi.lockscheduler.data.ProfileManager
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.api.LockManager
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class BootCompletedReceiver : BroadcastReceiver() {
@@ -38,9 +41,9 @@ class BootCompletedReceiver : BroadcastReceiver() {
             val delay = java.lang.Long.parseLong(AppPreferencesHelper.bootDelay)
             if (delay < 0)
                 throw IllegalArgumentException("Delay cannot be negative. Delay = $delay.")
-            if (delay == 0L)
-                ProfileManager.init()
-            else {
+            if (delay == 0L) {
+                CoroutineScope(Dispatchers.IO).launch { ProfileManager.init() } // todo
+            } else {
                 Toast.makeText(context, "Setting alarm. Delay = $delay", Toast.LENGTH_SHORT).show()
                 LockManager.resetPassword(context)
                 val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager

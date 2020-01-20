@@ -3,18 +3,24 @@ package com.ibashkimi.lockscheduler.addeditprofile
 import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.R
+import com.ibashkimi.lockscheduler.data.ProfileManager
+import com.ibashkimi.lockscheduler.data.ProfileRepository
 import com.ibashkimi.lockscheduler.model.*
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.condition.PlaceCondition
 import com.ibashkimi.lockscheduler.model.condition.PowerCondition
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
 import com.ibashkimi.lockscheduler.model.condition.WifiCondition
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel() {
 
-    private val repository: ProfileRepository = ProfileManager
+    private val repository: ProfileRepository =
+        ProfileManager
 
     init {
         if (state.contains("profile_id")) {
@@ -36,25 +42,24 @@ class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel()
             setWhenInactiveLockAction(LockAction(LockAction.LockMode.Unchanged))
         } else {
             state["profile_id"] = profileId
-            repository.get(profileId)?.apply {
-                setProfileName(name)
-                setPlaceCondition(conditions.placeCondition)
-                setPowerCondition(conditions.powerCondition)
-                setTimeCondition(conditions.timeCondition)
-                setWifiCondition(conditions.wifiCondition)
-                setWhenActiveLockAction(enterExitActions.enterActions.lockAction!!)
-                setWhenInactiveLockAction(enterExitActions.exitActions.lockAction!!)
-            } ?: setProfileId(null)
+            viewModelScope.launch(Dispatchers.Main) {
+                repository.get(profileId)?.apply {
+                    setProfileName(name)
+                    setPlaceCondition(conditions.placeCondition)
+                    setPowerCondition(conditions.powerCondition)
+                    setTimeCondition(conditions.timeCondition)
+                    setWifiCondition(conditions.wifiCondition)
+                    setWhenActiveLockAction(enterExitActions.enterActions.lockAction!!)
+                    setWhenInactiveLockAction(enterExitActions.exitActions.lockAction!!)
+                } ?: setProfileId(null)
+            }
         }
     }
 
-    fun getProfileName() = state.get<String>("profile_name")
+    fun getProfileName() = state.getLiveData<String?>("profile_name")
 
     fun setProfileName(name: String?) {
-        if (name == null)
-            state.remove<String>("profile_name")
-        else
-            state["profile_name"] = name
+        getProfileName().value = name
     }
 
     fun getWhenActiveLockAction() = state.getLiveData<LockAction>("active_lock_action")
@@ -100,7 +105,7 @@ class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel()
             timeCondition = getTimeCondition().value
             wifiCondition = getWifiCondition().value
         }.build()
-        val profileName: String = getProfileName()
+        val profileName: String = getProfileName().value
             ?: App.getInstance().getString(R.string.default_profile_name)
         if (conditions.all.isEmpty()) {
             Toast.makeText(App.getInstance(), "Add at least one condition", Toast.LENGTH_SHORT)
@@ -123,17 +128,20 @@ class AddEditProfileViewModel(private val state: SavedStateHandle) : ViewModel()
             Actions.Builder().apply { lockAction = activeAction }.build(),
             Actions.Builder().apply { lockAction = inactiveAction }.build()
         )
-        getProfileId()?.let { profileId ->
-            repository.update(updateProfile(profileId, profileName, conditions, actions))
-        } ?: repository.add(createProfile(profileName, conditions, actions))
+        viewModelScope.launch {
+            getProfileId()?.let { profileId ->
+                repository.update(updateProfile(profileId, profileName, conditions, actions))
+            } ?: repository.add(createProfile(profileName, conditions, actions))
+        }
         return true
     }
 
-    fun deleteProfile(): Boolean {
-        return getProfileId()?.let {
-            repository.remove(it)
-            true
-        } ?: false
+    fun deleteProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getProfileId()?.let {
+                repository.remove(it)
+            }
+        }
     }
 
     private fun createProfile(

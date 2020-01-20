@@ -7,6 +7,9 @@ import android.os.PowerManager
 import android.widget.Toast
 
 import com.ibashkimi.lockscheduler.data.ProfileManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -17,14 +20,16 @@ class AlarmReceiver : BroadcastReceiver() {
 
         Toast.makeText(context, "AlarmReceiver!", Toast.LENGTH_LONG).show()
 
-        intent.getStringExtra("profileId")?.let {
-            ProfileManager.timeHandler.onAlarm(it)
-        }
-        intent.getStringExtra("boot")?.let {
-            ProfileManager.init()
-        }
+        CoroutineScope(Dispatchers.IO).launch {
+            intent.getStringExtra("profileId")?.let {
+                ProfileManager.timeHandler.onAlarm(it)
+            }
+            intent.getStringExtra("boot")?.let {
+                ProfileManager.init()
+            }
 
-        wl.release()
+            wl.release()
+        }
     }
 
     companion object {
