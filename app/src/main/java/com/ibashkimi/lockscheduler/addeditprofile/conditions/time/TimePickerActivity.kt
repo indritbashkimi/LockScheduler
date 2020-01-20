@@ -3,6 +3,7 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.time
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.ibashkimi.lockscheduler.R
@@ -16,10 +17,9 @@ class TimePickerActivity : BaseActivity() {
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_clear)
         }
 
         findViewById<View>(R.id.fab).setOnClickListener {
@@ -30,6 +30,16 @@ class TimePickerActivity : BaseActivity() {
             intent.putExtra("time_condition", condition)
             setResult(Activity.RESULT_OK, intent)
             finish()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> onOptionsItemSelected(item)
         }
     }
 }

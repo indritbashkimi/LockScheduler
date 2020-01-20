@@ -48,6 +48,8 @@ data class DaysOfWeek(
         }
     }
 
+    fun activeDaysIndexes() = asBooleanArray().indices.filter { get(it) }
+
     fun asBooleanArray(): BooleanArray {
         return booleanArrayOf(monday, tuesday, wednesday, thursday, friday, saturday, sunday)
     }
