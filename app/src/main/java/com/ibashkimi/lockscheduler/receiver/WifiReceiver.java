@@ -28,7 +28,8 @@ public class WifiReceiver extends BroadcastReceiver {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                     if (wifiInfo != null) {
                         String ssid = wifiInfo.getSSID();
-                        wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1));
+                        String bssid = wifiInfo.getBSSID();
+                        wifiItem = new WifiItem(ssid.substring(1, ssid.length() - 1), bssid);
                     }
                 }
             }

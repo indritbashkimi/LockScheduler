@@ -2,11 +2,12 @@ package com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi;
 
 import android.util.SparseBooleanArray;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+//todo use selection lib
 public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     @SuppressWarnings("unused")

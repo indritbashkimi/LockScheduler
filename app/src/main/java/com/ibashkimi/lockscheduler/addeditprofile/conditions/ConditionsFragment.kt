@@ -18,15 +18,16 @@ import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.AddEditProfileViewModel
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.location.PlacePickerActivity
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.time.TimePickerActivity
+import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.SelectableWifiItem
 import com.ibashkimi.lockscheduler.addeditprofile.conditions.wifi.WifiPickerActivity
+import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.databinding.FragmentConditionsBinding
 import com.ibashkimi.lockscheduler.extention.checkPermission
+import com.ibashkimi.lockscheduler.extention.concatenate
 import com.ibashkimi.lockscheduler.extention.requestPermission
+import com.ibashkimi.lockscheduler.extention.toDaysString
 import com.ibashkimi.lockscheduler.model.condition.*
-import com.ibashkimi.lockscheduler.model.prefs.AppPreferencesHelper
-import com.ibashkimi.lockscheduler.util.ConditionUtils
 import com.ibashkimi.lockscheduler.util.Utils
-import java.util.*
 
 
 class ConditionsFragment : Fragment(), View.OnClickListener {
@@ -157,13 +158,10 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
             whenGranted = {
                 val wifiCondition = viewModel.getWifiCondition().value
                 val intent = Intent(context, WifiPickerActivity::class.java)
-                val items = wifiCondition?.wifiList
-                if (items != null && items.isNotEmpty()) {
-                    val itemReps = arrayOfNulls<String>(items.size)
-                    for (i in items.indices) {
-                        itemReps[i] = items[i].ssid
-                    }
-                    intent.putExtra("ssids", itemReps)
+                wifiCondition?.wifiList?.map {
+                    SelectableWifiItem(it.ssid, it.bssid, true)
+                }?.toTypedArray()?.let {
+                    intent.putExtra("wifi_items", it)
                 }
                 startActivityForResult(intent, REQUEST_WIFI_PICKER)
             },
@@ -205,9 +203,11 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
             }
         } else if (requestCode == REQUEST_WIFI_PICKER) {
             if (resultCode == RESULT_OK) {
-                val ssidArray = data!!.getStringArrayExtra("ssids")!!
-                val items = ArrayList<WifiItem>(ssidArray.size)
-                ssidArray.mapTo(items) { WifiItem(it) }
+                val items: List<WifiItem> = data!!.getParcelableArrayExtra("wifi_items")?.map {
+                    it as SelectableWifiItem
+                }?.map {
+                    WifiItem(it.SSID, it.BSSID)
+                } ?: emptyList()
                 viewModel.setWifiCondition(if (items.isNotEmpty()) WifiCondition(items) else null)
             }
         } else if (requestCode == REQUEST_TIME_PICKER) {
@@ -244,7 +244,7 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
             timeSummary.visibility = View.VISIBLE
             timeSummary.text = getString(
                 R.string.time_condition_summary,
-                ConditionUtils.daysToString(context, condition),
+                condition.daysActive.toDaysString(requireContext()),
                 Utils.formatTime(condition.startTime.hour, condition.startTime.minute),
                 Utils.formatTime(condition.endTime.hour, condition.endTime.minute)
             )
@@ -265,9 +265,7 @@ class ConditionsFragment : Fragment(), View.OnClickListener {
     private fun showWifiCondition(condition: WifiCondition) {
         binding.apply {
             TransitionManager.beginDelayedTransition(wifiLayout)
-            val wifiList = arrayOfNulls<CharSequence>(condition.wifiList.size)
-            for (i in wifiList.indices) wifiList[i] = condition.wifiList[i].ssid
-            wifiSummary.text = ConditionUtils.concatenate(wifiList, ", ")
+            wifiSummary.text = condition.wifiList.map { it.ssid }.concatenate(", ")
             wifiSummary.visibility = View.VISIBLE
             wifiDelete.visibility = View.VISIBLE
             wifiTitle.setText(R.string.wifi_condition_title)

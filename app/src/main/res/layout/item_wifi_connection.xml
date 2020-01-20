@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
+    android:orientation="horizontal"
     android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|center_vertical"
-        android:layout_marginStart="16dp"
-        android:gravity="start|center_vertical"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        tools:text="Wifi-23" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ssid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:gravity="start|center_vertical"
+            android:textAppearance="?textAppearanceBody1"
+            tools:text="Wifi-23" />
+
+        <TextView
+            android:id="@+id/bssid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="16dp"
+            android:gravity="start|center_vertical"
+            android:textAppearance="?textAppearanceSubtitle1"
+            tools:text="Wifi-23" />
+
+    </LinearLayout>
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -26,4 +45,4 @@
         android:layout_gravity="center_vertical|end"
         android:layout_margin="16dp" />
 
-</FrameLayout>
+</LinearLayout>

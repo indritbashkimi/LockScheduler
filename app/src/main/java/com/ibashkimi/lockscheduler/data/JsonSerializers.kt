@@ -187,8 +187,9 @@ fun WifiCondition.toJson(): JSONObject {
         .put("type", type.name)
         .put("triggered", isTriggered)
         .put("wifi_items_len", wifiList.size)
-    for (i in 0 until wifiList.size) {
-        json.put("wifi_item_$i", wifiList[i].ssid)
+    for (i in wifiList.indices) {
+        json.put("wifi_item_ssid$i", wifiList[i].ssid)
+        json.put("wifi_item_bssid$i", wifiList[i].bssid)
     }
     return json
 }
@@ -197,8 +198,9 @@ fun JSONObject.toWifiCondition(): WifiCondition {
     val wifiItemSize = getInt("wifi_items_len")
     val items = ArrayList<WifiItem>(wifiItemSize)
     for (i in 0 until wifiItemSize) {
-        val ssid = getString("wifi_item_$i")
-        val item = WifiItem(ssid)
+        val ssid = getString("wifi_item_ssid$i")
+        val bssid = getString("wifi_item_bssid$i")
+        val item = WifiItem(ssid, bssid)
         items.add(item)
     }
     return WifiCondition(items, getBoolean("triggered"))
