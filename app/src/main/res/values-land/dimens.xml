@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="place_picker_circle_margin">16dp</dimen>
-    <dimen name="profile_item_margin_left_right">4dp</dimen>
 </resources>

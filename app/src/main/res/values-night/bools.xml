@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- Flag to easily detect if night mode is active -->
-    <bool name="night_mode">true</bool>
-</resources>
