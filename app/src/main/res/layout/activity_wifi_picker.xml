@@ -13,43 +13,19 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:visibility="gone"
         android:text="@string/turn_on_wifi"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone" />
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible"
-                tools:visibility="visible" />
-
-            <androidx.legacy.widget.Space
-                android:layout_width="match_parent"
-                android:layout_height="88dp" />
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!--<Button
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_margin="8dp"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_gravity="bottom"
-        android:text="Save"/>-->
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="88dp"
+        android:visibility="invisible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

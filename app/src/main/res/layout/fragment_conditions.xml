@@ -64,11 +64,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
             android:paddingBottom="16dp"
-            tools:text="Via Antonio Gramsci 14, 47826, Verucchio RN"
+            tools:text="Aaaaaaa"
             tools:visibility="visible" />
 
     </LinearLayout>
@@ -131,11 +131,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
             android:paddingBottom="16dp"
-            tools:text="Via Antonio Gramsci 14, 47826, Verucchio RN"
+            tools:text="Aaaaaaa"
             tools:visibility="visible" />
 
     </LinearLayout>
@@ -198,11 +198,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
             android:paddingBottom="16dp"
-            tools:text="Via Antonio Gramsci 14, 47826, Verucchio RN"
+            tools:text="Aaaaaaaaaaaa"
             tools:visibility="visible" />
 
     </LinearLayout>
@@ -269,11 +269,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
             android:paddingBottom="16dp"
-            tools:text="Via Antonio Gramsci 14, 47826, Verucchio RN"
+            tools:text="Aaaaaaaa"
             tools:visibility="visible" />
 
     </LinearLayout>

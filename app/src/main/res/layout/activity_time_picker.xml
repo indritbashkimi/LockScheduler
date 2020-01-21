@@ -6,7 +6,7 @@
 
     <include layout="@layout/app_bar" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/time_fragment"
         android:name="com.ibashkimi.lockscheduler.addeditprofile.conditions.time.TimeConditionFragment"
         android:layout_width="match_parent"

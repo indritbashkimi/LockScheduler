@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/profile_item_margin_left_right"
     android:layout_marginTop="16dp"
-    android:layout_marginRight="@dimen/profile_item_margin_left_right"
     android:layout_marginBottom="0dp"
     android:foreground="?attr/selectableItemBackground"
     android:hapticFeedbackEnabled="false"
@@ -34,8 +32,9 @@
             android:gravity="start|top"
             android:maxLines="2"
             android:minLines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            tools:text="Profile 1" />
+            android:textAppearance="?textAppearanceBody1"
+            android:textStyle="bold"
+            tools:text="Profile name" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,7 +51,7 @@
                 android:tint="?android:textColorSecondary"
                 card:srcCompat="@drawable/ic_lock" />
 
-            <LinearLayout
+            <androidx.appcompat.widget.ButtonBarLayout
                 android:id="@+id/lock_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,7 +67,7 @@
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textAppearance="?textAppearanceBody2"
                     tools:text="PIN" />
 
                 <TextView
@@ -77,10 +76,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:textAppearance="?textAppearanceBody2"
                     tools:text="Swipe" />
 
-            </LinearLayout>
+            </androidx.appcompat.widget.ButtonBarLayout>
 
         </LinearLayout>
 
@@ -111,8 +110,8 @@
                 android:maxLines="2"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="Via Antonio Gramsci 14, Villa Verucchio 47827 RN" />
+                android:textAppearance="?textAppearanceBody2"
+                tools:text="Address" />
 
         </LinearLayout>
 
@@ -147,14 +146,14 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textAppearance="?textAppearanceBody2"
                     tools:text="Mon, Tue, Wed, Thu, Fri, Sat, Sun" />
 
                 <TextView
                     android:id="@+id/interval"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textAppearance="?textAppearanceBody2"
                     tools:text="00:00 - 00:00" />
 
             </LinearLayout>
@@ -189,8 +188,8 @@
                 android:maxLines="2"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="WiFi-23, Cantinetta, asjkdlfj asdkjf akjasdkjf kòasdjfk ljaskdjlf klasdkjl fasdklf jasdklj " />
+                android:textAppearance="?textAppearanceBody2"
+                tools:text="WiFi-Wi, asjkdlfj asdkjf akjasdkjf kòasdjfk ljaskdjlf klasdkjl fasdklf jasdklj " />
 
         </LinearLayout>
 
@@ -221,7 +220,7 @@
                 android:maxLines="2"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textAppearance="?textAppearanceBody2"
                 tools:text="When connected" />
 
         </LinearLayout>
@@ -248,4 +247,4 @@
 
     </FrameLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>
