@@ -1,75 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/lib_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="false">
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="?listPreferredItemHeight"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp">
 
-    <RelativeLayout
-        android:id="@+id/lib_item"
+    <TextView
+        android:id="@+id/library_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:listPreferredItemHeight">
+        android:gravity="center_vertical|start"
+        android:textAppearance="?textAppearanceBody1"
+        tools:text="Android Support Library" />
 
-        <TextView
-            android:id="@+id/library_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center_vertical|start"
-            android:paddingLeft="16dp"
-            android:paddingTop="16dp"
-            android:paddingRight="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            tools:text="Android Support Library" />
+    <TextView
+        android:id="@+id/library_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        tools:text="www.google.com" />
 
-        <TextView
-            android:id="@+id/library_link"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/library_name"
-            android:gravity="start"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="www.google.com" />
+    <TextView
+        android:id="@+id/library_license"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textAppearance="?textAppearanceBody2"
+        tools:text="@string/apache_v2" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/library_website"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/library_link"
-            android:layout_toEndOf="@+id/library_full_license"
-            android:padding="8dp"
-            android:text="@string/website" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/library_full_license"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/library_link"
-            android:padding="16dp"
-            tools:text="Apache 2.0" />
-
-        <TextView
-            android:id="@+id/library_license"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/library_website"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="16dp"
-            tools:text="@string/material_dialogs_license" />
-
-    </RelativeLayout>
-
-</androidx.cardview.widget.CardView>
+</LinearLayout>
