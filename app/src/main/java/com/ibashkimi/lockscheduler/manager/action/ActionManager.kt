@@ -1,9 +1,9 @@
-package com.ibashkimi.lockscheduler.model
+package com.ibashkimi.lockscheduler.manager.action
 
 import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.model.action.Action
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.api.LockManager
+
 
 object ActionManager {
 
@@ -26,6 +26,8 @@ object ActionManager {
 
     fun performActions(actions: List<Action>) {
         for (action in actions)
-            performAction(action)
+            performAction(
+                action
+            )
     }
 }

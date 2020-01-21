@@ -1,84 +1,53 @@
 package com.ibashkimi.lockscheduler.model
 
 import com.ibashkimi.lockscheduler.model.action.Action
-import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.model.condition.*
+import com.ibashkimi.lockscheduler.model.condition.Condition
+import kotlin.reflect.KClass
+
+typealias Conditions = Map<Condition.Type, Condition>
+
+typealias Actions = Map<Action.Type, Action>
 
 data class Profile(
     val id: String,
     val name: String,
     val conditions: Conditions,
-    val enterExitActions: EnterExitActions
+    val enterActions: Actions,
+    val exitActions: Actions
 ) {
 
-    fun isActive(): Boolean = conditions.areAllTriggered()
+    fun isActive(): Boolean = conditions.values.all { it.isTriggered }
 }
 
-data class EnterExitActions(val enterActions: Actions, val exitActions: Actions)
-
-data class Actions(val actions: List<Action>) {
-
-    val lockAction: LockAction?
-        get() = actionOf(Action.Type.LOCK) as? LockAction?
-
-    fun actionOf(type: Action.Type): Action? {
-        return actions.firstOrNull { it.type == type }
-    }
-
-    class Builder {
-        var lockAction: LockAction? = null
-
-        fun build(): Actions {
-            val actions = ArrayList<Action>()
-            lockAction?.let { actions.add(it) }
-            return Actions(actions)
-        }
-    }
+inline fun <reified T : Condition> Profile.findCondition(): T? {
+    return conditions.findByClass(T::class)
 }
 
-data class Conditions(val conditions: List<Condition>) {
-
-    val all: List<Condition>
-        get() = conditions
-
-    fun isEmpty(): Boolean = conditions.isEmpty()
-
-    fun areAllTriggered(): Boolean {
-        return conditions.all { it.isTriggered }
-    }
-
-    fun of(type: Condition.Type): Condition? {
-        return conditions.firstOrNull { it.type == type }
-    }
-
-    val placeCondition: PlaceCondition?
-        get() = of(Condition.Type.PLACE) as? PlaceCondition?
-
-    val powerCondition: PowerCondition?
-        get() = of(Condition.Type.POWER) as? PowerCondition?
-
-    val timeCondition: TimeCondition?
-        get() = of(Condition.Type.TIME) as? TimeCondition?
-
-    val wifiCondition: WifiCondition?
-        get() = of(Condition.Type.WIFI) as? WifiCondition?
-
-    class Builder {
-        var placeCondition: PlaceCondition? = null
-
-        var powerCondition: PowerCondition? = null
-
-        var timeCondition: TimeCondition? = null
-
-        var wifiCondition: WifiCondition? = null
-
-        fun build(): Conditions {
-            val conditions = ArrayList<Condition>()
-            placeCondition?.let { conditions.add(it) }
-            powerCondition?.let { conditions.add(it) }
-            timeCondition?.let { conditions.add(it) }
-            wifiCondition?.let { conditions.add(it) }
-            return Conditions(conditions)
-        }
-    }
+fun Map<Condition.Type, Condition>.asList(): List<Condition> {
+    return this.values.toList()
 }
+
+fun <T : Condition?> Map<Condition.Type, Condition>.findByType(type: Condition.Type): T? {
+    return this[type] as T?
+}
+
+fun <T : Condition?> Map<Condition.Type, Condition>.findByClass(kClass: KClass<*>?): T? {
+    return values.firstOrNull { it::class == kClass } as? T?
+}
+
+inline fun <reified T : Condition> Map<Condition.Type, Condition>.find(): T? {
+    return findByClass(T::class)
+}
+
+fun <T : Action?> Actions.findByType(type: Action.Type): T? {
+    return this[type] as T?
+}
+
+fun <T : Action?> Actions.findByClass(kClass: KClass<*>?): T? {
+    return values.firstOrNull { it::class == kClass } as? T?
+}
+
+inline fun <reified T : Action> Actions.find(): T? {
+    return findByClass(T::class)
+}
+

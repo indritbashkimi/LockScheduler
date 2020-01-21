@@ -10,7 +10,6 @@ data class Time(val hour: Int, val minute: Int) : Parcelable {
     val isMidnight: Boolean
         get() = hour == 0 && minute == 0
 
-    // todo equal?
     fun isHigherThan(time: Time): Boolean {
         return hour > time.hour || (hour == time.hour && minute > time.minute)
     }

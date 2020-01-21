@@ -9,11 +9,6 @@ import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 
 
-fun AppCompatActivity.setUpToolbar(toolbar: Toolbar = findViewById(R.id.toolbar)) {
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-}
-
 fun Activity.isPermissionGranted(permission: String): Boolean {
     return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }

@@ -7,6 +7,7 @@ import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,7 +18,8 @@ import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.adapter.ProfileAdapter
 import com.ibashkimi.lockscheduler.databinding.FragmentProfilesBinding
 import com.ibashkimi.lockscheduler.model.Profile
-import com.ibashkimi.lockscheduler.util.PlatformUtils
+import com.ibashkimi.lockscheduler.util.uninstall
+import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -25,9 +27,9 @@ import java.util.*
  */
 class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
 
-    private lateinit var binding: FragmentProfilesBinding
-
     private val viewModel: ProfilesViewModel by viewModels()
+
+    private lateinit var binding: FragmentProfilesBinding
 
     private lateinit var adapter: ProfileAdapter
 
@@ -84,7 +86,9 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         if (NavigationUI.onNavDestinationSelected(item, findNavController())) {
             return true
         } else if (item.itemId == R.id.action_uninstall) {
-            PlatformUtils.uninstall(requireContext())
+            lifecycleScope.launch {
+                uninstall(requireContext())
+            }
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -104,7 +108,10 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
             layoutManager = GridLayoutManager(context, columnCount)
 
         binding.recyclerView.layoutManager = layoutManager
-        adapter = ProfileAdapter(ArrayList(0), R.layout.item_profile, this)
+        adapter = ProfileAdapter(
+            ArrayList(0),
+            this
+        )
         binding.recyclerView.adapter = adapter
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
@@ -135,17 +142,19 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
         adapter.notifyDataSetChanged()
         // Bug: It's better to call adapter.notifyItemChanged(position) but it shows the wrong item.
 
-        val count = adapter.selectedItemCount
-        if (count == 0) {
-            actionMode!!.finish()
-        } else {
-            actionMode!!.title = count.toString()
-            actionMode!!.invalidate()
+        actionMode?.let {
+            val count = adapter.selectedItemCount
+            if (count == 0) {
+                it.finish()
+            } else {
+                it.title = count.toString()
+                it.invalidate()
+            }
         }
     }
 
     private fun showProfiles(profiles: List<Profile>) {
-        adapter.setData(profiles)
+        adapter.setData(profiles.toMutableList())
 
         binding.recyclerView.visibility = View.VISIBLE
         binding.noProfiles.visibility = View.GONE
@@ -206,7 +215,6 @@ class ProfilesFragment : Fragment(), ProfileAdapter.Callback {
                     viewModel.delete(adapter.profiles[position].id)
                 }
                 adapter.clearSelection()
-                viewModel.loadData()
                 mode.finish()
                 return true
             }

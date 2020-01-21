@@ -1,13 +1,14 @@
-package com.ibashkimi.lockscheduler.scheduler
+package com.ibashkimi.lockscheduler.manager.scheduler
 
 import android.util.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
-import com.ibashkimi.lockscheduler.api.GeofenceClient
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
+import com.ibashkimi.lockscheduler.model.condition.PlaceCondition
+import com.ibashkimi.lockscheduler.model.findCondition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import java.util.*
@@ -51,10 +52,11 @@ class PlaceConditionScheduler(
                 unregister(geofence.requestId)
             } else {
                 val wasActive = profile.isActive()
-                val condition = profile.conditions.placeCondition!! // todo
-                condition.isTriggered =
-                    geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
-                listener.notifyConditionChanged(profile, condition, wasActive)
+                profile.findCondition<PlaceCondition>()?.let {
+                    it.isTriggered =
+                        geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER || geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL
+                    listener.notifyConditionChanged(profile, it, wasActive)
+                }
             }
         }
     }
@@ -65,12 +67,12 @@ class PlaceConditionScheduler(
         Log.d("GeofenceClient", "getGeofenceList: loitering $loiteringDelay")
         Log.d("GeofenceClient", "size: ${this.size}")
         val geofences = ArrayList<Geofence>()
-        for ((id, _, conditions) in this) {
-            Log.d("GeofenceClient", "profile ${id}, looking for placeCondition")
-            conditions.placeCondition?.let { placeCondition ->
+        for (profile in this) {
+            Log.d("GeofenceClient", "profile ${profile.id}, looking for placeCondition")
+            profile.findCondition<PlaceCondition>()?.let { placeCondition ->
                 Log.d("GeofenceClient", "adding $placeCondition")
                 val builder = Geofence.Builder()
-                    .setRequestId(id)
+                    .setRequestId(profile.id)
                     .setCircularRegion(
                         placeCondition.latitude,
                         placeCondition.longitude,

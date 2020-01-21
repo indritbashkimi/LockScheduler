@@ -7,11 +7,11 @@ import androidx.fragment.app.Fragment
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.addeditprofile.actions.PinChooserActivity
 import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.api.AdminUtils
-import com.ibashkimi.lockscheduler.api.LockSchedulerAdmin
+import com.ibashkimi.lockscheduler.manager.action.AdminUtils
+import com.ibashkimi.lockscheduler.manager.action.LockSchedulerAdmin
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
 
-
+//todo mixed
 fun Fragment.showPasswordDialog(lockType: LockAction.LockType, onSelected: (Int) -> Unit) {
     val builder = AlertDialog.Builder(context!!)
     val items = resources.getStringArray(R.array.lock_types)
@@ -58,7 +58,7 @@ fun Fragment.showAdminPermissionRationale(onOk: () -> Unit, onCancel: () -> Unit
     builder.setTitle(R.string.admin_permission_rationale_title)
         .setMessage(R.string.admin_permission_rationale)
         .setPositiveButton(android.R.string.ok) { _, _ -> onOk() }
-        .setNegativeButton(R.string.cancel) { _, _ -> onCancel() }
+        .setNegativeButton(android.R.string.cancel) { _, _ -> onCancel() }
     builder.create().show()
 }
 

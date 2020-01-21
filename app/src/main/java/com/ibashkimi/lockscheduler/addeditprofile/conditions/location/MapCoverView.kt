@@ -10,7 +10,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.ColorUtils
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.theme.utils.ThemeUtils
+import com.ibashkimi.lockscheduler.util.ThemeUtils
 
 class MapCoverView : View {
     private val circlePaint: Paint = Paint()
@@ -26,12 +26,11 @@ class MapCoverView : View {
     constructor(
         context: Context,
         attrs: AttributeSet? = null,
-        defStyleAttr: Int = R.style.AppTheme_DayNight
+        defStyleAttr: Int = R.style.AppTheme
     ) : super(context, attrs, defStyleAttr) {
         init(context)
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     constructor(
         context: Context,
         attrs: AttributeSet?,

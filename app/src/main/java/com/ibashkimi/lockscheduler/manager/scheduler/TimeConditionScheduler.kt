@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.scheduler
+package com.ibashkimi.lockscheduler.manager.scheduler
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,15 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.ibashkimi.lockscheduler.App
+import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition
-import com.ibashkimi.lockscheduler.data.ProfilesDataSource
+import com.ibashkimi.lockscheduler.model.findCondition
 import com.ibashkimi.lockscheduler.receiver.AlarmReceiver
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,11 +32,11 @@ class TimeConditionScheduler(
     override suspend fun register(profile: Profile): Boolean {
         Log.d(TAG, "register() called with profile=$profile")
         super.register(profile)
-            val condition = profile.conditions.timeCondition!!
-            val now = Calendar.getInstance().timeInMillis
-            condition.isTriggered = shouldBeActive(now, condition)
-            setAlarm(profile.id, condition.getNextAlarm(now))
-           return condition.isTriggered
+        val condition = profile.findCondition<TimeCondition>()!!
+        val now = Calendar.getInstance().timeInMillis
+        condition.isTriggered = shouldBeActive(now, condition)
+        setAlarm(profile.id, condition.getNextAlarm(now))
+        return condition.isTriggered
     }
 
     override suspend fun unregister(profileId: String) {
@@ -52,8 +51,9 @@ class TimeConditionScheduler(
         if (profile == null) {
             unregister(profileId)
         } else {
-            val condition = profile.conditions.timeCondition!!
-            doAlarmJob(profile, condition)
+            profile.findCondition<TimeCondition>()?.let {
+                doAlarmJob(profile, it)
+            }
         }
     }
 

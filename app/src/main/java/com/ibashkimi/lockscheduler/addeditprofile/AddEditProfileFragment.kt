@@ -1,13 +1,13 @@
 package com.ibashkimi.lockscheduler.addeditprofile
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -53,18 +53,18 @@ class AddEditProfileFragment : Fragment() {
 
         if (savedInstanceState == null) {
             viewModel.setProfileId(args.profileId)
-
-            profileName.setText(viewModel.getProfileName())
-            profileName.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(text: Editable) {}
-                override fun beforeTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {}
-
-                override fun onTextChanged(text: CharSequence, p1: Int, p2: Int, p3: Int) {
-                    viewModel.setProfileName(text.toString())
+            profileName.addTextChangedListener {
+                if (viewModel.getProfileName().value != it?.toString()) {
+                    viewModel.setProfileName(it?.toString())
                 }
-            })
+            }
             attachChildFragments()
         }
+
+        viewModel.getProfileName().observe(viewLifecycleOwner, Observer {
+            profileName.setText(it)
+            viewModel.getProfileName().removeObservers(viewLifecycleOwner)
+        })
         showDelete = if (viewModel.getProfileId() == null) {
             showTitle(R.string.new_profile)
             false

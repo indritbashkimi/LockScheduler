@@ -16,7 +16,7 @@ import com.afollestad.materialdialogs.datetime.DateTimeCallback
 import com.afollestad.materialdialogs.datetime.timePicker
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.databinding.FragmentConditionTimeBinding
-import com.ibashkimi.lockscheduler.extention.toDaysString
+import com.ibashkimi.lockscheduler.util.toDaysString
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
 import com.ibashkimi.lockscheduler.model.condition.Time
 import com.ibashkimi.lockscheduler.model.condition.TimeCondition

@@ -5,13 +5,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.Toast
-
-import com.ibashkimi.lockscheduler.data.ProfileManager
-import com.ibashkimi.lockscheduler.model.action.LockAction
-import com.ibashkimi.lockscheduler.api.LockManager
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.manager.ProfileManager
+import com.ibashkimi.lockscheduler.manager.action.LockManager
+import com.ibashkimi.lockscheduler.model.action.LockAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,9 +17,6 @@ import kotlinx.coroutines.launch
 class BootCompletedReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d(TAG, "onReceive")
-        // TODO: API 24 ACTION_LOCKED_BOOT_COMPLETED https://developer.android.com/reference/android/content/Intent.html#ACTION_BOOT_COMPLETED
-        Log.d(TAG, "action = ${intent.action}")
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
             when (AppPreferencesHelper.lockAtBoot) {
                 LockAction.LockType.SWIPE -> LockManager.resetPassword(context)
@@ -44,7 +38,6 @@ class BootCompletedReceiver : BroadcastReceiver() {
             if (delay == 0L) {
                 CoroutineScope(Dispatchers.IO).launch { ProfileManager.init() } // todo
             } else {
-                Toast.makeText(context, "Setting alarm. Delay = $delay", Toast.LENGTH_SHORT).show()
                 LockManager.resetPassword(context)
                 val am = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val alarmIntent = Intent(context, AlarmReceiver::class.java)
@@ -59,13 +52,6 @@ class BootCompletedReceiver : BroadcastReceiver() {
                 val nextAlarm = now + delay
                 am.set(AlarmManager.RTC_WAKEUP, nextAlarm, pi)
             }
-        } else {
-            Log.w(TAG, "Unhandled action: " + intent.action!!)
         }
-    }
-
-    companion object {
-
-        private val TAG = "BootCompletedReceiver"
     }
 }

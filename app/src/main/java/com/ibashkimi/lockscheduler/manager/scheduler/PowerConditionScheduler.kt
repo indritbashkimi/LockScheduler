@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.scheduler
+package com.ibashkimi.lockscheduler.manager.scheduler
 
 import android.content.Intent
 import android.content.IntentFilter
@@ -7,6 +7,8 @@ import com.ibashkimi.lockscheduler.App
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
+import com.ibashkimi.lockscheduler.model.condition.PowerCondition
+import com.ibashkimi.lockscheduler.model.findCondition
 
 
 class PowerConditionScheduler(
@@ -25,7 +27,7 @@ class PowerConditionScheduler(
         val batteryStatus = App.getInstance().registerReceiver(null, filter)
         val status = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
         val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
-        val condition = profile.conditions.powerCondition!!
+        val condition = profile.findCondition<PowerCondition>()!!
         condition.isTriggered = if (condition.powerConnected) isCharging else !isCharging
         return condition.isTriggered
     }
@@ -34,12 +36,13 @@ class PowerConditionScheduler(
     fun onPowerStateEvent(isPowerConnected: Boolean) {
         for (profile in registeredProfiles) {
             val wasActive = profile.isActive()
-            val condition = profile.conditions.powerCondition!!
-            val wasTrue = condition.isTriggered
-            condition.isTriggered =
-                if (condition.powerConnected) isPowerConnected else !isPowerConnected
-            if (condition.isTriggered != wasTrue)
-                listener.notifyConditionChanged(profile, condition, wasActive)
+            profile.findCondition<PowerCondition>()?.let { condition ->
+                val wasTrue = condition.isTriggered
+                condition.isTriggered =
+                    if (condition.powerConnected) isPowerConnected else !isPowerConnected
+                if (condition.isTriggered != wasTrue)
+                    listener.notifyConditionChanged(profile, condition, wasActive)
+            }
         }
     }
 }

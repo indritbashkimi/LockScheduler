@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.GeofencingEvent
 import com.ibashkimi.lockscheduler.R
-import com.ibashkimi.lockscheduler.data.ProfileManager.placeHandler
+import com.ibashkimi.lockscheduler.manager.ProfileManager.placeHandler
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper.showNotifications
 import com.ibashkimi.lockscheduler.ui.MainActivity
 import com.ibashkimi.lockscheduler.util.PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID
@@ -45,7 +45,9 @@ class TransitionsIntentService : IntentService("TransitionsIntentService") {
 
     private fun sendNotification(title: String, content: String, notificationId: Int) {
         val builder =
-            NotificationCompat.Builder(this, PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder(this,
+                PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID
+            )
                 .setSmallIcon(R.drawable.ic_notif)
                 .setContentTitle(title)
                 .setContentText(content)

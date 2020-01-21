@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.api
+package com.ibashkimi.lockscheduler.manager.scheduler
 
 import android.Manifest
 import android.app.PendingIntent

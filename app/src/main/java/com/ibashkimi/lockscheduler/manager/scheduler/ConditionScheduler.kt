@@ -1,11 +1,9 @@
-package com.ibashkimi.lockscheduler.scheduler
+package com.ibashkimi.lockscheduler.manager.scheduler
 
 import androidx.annotation.CallSuper
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.condition.Condition
 import com.ibashkimi.lockscheduler.data.ProfilesDataSource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 abstract class ConditionScheduler(
     private val conditionType: Condition.Type,

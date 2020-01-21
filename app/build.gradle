@@ -17,6 +17,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     viewBinding.enabled = true
+    defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     buildTypes {
         release {
             minifyEnabled true
@@ -26,11 +27,6 @@ android {
         debug {
             minifyEnabled false
         }
-    }
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-    productFlavors {
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -50,44 +46,35 @@ configurations {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
-    testImplementation deps.test.junit
-    androidTestImplementation deps.test.espresso.core
-    
     implementation deps.androidx.appcompat
-    implementation deps.androidx.vectordrawableanimated
-    implementation deps.google.material
-    implementation deps.androidx.cardview
-    implementation deps.androidx.percentlayout
-    implementation deps.androidx.vectordrawable
-    implementation deps.androidx.preference
     implementation deps.androidx.browser
-    implementation "com.google.android.gms:play-services-analytics:17.0.0"
-    implementation deps.playservices.maps
-    implementation 'com.google.android.libraries.places:places-compat:2.1.0'
-    implementation deps.playservices.location
-    implementation deps.kotlin.stdlib
-    implementation deps.kotlin.coroutines
+    implementation deps.androidx.cardview
     implementation deps.androidx.constraintlayout
+    implementation deps.androidx.paging.runtime
+    implementation deps.androidx.percentlayout
+    implementation deps.androidx.preference
+    implementation deps.google.material
+    implementation deps.google.places
+    implementation deps.kotlin.coroutines
+    implementation deps.kotlin.stdlib
+    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.livedata
+    implementation deps.navigation.fragment
+    implementation deps.navigation.ui
+    implementation deps.playservices.location
+    implementation deps.playservices.maps
     implementation deps.playservices.mapsutils
+    implementation deps.room.runtime
+    kapt deps.room.compiler
     implementation 'com.afollestad.material-dialogs:core:3.1.1'
     implementation 'com.afollestad.material-dialogs:input:3.1.1'
     implementation 'com.afollestad.material-dialogs:datetime:3.1.1'
-    testImplementation deps.test.junit
-    testImplementation 'org.mockito:mockito-core:3.1.0'
-    // ViewModel and LiveData
-    implementation deps.lifecycle.extensions
-    implementation deps.lifecycle.compiler
-    implementation deps.lifecycle.livedata
-    kapt deps.lifecycle.compiler
-    implementation deps.room.runtime
-    kapt deps.room.compiler
-    // Java8 support for Lifecycles
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0-rc02"
-    // Paging
-    implementation deps.androidx.paging.runtime
-    implementation deps.navigation.fragment
-    implementation deps.navigation.ui
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc02'
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:1.0.0-rc03'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
 // ADD THIS AT THE BOTTOM

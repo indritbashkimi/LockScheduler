@@ -1,9 +1,11 @@
-package com.ibashkimi.lockscheduler.extention
+package com.ibashkimi.lockscheduler.util
 
 import android.content.Context
 import androidx.annotation.StringRes
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.model.condition.DaysOfWeek
+import com.ibashkimi.lockscheduler.model.condition.Time
+import java.util.*
 
 
 fun DaysOfWeek.toDaysString(context: Context): String? {
@@ -35,3 +37,12 @@ fun DaysOfWeek.getDayName(context: Context, dayIndex: Int): String {
     }
     return context.getString(stringRes)
 }
+
+fun intervalToString(startTime: Time, endTime: Time) = String.format(
+    Locale.ENGLISH,
+    "%02d:%02d - %02d:%02d",
+    startTime.hour,
+    startTime.minute,
+    endTime.hour,
+    endTime.minute
+)

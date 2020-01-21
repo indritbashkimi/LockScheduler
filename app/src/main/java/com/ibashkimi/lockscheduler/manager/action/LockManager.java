@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.api;
+package com.ibashkimi.lockscheduler.manager.action;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -35,6 +35,10 @@ public class LockManager {
         //devicePolicyManager.setPasswordQuality(componentName, passwordQuality);
         //devicePolicyManager.setPasswordMinimumLength(componentName, 4);
         //devicePolicyManager.setPasswordExpirationTimeout(componentName, passwordExpirationTimeout);
+        // TODO
+        //  For device owner and profile owners targeting SDK level
+        //  {@link android.os.Build.VERSION_CODES#O} or above, this API is no longer available and will
+        //  throw {@link SecurityException}
         return devicePolicyManager.resetPassword(password, DevicePolicyManager.RESET_PASSWORD_REQUIRE_ENTRY);
     }
 

@@ -18,7 +18,7 @@ import com.ibashkimi.lockscheduler.databinding.ItemWifiConnectionBinding
 import com.ibashkimi.lockscheduler.ui.BaseActivity
 
 // TODO: must have location permission for scanning wifi starting from api 28?
-// TODO: use the new change wifi state dialog if wifi is off
+// TODO: use the change wifi state dialog if wifi is off
 
 class WifiPickerActivity : BaseActivity() {
 

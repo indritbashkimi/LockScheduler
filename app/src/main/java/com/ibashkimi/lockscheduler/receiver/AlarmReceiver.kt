@@ -6,7 +6,7 @@ import android.content.Intent
 import android.os.PowerManager
 import android.widget.Toast
 
-import com.ibashkimi.lockscheduler.data.ProfileManager
+import com.ibashkimi.lockscheduler.manager.ProfileManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

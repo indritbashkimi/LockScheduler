@@ -16,12 +16,12 @@ import androidx.annotation.XmlRes
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.data.prefs.AppPreferencesHelper
+import com.ibashkimi.lockscheduler.util.PROFILE_ACTIVATED_NOTIFICATION_CHANNEL_ID
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.util.*
 

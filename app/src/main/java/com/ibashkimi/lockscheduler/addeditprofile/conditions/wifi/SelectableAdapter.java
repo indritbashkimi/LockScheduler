@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-//todo use selection lib
+
 public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
     @SuppressWarnings("unused")
@@ -32,14 +32,6 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
     public boolean isSelected(int position) {
         return getSelectedItems().contains(position);
     }
-
-    /*public void setSelected(int position, boolean selected) {
-        if (selected) {
-            selectedItems.put(position, true);
-        } else {
-            selectedItems.delete(position);
-        }
-    }*/
 
     /**
      * Toggle the selection status of the item at a given position

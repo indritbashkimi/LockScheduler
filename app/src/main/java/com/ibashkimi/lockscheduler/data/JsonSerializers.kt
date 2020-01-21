@@ -1,21 +1,20 @@
 package com.ibashkimi.lockscheduler.data
 
-import com.ibashkimi.lockscheduler.model.Actions
-import com.ibashkimi.lockscheduler.model.Conditions
-import com.ibashkimi.lockscheduler.model.EnterExitActions
 import com.ibashkimi.lockscheduler.model.Profile
 import com.ibashkimi.lockscheduler.model.action.Action
 import com.ibashkimi.lockscheduler.model.action.LockAction
 import com.ibashkimi.lockscheduler.model.condition.*
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.ArrayList
 
-fun Profile.toJson(): JSONObject {
-    return JSONObject()
-        .put("id", "" + id)
-        .put("name", name)
-        .put("actions", enterExitActions.toJson())
-        .put("conditions", conditions.toJson())
-}
+fun Profile.toJson(): JSONObject = JSONObject()
+    .put("id", "" + id)
+    .put("name", name)
+    .put("enter_actions", enterActions.toActionsJson())
+    .put("exit_actions", exitActions.toActionsJson())
+    .put("conditions", conditions.toJson())
+
 
 fun String.toProfile() = JSONObject(this).toProfile()
 
@@ -24,43 +23,33 @@ fun JSONObject.toProfile(): Profile {
         getString("id"),
         getString("name"),
         getJSONObject("conditions").toConditions(),
-        getJSONObject("actions").toEnterExitActions()
-    )
-}
-
-fun EnterExitActions.toJson(): JSONObject {
-    return JSONObject()
-        .put("enter_actions", enterActions.toJson())
-        .put("exit_actions", exitActions.toJson())
-}
-
-fun JSONObject.toEnterExitActions(): EnterExitActions {
-    return EnterExitActions(
         getJSONObject("enter_actions").toActions(),
         getJSONObject("exit_actions").toActions()
     )
 }
 
-fun Actions.toJson(): JSONObject {
+fun Map<Action.Type, Action>.toActionsJson(): JSONObject {
     val jsonObject = JSONObject()
-    jsonObject.put("actions_len", actions.size)
-    for (i in 0 until actions.size) {
+    jsonObject.put("actions_len", this.size)
+    val actions = this.values.toList()
+    for (i in 0 until this.size) {
         jsonObject.put("action_$i", actions[i].toJson())
     }
     return jsonObject
 }
 
-fun JSONObject.toActions(): Actions {
+fun JSONObject.toActions(): Map<Action.Type, Action> {
     val size = getInt("actions_len")
-    val actions = ArrayList<Action>(size)
+    val actions = EnumMap<Action.Type, Action>(Action.Type::class.java)
     for (i in 0 until size) {
         val actionJson = getJSONObject("action_$i")
-        val action: Action = when (Action.Type.valueOf(actionJson.getString("type"))) {
+        val type = Action.Type.valueOf(actionJson.getString("type"))
+        val action: Action = when (type) {
             Action.Type.LOCK -> actionJson.toLockAction()
         }
-        actions.add(action)
+        actions[type] = (action)
     }
-    return Actions(actions)
+    return actions
 }
 
 fun Action.toJson(): JSONObject {
@@ -95,29 +84,31 @@ fun JSONObject.toLockAction(): LockAction {
     return LockAction(lockMode)
 }
 
-fun Conditions.toJson(): JSONObject {
+fun Map<Condition.Type, Condition>.toJson(): JSONObject {
     val jsonObject = JSONObject()
-    jsonObject.put("conditions_len", all.size)
-    for (i in 0 until all.size) {
-        jsonObject.put("condition_$i", all[i].toJson())
+    jsonObject.put("conditions_len", this.size)
+    val conditions = this.values.toList()
+    for (i in 0 until this.size) {
+        jsonObject.put("condition_$i", conditions[i].toJson())
     }
     return jsonObject
 }
 
-fun JSONObject.toConditions(): Conditions {
+fun JSONObject.toConditions(): Map<Condition.Type, Condition> {
     val size = getInt("conditions_len")
-    val conditions = ArrayList<Condition>(size)
+    val conditions = EnumMap<Condition.Type, Condition>(Condition.Type::class.java)
     for (i in 0 until size) {
         val conditionJson = getJSONObject("condition_$i")
-        val condition: Condition = when (Condition.Type.valueOf(conditionJson.getString("type"))) {
+        val type = Condition.Type.valueOf(conditionJson.getString("type"))
+        val condition: Condition = when (type) {
             Condition.Type.PLACE -> conditionJson.toPlaceCondition()
             Condition.Type.TIME -> conditionJson.toTimeCondition()
             Condition.Type.WIFI -> conditionJson.toWifiCondition()
             Condition.Type.POWER -> conditionJson.toPowerCondition()
         }
-        conditions.add(condition)
+        conditions[type] = condition
     }
-    return Conditions(conditions)
+    return conditions
 }
 
 fun Condition.toJson(): JSONObject {

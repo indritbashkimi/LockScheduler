@@ -32,12 +32,11 @@ class PinChooserActivity : BaseActivity() {
         binding = ActivityPinPassChooserBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(findViewById(R.id.toolbar))
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_cancel_toolbar)
-            actionBar.setDisplayShowHomeEnabled(true)
-            actionBar.setDisplayShowCustomEnabled(true)
-            actionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply {
+            setHomeAsUpIndicator(R.drawable.ic_clear)
+            setDisplayShowHomeEnabled(true)
+            setDisplayShowCustomEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
         }
         binding.cancel.setOnClickListener { onCancel() }
         if (savedInstanceState == null) {
@@ -81,12 +80,12 @@ class PinChooserActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun onContinuePressed() {
+    private fun onContinuePressed() {
         input = binding.editText.text.toString()
         setConfirmState()
     }
 
-    fun onDonePressed() {
+    private fun onDonePressed() {
         if (binding.editText.text.toString() == input) {
             onSave()
         } else {
@@ -106,7 +105,7 @@ class PinChooserActivity : BaseActivity() {
             actionButton.setOnClickListener(firstFabListener)
             editText.addTextChangedListener(textChangeListener)
             editText.imeOptions = EditorInfo.IME_ACTION_NEXT
-            editText.setOnEditorActionListener { v: TextView?, actionId: Int, _: KeyEvent? ->
+            editText.setOnEditorActionListener { _: TextView, actionId: Int, _: KeyEvent ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_NEXT -> {
                         if (editText.text!!.length >= minLength) onContinuePressed()
@@ -134,7 +133,7 @@ class PinChooserActivity : BaseActivity() {
         }
     }
 
-    fun onCancel() {
+    private fun onCancel() {
         setResult(Activity.RESULT_CANCELED)
         finish()
     }

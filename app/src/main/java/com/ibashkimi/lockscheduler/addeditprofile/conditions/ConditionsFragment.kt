@@ -25,7 +25,7 @@ import com.ibashkimi.lockscheduler.databinding.FragmentConditionsBinding
 import com.ibashkimi.lockscheduler.extention.checkPermission
 import com.ibashkimi.lockscheduler.extention.concatenate
 import com.ibashkimi.lockscheduler.extention.requestPermission
-import com.ibashkimi.lockscheduler.extention.toDaysString
+import com.ibashkimi.lockscheduler.util.toDaysString
 import com.ibashkimi.lockscheduler.model.condition.*
 import com.ibashkimi.lockscheduler.util.Utils
 

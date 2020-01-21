@@ -190,8 +190,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
             },
             whenDenied = {
                 requestPermission(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    PERMISSION_REQUEST_LOCATION
+                    Manifest.permission.ACCESS_FINE_LOCATION, PERMISSION_REQUEST_LOCATION
                 )
             }
         )
@@ -297,6 +296,7 @@ class PlacePickerActivity : BaseActivity(), OnMapReadyCallback {
                 RESULT_OK -> {
                     val place = PlaceAutocomplete.getPlace(this, data)
                     this.center = place.latLng
+                    // todo nope, use viewModel. center should be in viewModel
                     val mapFragment =
                         supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
                     mapFragment.getMapAsync(this)
