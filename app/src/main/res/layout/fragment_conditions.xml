@@ -64,10 +64,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
+            android:paddingBottom="16dp"
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
-            android:paddingBottom="16dp"
             tools:text="Aaaaaaa"
             tools:visibility="visible" />
 
@@ -131,10 +131,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
+            android:paddingBottom="16dp"
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
-            android:paddingBottom="16dp"
             tools:text="Aaaaaaa"
             tools:visibility="visible" />
 
@@ -198,10 +198,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
+            android:paddingBottom="16dp"
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
-            android:paddingBottom="16dp"
             tools:text="Aaaaaaaaaaaa"
             tools:visibility="visible" />
 
@@ -269,10 +269,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginEnd="16dp"
+            android:paddingBottom="16dp"
             android:textAppearance="?textAppearanceBody2"
             android:textColor="?android:textColorSecondary"
             android:visibility="gone"
-            android:paddingBottom="16dp"
             tools:text="Aaaaaaaa"
             tools:visibility="visible" />
 

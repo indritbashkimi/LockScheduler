@@ -13,16 +13,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="true"
-            android:paddingBottom="88dp"
             android:clipToPadding="false"
-            android:orientation="vertical">
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingBottom="88dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="@string/profile_name_hint"
-                android:layout_height="wrap_content">
+                android:hint="@string/profile_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/profile_name"
@@ -43,8 +43,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center_vertical"
-                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:text="@string/actions_title"
                 android:visibility="visible"
                 tools:visibility="visible" />
@@ -62,10 +62,10 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@color/day_night_divider" />
 
                 <FrameLayout
@@ -82,8 +82,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center_vertical"
-                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:text="@string/conditions_title"
                 android:visibility="visible"
                 tools:visibility="visible" />
