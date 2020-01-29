@@ -1,4 +1,4 @@
-package com.ibashkimi.lockscheduler.help
+package com.ibashkimi.lockscheduler.about
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ibashkimi.lockscheduler.R
 import com.ibashkimi.lockscheduler.databinding.FragmentHelpBinding
 import com.ibashkimi.lockscheduler.databinding.ItemHelpBinding
-import com.ibashkimi.lockscheduler.help.HelpFragment.HelpAdapter.HelpViewHolder
+import com.ibashkimi.lockscheduler.about.HelpFragment.HelpAdapter.HelpViewHolder
 import com.ibashkimi.lockscheduler.util.PlatformUtils
 import com.ibashkimi.lockscheduler.util.uninstall
 
@@ -36,13 +36,29 @@ class HelpFragment : Fragment() {
         )
         binding.recyclerView.isNestedScrollingEnabled = false
         val items = arrayOf(
-            HelpItem(R.string.uninstall_title, R.string.uninstall_content),
-            HelpItem(R.string.forgot_password_title, R.string.forgot_password_content),
-            HelpItem(R.string.device_admin_title, R.string.device_admin_content),
-            HelpItem(R.string.location_permission_title, R.string.location_permission_content),
-            HelpItem(R.string.access_to_wifi_title, R.string.access_to_wifi_content)
+            HelpItem(
+                R.string.uninstall_title,
+                R.string.uninstall_content
+            ),
+            HelpItem(
+                R.string.forgot_password_title,
+                R.string.forgot_password_content
+            ),
+            HelpItem(
+                R.string.device_admin_title,
+                R.string.device_admin_content
+            ),
+            HelpItem(
+                R.string.location_permission_title,
+                R.string.location_permission_content
+            ),
+            HelpItem(
+                R.string.access_to_wifi_title,
+                R.string.access_to_wifi_content
+            )
         )
-        val adapter = HelpAdapter(items)
+        val adapter =
+            HelpAdapter(items)
         binding.recyclerView.adapter = adapter
 
         return binding.root

@@ -49,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/help"
-        android:name="com.ibashkimi.lockscheduler.help.HelpFragment"
+        android:name="com.ibashkimi.lockscheduler.about.HelpFragment"
         android:label="@string/help_title"
         tools:layout="@layout/activity_help" />
     <fragment
