@@ -3,7 +3,7 @@
  * maven repositories.
  **/
 
-def versions = [
+ext.versions = [
         android: [
                 compileSdk: 29,
                 buildTools: '29.0.2',
@@ -42,7 +42,7 @@ def versions = [
         ]
 ]
 
-def deps = [
+ext.deps = [
         androidx : [
                 annotation          : "androidx.annotation:annotation:${versions.androidx.annotation}",
                 appcompat           : "androidx.appcompat:appcompat:${versions.androidx.appcompat}",
@@ -52,19 +52,13 @@ def deps = [
                 core                : "androidx.core:core:${versions.androidx.core}",
                 corektx             : "androidx.core:core-ktx:${versions.androidx.core}",
                 fragment            : "androidx.fragment:fragment-ktx:${versions.androidx.fragment}",
-                gridlayout          : "androidx.gridlayout:gridlayout:${versions.androidx.gridlayout}",
-                media               : "androidx.media:media:${versions.androidx.media}",
                 paging              : [
                         runtime     : "androidx.paging:paging-runtime-ktx:${versions.androidx.paging}"
                 ],
-                palette             : "androidx.palette:palette:${versions.androidx.palette}",
                 percentlayout       : "androidx.percentlayout:percentlayout:${versions.androidx.percentlayout}",
                 preference          : "androidx.preference:preference-ktx:${versions.androidx.preference}",
                 recyclerview        : "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}",
-                recyclerviewselection  : "androidx.recyclerview:recyclerview-selection:${versions.androidx.recyclerview}",
                 swiperefreshlayout  : "androidx.swiperefreshlayout:swiperefreshlayout:${versions.androidx.swiperefreshlayout}",
-                vectordrawable      : "androidx.vectordrawable:vectordrawable:${versions.androidx.vectordrawable}",
-                vectordrawableanimated : "androidx.vectordrawable:vectordrawable-animated:${versions.androidx.vectordrawable}"
         ],
         google : [
                 material    : "com.google.android.material:material:${versions.google.material}",
@@ -115,6 +109,3 @@ def deps = [
         ]
 
 ]
-
-ext.versions = versions
-ext.deps = deps
