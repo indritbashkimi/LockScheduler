@@ -1,8 +1,14 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-## Lock Scheduler
+# Lock Scheduler
 
 Lock Scheduler automatically changes your lock settings to keep your phone safe.
+
+DISCLAIMER
+----------
+Please note: this project is released for use "AS IS" **without any warranties of any kind**.
+
+**Keep in mind that this app automatically changes your phone's lock protection and you may not be able to unlock it.**
 
 ## License
     Copyright (c) 2020 Indrit Bashkimi
